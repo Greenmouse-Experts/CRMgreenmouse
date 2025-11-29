@@ -31,8 +31,8 @@ html {
     --color-base-200: oklch(98% 0 0);
     --color-base-300: oklch(95% 0 0);
     --color-base-content: oklch(21% 0.006 285.885);
-    --color-primary: oklch(52.2% 0.272 301.924);
-    --color-primary-content: oklch(93% 0.034 272.788);
+    --color-primary: oklch(25% 0.01 280); /* Dark gray */
+    --color-primary-content: oklch(95% 0 0); /* White for contrast */
     --color-secondary: oklch(65% 0.241 354.308);
     --color-secondary-content: oklch(94% 0.028 342.258);
     --color-accent: oklch(77% 0.152 181.912);

@@ -67,7 +67,7 @@ const StatCard = ({
             </div>
           </div>
           <div>
-            <div className="p-3 bg-linear-50 rounded-full from-secondary/50 to-secondary size-fit">
+            <div className="p-3 bg-linear-50 rounded-full from-primary/80 to-primary size-fit">
               <Icon className="size-32 text-white" />
             </div>
           </div>
