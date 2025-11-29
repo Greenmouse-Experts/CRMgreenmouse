@@ -1,4 +1,5 @@
-import { ArrowBigDown, ArrowBigUp } from "lucide-react";
+import { ArrowBigDown, ArrowBigUp, EyeIcon, EyeOffIcon } from "lucide-react";
+import { useState } from "react";
 
 export default function AdminWallet() {
   const recentTransactions = [
@@ -38,16 +39,27 @@ export default function AdminWallet() {
       date: "2023-10-24",
     },
   ];
+  const [showBalance, setShowBalance] = useState(false);
 
   return (
     <div className="p-6 bg-base-100 shadow rounded-box space-y-8">
       <h2 className="font-bold text-sm">Wallet</h2>
       <div className="bg-linear-30 from-primary to-secondary space-y-4 p-4 text-white rounded-box">
-        <div>
-          <p className="text-sm">Total Balance</p>
+        <div className="flex items-center">
+          <p className="text-md font-bold">Total Balance</p>
+          <button
+            onClick={() => setShowBalance(!showBalance)}
+            className="btn btn-ghost btn-circle ml-auto"
+          >
+            {showBalance ? <EyeOffIcon /> : <EyeIcon />}
+          </button>
         </div>
         <div>
-          <h2 className="text-2xl font-bold">3500000</h2>
+          {showBalance ? (
+            <h2 className="text-xl font-bold">3,500,000</h2>
+          ) : (
+            <h2 className="text-xl font-bold">********</h2>
+          )}
         </div>
       </div>
       <section className="grid grid-cols-2 gap-2">
