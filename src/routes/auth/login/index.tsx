@@ -27,7 +27,7 @@ function RouteComponent() {
     <div className="min-h-screen grid  place-items-center bg-base-300">
       <form
         action=""
-        className="p-6 space-y-6 bg-base-100 shadow w-full max-w-lg m-2 "
+        className="p-6 space-y-6 py-8 bg-base-100 shadow w-full max-w-lg m-2 "
       >
         <div className="space-y-3 text-center">
           <h2 className="text-4xl font-bold text-center leading-normal">
