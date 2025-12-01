@@ -58,13 +58,7 @@ const nav_links = [
     type: "menu",
     children: null,
   },
-  {
-    path: "/admin/subscriptions",
-    label: "Subscriptions",
-    icon: <CreditCard size={20} />,
-    type: "menu",
-    children: null,
-  },
+
   {
     path: "/admin/expenses",
     label: "Expenses",
@@ -107,23 +101,10 @@ const nav_links = [
     type: "menu",
     children: null,
   },
+
   {
-    path: "/admin/estimate-request",
-    label: "Estimate Request",
-    icon: <Megaphone size={20} />,
-    type: "menu",
-    children: null,
-  },
-  {
-    path: "/admin/knowledge-base",
-    label: "Knowledge Base",
-    icon: <Bell size={20} />,
-    type: "menu",
-    children: null,
-  },
-  {
-    path: "/admin/utilities",
-    label: "Utilities",
+    path: "/admin/Inventries",
+    label: "Inventries",
     icon: <Cog size={20} />,
     type: "menu",
     children: null,
