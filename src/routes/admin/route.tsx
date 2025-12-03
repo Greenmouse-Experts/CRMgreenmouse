@@ -44,7 +44,7 @@ const nav_links = [
     type: "submenu",
     children: [
       {
-        path: "/admin/users/list",
+        path: "/admin/users",
         label: "Users",
         icon: <Users size={20} />,
         type: "menu",

@@ -49,6 +49,10 @@ function RouteComponent() {
   ];
   return (
     <div className="">
+      <div className="px-2 mt-4">
+        <CustomerSummary />
+      </div>
+
       <SimpleContainer
         title="Customers"
         actions={
@@ -59,7 +63,6 @@ function RouteComponent() {
           </>
         }
       >
-        <CustomerSummary />
         {/*{props.search}*/}
         {/*<ContainerRow searchProps={props} />*/}
         <div className="bg-base-100">

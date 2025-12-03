@@ -3,22 +3,22 @@ import SummaryGrid from "@/components/SummaryGrid";
 
 const customers = [
   {
-    title: "Total Customers",
+    title: "Total Users",
     value: 100,
   },
   {
-    title: "Active Customers",
+    title: "Active Users",
     value: 80,
   },
   {
-    title: "Inactive Customers",
+    title: "Inactive Users",
     value: 20,
   },
 ];
 
-export default function CustomerSummary() {
+export default function UserSummary() {
   return (
-    <div className="">
+    <div>
       <SummaryGrid>
         {customers.map((customer) => (
           <SummaryCard item={customer} />
