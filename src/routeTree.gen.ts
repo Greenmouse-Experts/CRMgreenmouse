@@ -17,8 +17,8 @@ import { Route as AdminIndexRouteImport } from './routes/admin/index'
 import { Route as TestHomeRouteImport } from './routes/test/home'
 import { Route as AuthLoginIndexRouteImport } from './routes/auth/login/index'
 import { Route as AdminProductsIndexRouteImport } from './routes/admin/products/index'
-import { Route as AdminStaffsUsersIndexRouteImport } from './routes/admin/staffs/users/index'
-import { Route as AdminStaffsCustomersIndexRouteImport } from './routes/admin/staffs/customers/index'
+import { Route as AdminContactsUsersIndexRouteImport } from './routes/admin/contacts/users/index'
+import { Route as AdminContactsCustomersIndexRouteImport } from './routes/admin/contacts/customers/index'
 
 const TestRouteRoute = TestRouteRouteImport.update({
   id: '/test',
@@ -60,15 +60,15 @@ const AdminProductsIndexRoute = AdminProductsIndexRouteImport.update({
   path: '/products/',
   getParentRoute: () => AdminRouteRoute,
 } as any)
-const AdminStaffsUsersIndexRoute = AdminStaffsUsersIndexRouteImport.update({
-  id: '/staffs/users/',
-  path: '/staffs/users/',
+const AdminContactsUsersIndexRoute = AdminContactsUsersIndexRouteImport.update({
+  id: '/contacts/users/',
+  path: '/contacts/users/',
   getParentRoute: () => AdminRouteRoute,
 } as any)
-const AdminStaffsCustomersIndexRoute =
-  AdminStaffsCustomersIndexRouteImport.update({
-    id: '/staffs/customers/',
-    path: '/staffs/customers/',
+const AdminContactsCustomersIndexRoute =
+  AdminContactsCustomersIndexRouteImport.update({
+    id: '/contacts/customers/',
+    path: '/contacts/customers/',
     getParentRoute: () => AdminRouteRoute,
   } as any)
 
@@ -81,8 +81,8 @@ export interface FileRoutesByFullPath {
   '/test/': typeof TestIndexRoute
   '/admin/products': typeof AdminProductsIndexRoute
   '/auth/login': typeof AuthLoginIndexRoute
-  '/admin/staffs/customers': typeof AdminStaffsCustomersIndexRoute
-  '/admin/staffs/users': typeof AdminStaffsUsersIndexRoute
+  '/admin/contacts/customers': typeof AdminContactsCustomersIndexRoute
+  '/admin/contacts/users': typeof AdminContactsUsersIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -91,8 +91,8 @@ export interface FileRoutesByTo {
   '/test': typeof TestIndexRoute
   '/admin/products': typeof AdminProductsIndexRoute
   '/auth/login': typeof AuthLoginIndexRoute
-  '/admin/staffs/customers': typeof AdminStaffsCustomersIndexRoute
-  '/admin/staffs/users': typeof AdminStaffsUsersIndexRoute
+  '/admin/contacts/customers': typeof AdminContactsCustomersIndexRoute
+  '/admin/contacts/users': typeof AdminContactsUsersIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -104,8 +104,8 @@ export interface FileRoutesById {
   '/test/': typeof TestIndexRoute
   '/admin/products/': typeof AdminProductsIndexRoute
   '/auth/login/': typeof AuthLoginIndexRoute
-  '/admin/staffs/customers/': typeof AdminStaffsCustomersIndexRoute
-  '/admin/staffs/users/': typeof AdminStaffsUsersIndexRoute
+  '/admin/contacts/customers/': typeof AdminContactsCustomersIndexRoute
+  '/admin/contacts/users/': typeof AdminContactsUsersIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -118,8 +118,8 @@ export interface FileRouteTypes {
     | '/test/'
     | '/admin/products'
     | '/auth/login'
-    | '/admin/staffs/customers'
-    | '/admin/staffs/users'
+    | '/admin/contacts/customers'
+    | '/admin/contacts/users'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -128,8 +128,8 @@ export interface FileRouteTypes {
     | '/test'
     | '/admin/products'
     | '/auth/login'
-    | '/admin/staffs/customers'
-    | '/admin/staffs/users'
+    | '/admin/contacts/customers'
+    | '/admin/contacts/users'
   id:
     | '__root__'
     | '/'
@@ -140,8 +140,8 @@ export interface FileRouteTypes {
     | '/test/'
     | '/admin/products/'
     | '/auth/login/'
-    | '/admin/staffs/customers/'
-    | '/admin/staffs/users/'
+    | '/admin/contacts/customers/'
+    | '/admin/contacts/users/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -209,18 +209,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminProductsIndexRouteImport
       parentRoute: typeof AdminRouteRoute
     }
-    '/admin/staffs/users/': {
-      id: '/admin/staffs/users/'
-      path: '/staffs/users'
-      fullPath: '/admin/staffs/users'
-      preLoaderRoute: typeof AdminStaffsUsersIndexRouteImport
+    '/admin/contacts/users/': {
+      id: '/admin/contacts/users/'
+      path: '/contacts/users'
+      fullPath: '/admin/contacts/users'
+      preLoaderRoute: typeof AdminContactsUsersIndexRouteImport
       parentRoute: typeof AdminRouteRoute
     }
-    '/admin/staffs/customers/': {
-      id: '/admin/staffs/customers/'
-      path: '/staffs/customers'
-      fullPath: '/admin/staffs/customers'
-      preLoaderRoute: typeof AdminStaffsCustomersIndexRouteImport
+    '/admin/contacts/customers/': {
+      id: '/admin/contacts/customers/'
+      path: '/contacts/customers'
+      fullPath: '/admin/contacts/customers'
+      preLoaderRoute: typeof AdminContactsCustomersIndexRouteImport
       parentRoute: typeof AdminRouteRoute
     }
   }
@@ -229,15 +229,15 @@ declare module '@tanstack/react-router' {
 interface AdminRouteRouteChildren {
   AdminIndexRoute: typeof AdminIndexRoute
   AdminProductsIndexRoute: typeof AdminProductsIndexRoute
-  AdminStaffsCustomersIndexRoute: typeof AdminStaffsCustomersIndexRoute
-  AdminStaffsUsersIndexRoute: typeof AdminStaffsUsersIndexRoute
+  AdminContactsCustomersIndexRoute: typeof AdminContactsCustomersIndexRoute
+  AdminContactsUsersIndexRoute: typeof AdminContactsUsersIndexRoute
 }
 
 const AdminRouteRouteChildren: AdminRouteRouteChildren = {
   AdminIndexRoute: AdminIndexRoute,
   AdminProductsIndexRoute: AdminProductsIndexRoute,
-  AdminStaffsCustomersIndexRoute: AdminStaffsCustomersIndexRoute,
-  AdminStaffsUsersIndexRoute: AdminStaffsUsersIndexRoute,
+  AdminContactsCustomersIndexRoute: AdminContactsCustomersIndexRoute,
+  AdminContactsUsersIndexRoute: AdminContactsUsersIndexRoute,
 }
 
 const AdminRouteRouteWithChildren = AdminRouteRoute._addFileChildren(

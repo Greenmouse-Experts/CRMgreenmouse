@@ -5,7 +5,7 @@ import { useSearch } from "@/stores/data";
 import { PlusCircleIcon } from "lucide-react";
 import { faker } from "@faker-js/faker";
 import CustomTable from "@/components/tables/CustomTable";
-export const Route = createFileRoute("/admin/staffs/customers/")({
+export const Route = createFileRoute("/admin/contacts/users/")({
   component: RouteComponent,
 });
 
@@ -49,7 +49,7 @@ function RouteComponent() {
   return (
     <div>
       <SimpleContainer
-        title="Customers"
+        title="Staffs"
         actions={
           <>
             <button className="btn btn-primary">

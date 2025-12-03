@@ -5,7 +5,8 @@ import { useSearch } from "@/stores/data";
 import { PlusCircleIcon } from "lucide-react";
 import { faker } from "@faker-js/faker";
 import CustomTable from "@/components/tables/CustomTable";
-export const Route = createFileRoute("/admin/staffs/users/")({
+import CustomerSummary from "./-components/CustomerSum";
+export const Route = createFileRoute("/admin/contacts/customers/")({
   component: RouteComponent,
 });
 
@@ -47,20 +48,23 @@ function RouteComponent() {
     // Add more actions if needed
   ];
   return (
-    <div>
+    <div className="">
       <SimpleContainer
-        title="Staffs"
+        title="Customers"
         actions={
           <>
-            <button className="btn btn-primary">
+            <button className="btn btn-sm btn-primary">
               <PlusCircleIcon /> Add Staffs
             </button>
           </>
         }
       >
-        {props.search}
+        <CustomerSummary />
+        {/*{props.search}*/}
         {/*<ContainerRow searchProps={props} />*/}
-        <CustomTable data={staffs} columns={columns} actions={actions} />
+        <div className="bg-base-100">
+          <CustomTable data={staffs} columns={columns} actions={actions} />
+        </div>
       </SimpleContainer>
     </div>
   );
