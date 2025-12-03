@@ -1,27 +1,26 @@
 import SummaryCard from "@/components/SummaryCard";
 import SummaryGrid from "@/components/SummaryGrid";
 
-const customers = [
+const companies = [
   {
-    title: "Total Users",
+    title: "Total Companies",
     value: 100,
   },
   {
-    title: "Active Users",
+    title: "Active Companies",
     value: 80,
   },
   {
-    title: "Inactive Users",
+    title: "Inactive Companies",
     value: 20,
   },
 ];
-
-export default function UserSummary() {
+export default function CompanySummary() {
   return (
-    <div className="">
+    <div>
       <SummaryGrid>
-        {customers.map((customer) => (
-          <SummaryCard item={customer} />
+        {companies.map((item) => (
+          <SummaryCard item={item} />
         ))}
       </SummaryGrid>
     </div>

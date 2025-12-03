@@ -48,10 +48,8 @@ function RouteComponent() {
     // Add more actions if needed
   ];
   return (
-    <div className="">
-      <div className="px-2 mt-4">
-        <CustomerSummary />
-      </div>
+    <>
+      <CustomerSummary />
 
       <SimpleContainer
         title="Customers"
@@ -69,6 +67,6 @@ function RouteComponent() {
           <CustomTable data={staffs} columns={columns} actions={actions} />
         </div>
       </SimpleContainer>
-    </div>
+    </>
   );
 }

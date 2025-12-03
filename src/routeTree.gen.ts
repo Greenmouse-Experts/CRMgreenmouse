@@ -19,6 +19,7 @@ import { Route as AuthLoginIndexRouteImport } from './routes/auth/login/index'
 import { Route as AdminUsersIndexRouteImport } from './routes/admin/users/index'
 import { Route as AdminProductsIndexRouteImport } from './routes/admin/products/index'
 import { Route as AdminContactsCustomersIndexRouteImport } from './routes/admin/contacts/customers/index'
+import { Route as AdminContactsCompaniesIndexRouteImport } from './routes/admin/contacts/companies/index'
 
 const TestRouteRoute = TestRouteRouteImport.update({
   id: '/test',
@@ -71,6 +72,12 @@ const AdminContactsCustomersIndexRoute =
     path: '/contacts/customers/',
     getParentRoute: () => AdminRouteRoute,
   } as any)
+const AdminContactsCompaniesIndexRoute =
+  AdminContactsCompaniesIndexRouteImport.update({
+    id: '/contacts/companies/',
+    path: '/contacts/companies/',
+    getParentRoute: () => AdminRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -82,6 +89,7 @@ export interface FileRoutesByFullPath {
   '/admin/products': typeof AdminProductsIndexRoute
   '/admin/users': typeof AdminUsersIndexRoute
   '/auth/login': typeof AuthLoginIndexRoute
+  '/admin/contacts/companies': typeof AdminContactsCompaniesIndexRoute
   '/admin/contacts/customers': typeof AdminContactsCustomersIndexRoute
 }
 export interface FileRoutesByTo {
@@ -92,6 +100,7 @@ export interface FileRoutesByTo {
   '/admin/products': typeof AdminProductsIndexRoute
   '/admin/users': typeof AdminUsersIndexRoute
   '/auth/login': typeof AuthLoginIndexRoute
+  '/admin/contacts/companies': typeof AdminContactsCompaniesIndexRoute
   '/admin/contacts/customers': typeof AdminContactsCustomersIndexRoute
 }
 export interface FileRoutesById {
@@ -105,6 +114,7 @@ export interface FileRoutesById {
   '/admin/products/': typeof AdminProductsIndexRoute
   '/admin/users/': typeof AdminUsersIndexRoute
   '/auth/login/': typeof AuthLoginIndexRoute
+  '/admin/contacts/companies/': typeof AdminContactsCompaniesIndexRoute
   '/admin/contacts/customers/': typeof AdminContactsCustomersIndexRoute
 }
 export interface FileRouteTypes {
@@ -119,6 +129,7 @@ export interface FileRouteTypes {
     | '/admin/products'
     | '/admin/users'
     | '/auth/login'
+    | '/admin/contacts/companies'
     | '/admin/contacts/customers'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -129,6 +140,7 @@ export interface FileRouteTypes {
     | '/admin/products'
     | '/admin/users'
     | '/auth/login'
+    | '/admin/contacts/companies'
     | '/admin/contacts/customers'
   id:
     | '__root__'
@@ -141,6 +153,7 @@ export interface FileRouteTypes {
     | '/admin/products/'
     | '/admin/users/'
     | '/auth/login/'
+    | '/admin/contacts/companies/'
     | '/admin/contacts/customers/'
   fileRoutesById: FileRoutesById
 }
@@ -223,6 +236,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminContactsCustomersIndexRouteImport
       parentRoute: typeof AdminRouteRoute
     }
+    '/admin/contacts/companies/': {
+      id: '/admin/contacts/companies/'
+      path: '/contacts/companies'
+      fullPath: '/admin/contacts/companies'
+      preLoaderRoute: typeof AdminContactsCompaniesIndexRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
   }
 }
 
@@ -230,6 +250,7 @@ interface AdminRouteRouteChildren {
   AdminIndexRoute: typeof AdminIndexRoute
   AdminProductsIndexRoute: typeof AdminProductsIndexRoute
   AdminUsersIndexRoute: typeof AdminUsersIndexRoute
+  AdminContactsCompaniesIndexRoute: typeof AdminContactsCompaniesIndexRoute
   AdminContactsCustomersIndexRoute: typeof AdminContactsCustomersIndexRoute
 }
 
@@ -237,6 +258,7 @@ const AdminRouteRouteChildren: AdminRouteRouteChildren = {
   AdminIndexRoute: AdminIndexRoute,
   AdminProductsIndexRoute: AdminProductsIndexRoute,
   AdminUsersIndexRoute: AdminUsersIndexRoute,
+  AdminContactsCompaniesIndexRoute: AdminContactsCompaniesIndexRoute,
   AdminContactsCustomersIndexRoute: AdminContactsCustomersIndexRoute,
 }
 

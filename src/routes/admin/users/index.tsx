@@ -48,10 +48,8 @@ function RouteComponent() {
     // Add more actions if needed
   ];
   return (
-    <div>
-      <div className="px-2 mt-4">
-        <UserSummary />
-      </div>
+    <div className="space-y-4">
+      <UserSummary />
       <SimpleContainer
         title="Staffs"
         actions={
