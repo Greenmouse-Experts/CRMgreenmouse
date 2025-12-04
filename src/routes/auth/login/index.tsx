@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import Lottie from "lottie-react";
 import anim from "./data_scan.json";
 import { useNavigate } from "@tanstack/react-router";
-import SimpleInput from "@/components/SimpleInput";
+import SimpleInput from "@/components/inputs/SimpleInput";
 export const Route = createFileRoute("/auth/login/")({
   component: RouteComponent,
 });
