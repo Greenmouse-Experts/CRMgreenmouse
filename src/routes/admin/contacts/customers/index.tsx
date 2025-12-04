@@ -56,7 +56,7 @@ function RouteComponent() {
         actions={
           <>
             <button className="btn btn-sm btn-primary">
-              <PlusCircleIcon /> Add Staffs
+              <PlusCircleIcon /> Add customer
             </button>
           </>
         }
