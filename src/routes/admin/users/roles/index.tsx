@@ -5,21 +5,23 @@ import { useSearch } from "@/stores/data";
 import { PlusCircleIcon } from "lucide-react";
 import CustomTable from "@/components/tables/CustomTable";
 import { faker } from "@faker-js/faker";
-export const Route = createFileRoute("/admin/products/categories/")({
+export const Route = createFileRoute("/admin/users/roles/")({
   component: RouteComponent,
 });
 
 function RouteComponent() {
-  const categories = Array.from({ length: 10 }, (_, i) => ({
+  const roles = Array.from({ length: 5 }, (_, i) => ({
     id: i + 1,
-    name: faker.commerce.department(),
-    productCount: faker.number.int({ min: 0, max: 100 }),
+    name: faker.person.jobTitle(),
+    description: faker.lorem.sentence(),
+    usersCount: faker.number.int({ min: 0, max: 100 }),
   }));
 
   const columns = [
     { key: "id", label: "ID" },
-    { key: "name", label: "Category Name" },
-    { key: "productCount", label: "Product Count" },
+    { key: "name", label: "Role Name" },
+    { key: "description", label: "Description" },
+    { key: "usersCount", label: "Number of Users" },
   ];
 
   const actions = [
@@ -39,11 +41,11 @@ function RouteComponent() {
   return (
     <div>
       <SimpleContainer
-        title="Categories"
+        title="Roles"
         actions={
           <>
             <button className="btn btn-sm btn-primary">
-              <PlusCircleIcon /> Create Category
+              <PlusCircleIcon /> Create Role
             </button>
           </>
         }
@@ -66,7 +68,7 @@ function RouteComponent() {
             </>
           }
         />
-        <CustomTable data={categories} columns={columns} actions={actions} />
+        <CustomTable data={roles} columns={columns} actions={actions} />
       </SimpleContainer>
     </div>
   );
