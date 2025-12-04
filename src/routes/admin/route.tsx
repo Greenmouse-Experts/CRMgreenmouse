@@ -95,7 +95,7 @@ const nav_links = [
     type: "submenu",
     children: [
       {
-        path: "/admin/products/list",
+        path: "/admin/products",
         label: "Products",
         icon: <Package size={20} />,
         type: "menu",
