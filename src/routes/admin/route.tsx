@@ -140,27 +140,6 @@ const nav_links = [
     children: null,
   },
   {
-    path: "/admin/contracts",
-    label: "Contracts",
-    icon: <ReceiptText size={20} />,
-    type: "menu",
-    children: null,
-  },
-  {
-    path: "/admin/projects",
-    label: "Projects",
-    icon: <BarChart2 size={20} />,
-    type: "menu",
-    children: null,
-  },
-  {
-    path: "/admin/tasks",
-    label: "Tasks",
-    icon: <Ticket size={20} />,
-    type: "menu",
-    children: null,
-  },
-  {
     path: "/admin/support",
     label: "Support",
     icon: <HelpCircle size={20} />,
