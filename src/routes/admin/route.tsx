@@ -18,7 +18,7 @@ import {
   Shirt,
   Tag,
 } from "lucide-react";
-import AdminHeader from "./_components/AdminHeader";
+import AdminHeader from "./-components/AdminHeader";
 import { Link } from "@tanstack/react-router";
 import { useLocation } from "@tanstack/react-router";
 interface Links {
