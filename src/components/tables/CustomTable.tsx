@@ -21,12 +21,19 @@ interface CustomTableProps {
   columns?: columnType[];
   actions?: Actions[];
   user?: any;
+  ring?: boolean;
 }
 
 export default function CustomTable(props: CustomTableProps) {
   const [selectedItem, setSelectedItem] = useState<number | null>(null);
+  const { ring = true } = props;
   return (
-    <div className="bg-base-100 ring rounded-box ring-current/20">
+    <div
+      className={
+        "bg-base-100  ring ring-current/20 " +
+        (ring ? " rounded-box " : "rounded-b-box")
+      }
+    >
       <div className=" relative overflow-x-scroll">
         <table className="table   w-full text-xs">
           <thead className="">

@@ -52,7 +52,12 @@ export default function AdminUserList() {
           </>
         }
       >
-        <CustomTable data={staffs} columns={columns} actions={actions} />
+        <CustomTable
+          ring={false}
+          data={staffs}
+          columns={columns}
+          actions={actions}
+        />
         <div className="flex justify-center mt-4">
           <button className="btn btn-ghost">See More</button>
         </div>
