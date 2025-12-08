@@ -1,5 +1,6 @@
 import { useLocation } from "@tanstack/react-router";
 import { createFileRoute, Link, Outlet } from "@tanstack/react-router";
+import { Menu } from "lucide-react";
 
 export const Route = createFileRoute("/admin/settings")({
   component: RouteComponent,
@@ -21,7 +22,15 @@ function RouteComponent() {
   const location = useLocation();
   return (
     <div className="space-y-4">
-      <h2 className="text-lg font-bold opacity-90">Account Settings</h2>
+      <div className="flex items-center">
+        <h2 className="text-lg font-bold opacity-90">Account Settings </h2>
+        <label
+          htmlFor="my-drawer-3"
+          className="btn btn-neutral btn-ghost btn-square ml-auto lg:hidden"
+        >
+          <Menu />
+        </label>
+      </div>
       <section className=" bg-base-100 rounded-box shadow">
         <div className="drawer lg:drawer-open">
           <input id="my-drawer-3" type="checkbox" className="drawer-toggle" />
@@ -41,8 +50,9 @@ function RouteComponent() {
               aria-label="close sidebar"
               className="drawer-overlay"
             ></label>
-            <ul className="menu py-4 min-h-full w-60  space-y-2 border-r border-r-current/20">
+            <ul className="menu bg-base-100 py-4 min-h-full w-60  space-y-2 border-r border-r-current/20">
               {/* Sidebar content here */}
+              <h2 className="text-lg px-3  font-bold"> Settings</h2>
               {links.map((link) => (
                 <li key={link.path}>
                   <Link
