@@ -10,7 +10,7 @@ export default function AdminHeader() {
       >
         <Menu />
       </label>
-      <h2 className="text-current/80 font-bold text-sm">
+      <h2 className="text-current/80 font-bold text-xl">
         Super Admin DashBoard
       </h2>
 
