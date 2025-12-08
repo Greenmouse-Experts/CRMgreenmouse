@@ -1,9 +1,9 @@
-import { Mail, Phone, User, Briefcase, Edit } from "lucide-react";
+import { Edit } from "lucide-react";
 import SimpleInput from "@/components/inputs/SimpleInput";
 import { FormProvider, useForm } from "react-hook-form";
 import { useState } from "react";
 
-export default function PersonalInfo() {
+export default function AddressInfo() {
   const methods = useForm();
   const [editMode, setEditMode] = useState(false);
 
@@ -11,7 +11,7 @@ export default function PersonalInfo() {
     <FormProvider {...methods}>
       <div className="card bg-base-100">
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-lg font-bold">Personal Information</h2>
+          <h2 className="text-lg font-bold">Address</h2>
           <button
             className="btn btn-ghost btn-sm"
             onClick={() => setEditMode(!editMode)}
@@ -22,42 +22,30 @@ export default function PersonalInfo() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
           <SimpleInput
-            label="First Name"
-            name="firstName"
-            defaultValue="Rafiqur"
+            label="Country"
+            name="country"
+            defaultValue="United Kingdom"
             disabled={!editMode}
           />
           <SimpleInput
-            label="Last Name"
-            name="lastName"
-            defaultValue="Rahman"
+            label="City/State"
+            name="cityState"
+            defaultValue="Leeds, East London"
             disabled={!editMode}
           />
           <SimpleInput
-            label="Email address"
-            name="email"
-            type="email"
-            defaultValue="rafiqurrahman51@gmail.com"
-            icon={<Mail size={16} />}
+            label="Postal Code"
+            name="postalCode"
+            defaultValue="ERT 2354"
             disabled={!editMode}
           />
           <SimpleInput
-            label="Phone"
-            name="phone"
-            type="tel"
-            defaultValue="+09 345 346 46"
-            icon={<Phone size={16} />}
+            label="TAX ID"
+            name="taxId"
+            defaultValue="AS45645756"
             disabled={!editMode}
           />
         </div>
-
-        <SimpleInput
-          label="Bio"
-          name="bio"
-          defaultValue="Team Manager"
-          icon={<Briefcase size={16} />}
-          disabled={!editMode}
-        />
       </div>
     </FormProvider>
   );
