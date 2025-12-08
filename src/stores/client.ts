@@ -1,15 +1,23 @@
-import { atom, useAtom } from "jotai";
-import { atomWithStorage } from "jotai/utils";
+import { useState, useEffect } from "react";
+import Cookies from "js-cookie";
 
-let theme_atom = atomWithStorage<"light" | "dark">("theme", "dark");
+type Theme = "light" | "dark";
+
+const THEME_COOKIE_NAME = "theme";
 
 export const useTheme = () => {
-  const [theme, setTheme] = useAtom(theme_atom);
+  const [theme, setTheme] = useState<Theme>(() => {
+    return (Cookies.get(THEME_COOKIE_NAME) as Theme) || "dark";
+  });
+
+  useEffect(() => {
+    Cookies.set(THEME_COOKIE_NAME, theme, { expires: 365 });
+  }, [theme]);
+
   const toggleTheme = () => {
-    setTheme((prevTheme) => {
-      return prevTheme === "light" ? "dark" : "light";
-    });
+    setTheme((prevTheme) => (prevTheme === "light" ? "dark" : "light"));
   };
+
   return {
     theme,
     toggleTheme,
