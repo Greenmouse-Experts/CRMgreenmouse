@@ -29,38 +29,39 @@ interface Links {
   children: Partial<Links[]> | null;
 }
 [];
+const ICON_SIZE = 12;
 const nav_links = [
   {
     path: "/admin",
     label: "Dashboard",
-    icon: <LayoutDashboard size={20} />,
+    icon: <LayoutDashboard size={ICON_SIZE} />,
     type: "menu",
     children: null,
   },
   {
     path: "/admin/users",
     label: "Users",
-    icon: <Users size={20} />,
+    icon: <Users size={ICON_SIZE} />,
     type: "submenu",
     children: [
       {
         path: "/admin/users",
         label: "Users",
-        icon: <Users size={20} />,
+        icon: <Users size={ICON_SIZE} />,
         type: "menu",
         children: null,
       },
       {
         path: "/admin/users/roles",
         label: "Roles",
-        icon: <Tag size={20} />,
+        icon: <Tag size={ICON_SIZE} />,
         type: "menu",
         children: null,
       },
       {
         path: "/admin/users/permissions",
         label: "Permissions",
-        icon: <Cog size={20} />,
+        icon: <Cog size={ICON_SIZE} />,
         type: "menu",
         children: null,
       },
@@ -69,20 +70,20 @@ const nav_links = [
   {
     path: "/admin/contacts",
     label: "Contacts",
-    icon: <Users size={20} />,
+    icon: <Users size={ICON_SIZE} />,
     type: "submenu",
     children: [
       {
         path: "/admin/contacts/customers",
         label: "Customers",
-        icon: <Users size={20} />,
+        icon: <Users size={ICON_SIZE} />,
         type: "menu",
         children: null,
       },
       {
         path: "/admin/contacts/companies",
         label: "Companies",
-        icon: <Shirt size={20} />,
+        icon: <Shirt size={ICON_SIZE} />,
         type: "menu",
         children: null,
       },
@@ -91,20 +92,20 @@ const nav_links = [
   {
     path: "/admin/products",
     label: "Products",
-    icon: <Package size={20} />,
+    icon: <Package size={ICON_SIZE} />,
     type: "submenu",
     children: [
       {
         path: "/admin/products",
         label: "Products",
-        icon: <Package size={20} />,
+        icon: <Package size={ICON_SIZE} />,
         type: "menu",
         children: null,
       },
       {
         path: "/admin/products/categories",
         label: "Categories",
-        icon: <Tag size={20} />,
+        icon: <Tag size={ICON_SIZE} />,
         type: "menu",
         children: null,
       },
@@ -113,20 +114,20 @@ const nav_links = [
   {
     path: "/admin/accounts",
     label: "Accounts",
-    icon: <CreditCard size={20} />,
+    icon: <CreditCard size={ICON_SIZE} />,
     type: "submenu",
     children: [
       {
         path: "/admin/accounts/income-expenses",
         label: "Income & Expenses",
-        icon: <ReceiptText size={20} />,
+        icon: <ReceiptText size={ICON_SIZE} />,
         type: "menu",
         children: null,
       },
       {
         path: "/admin/accounts/invoices",
         label: "Invoices",
-        icon: <ShoppingCart size={20} />,
+        icon: <ShoppingCart size={ICON_SIZE} />,
         type: "menu",
         children: null,
       },
@@ -135,28 +136,28 @@ const nav_links = [
   {
     path: "/admin/transactions",
     label: "Transactions",
-    icon: <CreditCard size={20} />,
+    icon: <CreditCard size={ICON_SIZE} />,
     type: "menu",
     children: null,
   },
   {
     path: "/admin/support",
     label: "Support",
-    icon: <HelpCircle size={20} />,
+    icon: <HelpCircle size={ICON_SIZE} />,
     type: "menu",
     children: null,
   },
   {
     path: "/admin/sales",
     label: "Sales",
-    icon: <ShoppingCart size={20} />,
+    icon: <ShoppingCart size={ICON_SIZE} />,
     type: "menu",
     children: null,
   },
   {
     path: "/admin/settings",
     label: "Settings",
-    icon: <Settings size={20} />,
+    icon: <Settings size={ICON_SIZE} />,
     type: "menu",
     children: null,
   },
@@ -199,11 +200,10 @@ function RouteComponent() {
           className="drawer-overlay"
         ></label>
         <div className="min-h-full w-3xs bg-primary text-white">
-          <div className="font-bold h-26 text-3xl text-center  grid place-items-center">
-            KINOVIA <br />
-            CRM
+          <div className="font-bold h-18 text-lg flex  items-center px-4 border-b border-base-300/40">
+            KINOVIA CRM
           </div>
-          <ul className="menu w-full space-y-2 ">
+          <ul className="menu  w-full space-y-2 ">
             {nav_links.map((link) => {
               const int_url = link.path;
               if (link.type === "submenu" && link.children) {
@@ -211,7 +211,7 @@ function RouteComponent() {
                 return (
                   <li key={link.path} className="mb-2">
                     <details open>
-                      <summary className="text-sm font-semibold py-2">
+                      <summary className="text-xs font-semibold ">
                         {link.icon}
                         {link.label}
                       </summary>
@@ -223,11 +223,7 @@ function RouteComponent() {
                             <li key={childLink.path}>
                               <Link
                                 to={childLink.path}
-                                className={`text-xs font-medium py-2 ${
-                                  isChildActive
-                                    ? "bg-white/70 text-primary"
-                                    : ""
-                                }`}
+                                className={`btn btn-ghost justify-start flex btn-sm ${isChildActive ? "btn-active" : ""}`}
                               >
                                 {childLink.icon}
                                 {childLink.label}
@@ -246,7 +242,7 @@ function RouteComponent() {
                 <li key={link.path} className="mb-2">
                   <Link
                     to={link.path}
-                    className={`text-sm font-semibold py-2 ${isActive ? "bg-white/70 text-primary" : ""}`}
+                    className={`btn btn-ghost justify-start flex btn-sm ${isActive ? "btn-active" : ""}`}
                   >
                     {link.icon}
                     {link.label}

@@ -30,6 +30,7 @@ function RouteComponent() {
           Kinovia <br /> Crm{" "}
         </h2>
         <form
+          onSubmit={form.handleSubmit(onSubmit)}
           action=""
           className="p-6 space-y-6 py-8 mx-auto bg-base-100 shadow w-full max-w-lg m-2 "
         >
