@@ -59,6 +59,5 @@ html {
 }
 
 .lucide {
-    height: 12;
-    width: 12;
+    @apply size-5;
 }

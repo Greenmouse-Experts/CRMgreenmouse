@@ -1,9 +1,9 @@
 import type { useSearch } from "@/stores/data";
 import { Search, XIcon } from "lucide-react";
+import type { PropsWithChildren } from "react";
 import { useForm } from "react-hook-form";
-interface ContainerRowProps {
+interface ContainerRowProps extends PropsWithChildren {
   searchProps?: ReturnType<typeof useSearch>;
-  actions?: any;
   showSearch?: boolean;
 }
 
@@ -15,10 +15,10 @@ export default function ContainerRow(props: ContainerRowProps) {
     },
   });
   return (
-    <div className=" h-16 px-2 bg-base-100 flex gap-2 items-center py-2">
+    <div className=" rounded-b-box ring ring-current/20  lg:h-16 px-2 bg-base-100 flex  flex-col md:flex-row gap-2 items-center py-2">
       {props.showSearch && (
         <form
-          className="join"
+          className="min-w-xs join w-full  md:w-fit"
           onSubmit={form.handleSubmit((data) => {
             if (setSearch) {
               // Only call setSearch if it exists
@@ -28,10 +28,10 @@ export default function ContainerRow(props: ContainerRowProps) {
         >
           <input
             {...form.register("search")}
-            className="input join-item input-sm text-sm"
+            className="input join-item text-sm "
             placeholder="Search...."
           />
-          <button className="btn btn-accent btn-soft btn-square btn-sm join-item ">
+          <button className="btn btn-primary btn-square  join-item ">
             <Search />
           </button>
           {search && search.length > 0 && (
@@ -49,7 +49,9 @@ export default function ContainerRow(props: ContainerRowProps) {
           )}
         </form>
       )}
-      <div className={""}>{props.actions}</div>
+      <div className={"flex-1 flex items-center gap-2 w-full lg:w-auto"}>
+        {props.children}
+      </div>
     </div>
   );
 }

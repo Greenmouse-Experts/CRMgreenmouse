@@ -14,7 +14,7 @@ const ActionButton = forwardRef<HTMLButtonElement, ActionButtonProps>(
   ({ title, onClick, children, ...props }, ref) => {
     return (
       <button
-        className="btn btn-primary btn-sm"
+        className={"btn btn-primary " + props.className}
         ref={ref}
         onClick={onClick}
         {...props}

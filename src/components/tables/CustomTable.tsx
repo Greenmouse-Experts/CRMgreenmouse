@@ -26,7 +26,7 @@ interface CustomTableProps {
 export default function CustomTable(props: CustomTableProps) {
   const [selectedItem, setSelectedItem] = useState<number | null>(null);
   return (
-    <div className="bg-base-100">
+    <div className="bg-base-100 ring rounded-box ring-current/20">
       <div className=" relative overflow-x-scroll">
         <table className="table   w-full text-xs">
           <thead className="">

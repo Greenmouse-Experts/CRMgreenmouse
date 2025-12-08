@@ -1,4 +1,4 @@
-import { Menu } from "lucide-react";
+import { Bell, Menu } from "lucide-react";
 import AdminUserProfile from "./AdminUserProfile";
 
 export default function AdminHeader() {
@@ -13,7 +13,13 @@ export default function AdminHeader() {
       <h2 className="text-current/80 font-bold text-sm">
         Super Admin DashBoard
       </h2>
-      <div className="ml-auto">
+
+      <div className="ml-auto flex items-center gap-2">
+        <div className="relative">
+          <span className="absolute top-0 right-0 -mt-1 mr-1 flex h-2 w-2 animate-ping rounded-full bg-error"></span>
+          <span className="absolute top-0 right-0 -mt-1 mr-1 flex h-2 w-2 rounded-full bg-error"></span>
+          <Bell className="!size-6"></Bell>
+        </div>
         <AdminUserProfile />
       </div>
     </div>

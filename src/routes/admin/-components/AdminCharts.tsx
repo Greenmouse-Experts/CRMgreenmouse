@@ -23,7 +23,7 @@ export default function AdminCharts() {
       </div>
       <div className="  col-span-3 lg:col-span-2  space-y-8 ">
         <div className="space-y-4 p-4 bg-base-100 rounded-box  shadow">
-          <p className="mb-2">Total Profit</p>
+          <p className="mb-2 font-bold text-xl">Total Profit</p>
           <AreaChartExample />
         </div>
         <div className="max-w-fit">{/*<AdminRecents />*/}</div>

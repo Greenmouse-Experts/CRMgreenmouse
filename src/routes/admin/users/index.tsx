@@ -6,6 +6,8 @@ import { PlusCircleIcon } from "lucide-react";
 import { faker } from "@faker-js/faker";
 import CustomTable from "@/components/tables/CustomTable";
 import UserSummary from "./-components/UsersSummary";
+import ActionButton from "@/components/buttons/ActionButton";
+import DropDownBtn from "@/components/buttons/DropdownBtn";
 export const Route = createFileRoute("/admin/users/")({
   component: RouteComponent,
 });
@@ -60,6 +62,20 @@ function RouteComponent() {
           </>
         }
       >
+        <ContainerRow showSearch>
+          <button className="btn btn-accent  btn-outline">Filter</button>
+          <button className="btn btn-accent  btn-outline">Filter</button>
+          <DropDownBtn
+            title="Export"
+            items={[
+              {
+                name: "CSV",
+                action: () => {},
+              },
+            ]}
+          ></DropDownBtn>
+          {/*<button className="btn btn-primary ml-auto">Add User</button>*/}
+        </ContainerRow>
         {props.search}
         {/*<ContainerRow searchProps={props} />*/}
         <CustomTable data={staffs} columns={columns} actions={actions} />
