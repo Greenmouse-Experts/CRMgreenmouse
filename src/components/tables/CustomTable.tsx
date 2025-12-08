@@ -1,7 +1,7 @@
 import { MenuIcon } from "lucide-react";
 import { nanoid } from "nanoid";
 import { useState } from "react";
-import PopUp from "./pop-up";
+import PopUp, { type Actions } from "./pop-up";
 // import CaryBinApi from "../services/CarybinBaseUrl";
 // import { Link } from "react-router-dom";
 
@@ -11,11 +11,11 @@ type columnType = {
   render?: (value: any, item: any) => any;
 };
 
-type Actions = {
-  key: string;
-  label: string;
-  action: (item: any) => any;
-};
+// type  Actions extends  = {
+//   key: string;
+//   label: string;
+//   // action: (item: any) => any;
+// };
 interface CustomTableProps {
   data?: any[];
   columns?: columnType[];

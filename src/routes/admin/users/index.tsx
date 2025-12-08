@@ -6,8 +6,8 @@ import { PlusCircleIcon } from "lucide-react";
 import { faker } from "@faker-js/faker";
 import CustomTable from "@/components/tables/CustomTable";
 import UserSummary from "./-components/UsersSummary";
-import ActionButton from "@/components/buttons/ActionButton";
 import DropDownBtn from "@/components/buttons/DropdownBtn";
+import type { Actions } from "@/components/tables/pop-up";
 export const Route = createFileRoute("/admin/users/")({
   component: RouteComponent,
 });
@@ -41,11 +41,15 @@ function RouteComponent() {
     { key: "phone", label: "Phone" },
   ];
 
-  const actions = [
+  const actions: Actions[] = [
     {
       key: "view",
       label: "View",
-      action: (item: any) => console.log("View staff:", item),
+      action: (item: any, nav) => {
+        nav({
+          to: "/admin/users/" + "uidnfde1e",
+        });
+      },
     },
     // Add more actions if needed
   ];

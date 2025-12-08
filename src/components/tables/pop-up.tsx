@@ -2,10 +2,11 @@ import { Menu } from "lucide-react";
 import { useEffect, useState, useRef } from "react";
 import { usePopper } from "react-popper";
 import Portal from "./Portal";
-type Actions = {
+import { useNavigate } from "@tanstack/react-router"; // Import useNavigate
+export type Actions = {
   key: string;
   label: string;
-  action: (item: any) => any;
+  action: (item: any, nav: ReturnType<typeof useNavigate>) => any;
 };
 type currentIndex = number;
 type item = any;
@@ -23,6 +24,7 @@ export default function PopUp(props: {
   );
   const [isOpen, setIsOpen] = useState(false);
   const popupRef = useRef<HTMLDivElement>(null);
+  const nav = useNavigate(); // Get the useNavigate instance
 
   const togglePopup = () => {
     if (props.itemIndex === props.currentIndex) {
@@ -98,7 +100,7 @@ export default function PopUp(props: {
                 <button
                   key={action.key}
                   className="btn btn-ghost  btn-sm"
-                  onClick={() => action.action(props.item)}
+                  onClick={() => action.action(props.item, nav)}
                 >
                   {action.label}
                 </button>
