@@ -1,9 +1,16 @@
 import { createFileRoute } from "@tanstack/react-router";
+import UserInfo from "./-components/UserInfo";
+import PersonalInfo from "./-components/PersonalInfo";
 
 export const Route = createFileRoute("/admin/settings/profile/")({
   component: RouteComponent,
 });
 
 function RouteComponent() {
-  return <div>Hello "/admin/settings/profile/"!</div>;
+  return (
+    <div className="space-y-4 *:ring *:p-4 *:ring-current/10 *:rounded-box">
+      <UserInfo />
+      <PersonalInfo />
+    </div>
+  );
 }

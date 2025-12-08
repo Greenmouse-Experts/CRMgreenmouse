@@ -19,6 +19,7 @@ import { Route as AdminSettingsRouteRouteImport } from './routes/admin/settings/
 import { Route as AuthLoginIndexRouteImport } from './routes/auth/login/index'
 import { Route as AdminUsersIndexRouteImport } from './routes/admin/users/index'
 import { Route as AdminTransactionsIndexRouteImport } from './routes/admin/transactions/index'
+import { Route as AdminSettingsIndexRouteImport } from './routes/admin/settings/index'
 import { Route as AdminProductsIndexRouteImport } from './routes/admin/products/index'
 import { Route as AdminUsersRolesIndexRouteImport } from './routes/admin/users/roles/index'
 import { Route as AdminSettingsProfileIndexRouteImport } from './routes/admin/settings/profile/index'
@@ -76,6 +77,11 @@ const AdminTransactionsIndexRoute = AdminTransactionsIndexRouteImport.update({
   path: '/transactions/',
   getParentRoute: () => AdminRouteRoute,
 } as any)
+const AdminSettingsIndexRoute = AdminSettingsIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AdminSettingsRouteRoute,
+} as any)
 const AdminProductsIndexRoute = AdminProductsIndexRouteImport.update({
   id: '/products/',
   path: '/products/',
@@ -120,6 +126,7 @@ export interface FileRoutesByFullPath {
   '/admin/': typeof AdminIndexRoute
   '/test/': typeof TestIndexRoute
   '/admin/products': typeof AdminProductsIndexRoute
+  '/admin/settings/': typeof AdminSettingsIndexRoute
   '/admin/transactions': typeof AdminTransactionsIndexRoute
   '/admin/users': typeof AdminUsersIndexRoute
   '/auth/login': typeof AuthLoginIndexRoute
@@ -131,11 +138,11 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/admin/settings': typeof AdminSettingsRouteRouteWithChildren
   '/test/home': typeof TestHomeRoute
   '/admin': typeof AdminIndexRoute
   '/test': typeof TestIndexRoute
   '/admin/products': typeof AdminProductsIndexRoute
+  '/admin/settings': typeof AdminSettingsIndexRoute
   '/admin/transactions': typeof AdminTransactionsIndexRoute
   '/admin/users': typeof AdminUsersIndexRoute
   '/auth/login': typeof AuthLoginIndexRoute
@@ -155,6 +162,7 @@ export interface FileRoutesById {
   '/admin/': typeof AdminIndexRoute
   '/test/': typeof TestIndexRoute
   '/admin/products/': typeof AdminProductsIndexRoute
+  '/admin/settings/': typeof AdminSettingsIndexRoute
   '/admin/transactions/': typeof AdminTransactionsIndexRoute
   '/admin/users/': typeof AdminUsersIndexRoute
   '/auth/login/': typeof AuthLoginIndexRoute
@@ -175,6 +183,7 @@ export interface FileRouteTypes {
     | '/admin/'
     | '/test/'
     | '/admin/products'
+    | '/admin/settings/'
     | '/admin/transactions'
     | '/admin/users'
     | '/auth/login'
@@ -186,11 +195,11 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/admin/settings'
     | '/test/home'
     | '/admin'
     | '/test'
     | '/admin/products'
+    | '/admin/settings'
     | '/admin/transactions'
     | '/admin/users'
     | '/auth/login'
@@ -209,6 +218,7 @@ export interface FileRouteTypes {
     | '/admin/'
     | '/test/'
     | '/admin/products/'
+    | '/admin/settings/'
     | '/admin/transactions/'
     | '/admin/users/'
     | '/auth/login/'
@@ -298,6 +308,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminTransactionsIndexRouteImport
       parentRoute: typeof AdminRouteRoute
     }
+    '/admin/settings/': {
+      id: '/admin/settings/'
+      path: '/'
+      fullPath: '/admin/settings/'
+      preLoaderRoute: typeof AdminSettingsIndexRouteImport
+      parentRoute: typeof AdminSettingsRouteRoute
+    }
     '/admin/products/': {
       id: '/admin/products/'
       path: '/products'
@@ -344,10 +361,12 @@ declare module '@tanstack/react-router' {
 }
 
 interface AdminSettingsRouteRouteChildren {
+  AdminSettingsIndexRoute: typeof AdminSettingsIndexRoute
   AdminSettingsProfileIndexRoute: typeof AdminSettingsProfileIndexRoute
 }
 
 const AdminSettingsRouteRouteChildren: AdminSettingsRouteRouteChildren = {
+  AdminSettingsIndexRoute: AdminSettingsIndexRoute,
   AdminSettingsProfileIndexRoute: AdminSettingsProfileIndexRoute,
 }
 

@@ -21,10 +21,10 @@ function RouteComponent() {
   return (
     <div className="space-y-4">
       <h2 className="text-lg font-bold opacity-90">Account Settings</h2>
-      <section className="p-4 bg-base-100 shadow">
+      <section className=" bg-base-100 rounded-box shadow">
         <div className="drawer lg:drawer-open">
           <input id="my-drawer-3" type="checkbox" className="drawer-toggle" />
-          <div className="drawer-content p-4">
+          <div className="drawer-content p-4 ">
             <Outlet />
             {/* Page content here */}
             {/*<label
@@ -34,13 +34,13 @@ function RouteComponent() {
               Open drawer
             </label>*/}
           </div>
-          <div className="drawer-side">
+          <div className="drawer-side ">
             <label
               htmlFor="my-drawer-3"
               aria-label="close sidebar"
               className="drawer-overlay"
             ></label>
-            <ul className="menu bg-base-100 min-h-full w-60 p-4 space-y-2 border-r border-r-current/20">
+            <ul className="menu py-4 min-h-full w-60  space-y-2 border-r border-r-current/20">
               {/* Sidebar content here */}
               {links.map((link) => (
                 <li key={link.path}>
