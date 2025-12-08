@@ -223,7 +223,7 @@ function RouteComponent() {
                             <li key={childLink.path}>
                               <Link
                                 to={childLink.path}
-                                className={`btn btn-ghost justify-start flex btn-sm ${isChildActive ? "btn-active" : ""}`}
+                                className={` ${isChildActive ? "bg-primary text-primary-content " : "opacity-70"} text-xs font-bold`}
                               >
                                 {childLink.icon}
                                 {childLink.label}
