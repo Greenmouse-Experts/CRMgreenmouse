@@ -23,3 +23,15 @@ export const useTheme = () => {
     toggleTheme,
   };
 };
+
+export interface Tab {
+  name: string;
+}
+
+export const useTabs = (_tabs: Tab[], initial: Tab) => {
+  const [tab, setTab] = useState<Tab>(initial);
+  return {
+    tab,
+    setTab,
+  };
+};
