@@ -63,11 +63,11 @@ const StatCard = ({
           <div className="flex-1 space-y-2">
             <p className="text-xl font-extrabold mt-2">{value}</p>
             <div className="flex items-center justify-between">
-              <h2 className="card-title text-xs text-primary/50 ">{title}</h2>
+              <h2 className="card-title text-xs text-accent/70 ">{title}</h2>
             </div>
           </div>
           <div>
-            <div className="p-3 bg-linear-50 rounded-full from-primary/80 to-primary size-fit">
+            <div className="p-3 bg-linear-50 rounded-full from-accent/80 to-accent size-fit">
               <Icon className="size-32 text-white" />
             </div>
           </div>

@@ -1,5 +1,3 @@
-import AdminRecents from "./AdminRecents";
-import AdminWallet from "./AdminWallet";
 import AreaChartExample from "./charts/AreaChart";
 import PieChartExample from "./charts/PieChart";
 
@@ -12,7 +10,7 @@ export default function AdminCharts() {
 
   return (
     <div className="min-h-[300px] w-full   grid lg:grid-cols-3 gap-4 py-4 ">
-      <div className="bg-primary rounded-xl shadow flex flex-col justify-center text-primary-content p-6 sm:p-8 relative w-full col-span-3 min-h-[180px] sm:min-h-[200px]">
+      <div className="bg-accent rounded-xl shadow flex flex-col justify-center text-accent-content p-6 sm:p-8 relative w-full col-span-3 min-h-[180px] sm:min-h-[200px]">
         <div className="space-y-2 sm:space-y-4">
           <div className="bg-secondary/20 text-white font-bold rounded-md p-2 text-xs sm:text-sm w-fit">
             {currentDate}
