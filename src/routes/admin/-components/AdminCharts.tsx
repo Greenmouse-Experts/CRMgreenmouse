@@ -10,8 +10,8 @@ export default function AdminCharts() {
 
   return (
     <div className="min-h-[300px] w-full   grid lg:grid-cols-3 gap-4 py-4 ">
-      <div className="bg-linear-30 from-accent to-primary/60 bg-accent rounded-xl shadow flex flex-col justify-center text-accent-content p-6 sm:p-8 relative w-full col-span-3 min-h-[180px] sm:min-h-[200px]">
-        <div className="space-y-2 sm:space-y-4">
+      <div className="bg-linear-30 from-accent to-primary/60 bg-accent rounded-xl shadow flex flex-col justify-center text-accent-content p-6 relative w-full col-span-3 ">
+        <div className="space-y-2 sm:space-y-2">
           <div className="bg-primary/20 text-white font-bold rounded-md p-2 text-xs sm:text-sm w-fit">
             {currentDate}
           </div>
