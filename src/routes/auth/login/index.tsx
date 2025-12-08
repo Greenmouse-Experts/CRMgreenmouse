@@ -24,15 +24,15 @@ function RouteComponent() {
   };
 
   return (
-    <div className="min-h-screen grid  place-items-center from-accent/20 bg-linear-60 to-secondary/20">
-      <div className="w-full flex flex-col mx-auto space-y-4">
+    <div className="min-h-screen flex items-center justify-center bg-base-300">
+      <div className="w-full flex flex-col mx-auto space-y-4 px-4">
         <h2 className="text-4xl font-bold text-center leading-normal">
           Kinovia <br /> Crm{" "}
         </h2>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
           action=""
-          className="p-6 space-y-6 py-8 mx-auto bg-base-100 shadow w-full max-w-lg m-2 "
+          className="p-6 space-y-6 py-8 mx-auto  bg-base-100 shadow w-full max-w-lg m-2 "
         >
           <div className="space-y-1 ">
             <h2 className="text-2xl font-bold">Admin Login</h2>
