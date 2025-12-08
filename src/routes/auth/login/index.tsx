@@ -24,29 +24,35 @@ function RouteComponent() {
   };
 
   return (
-    <div className="min-h-screen grid  place-items-center bg-base-300">
-      <form
-        action=""
-        className="p-6 space-y-6 py-8 bg-base-100 shadow w-full max-w-lg m-2 "
-      >
-        <div className="space-y-3 text-center">
-          <h2 className="text-4xl font-bold text-center leading-normal">
-            Kinovia <br /> Crm{" "}
-          </h2>
-          <h2 className="text-2xl font-semibold">Admin Login</h2>
-          <p className="text-sm text-center label ">
-            Enter your credentials to access your account
-          </p>
-        </div>
+    <div className="min-h-screen grid  place-items-center from-accent/20 bg-linear-60 to-secondary/20">
+      <div className="w-full flex flex-col mx-auto space-y-4">
+        <h2 className="text-4xl font-bold text-center leading-normal">
+          Kinovia <br /> Crm{" "}
+        </h2>
+        <form
+          action=""
+          className="p-6 space-y-6 py-8 mx-auto bg-base-100 shadow w-full max-w-lg m-2 "
+        >
+          <div className="space-y-1 ">
+            <h2 className="text-2xl font-bold">Admin Login</h2>
+            <p className="text-sm text-center label ">
+              Enter your credentials to access your account
+            </p>
+          </div>
 
-        <SimpleInput label="Email Address" {...form.register("email")} />
-        <SimpleInput
-          label="Password"
-          {...form.register("password")}
-          type="password"
-        />
-        <button className="btn btn-primary btn-block">Login</button>
-      </form>
+          <SimpleInput label="Email Address" {...form.register("email")} />
+          <SimpleInput
+            label="Password"
+            {...form.register("password")}
+            type="password"
+          />
+          <div className="flex items-center gap-2">
+            <input type="checkbox" className="toggle" name="" id="" />{" "}
+            <span className="fieldset-label text-sm">Remember Me</span>
+          </div>
+          <button className="btn btn-primary btn-block">Login</button>
+        </form>
+      </div>
     </div>
   );
 }
