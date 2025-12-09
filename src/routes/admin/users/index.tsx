@@ -10,6 +10,7 @@ import DropDownBtn from "@/components/buttons/DropdownBtn";
 import type { Actions } from "@/components/tables/pop-up";
 import { useModal } from "@/helpers/modals";
 import Modal from "@/components/modals/DialogModal";
+import { Link } from "@tanstack/react-router";
 export const Route = createFileRoute("/admin/users/")({
   component: RouteComponent,
 });
@@ -64,9 +65,9 @@ function RouteComponent() {
         title="Staffs"
         actions={
           <>
-            <button className="btn btn-primary btn-sm">
+            <Link to="add" className="btn btn-primary btn-sm">
               <PlusCircleIcon /> Add Staffs
-            </button>
+            </Link>
           </>
         }
       >
