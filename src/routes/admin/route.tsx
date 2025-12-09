@@ -134,26 +134,13 @@ const nav_links = [
     ],
   },
   {
-    path: "/admin/transactions",
-    label: "Transactions",
-    icon: <CreditCard size={ICON_SIZE} />,
-    type: "menu",
-    children: null,
-  },
-  {
     path: "/admin/support",
     label: "Support",
     icon: <HelpCircle size={ICON_SIZE} />,
     type: "menu",
     children: null,
   },
-  {
-    path: "/admin/sales",
-    label: "Sales",
-    icon: <ShoppingCart size={ICON_SIZE} />,
-    type: "menu",
-    children: null,
-  },
+
   {
     path: "/admin/settings",
     label: "Settings",

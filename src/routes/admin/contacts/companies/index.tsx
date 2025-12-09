@@ -157,7 +157,23 @@ function RouteComponent() {
           </>
         }
       >
-        <CustomTable data={companies} columns={companyColumns} />
+        <CustomTable
+          ring={false}
+          actions={[
+            {
+              label: "View",
+              key: "view",
+              action: (item, nav) => {
+                nav({
+                  //@ts-ignore
+                  to: "details/acme",
+                });
+              },
+            },
+          ]}
+          data={companies}
+          columns={companyColumns}
+        />
       </SimpleContainer>
     </>
   );

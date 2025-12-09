@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import ContainerRow from "@/components/ContainerRow";
 import SimpleContainer from "@/components/SimpleContainer";
 import { useSearch } from "@/stores/data";
@@ -15,7 +15,6 @@ function RouteComponent() {
     id: i + 1,
     name: faker.person.fullName(),
     email: faker.internet.email(),
-    role: faker.person.jobTitle(),
     phone: faker.phone.number(),
     avatar: faker.image.avatar(),
   }));
@@ -34,7 +33,7 @@ function RouteComponent() {
       ),
     },
     { key: "name", label: "Name" },
-    { key: "role", label: "Role" },
+    // { key: "role", label: "Role" },
     { key: "email", label: "Email" },
     { key: "phone", label: "Phone" },
   ];
@@ -50,21 +49,28 @@ function RouteComponent() {
   return (
     <>
       <CustomerSummary />
-
       <SimpleContainer
         title="Customers"
         actions={
           <>
-            <button className="btn btn-sm btn-primary">
+            <Link
+              to="/admin/contacts/customers/add"
+              className="btn btn-sm btn-primary"
+            >
               <PlusCircleIcon /> Add customer
-            </button>
+            </Link>
           </>
         }
       >
         {/*{props.search}*/}
         {/*<ContainerRow searchProps={props} />*/}
         <div className="bg-base-100">
-          <CustomTable data={staffs} columns={columns} actions={actions} />
+          <CustomTable
+            ring={false}
+            data={staffs}
+            columns={columns}
+            actions={actions}
+          />
         </div>
       </SimpleContainer>
     </>
