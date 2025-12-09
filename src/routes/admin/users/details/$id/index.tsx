@@ -3,7 +3,7 @@ import UserInfo from "./-components/UserInfo";
 import FullInfo from "./-components/FullInfo";
 import OtherInfo from "./-components/OtherInfo";
 
-export const Route = createFileRoute("/admin/users/$id/")({
+export const Route = createFileRoute("/admin/users/details/$id/")({
   component: RouteComponent,
 });
 

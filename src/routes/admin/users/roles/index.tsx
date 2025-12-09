@@ -5,6 +5,12 @@ import { useSearch } from "@/stores/data";
 import { PlusCircleIcon } from "lucide-react";
 import CustomTable from "@/components/tables/CustomTable";
 import { faker } from "@faker-js/faker";
+import DialogModal from "@/components/modals/DialogModal";
+import { useModal } from "@/helpers/modals";
+import SimpleInput from "@/components/inputs/SimpleInput";
+import ActionButton from "@/components/buttons/ActionButton";
+import { FormProvider, useForm } from "react-hook-form";
+
 export const Route = createFileRoute("/admin/users/roles/")({
   component: RouteComponent,
 });
@@ -37,6 +43,18 @@ function RouteComponent() {
     },
   ];
 
+  const {
+    ref: addRoleModalRef,
+    showModal: openAddRoleModal,
+    closeModal: closeAddRoleModal,
+  } = useModal();
+  const methods = useForm();
+
+  const onSubmit = (data: any) => {
+    console.log("Add Role:", data);
+    closeAddRoleModal();
+  };
+
   const props = useSearch();
   return (
     <div>
@@ -44,7 +62,10 @@ function RouteComponent() {
         title="Roles"
         actions={
           <>
-            <button className="btn btn-sm btn-primary">
+            <button
+              className="btn btn-sm btn-primary"
+              onClick={openAddRoleModal}
+            >
               <PlusCircleIcon /> Create Role
             </button>
           </>
@@ -54,6 +75,7 @@ function RouteComponent() {
         <ContainerRow
           searchProps={props}
           showSearch={true}
+          //@ts-ignore
           actions={
             <>
               <ExportOptions
@@ -70,6 +92,37 @@ function RouteComponent() {
         />
         <CustomTable data={roles} columns={columns} actions={actions} />
       </SimpleContainer>
+
+      <DialogModal ref={addRoleModalRef} title="Add New Role">
+        <FormProvider {...methods}>
+          <form onSubmit={methods.handleSubmit(onSubmit)} className="space-y-4">
+            <SimpleInput
+              label="Role Name"
+              name="roleName"
+              placeholder="Enter role name"
+              {...methods.register("roleName", {
+                required: "Role name is required",
+              })}
+            />
+            <SimpleInput
+              label="Description"
+              name="description"
+              placeholder="Enter role description"
+              {...methods.register("description")}
+            />
+            <div className="flex justify-end gap-2">
+              <ActionButton
+                type="button"
+                onClick={closeAddRoleModal}
+                className="btn-ghost"
+              >
+                Cancel
+              </ActionButton>
+              <ActionButton type="submit">Add Role</ActionButton>
+            </div>
+          </form>
+        </FormProvider>
+      </DialogModal>
     </div>
   );
 }

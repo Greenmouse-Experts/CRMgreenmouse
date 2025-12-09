@@ -22,12 +22,13 @@ import { Route as AdminTransactionsIndexRouteImport } from './routes/admin/trans
 import { Route as AdminSettingsIndexRouteImport } from './routes/admin/settings/index'
 import { Route as AdminProductsIndexRouteImport } from './routes/admin/products/index'
 import { Route as AdminUsersRolesIndexRouteImport } from './routes/admin/users/roles/index'
-import { Route as AdminUsersIdIndexRouteImport } from './routes/admin/users/$id/index'
+import { Route as AdminUsersAddIndexRouteImport } from './routes/admin/users/add/index'
 import { Route as AdminSettingsThemeIndexRouteImport } from './routes/admin/settings/theme/index'
 import { Route as AdminSettingsProfileIndexRouteImport } from './routes/admin/settings/profile/index'
 import { Route as AdminProductsCategoriesIndexRouteImport } from './routes/admin/products/categories/index'
 import { Route as AdminContactsCustomersIndexRouteImport } from './routes/admin/contacts/customers/index'
 import { Route as AdminContactsCompaniesIndexRouteImport } from './routes/admin/contacts/companies/index'
+import { Route as AdminUsersDetailsIdIndexRouteImport } from './routes/admin/users/details/$id/index'
 
 const TestRouteRoute = TestRouteRouteImport.update({
   id: '/test',
@@ -94,9 +95,9 @@ const AdminUsersRolesIndexRoute = AdminUsersRolesIndexRouteImport.update({
   path: '/users/roles/',
   getParentRoute: () => AdminRouteRoute,
 } as any)
-const AdminUsersIdIndexRoute = AdminUsersIdIndexRouteImport.update({
-  id: '/users/$id/',
-  path: '/users/$id/',
+const AdminUsersAddIndexRoute = AdminUsersAddIndexRouteImport.update({
+  id: '/users/add/',
+  path: '/users/add/',
   getParentRoute: () => AdminRouteRoute,
 } as any)
 const AdminSettingsThemeIndexRoute = AdminSettingsThemeIndexRouteImport.update({
@@ -128,6 +129,12 @@ const AdminContactsCompaniesIndexRoute =
     path: '/contacts/companies/',
     getParentRoute: () => AdminRouteRoute,
   } as any)
+const AdminUsersDetailsIdIndexRoute =
+  AdminUsersDetailsIdIndexRouteImport.update({
+    id: '/users/details/$id/',
+    path: '/users/details/$id/',
+    getParentRoute: () => AdminRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -147,8 +154,9 @@ export interface FileRoutesByFullPath {
   '/admin/products/categories': typeof AdminProductsCategoriesIndexRoute
   '/admin/settings/profile': typeof AdminSettingsProfileIndexRoute
   '/admin/settings/theme': typeof AdminSettingsThemeIndexRoute
-  '/admin/users/$id': typeof AdminUsersIdIndexRoute
+  '/admin/users/add': typeof AdminUsersAddIndexRoute
   '/admin/users/roles': typeof AdminUsersRolesIndexRoute
+  '/admin/users/details/$id': typeof AdminUsersDetailsIdIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -165,8 +173,9 @@ export interface FileRoutesByTo {
   '/admin/products/categories': typeof AdminProductsCategoriesIndexRoute
   '/admin/settings/profile': typeof AdminSettingsProfileIndexRoute
   '/admin/settings/theme': typeof AdminSettingsThemeIndexRoute
-  '/admin/users/$id': typeof AdminUsersIdIndexRoute
+  '/admin/users/add': typeof AdminUsersAddIndexRoute
   '/admin/users/roles': typeof AdminUsersRolesIndexRoute
+  '/admin/users/details/$id': typeof AdminUsersDetailsIdIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -187,8 +196,9 @@ export interface FileRoutesById {
   '/admin/products/categories/': typeof AdminProductsCategoriesIndexRoute
   '/admin/settings/profile/': typeof AdminSettingsProfileIndexRoute
   '/admin/settings/theme/': typeof AdminSettingsThemeIndexRoute
-  '/admin/users/$id/': typeof AdminUsersIdIndexRoute
+  '/admin/users/add/': typeof AdminUsersAddIndexRoute
   '/admin/users/roles/': typeof AdminUsersRolesIndexRoute
+  '/admin/users/details/$id/': typeof AdminUsersDetailsIdIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -210,8 +220,9 @@ export interface FileRouteTypes {
     | '/admin/products/categories'
     | '/admin/settings/profile'
     | '/admin/settings/theme'
-    | '/admin/users/$id'
+    | '/admin/users/add'
     | '/admin/users/roles'
+    | '/admin/users/details/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -228,8 +239,9 @@ export interface FileRouteTypes {
     | '/admin/products/categories'
     | '/admin/settings/profile'
     | '/admin/settings/theme'
-    | '/admin/users/$id'
+    | '/admin/users/add'
     | '/admin/users/roles'
+    | '/admin/users/details/$id'
   id:
     | '__root__'
     | '/'
@@ -249,8 +261,9 @@ export interface FileRouteTypes {
     | '/admin/products/categories/'
     | '/admin/settings/profile/'
     | '/admin/settings/theme/'
-    | '/admin/users/$id/'
+    | '/admin/users/add/'
     | '/admin/users/roles/'
+    | '/admin/users/details/$id/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -353,11 +366,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminUsersRolesIndexRouteImport
       parentRoute: typeof AdminRouteRoute
     }
-    '/admin/users/$id/': {
-      id: '/admin/users/$id/'
-      path: '/users/$id'
-      fullPath: '/admin/users/$id'
-      preLoaderRoute: typeof AdminUsersIdIndexRouteImport
+    '/admin/users/add/': {
+      id: '/admin/users/add/'
+      path: '/users/add'
+      fullPath: '/admin/users/add'
+      preLoaderRoute: typeof AdminUsersAddIndexRouteImport
       parentRoute: typeof AdminRouteRoute
     }
     '/admin/settings/theme/': {
@@ -395,6 +408,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminContactsCompaniesIndexRouteImport
       parentRoute: typeof AdminRouteRoute
     }
+    '/admin/users/details/$id/': {
+      id: '/admin/users/details/$id/'
+      path: '/users/details/$id'
+      fullPath: '/admin/users/details/$id'
+      preLoaderRoute: typeof AdminUsersDetailsIdIndexRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
   }
 }
 
@@ -422,8 +442,9 @@ interface AdminRouteRouteChildren {
   AdminContactsCompaniesIndexRoute: typeof AdminContactsCompaniesIndexRoute
   AdminContactsCustomersIndexRoute: typeof AdminContactsCustomersIndexRoute
   AdminProductsCategoriesIndexRoute: typeof AdminProductsCategoriesIndexRoute
-  AdminUsersIdIndexRoute: typeof AdminUsersIdIndexRoute
+  AdminUsersAddIndexRoute: typeof AdminUsersAddIndexRoute
   AdminUsersRolesIndexRoute: typeof AdminUsersRolesIndexRoute
+  AdminUsersDetailsIdIndexRoute: typeof AdminUsersDetailsIdIndexRoute
 }
 
 const AdminRouteRouteChildren: AdminRouteRouteChildren = {
@@ -435,8 +456,9 @@ const AdminRouteRouteChildren: AdminRouteRouteChildren = {
   AdminContactsCompaniesIndexRoute: AdminContactsCompaniesIndexRoute,
   AdminContactsCustomersIndexRoute: AdminContactsCustomersIndexRoute,
   AdminProductsCategoriesIndexRoute: AdminProductsCategoriesIndexRoute,
-  AdminUsersIdIndexRoute: AdminUsersIdIndexRoute,
+  AdminUsersAddIndexRoute: AdminUsersAddIndexRoute,
   AdminUsersRolesIndexRoute: AdminUsersRolesIndexRoute,
+  AdminUsersDetailsIdIndexRoute: AdminUsersDetailsIdIndexRoute,
 }
 
 const AdminRouteRouteWithChildren = AdminRouteRoute._addFileChildren(

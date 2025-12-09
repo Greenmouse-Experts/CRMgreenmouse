@@ -8,6 +8,8 @@ import CustomTable from "@/components/tables/CustomTable";
 import UserSummary from "./-components/UsersSummary";
 import DropDownBtn from "@/components/buttons/DropdownBtn";
 import type { Actions } from "@/components/tables/pop-up";
+import { useModal } from "@/helpers/modals";
+import Modal from "@/components/modals/DialogModal";
 export const Route = createFileRoute("/admin/users/")({
   component: RouteComponent,
 });
@@ -53,8 +55,10 @@ function RouteComponent() {
     },
     // Add more actions if needed
   ];
+  const modal = useModal();
   return (
     <div className="space-y-4">
+      <Modal ref={modal.ref} title="Add Staff"></Modal>
       <UserSummary />
       <SimpleContainer
         title="Staffs"
