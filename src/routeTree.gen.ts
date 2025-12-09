@@ -21,7 +21,6 @@ import { Route as AdminUsersIndexRouteImport } from './routes/admin/users/index'
 import { Route as AdminTransactionsIndexRouteImport } from './routes/admin/transactions/index'
 import { Route as AdminSettingsIndexRouteImport } from './routes/admin/settings/index'
 import { Route as AdminProductsIndexRouteImport } from './routes/admin/products/index'
-import { Route as AdminIncomeExpensesIndexRouteImport } from './routes/admin/income-expenses/index'
 import { Route as AdminUsersRolesIndexRouteImport } from './routes/admin/users/roles/index'
 import { Route as AdminUsersAddIndexRouteImport } from './routes/admin/users/add/index'
 import { Route as AdminSettingsThemeIndexRouteImport } from './routes/admin/settings/theme/index'
@@ -97,12 +96,6 @@ const AdminProductsIndexRoute = AdminProductsIndexRouteImport.update({
   path: '/products/',
   getParentRoute: () => AdminRouteRoute,
 } as any)
-const AdminIncomeExpensesIndexRoute =
-  AdminIncomeExpensesIndexRouteImport.update({
-    id: '/income-expenses/',
-    path: '/income-expenses/',
-    getParentRoute: () => AdminRouteRoute,
-  } as any)
 const AdminUsersRolesIndexRoute = AdminUsersRolesIndexRouteImport.update({
   id: '/users/roles/',
   path: '/users/roles/',
@@ -191,7 +184,6 @@ export interface FileRoutesByFullPath {
   '/test/home': typeof TestHomeRoute
   '/admin/': typeof AdminIndexRoute
   '/test/': typeof TestIndexRoute
-  '/admin/income-expenses': typeof AdminIncomeExpensesIndexRoute
   '/admin/products': typeof AdminProductsIndexRoute
   '/admin/settings/': typeof AdminSettingsIndexRoute
   '/admin/transactions': typeof AdminTransactionsIndexRoute
@@ -217,7 +209,6 @@ export interface FileRoutesByTo {
   '/test/home': typeof TestHomeRoute
   '/admin': typeof AdminIndexRoute
   '/test': typeof TestIndexRoute
-  '/admin/income-expenses': typeof AdminIncomeExpensesIndexRoute
   '/admin/products': typeof AdminProductsIndexRoute
   '/admin/settings': typeof AdminSettingsIndexRoute
   '/admin/transactions': typeof AdminTransactionsIndexRoute
@@ -247,7 +238,6 @@ export interface FileRoutesById {
   '/test/home': typeof TestHomeRoute
   '/admin/': typeof AdminIndexRoute
   '/test/': typeof TestIndexRoute
-  '/admin/income-expenses/': typeof AdminIncomeExpensesIndexRoute
   '/admin/products/': typeof AdminProductsIndexRoute
   '/admin/settings/': typeof AdminSettingsIndexRoute
   '/admin/transactions/': typeof AdminTransactionsIndexRoute
@@ -278,7 +268,6 @@ export interface FileRouteTypes {
     | '/test/home'
     | '/admin/'
     | '/test/'
-    | '/admin/income-expenses'
     | '/admin/products'
     | '/admin/settings/'
     | '/admin/transactions'
@@ -304,7 +293,6 @@ export interface FileRouteTypes {
     | '/test/home'
     | '/admin'
     | '/test'
-    | '/admin/income-expenses'
     | '/admin/products'
     | '/admin/settings'
     | '/admin/transactions'
@@ -333,7 +321,6 @@ export interface FileRouteTypes {
     | '/test/home'
     | '/admin/'
     | '/test/'
-    | '/admin/income-expenses/'
     | '/admin/products/'
     | '/admin/settings/'
     | '/admin/transactions/'
@@ -446,13 +433,6 @@ declare module '@tanstack/react-router' {
       path: '/products'
       fullPath: '/admin/products'
       preLoaderRoute: typeof AdminProductsIndexRouteImport
-      parentRoute: typeof AdminRouteRoute
-    }
-    '/admin/income-expenses/': {
-      id: '/admin/income-expenses/'
-      path: '/income-expenses'
-      fullPath: '/admin/income-expenses'
-      preLoaderRoute: typeof AdminIncomeExpensesIndexRouteImport
       parentRoute: typeof AdminRouteRoute
     }
     '/admin/users/roles/': {
@@ -574,7 +554,6 @@ const AdminSettingsRouteRouteWithChildren =
 interface AdminRouteRouteChildren {
   AdminSettingsRouteRoute: typeof AdminSettingsRouteRouteWithChildren
   AdminIndexRoute: typeof AdminIndexRoute
-  AdminIncomeExpensesIndexRoute: typeof AdminIncomeExpensesIndexRoute
   AdminProductsIndexRoute: typeof AdminProductsIndexRoute
   AdminTransactionsIndexRoute: typeof AdminTransactionsIndexRoute
   AdminUsersIndexRoute: typeof AdminUsersIndexRoute
@@ -595,7 +574,6 @@ interface AdminRouteRouteChildren {
 const AdminRouteRouteChildren: AdminRouteRouteChildren = {
   AdminSettingsRouteRoute: AdminSettingsRouteRouteWithChildren,
   AdminIndexRoute: AdminIndexRoute,
-  AdminIncomeExpensesIndexRoute: AdminIncomeExpensesIndexRoute,
   AdminProductsIndexRoute: AdminProductsIndexRoute,
   AdminTransactionsIndexRoute: AdminTransactionsIndexRoute,
   AdminUsersIndexRoute: AdminUsersIndexRoute,
