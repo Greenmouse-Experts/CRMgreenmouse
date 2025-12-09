@@ -43,7 +43,7 @@ const createRandomCompany = (): Company => {
     location: faker.location.city() + ", " + faker.location.country(),
     contactPerson: faker.person.fullName(),
     phone: faker.phone.number(),
-    logo: faker.image.urlLoremFlickr({ category: "logo" }),
+    logo: faker.image.url(),
   };
 };
 
@@ -60,7 +60,7 @@ function RouteComponent() {
   const handleAddCompany = (data: AddCompanyProps) => {
     const newCompany: Company = {
       id: faker.string.uuid(),
-      logo: faker.image.urlLoremFlickr({ category: "logo" }),
+      logo: faker.image.url(),
       ...data,
     };
     setCompanies((prev) => [...prev, newCompany]);
