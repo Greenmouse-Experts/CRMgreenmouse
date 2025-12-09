@@ -10,6 +10,8 @@ import { FormProvider, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { faker } from "@faker-js/faker";
 import { useState } from "react";
+import SelectImage from "@/components/images/SelectImage";
+import { useSelectImage } from "@/helpers/images";
 
 export const Route = createFileRoute("/admin/contacts/companies/")({
   component: RouteComponent,
@@ -86,6 +88,7 @@ function RouteComponent() {
     { key: "phone", label: "Phone" },
   ];
 
+  const props = useSelectImage();
   return (
     <>
       <Modal title="Add Company" ref={modal.ref}>
@@ -95,6 +98,7 @@ function RouteComponent() {
             className="space-y-4"
             onSubmit={handleSubmit(handleAddCompany)}
           >
+            <SelectImage title="Company logo" {...props} />
             <SimpleInput
               title="Company Name"
               label="Company Name"
