@@ -8,7 +8,12 @@ const SimpleTitle = forwardRef<
   return (
     <>
       {backBtn && (
-        <button className="btn btn-accent from-accent bg-linear-30 to-primary/10">
+        <button
+          onClick={() => {
+            window.history.back();
+          }}
+          className="btn btn-accent from-accent bg-linear-30 to-primary/10"
+        >
           <span>
             <ArrowLeft className="!size-4" />
           </span>
