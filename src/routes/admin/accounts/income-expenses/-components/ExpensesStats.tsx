@@ -34,7 +34,7 @@ export default function ExpensesStat() {
                        border-l-4 ${item.colorClass}
                        transition-all duration-300 hover:shadow-xl hover:scale-[1.02]`}
           >
-            <div className="p-6 flex flex-col gap-3">
+            <div className="p-4 flex flex-col gap-3">
               <div className="flex items-center gap-3 text-base-content/80">
                 <IconComponent className="h-6 w-6" /> {/* Render Lucide icon */}
                 <span className="text-sm font-semibold">{item.title}</span>
