@@ -1,4 +1,5 @@
 import React, { forwardRef, type PropsWithChildren } from "react";
+import { ArrowLeft } from "lucide-react";
 
 const SimpleTitle = forwardRef<
   HTMLDivElement,
@@ -8,6 +9,9 @@ const SimpleTitle = forwardRef<
     <>
       {backBtn && (
         <button className="btn btn-accent from-accent bg-linear-30 to-primary/10">
+          <span>
+            <ArrowLeft className="!size-4" />
+          </span>
           Go Back
         </button>
       )}
