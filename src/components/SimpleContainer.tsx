@@ -3,7 +3,7 @@ import type { JSX } from "react/jsx-runtime";
 
 interface ContainerProps extends PropsWithChildren {
   title?: string | ReactNode;
-  actions?: ReactNode | JSX.Element;
+  actions?: ReactNode | JSX.Element | any;
 }
 
 export default function SimpleContainer(props: ContainerProps) {

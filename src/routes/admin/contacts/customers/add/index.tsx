@@ -2,6 +2,9 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useForm, FormProvider } from "react-hook-form";
 import SimpleInput from "@/components/inputs/SimpleInput";
 import ActionButton from "@/components/buttons/ActionButton";
+import SimpleTitle from "@/components/SimpleTitle";
+import SelectImage from "@/components/images/SelectImage";
+import { useSelectImage } from "@/helpers/images";
 
 export const Route = createFileRoute("/admin/contacts/customers/add/")({
   component: RouteComponent,
@@ -9,13 +12,16 @@ export const Route = createFileRoute("/admin/contacts/customers/add/")({
 function RouteComponent() {
   const methods = useForm();
   const onSubmit = (data: any) => console.log(data);
-
+  const props = useSelectImage();
   return (
-    <div className="p-4">
-      <h2 className="text-2xl font-bold mb-4">Add Customer</h2>
-      <section className="p-4 bg-base-100 shadow rounded-box py-8">
+    <div className="">
+      <SimpleTitle title={"Add Customer"}></SimpleTitle>
+      {/*<h2 className="text-2xl font-bold mb-4">Add Customer</h2>*/}
+      <section className="p-4 bg-base-100 shadow rounded-box py-8 ">
         <FormProvider {...methods}>
           <form onSubmit={methods.handleSubmit(onSubmit)} className="space-y-4">
+            <SelectImage {...props} title="Profile Pic"></SelectImage>
+
             <SimpleInput
               label="Full Name"
               placeholder="Enter full name"
