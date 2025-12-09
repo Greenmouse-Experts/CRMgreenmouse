@@ -86,8 +86,7 @@ export default function Incometable() {
   ];
 
   return (
-    <div className="p-4">
-      <h2 className="text-xl font-bold mb-4">Income List</h2>
+    <div className="">
       <CustomTable columns={columns} data={data} actions={actions} />
     </div>
   );

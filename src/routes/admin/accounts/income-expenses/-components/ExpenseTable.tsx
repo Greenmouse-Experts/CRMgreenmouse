@@ -87,8 +87,7 @@ export default function ExpenseTable() {
   ];
 
   return (
-    <div className="p-4">
-      <h2 className="text-xl font-bold mb-4">Expense List</h2>
+    <div className="">
       <CustomTable columns={columns} data={data} actions={actions} />
     </div>
   );
