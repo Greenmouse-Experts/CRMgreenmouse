@@ -9,6 +9,7 @@ import SimpleInput from "@/components/inputs/SimpleInput";
 import { FormProvider, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { faker } from "@faker-js/faker";
+import { useState } from "react";
 
 export const Route = createFileRoute("/admin/contacts/companies/")({
   component: RouteComponent,
@@ -18,6 +19,8 @@ interface AddCompanyProps {
   email: string;
   name: string;
   location: string;
+  contactPerson: string;
+  phone: string;
 }
 
 interface Company {
@@ -42,14 +45,27 @@ const createRandomCompany = (): Company => {
   };
 };
 
-const dummyCompanies: Company[] = faker.helpers.multiple(createRandomCompany, {
-  count: 10,
-});
-
 function RouteComponent() {
   const modal = useModal();
   const form = useForm<AddCompanyProps>();
-  const { register } = form;
+  const { register, handleSubmit, reset } = form;
+  const [companies, setCompanies] = useState<Company[]>(
+    faker.helpers.multiple(createRandomCompany, {
+      count: 10,
+    }),
+  );
+
+  const handleAddCompany = (data: AddCompanyProps) => {
+    const newCompany: Company = {
+      id: faker.string.uuid(),
+      logo: faker.image.urlLoremFlickr({ category: "logo" }),
+      ...data,
+    };
+    setCompanies((prev) => [...prev, newCompany]);
+    toast.success("Company added successfully!");
+    modal.closeModal();
+    reset(); // Reset form fields after successful submission
+  };
 
   const companyColumns = [
     {
@@ -77,34 +93,54 @@ function RouteComponent() {
           <form
             action=""
             className="space-y-4"
-            onSubmit={form.handleSubmit((data) => {
-              console.log(data);
-              toast.info(JSON.stringify(data));
-              modal.closeModal();
-            })}
+            onSubmit={handleSubmit(handleAddCompany)}
           >
             <SimpleInput
-              title="Name"
-              label="Name"
+              title="Company Name"
+              label="Company Name"
               {...register("name", {
-                required: "Name is Required",
+                required: "Company Name is Required",
               })}
-              placeholder="Name"
+              placeholder="Enter company name"
             />
             <SimpleInput
               title="Email"
               label="Email"
-              {...register("email")}
-              placeholder="Email"
+              {...register("email", {
+                required: "Email is Required",
+                pattern: {
+                  value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                  message: "Invalid email address",
+                },
+              })}
+              placeholder="Enter company email"
             />
             <SimpleInput
               title="Location"
               label="Location"
-              {...register("location")}
-              placeholder="Location"
+              {...register("location", {
+                required: "Location is Required",
+              })}
+              placeholder="Enter company location"
             />
-            <div className="bg-red-200 w-fit ml-auto mt-4">
-              <button className="btn btn-primary">Add</button>
+            <SimpleInput
+              title="Contact Person"
+              label="Contact Person"
+              {...register("contactPerson", {
+                required: "Contact Person is Required",
+              })}
+              placeholder="Enter contact person's name"
+            />
+            <SimpleInput
+              title="Phone"
+              label="Phone"
+              {...register("phone", {
+                required: "Phone number is Required",
+              })}
+              placeholder="Enter phone number"
+            />
+            <div className="flex justify-end mt-4">
+              <ActionButton type="submit">Add Company</ActionButton>
             </div>
           </form>
         </FormProvider>
@@ -121,7 +157,7 @@ function RouteComponent() {
           </>
         }
       >
-        <CustomTable data={dummyCompanies} columns={companyColumns} />
+        <CustomTable data={companies} columns={companyColumns} />
       </SimpleContainer>
     </>
   );

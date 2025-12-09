@@ -1,10 +1,10 @@
 import { createFileRoute, useParams } from "@tanstack/react-router";
-import UserInfo from "./-components/UserInfo";
 import FullInfo from "./-components/FullInfo";
 import OtherInfo from "./-components/OtherInfo";
 import SimpleTitle from "@/components/SimpleTitle";
+import CompanyInfo from "./-components/CompanyInfo";
 
-export const Route = createFileRoute("/admin/users/details/$id/")({
+export const Route = createFileRoute("/admin/contacts/companies/details/$id/")({
   component: RouteComponent,
 });
 
@@ -14,8 +14,8 @@ function RouteComponent() {
   });
   return (
     <div className="container mx-auto  px-4 py-4 space-y-4">
-      <SimpleTitle title={"Staff Details"}></SimpleTitle>
-      <UserInfo />
+      <SimpleTitle title={"Company Details"}></SimpleTitle>
+      <CompanyInfo />
       <FullInfo />
       <OtherInfo />
     </div>

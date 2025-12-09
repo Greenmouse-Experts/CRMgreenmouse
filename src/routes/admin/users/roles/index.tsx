@@ -10,6 +10,7 @@ import { useModal } from "@/helpers/modals";
 import SimpleInput from "@/components/inputs/SimpleInput";
 import ActionButton from "@/components/buttons/ActionButton";
 import { FormProvider, useForm } from "react-hook-form";
+import SimpleTextArea from "@/components/inputs/SimpleTextArea";
 
 export const Route = createFileRoute("/admin/users/roles/")({
   component: RouteComponent,
@@ -98,15 +99,13 @@ function RouteComponent() {
           <form onSubmit={methods.handleSubmit(onSubmit)} className="space-y-4">
             <SimpleInput
               label="Role Name"
-              name="roleName"
               placeholder="Enter role name"
               {...methods.register("roleName", {
                 required: "Role name is required",
               })}
             />
-            <SimpleInput
+            <SimpleTextArea
               label="Description"
-              name="description"
               placeholder="Enter role description"
               {...methods.register("description")}
             />

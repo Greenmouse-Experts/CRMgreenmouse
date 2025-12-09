@@ -49,7 +49,7 @@ function RouteComponent() {
       label: "View",
       action: (item: any, nav) => {
         nav({
-          to: "/admin/users/" + "uidnfde1e",
+          to: "/admin/users/details/" + "uidnfde1e",
         });
       },
     },
