@@ -11,7 +11,7 @@ const SimpleTextArea = forwardRef<HTMLTextAreaElement, SimpleTextAreaProps>(
     return (
       <div className=" w-full space-y-2 ">
         {label && (
-          <div className="label ">
+          <div className="fieldset-label font-semibold">
             <span className="text-base">{label}</span>
           </div>
         )}
