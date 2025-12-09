@@ -51,7 +51,7 @@ function RouteComponent() {
         title="Products"
         actions={
           <>
-            //@ts-ignore
+            {/*//@ts-ignore*/}
             <Link to="add" className="btn btn-sm btn-primary">
               <PlusCircleIcon /> Create Product
             </Link>
