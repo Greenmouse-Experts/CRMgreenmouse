@@ -50,17 +50,6 @@ function RouteComponent() {
                 required: "Phone number is required",
               })}
             />
-            <div className="form-control w-full">
-              <label className="label">
-                <span className="label-text text-base">Profile Picture</span>
-              </label>
-              <input
-                type="file"
-                accept="image/*"
-                className="file-input file-input-bordered w-full"
-                {...methods.register("profilePicture")}
-              />
-            </div>
 
             <ActionButton type="submit" title="Add Customer" />
           </form>
