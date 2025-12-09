@@ -4,6 +4,7 @@ import SimpleInput from "@/components/inputs/SimpleInput";
 import ActionButton from "@/components/buttons/ActionButton";
 import { useSelectImage } from "@/helpers/images";
 import SelectImage from "@/components/images/SelectImage";
+import SimpleTitle from "@/components/SimpleTitle";
 
 export const Route = createFileRoute("/admin/users/add/")({
   component: RouteComponent,
@@ -15,7 +16,7 @@ function RouteComponent() {
   const props = useSelectImage();
   return (
     <div className="p-4">
-      <h2 className="text-2xl font-bold mb-4">Add New Staff</h2>
+      <SimpleTitle title={"Add New Staff"} />
       <section className="p-4 bg-base-100 shadow rounded-box py-8">
         <FormProvider {...methods}>
           <form onSubmit={methods.handleSubmit(onSubmit)} className="space-y-4">

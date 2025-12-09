@@ -5,20 +5,22 @@ const SimpleTitle = forwardRef<
   PropsWithChildren<{ title?: string | Element | any; backBtn?: boolean }>
 >(({ title = "Title", children, backBtn = true }, ref) => {
   return (
-    <div className="flex items-center gap-2 flex-1    ">
+    <>
       {backBtn && (
         <button className="btn btn-accent from-accent bg-linear-30 to-primary/10">
           Go Back
         </button>
       )}
-      <div
-        ref={ref}
-        className="text-xl flex-1 font-bold  divider divider-start"
-      >
-        {title}
+      <div className="flex items-center gap-2 flex-1    ">
+        <div
+          ref={ref}
+          className="text-xl flex-1 font-bold  divider divider-start"
+        >
+          {title}
+        </div>
+        <div className="">{children}</div>
       </div>
-      <div className="">{children}</div>
-    </div>
+    </>
   );
 });
 
