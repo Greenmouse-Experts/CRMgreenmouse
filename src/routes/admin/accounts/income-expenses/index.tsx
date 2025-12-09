@@ -4,6 +4,7 @@ import { useTabs, type Tab } from "@/stores/client";
 import CustomTabs from "@/components/CustomTabs";
 import Incometable from "./-components/IncomeTable";
 import ExpenseTable from "./-components/ExpenseTable";
+import ActionButton from "@/components/buttons/ActionButton";
 
 export const Route = createFileRoute("/admin/accounts/income-expenses/")({
   component: RouteComponent,
@@ -20,8 +21,19 @@ function RouteComponent() {
   return (
     <section className="space-y-4">
       <ExpensesStat />
-      <div className="bg-base-100 shadow rounded-box">
+      <div className="bg-base-100 shadow rounded-box flex items-center px-2">
         <CustomTabs tabs={tabs} tabProps={tab}></CustomTabs>
+        <div className="ml-auto">
+          {tab.tab.name == "Income" ? (
+            <ActionButton className="btn btn-primary btn-sm">
+              Add Income
+            </ActionButton>
+          ) : (
+            <ActionButton className="btn btn-primary btn-sm">
+              Add Expense
+            </ActionButton>
+          )}
+        </div>
       </div>
       <div className="">
         {tab.tab.name == "Income" ? <Incometable /> : <ExpenseTable />}
