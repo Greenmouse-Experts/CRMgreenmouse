@@ -5,5 +5,5 @@ export const Route = createFileRoute("/admin/users/permissions/")({
 });
 
 function RouteComponent() {
-  return <div>Hello "/admin/users/permissions/"!</div>;
+  return <div></div>;
 }

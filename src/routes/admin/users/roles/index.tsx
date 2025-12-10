@@ -4,26 +4,65 @@ import SimpleContainer from "@/components/SimpleContainer";
 import { useSearch } from "@/stores/data";
 import { PlusCircleIcon } from "lucide-react";
 import CustomTable from "@/components/tables/CustomTable";
-import { faker } from "@faker-js/faker";
 import DialogModal from "@/components/modals/DialogModal";
 import { useModal } from "@/helpers/modals";
 import SimpleInput from "@/components/inputs/SimpleInput";
 import ActionButton from "@/components/buttons/ActionButton";
 import { FormProvider, useForm } from "react-hook-form";
 import SimpleTextArea from "@/components/inputs/SimpleTextArea";
+import Modal from "@/components/modals/DialogModal";
+import { useState } from "react";
 
 export const Route = createFileRoute("/admin/users/roles/")({
   component: RouteComponent,
 });
 
+const roles = [
+  {
+    id: 1,
+    name: "Superadmin",
+    description: "Full access to all system features and settings.",
+    usersCount: 1,
+    permissions: [
+      "manage_users",
+      "manage_roles",
+      "manage_settings",
+      "view_reports",
+    ],
+  },
+  {
+    id: 2,
+    name: "Admin",
+    description: "Manage users, content, and some system settings.",
+    usersCount: 5,
+    permissions: ["manage_users", "manage_content", "view_reports"],
+  },
+  {
+    id: 3,
+    name: "Staff",
+    description: "Access to specific operational tasks and data.",
+    usersCount: 20,
+    permissions: ["view_orders", "process_returns"],
+  },
+  {
+    id: 4,
+    name: "Editor",
+    description: "Create, edit, and publish content.",
+    usersCount: 12,
+    permissions: ["create_content", "edit_content", "publish_content"],
+  },
+  {
+    id: 5,
+    name: "Viewer",
+    description: "Read-only access to certain sections.",
+    usersCount: 50,
+    permissions: ["view_content", "view_products"],
+  },
+];
 function RouteComponent() {
-  const roles = Array.from({ length: 5 }, (_, i) => ({
-    id: i + 1,
-    name: faker.person.jobTitle(),
-    description: faker.lorem.sentence(),
-    usersCount: faker.number.int({ min: 0, max: 100 }),
-  }));
-
+  const [selectedItem, setSeletedItem] = useState<
+    (typeof roles)[number] | null
+  >(null);
   const columns = [
     { key: "id", label: "ID" },
     { key: "name", label: "Role Name" },
@@ -33,9 +72,26 @@ function RouteComponent() {
 
   const actions = [
     {
+      key: "viewPermissions",
+      label: "View Permissions",
+      action: (item: any) => {
+        setSeletedItem(item);
+        modal.showModal();
+
+        // You might open a modal here to display permissions
+      },
+    },
+    {
       key: "edit",
       label: "Edit",
       action: (item: any) => console.log("Edit", item),
+    },
+    {
+      key: "addPermissions",
+      label: "Add Permissions",
+      action: (item: any) => {
+        addModal.showModal();
+      },
     },
     {
       key: "delete",
@@ -57,8 +113,90 @@ function RouteComponent() {
   };
 
   const props = useSearch();
+  const modal = useModal();
+  const addModal = useModal();
+
   return (
     <div>
+      <Modal title="Add Permissions" ref={addModal.ref}>
+        <div className="space-y-2">
+          <div className="form-control">
+            <label className="label cursor-pointer justify-start gap-2">
+              <input type="checkbox" className="checkbox checkbox-primary" />
+              <span className="label-text">Manage Users</span>
+            </label>
+          </div>
+          <div className="form-control">
+            <label className="label cursor-pointer justify-start gap-2">
+              <input type="checkbox" className="checkbox checkbox-primary" />
+              <span className="label-text">Manage Roles</span>
+            </label>
+          </div>
+          <div className="form-control">
+            <label className="label cursor-pointer justify-start gap-2">
+              <input type="checkbox" className="checkbox checkbox-primary" />
+              <span className="label-text">View Reports</span>
+            </label>
+          </div>
+          <div className="form-control">
+            <label className="label cursor-pointer justify-start gap-2">
+              <input type="checkbox" className="checkbox checkbox-primary" />
+              <span className="label-text">View Orders</span>
+            </label>
+          </div>
+          <div className="form-control">
+            <label className="label cursor-pointer justify-start gap-2">
+              <input type="checkbox" className="checkbox checkbox-primary" />
+              <span className="label-text">View Products</span>
+            </label>
+          </div>
+          <div className="form-control">
+            <label className="label cursor-pointer justify-start gap-2">
+              <input type="checkbox" className="checkbox checkbox-primary" />
+              <span className="label-text">Edit Content</span>
+            </label>
+          </div>
+          <div className="form-control">
+            <label className="label cursor-pointer justify-start gap-2">
+              <input type="checkbox" className="checkbox checkbox-primary" />
+              <span className="label-text">Publish Content</span>
+            </label>
+          </div>
+        </div>
+        <div className="modal-action">
+          <ActionButton
+            onClick={() => {
+              addModal.closeModal();
+              console.log("Permissions saved!");
+            }}
+          >
+            Save Permissions
+          </ActionButton>
+        </div>
+      </Modal>
+      <Modal
+        title={`Permissions for ${selectedItem?.name || "Role"}`}
+        ref={modal.ref}
+      >
+        <div className="menu">
+          {selectedItem?.permissions.length ? (
+            selectedItem.permissions.map((permission, index) => (
+              <li>
+                <a>
+                  <span className="size-2 bg-base-content/70 rounded-full"></span>
+                  <span key={index} className="capitalize">
+                    {permission.replace(/_/g, " ")}
+                  </span>
+                </a>
+              </li>
+            ))
+          ) : (
+            <p className="text-gray-500">
+              No permissions assigned to this role.
+            </p>
+          )}
+        </div>
+      </Modal>
       <SimpleContainer
         title="Roles"
         actions={

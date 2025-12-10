@@ -83,27 +83,28 @@ export default function PopUp(props: {
       <Portal>
         {isOpen && (
           <div
-            data-theme="nord"
+            data-theme=""
             ref={(el) => {
               setPopperElement(el);
               popupRef.current = el;
             }}
-            className="shadow-lg border border-current/20 rounded-xl bg-base-100 z-50 p-2"
+            className="shadow-lg border border-current/20 rounded-xl bg-base-100 z-50 "
             style={{
               ...styles.popper,
               width: "150px",
             }}
             {...attributes.popper}
           >
-            <div className="flex flex-col gap-1">
+            <div className="menu w-full">
               {props?.actions?.map((action) => (
-                <button
-                  key={action.key}
-                  className="btn btn-ghost  btn-sm"
-                  onClick={() => action.action(props.item, nav)}
-                >
-                  {action.label}
-                </button>
+                <li key={action.key}>
+                  <a
+                    onClick={() => action.action(props.item, nav)}
+                    className="text-xs"
+                  >
+                    {action.label}
+                  </a>
+                </li>
               ))}
             </div>
           </div>
