@@ -30,7 +30,7 @@ export default function ExpenseTable() {
       label: "Status",
       render: (value: string) => (
         <span
-          className={`badge ${
+          className={`badge badge-soft ring ring-current/50 text-xs badge-sm ${
             value === "Approved"
               ? "badge-success"
               : value === "Pending"
