@@ -174,7 +174,8 @@ function RouteComponent() {
     {
       key: "view",
       label: "View Details",
-      action: (item: any) => console.log("View invoice:", item.number),
+      action: (item: any, nav) =>
+        nav({ to: `/admin/accounts/invoices/${item.number}` }),
     },
     {
       key: "edit",
