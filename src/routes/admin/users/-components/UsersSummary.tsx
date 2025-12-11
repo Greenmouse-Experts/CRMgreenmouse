@@ -3,15 +3,15 @@ import SummaryGrid from "@/components/SummaryGrid";
 
 const customers = [
   {
-    title: "Total Users",
+    title: "Total Staffs",
     value: 100,
   },
   {
-    title: "Active Users",
+    title: "Active Staffs",
     value: 80,
   },
   {
-    title: "Inactive Users",
+    title: "Inactive Staffs",
     value: 20,
   },
 ];

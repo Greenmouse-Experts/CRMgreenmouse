@@ -333,7 +333,7 @@ function RouteComponent() {
       )}
 
       <SimpleContainer
-        title="Subscription Plans"
+        title="Subscriptions"
         actions={
           <>
             <ActionButton onClick={handleAddSubscription}>
