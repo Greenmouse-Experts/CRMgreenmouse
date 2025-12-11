@@ -53,9 +53,11 @@ function RouteComponent() {
         description="Manage customers and customer info"
       >
         {/*//@ts-ignore*/}
-        <button onClick={() => {}} className="btn btn-primary ">
-          <PlusCircleIcon /> Add Customer
-        </button>
+        <div>
+          <Link to="/admin/contacts/customers/add" className="btn btn-primary ">
+            <PlusCircleIcon /> Add Customer
+          </Link>
+        </div>
       </PageHeader>
       <CustomerSummary />
       <SimpleContainer title="Customers">
