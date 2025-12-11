@@ -102,12 +102,12 @@ function RouteComponent() {
             break;
           case "Pending":
           default:
-            badgeClass = "badge-warning text-warning-content";
+            badgeClass = "badge-warning ";
             break;
         }
         return (
           <span
-            className={`badge ${badgeClass} text-xs capitalize badge-soft ring ring-current/50 font-bold`}
+            className={`${badgeClass} badge badge-soft ring ring-current/50 text-xs badge-sm font-bold `}
           >
             {value}
           </span>
