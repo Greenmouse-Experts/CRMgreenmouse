@@ -92,7 +92,7 @@ function RouteComponent() {
             badgeClass = "badge-success text-success-content";
             break;
           case "Overdue":
-            badgeClass = "badge-error text-error-content";
+            badgeClass = "badge-error ";
             break;
           case "Draft":
             badgeClass = "badge-info "; // Softer look for draft
