@@ -15,7 +15,7 @@ function RouteComponent() {
       <SimpleTitle backBtn title={"Invoice Details: " + id} />
       {/*<div className="text-2xl font-bold mb-4">New Invoices: {id}</div>*/}
 
-      <div className="card bg-accent text-accent-content shadow-xl ">
+      <div className="card bg-accent  shadow text-accent-content  ">
         <div className="card-body p-6">
           <div className="flex items-center mb-4">
             <div className="avatar placeholder mr-4">
@@ -36,7 +36,7 @@ function RouteComponent() {
         </div>
       </div>
 
-      <div className="card bg-base-100  mb-6">
+      <div className="card bg-base-100  ring ring-current/10 shadow  mb-6">
         <div className="card-body p-6">
           <div className="grid grid-cols-2 gap-4 mb-4">
             <div>
@@ -55,7 +55,7 @@ function RouteComponent() {
         </div>
       </div>
 
-      <div className="card bg-base-100 shadow-xl mb-6">
+      <div className="card bg-base-100 ring ring-current/10 shadow mb-6">
         <div className="card-body p-6">
           <h3 className="font-bold text-lg mb-2">Item Details</h3>
           <p className="text-sm text-gray-500 mb-4">
