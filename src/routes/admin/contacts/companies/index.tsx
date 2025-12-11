@@ -98,7 +98,12 @@ function RouteComponent() {
         description="Manage companies and company info"
       >
         {/*//@ts-ignore*/}
-        <button onClick={() => {}} className="btn btn-primary ">
+        <button
+          onClick={() => {
+            modal.showModal();
+          }}
+          className="btn btn-primary "
+        >
           <PlusCircleIcon /> Add Company
         </button>
       </PageHeader>
