@@ -9,6 +9,7 @@ import { useModal } from "@/helpers/modals";
 import Modal from "@/components/modals/DialogModal";
 import SimpleInput from "@/components/inputs/SimpleInput";
 import SimpleTextArea from "@/components/inputs/SimpleTextArea";
+import PageHeader from "@/components/Headers/PageHeader";
 
 export const Route = createFileRoute("/admin/accounts/income-expenses/")({
   component: RouteComponent,
@@ -27,6 +28,15 @@ function RouteComponent() {
 
   return (
     <section className="space-y-4">
+      <PageHeader
+        title="Income & Expenses"
+        description="View and manage all income and expenses"
+      >
+        {/*//@ts-ignore*/}
+        {/*<button onClick={() => {}} className="btn btn-primary ">
+          <PlusCircleIcon /> Add Invoice
+        </button>*/}
+      </PageHeader>
       <Modal ref={incomeModal.ref} title="Add Income">
         <div className="space-y-4">
           <SimpleInput label="Amount" type="number" />
