@@ -1,11 +1,11 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import ContainerRow from "@/components/ContainerRow";
 import SimpleContainer from "@/components/SimpleContainer";
 import { useSearch } from "@/stores/data";
 import { PlusCircleIcon } from "lucide-react";
 import { faker } from "@faker-js/faker";
 import CustomTable from "@/components/tables/CustomTable";
 import CustomerSummary from "./-components/CustomerSum";
+import PageHeader from "@/components/Headers/PageHeader";
 export const Route = createFileRoute("/admin/contacts/customers/")({
   component: RouteComponent,
 });
@@ -48,20 +48,17 @@ function RouteComponent() {
   ];
   return (
     <>
-      <CustomerSummary />
-      <SimpleContainer
+      <PageHeader
         title="Customers"
-        actions={
-          <>
-            <Link
-              to="/admin/contacts/customers/add"
-              className="btn btn-sm btn-primary"
-            >
-              <PlusCircleIcon /> Add customer
-            </Link>
-          </>
-        }
+        description="Manage customers and customer info"
       >
+        {/*//@ts-ignore*/}
+        <button onClick={() => {}} className="btn btn-primary ">
+          <PlusCircleIcon /> Add Customer
+        </button>
+      </PageHeader>
+      <CustomerSummary />
+      <SimpleContainer title="Customers">
         {/*{props.search}*/}
         {/*<ContainerRow searchProps={props} />*/}
         <div className="bg-base-100">
