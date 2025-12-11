@@ -40,7 +40,7 @@ export default function ExpensesStat() {
                 <span className="text-sm font-semibold">{item.title}</span>
               </div>
               <span
-                className={`text-3xl font-extrabold mt-1 ${item.colorClass}`}
+                className={`text-3xl font-extrabold mt-1 text-base-content`}
               >
                 {item.value.toLocaleString()}
               </span>
