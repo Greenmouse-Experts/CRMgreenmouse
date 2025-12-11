@@ -5,7 +5,8 @@ import CustomTable from "@/components/tables/CustomTable";
 import { faker } from "@faker-js/faker";
 import ActionButton from "@/components/buttons/ActionButton";
 import PopUp, { type Actions } from "@/components/tables/pop-up"; // Import PopUp and its Actions type
-import { Star } from "lucide-react"; // Import Star icon for the 'Number' column
+import PageHeader from "@/components/Headers/PageHeader";
+import { PlusCircleIcon } from "lucide-react";
 
 // Define the type for an invoice, inspired by the image
 interface Invoice {
@@ -194,16 +195,25 @@ function RouteComponent() {
 
   return (
     <div className="space-y-4">
+      <PageHeader
+        title="Invoices"
+        description="Manage your customer invoices and billing"
+      >
+        {/*//@ts-ignore*/}
+        <button onClick={() => {}} className="btn btn-primary ">
+          <PlusCircleIcon /> Add Invoice
+        </button>
+      </PageHeader>
       <InvoicesStat />
       <SimpleContainer
         title="Invoices"
-        actions={
-          <>
-            <ActionButton className="btn btn-sm btn-primary">
-              Add Invoice
-            </ActionButton>
-          </>
-        }
+        // actions={
+        //   <>
+        //     <ActionButton className="btn btn-sm btn-primary">
+        //       Add Invoice
+        //     </ActionButton>
+        //   </>
+        // }
       >
         <CustomTable
           ring={false} // Match the subtle border in the image
