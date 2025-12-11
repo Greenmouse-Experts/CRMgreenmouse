@@ -67,7 +67,7 @@ const StatCard = ({
             </div>
           </div>
           <div>
-            <div className="p-3 bg-linear-50 rounded-full from-accent/80 to-accent size-fit">
+            <div className="p-3 bg-linear-50 rounded-full from-accent/80 to-primary size-fit">
               <Icon className="size-32 text-accent-content" />
             </div>
           </div>

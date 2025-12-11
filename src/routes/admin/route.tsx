@@ -221,7 +221,7 @@ function RouteComponent() {
                             <li key={childLink.path}>
                               <Link
                                 to={childLink.path}
-                                className={` ${isChildActive ? "bg-primary text-primary-content " : "opacity-70"} text-xs font-bold`}
+                                className={` ${isChildActive ? "bg-primary text-primary-content " : "opacity-70"} text-xs font-bold py-2 rounded-box`}
                               >
                                 {childLink.icon}
                                 {childLink.label}
@@ -240,7 +240,7 @@ function RouteComponent() {
                 <li key={link.path} className="mb-2">
                   <Link
                     to={link.path}
-                    className={` ${isActive ? "bg-primary text-primary-content " : ""} text-xs font-bold`}
+                    className={` ${isActive ? "bg-primary text-primary-content " : ""} text-xs font-bold py-2 rounded-box`}
                   >
                     {link.icon}
                     {link.label}
