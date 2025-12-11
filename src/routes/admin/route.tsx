@@ -240,7 +240,7 @@ function RouteComponent() {
                 <li key={link.path} className="mb-2">
                   <Link
                     to={link.path}
-                    className={` ${isActive ? "bg-primary text-primary-content " : "opacity-70"} text-xs font-bold`}
+                    className={` ${isActive ? "bg-primary text-primary-content " : ""} text-xs font-bold`}
                   >
                     {link.icon}
                     {link.label}
