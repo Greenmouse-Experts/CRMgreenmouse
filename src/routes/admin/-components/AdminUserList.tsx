@@ -1,6 +1,6 @@
 import SimpleContainer from "@/components/SimpleContainer";
 import CustomTable from "@/components/tables/CustomTable";
-import { faker } from "@faker-js/faker/locale/th";
+import { faker } from "@faker-js/faker";
 import { Link } from "@tanstack/react-router";
 import { PlusCircleIcon } from "lucide-react";
 
