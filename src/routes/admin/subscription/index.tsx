@@ -320,14 +320,14 @@ function RouteComponent() {
                 {currentPlan.description}
               </p>
             )}
-            <div className="card-actions justify-end ">
+            {/*<div className="card-actions justify-end ">
               <button
                 className="btn btn-sm btn-primary"
                 onClick={() => handleEditView(currentPlan)}
               >
                 Manage Plan
               </button>
-            </div>
+            </div>*/}
           </div>
         </div>
       )}
@@ -336,7 +336,10 @@ function RouteComponent() {
         title="Subscriptions"
         actions={
           <>
-            <ActionButton onClick={handleAddSubscription}>
+            <ActionButton
+              className="btn btn-primary btn-sm"
+              onClick={handleAddSubscription}
+            >
               Add Subscription
             </ActionButton>
           </>
