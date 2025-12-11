@@ -1,6 +1,10 @@
 export default function AdminUserProfile() {
   return (
-    <div>
+    <div className="flex items-center border-l pl-4 ml-2 border-current/30">
+      <div className="mr-2 md:flex flex-col text-sm text-right hidden font-semibold">
+        Admin User
+        <span className="text-base-content/70 text-xs">Super Admin</span>
+      </div>
       <div className="dropdown dropdown-end">
         <div className="flex gap-2 items-center">
           <button className="btn btn-circle  size-8 ring">
