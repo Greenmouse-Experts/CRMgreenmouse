@@ -52,7 +52,15 @@ const columns = [
   {
     key: "features",
     label: "Features",
-    render: (value: string[]) => value.join(", "),
+    render: (value: string[]) => (
+      <div className="flex flex-wrap gap-1">
+        {value.map((feature, index) => (
+          <span key={index} className="">
+            {feature},
+          </span>
+        ))}
+      </div>
+    ),
   },
   {
     key: "description", // Added description column
@@ -62,6 +70,13 @@ const columns = [
   {
     key: "status",
     label: "Status",
+    render: (value: string) => (
+      <span
+        className={`badge ${value === "Active" ? "badge-success" : "badge-warning"} text-white`}
+      >
+        {value}
+      </span>
+    ),
   },
 ];
 
@@ -165,23 +180,20 @@ const SubscriptionForm = ({
 
 function RouteComponent() {
   const modal = useModal();
-  // Removed `addModal` as it was unused.
   const [subscriptions, setSubscriptions] =
-    useState<SubscriptionItem[]>(initialData); // Use state for table data
+    useState<SubscriptionItem[]>(initialData);
   const [modalTitle, setModalTitle] = useState("");
   const [modalContent, setModalContent] = useState<React.ReactNode | null>(
     null,
-  ); // State for modal content
-  // Removed `selectedItem` as it is no longer necessary with the refactored structure.
+  );
+  const [currentPlanId, setCurrentPlanId] = useState<string | null>("2"); // Example: Set a default current plan
 
   const onSubmit = (values: SubscriptionFormValues) => {
-    // Convert features string back to array
     const updatedFeatures = values.features
       .split(",")
       .map((f) => f.trim())
       .filter((f) => f !== "");
 
-    // Create a base object that matches the structure for SubscriptionItem
     const baseSubscription: Omit<SubscriptionItem, "id"> = {
       name: values.name,
       price: values.price,
@@ -192,20 +204,16 @@ function RouteComponent() {
     };
 
     if (values.id) {
-      // Editing existing item: use the provided ID
       const subscriptionToSave: SubscriptionItem = {
         ...baseSubscription,
         id: values.id,
       };
       setSubscriptions((prev) =>
         prev.map((item) =>
-          item.id === subscriptionToSave.id
-            ? subscriptionToSave // Replace the item with the updated version
-            : item,
+          item.id === subscriptionToSave.id ? subscriptionToSave : item,
         ),
       );
     } else {
-      // Adding new item: generate a new ID
       const subscriptionToSave: SubscriptionItem = {
         ...baseSubscription,
         id: nanoid(),
@@ -225,8 +233,8 @@ function RouteComponent() {
           name: item.name,
           price: item.price,
           duration: item.duration,
-          features: item.features.join(", "), // Convert array to string for input
-          description: item.description || null, // Ensure null for empty description
+          features: item.features.join(", "),
+          description: item.description || null,
           status: item.status,
         }}
         onSubmit={onSubmit}
@@ -239,11 +247,7 @@ function RouteComponent() {
   const handleAddSubscription = () => {
     setModalTitle("Add New Subscription Plan");
     setModalContent(
-      <SubscriptionForm
-        onSubmit={onSubmit}
-        onCancel={modal.closeModal}
-        // initialValues will be default empty from the SubscriptionForm component
-      />,
+      <SubscriptionForm onSubmit={onSubmit} onCancel={modal.closeModal} />,
     );
     modal.showModal();
   };
@@ -289,11 +293,45 @@ function RouteComponent() {
     },
   ];
 
+  const currentPlan = subscriptions.find((plan) => plan.id === currentPlanId);
+
   return (
-    <div>
+    <div className="space-y-4">
       <Modal ref={modal.ref} title={modalTitle}>
         {modalContent}
       </Modal>
+
+      {currentPlan && (
+        <div className="card bg-base-100 shadow-md ring ring-current/20 ">
+          <div className="card-body">
+            <h2 className="text-2xl font-bold text-primary ">
+              {currentPlan.name}
+            </h2>
+            <p className="text-sm text-gray-500 ">Your Current Plan</p>
+            <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-base text-gray-700">
+              <span className="font-semibold">Price: {currentPlan.price}</span>
+              <span className="hidden sm:inline">•</span>
+              <span className="font-semibold">
+                Duration: {currentPlan.duration}
+              </span>
+            </div>
+            {currentPlan.description && (
+              <p className="text-sm text-gray-600 ">
+                {currentPlan.description}
+              </p>
+            )}
+            <div className="card-actions justify-end ">
+              <button
+                className="btn btn-sm btn-primary"
+                onClick={() => handleEditView(currentPlan)}
+              >
+                Manage Plan
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <SimpleContainer
         title="Subscription Plans"
         actions={

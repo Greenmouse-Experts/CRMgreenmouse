@@ -17,6 +17,9 @@ import {
   Users,
   Shirt,
   Tag,
+  SubscriptIcon,
+  Check,
+  CheckCircle,
 } from "lucide-react";
 import AdminHeader from "./-components/AdminHeader";
 import { Link } from "@tanstack/react-router";
@@ -133,6 +136,14 @@ const nav_links = [
       },
     ],
   },
+  {
+    path: "/admin/subscription",
+    label: "Subscription",
+    icon: <CheckCircle size={ICON_SIZE} />,
+    type: "menu",
+    children: null,
+  },
+
   {
     path: "/admin/support",
     label: "Support",
