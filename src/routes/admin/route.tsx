@@ -240,7 +240,7 @@ function RouteComponent() {
                 <li key={link.path} className="mb-2">
                   <Link
                     to={link.path}
-                    className={`btn btn-ghost justify-start flex btn-sm ${isActive ? "btn-active" : ""}`}
+                    className={` ${isActive ? "bg-primary text-primary-content " : "opacity-70"} text-xs font-bold`}
                   >
                     {link.icon}
                     {link.label}
