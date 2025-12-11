@@ -78,9 +78,6 @@ function RouteComponent() {
       label: "Number",
       render: (value: string, item: Invoice) => (
         <div className="flex items-center gap-2">
-          {item.isStarred && (
-            <Star className="h-4 w-4 fill-current text-warning" />
-          )}
           <span>{value}</span>
         </div>
       ),
