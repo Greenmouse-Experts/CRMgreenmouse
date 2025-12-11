@@ -34,6 +34,24 @@ function RouteComponent() {
     { key: "createdAt", label: "Created At" },
   ];
 
+  const actions = [
+    {
+      key: "edit",
+      label: "Edit",
+      action: (item: any) => console.log("Edit:", item),
+    },
+    {
+      key: "view",
+      label: "View",
+      action: (item: any) => console.log("View:", item),
+    },
+    {
+      key: "delete",
+      label: "Delete",
+      action: (item: any) => console.log("Delete:", item),
+    },
+  ];
+
   return (
     <>
       <PageHeader
@@ -48,7 +66,11 @@ function RouteComponent() {
 
       <SimpleContainer title="Permissions">
         <ContainerRow searchProps={props} showSearch></ContainerRow>
-        <CustomTable data={permissionsData} columns={columns} />
+        <CustomTable
+          data={permissionsData}
+          columns={columns}
+          actions={actions}
+        />
       </SimpleContainer>
     </>
   );
