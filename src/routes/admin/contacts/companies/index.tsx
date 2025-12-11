@@ -12,6 +12,8 @@ import { faker } from "@faker-js/faker";
 import { useState } from "react";
 import SelectImage from "@/components/images/SelectImage";
 import { useSelectImage } from "@/helpers/images";
+import PageHeader from "@/components/Headers/PageHeader";
+import { PlusCircleIcon } from "lucide-react";
 
 export const Route = createFileRoute("/admin/contacts/companies/")({
   component: RouteComponent,
@@ -91,6 +93,15 @@ function RouteComponent() {
   const props = useSelectImage();
   return (
     <>
+      <PageHeader
+        title="Companies"
+        description="Manage companies and company info"
+      >
+        {/*//@ts-ignore*/}
+        <button onClick={() => {}} className="btn btn-primary ">
+          <PlusCircleIcon /> Add Company
+        </button>
+      </PageHeader>
       <Modal title="Add Company" ref={modal.ref}>
         <FormProvider {...form}>
           <form
@@ -151,16 +162,7 @@ function RouteComponent() {
       </Modal>
 
       <CompanySummary />
-      <SimpleContainer
-        title="Companies"
-        actions={
-          <>
-            <ActionButton onClick={() => modal.showModal()}>
-              Add Company
-            </ActionButton>
-          </>
-        }
-      >
+      <SimpleContainer title="Companies">
         <CustomTable
           ring={false}
           actions={[

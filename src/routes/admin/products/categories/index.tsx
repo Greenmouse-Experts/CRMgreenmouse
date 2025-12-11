@@ -5,6 +5,7 @@ import { useSearch } from "@/stores/data";
 import { PlusCircleIcon } from "lucide-react";
 import CustomTable from "@/components/tables/CustomTable";
 import { faker } from "@faker-js/faker";
+import PageHeader from "@/components/Headers/PageHeader";
 export const Route = createFileRoute("/admin/products/categories/")({
   component: RouteComponent,
 });
@@ -37,38 +38,31 @@ function RouteComponent() {
 
   const props = useSearch();
   return (
-    <div>
+    <>
+      <PageHeader
+        title="Product Categories"
+        description="Manage products and product info"
+      >
+        {/*//@ts-ignore*/}
+        <button onClick={() => {}} className="btn btn-primary ">
+          <PlusCircleIcon /> Create Category
+        </button>
+      </PageHeader>
       <SimpleContainer
         title="Categories"
-        actions={
-          <>
-            <button className="btn btn-sm btn-primary">
-              <PlusCircleIcon /> Create Category
-            </button>
-          </>
-        }
+        // actions={
+        //   <>
+        //     <button className="btn btn-sm btn-primary">
+        //       <PlusCircleIcon /> Create Category
+        //     </button>
+        //   </>
+        // }
       >
         {props.search}
-        <ContainerRow
-          searchProps={props}
-          showSearch={true}
-          actions={
-            <>
-              <ExportOptions
-                position="left"
-                options={[
-                  {
-                    name: "export as pdf",
-                    action: () => console.log("yes"),
-                  },
-                ]}
-              />
-            </>
-          }
-        />
+        <ContainerRow searchProps={props} showSearch={true} />
         <CustomTable data={categories} columns={columns} actions={actions} />
       </SimpleContainer>
-    </div>
+    </>
   );
 }
 

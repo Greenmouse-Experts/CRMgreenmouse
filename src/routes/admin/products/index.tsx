@@ -6,6 +6,7 @@ import { PlusCircleIcon } from "lucide-react";
 import CustomTable from "@/components/tables/CustomTable";
 import { faker } from "@faker-js/faker";
 import { Link } from "@tanstack/react-router";
+import PageHeader from "@/components/Headers/PageHeader";
 export const Route = createFileRoute("/admin/products/")({
   component: RouteComponent,
 });
@@ -46,18 +47,17 @@ function RouteComponent() {
 
   const props = useSearch();
   return (
-    <div>
-      <SimpleContainer
+    <>
+      <PageHeader
         title="Products"
-        actions={
-          <>
-            {/*//@ts-ignore*/}
-            <Link to="add" className="btn btn-sm btn-primary">
-              <PlusCircleIcon /> Create Product
-            </Link>
-          </>
-        }
+        description="Manage products and product info"
       >
+        {/*//@ts-ignore*/}
+        <button onClick={() => {}} className="btn btn-primary ">
+          <PlusCircleIcon /> Add Product
+        </button>
+      </PageHeader>
+      <SimpleContainer title="Products">
         {props.search}
         <ContainerRow searchProps={props} showSearch={true}>
           {/*<ExportOptions
@@ -72,7 +72,7 @@ function RouteComponent() {
         </ContainerRow>
         <CustomTable data={products} columns={columns} actions={actions} />
       </SimpleContainer>
-    </div>
+    </>
   );
 }
 
