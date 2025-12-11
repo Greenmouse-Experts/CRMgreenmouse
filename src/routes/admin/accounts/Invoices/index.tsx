@@ -89,7 +89,7 @@ function RouteComponent() {
         let badgeClass = "";
         switch (value) {
           case "Paid":
-            badgeClass = "badge-success text-success-content";
+            badgeClass = "badge-success ";
             break;
           case "Overdue":
             badgeClass = "badge-error ";
