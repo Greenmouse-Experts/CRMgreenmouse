@@ -119,7 +119,7 @@ function RouteComponent() {
 
   return (
     <>
-      <PageHeader title="Staffs">
+      <PageHeader title="Roles" description="Manage Roles, access control">
         {/*//@ts-ignore*/}
         <button onClick={openAddRoleModal} className="btn btn-primary ">
           <PlusCircleIcon /> Create Role
