@@ -1,3 +1,4 @@
+import SimpleTitle from "@/components/SimpleTitle";
 import { useParams } from "@tanstack/react-router";
 import { createFileRoute } from "@tanstack/react-router";
 
@@ -11,7 +12,8 @@ function RouteComponent() {
   });
   return (
     <>
-      <div className="text-2xl font-bold mb-4">New Invoices: {id}</div>
+      <SimpleTitle backBtn title={"Invoice Details: " + id} />
+      {/*<div className="text-2xl font-bold mb-4">New Invoices: {id}</div>*/}
 
       <div className="card bg-accent text-accent-content shadow-xl ">
         <div className="card-body p-6">
