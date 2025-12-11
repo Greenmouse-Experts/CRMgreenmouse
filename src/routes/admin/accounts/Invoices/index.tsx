@@ -106,7 +106,9 @@ function RouteComponent() {
             break;
         }
         return (
-          <span className={`badge ${badgeClass} text-xs capitalize badge-soft`}>
+          <span
+            className={`badge ${badgeClass} text-xs capitalize badge-soft ring ring-current/50 font-bold`}
+          >
             {value}
           </span>
         );

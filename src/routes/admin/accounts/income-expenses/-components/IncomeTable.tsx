@@ -31,7 +31,7 @@ export default function Incometable() {
       label: "Status",
       render: (value: string) => (
         <span
-          className={`badge ${
+          className={` badge badge-soft ring ring-current/50 text-xs font-bold badge-sm ${
             value === "Received"
               ? "badge-success"
               : value === "Pending"
