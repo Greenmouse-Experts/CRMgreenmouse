@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import ContainerRow from "@/components/ContainerRow";
 import SimpleContainer from "@/components/SimpleContainer";
 import { useSearch } from "@/stores/data";
@@ -12,6 +12,7 @@ import { FormProvider, useForm } from "react-hook-form";
 import SimpleTextArea from "@/components/inputs/SimpleTextArea";
 import Modal from "@/components/modals/DialogModal";
 import { useState } from "react";
+import PageHeader from "@/components/Headers/PageHeader";
 
 export const Route = createFileRoute("/admin/users/roles/")({
   component: RouteComponent,
@@ -117,7 +118,13 @@ function RouteComponent() {
   const addModal = useModal();
 
   return (
-    <div>
+    <>
+      <PageHeader title="Staffs">
+        {/*//@ts-ignore*/}
+        <button onClick={openAddRoleModal} className="btn btn-primary ">
+          <PlusCircleIcon /> Create Role
+        </button>
+      </PageHeader>
       <Modal title="Add Permissions" ref={addModal.ref}>
         <div className="space-y-2">
           <div className="form-control">
@@ -201,12 +208,12 @@ function RouteComponent() {
         title="Roles"
         actions={
           <>
-            <button
+            {/*<button
               className="btn btn-sm btn-primary"
               onClick={openAddRoleModal}
             >
               <PlusCircleIcon /> Create Role
-            </button>
+            </button>*/}
           </>
         }
       >
@@ -260,7 +267,7 @@ function RouteComponent() {
           </form>
         </FormProvider>
       </DialogModal>
-    </div>
+    </>
   );
 }
 

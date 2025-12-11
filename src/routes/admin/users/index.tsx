@@ -62,16 +62,22 @@ function RouteComponent() {
     <div className="space-y-4">
       <PageHeader title="Staffs">
         {/*//@ts-ignore*/}
-        <Link to="add" className="btn btn-primary btn-sm">
+        <Link to="add" className="btn btn-primary ">
           <PlusCircleIcon /> Add Staffs
         </Link>
       </PageHeader>
       <Modal ref={modal.ref} title="Add Staff"></Modal>
       <UserSummary />
-      <SimpleContainer title="Staffs">
+      <SimpleContainer
+        title={
+          <>
+            Staffs <span className="opacity-80">(10)</span>
+          </>
+        }
+      >
         <ContainerRow showSearch>
-          <button className="btn btn-accent  btn-outline">Filter</button>
-          <button className="btn btn-accent  btn-outline">Filter</button>
+          {/*<button className="btn btn-accent  btn-outline">Filter</button>
+          <button className="btn btn-accent  btn-outline">Filter</button>*/}
           <DropDownBtn
             title="Export"
             items={[
