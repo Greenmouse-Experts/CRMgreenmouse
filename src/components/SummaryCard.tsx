@@ -8,7 +8,10 @@ export default function SummaryCard({
 }) {
   return (
     <div>
-      <div key={item.title} className="bg-base-100 shadow rounded-box">
+      <div
+        key={item.title}
+        className="bg-base-100 shadow-md ring ring-current/10 rounded-box"
+      >
         <div className="stat">
           <div className="fieldset-label text-sm">{item.title}</div>
           <div className="stat-value">{item.value}</div>
