@@ -53,9 +53,11 @@ function RouteComponent() {
         description="Manage products and product info"
       >
         {/*//@ts-ignore*/}
-        <button onClick={() => {}} className="btn btn-primary ">
+        {/*<div>*/}
+        <Link to="/admin/products/add" className="btn btn-primary ">
           <PlusCircleIcon /> Add Product
-        </button>
+        </Link>
+        {/*</div>*/}
       </PageHeader>
       <SimpleContainer title="Products">
         {props.search}
