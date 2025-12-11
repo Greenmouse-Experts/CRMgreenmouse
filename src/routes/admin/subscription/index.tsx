@@ -8,6 +8,8 @@ import { useState } from "react";
 import { useForm, FormProvider } from "react-hook-form";
 import SimpleInput from "@/components/inputs/SimpleInput";
 import { nanoid } from "nanoid";
+import PageHeader from "@/components/Headers/PageHeader";
+import { PlusCircleIcon } from "lucide-react";
 
 // Define the type for the form values
 interface SubscriptionFormValues {
@@ -270,6 +272,17 @@ function RouteComponent() {
 
   return (
     <div className="space-y-4">
+      <PageHeader
+        title="Subscription Plans"
+        description="Manage your subscription plans and their associated roles."
+      >
+        <ActionButton
+          className="btn btn-primary "
+          onClick={handleAddSubscription}
+        >
+          <PlusCircleIcon /> Add Subscription
+        </ActionButton>
+      </PageHeader>
       <Modal ref={modal.ref} title={modalTitle}>
         {modalContent}
       </Modal>
@@ -307,12 +320,12 @@ function RouteComponent() {
         title="Subscriptions"
         actions={
           <>
-            <ActionButton
+            {/*<ActionButton
               className="btn btn-primary btn-sm"
               onClick={handleAddSubscription}
             >
               Add Subscription
-            </ActionButton>
+            </ActionButton>*/}
           </>
         }
       >
