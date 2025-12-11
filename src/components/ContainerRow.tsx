@@ -15,7 +15,7 @@ export default function ContainerRow(props: ContainerRowProps) {
     },
   });
   return (
-    <div className=" rounded-b-box ring ring-current/20  lg:h-16 px-2 bg-base-100 flex  flex-col md:flex-row gap-2 items-center py-2">
+    <div className=" shadow-md rounded-b-box ring ring-current/20  lg:h-16 px-2 bg-base-100 flex  flex-col md:flex-row gap-2 items-center py-2">
       {props.showSearch && (
         <form
           className="min-w-xs join w-full  md:w-fit"

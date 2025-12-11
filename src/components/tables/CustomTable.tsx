@@ -30,7 +30,7 @@ export default function CustomTable(props: CustomTableProps) {
   return (
     <div
       className={
-        "bg-base-100  ring ring-current/20 " +
+        "bg-base-100 shadow-xl  ring ring-current/20 " +
         (ring ? " rounded-box " : "rounded-b-box")
       }
     >

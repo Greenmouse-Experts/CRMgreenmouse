@@ -3,7 +3,7 @@ import AdminUserProfile from "./AdminUserProfile";
 
 export default function AdminHeader() {
   return (
-    <div className="h-20 px-4 flex bg-base-100 shadow-xs items-center">
+    <div className="h-20 px-4 flex bg-base-100  border-b border-current/10 shadow-md items-center">
       <label
         htmlFor="admin-drawer"
         className="btn btn-square btn-ghost lg:hidden"

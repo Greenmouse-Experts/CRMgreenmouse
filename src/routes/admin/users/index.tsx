@@ -11,6 +11,7 @@ import type { Actions } from "@/components/tables/pop-up";
 import { useModal } from "@/helpers/modals";
 import Modal from "@/components/modals/DialogModal";
 import { Link } from "@tanstack/react-router";
+import PageHeader from "@/components/Headers/PageHeader";
 export const Route = createFileRoute("/admin/users/")({
   component: RouteComponent,
 });
@@ -59,18 +60,15 @@ function RouteComponent() {
   const modal = useModal();
   return (
     <div className="space-y-4">
+      <PageHeader title="Staffs">
+        {/*//@ts-ignore*/}
+        <Link to="add" className="btn btn-primary btn-sm">
+          <PlusCircleIcon /> Add Staffs
+        </Link>
+      </PageHeader>
       <Modal ref={modal.ref} title="Add Staff"></Modal>
       <UserSummary />
-      <SimpleContainer
-        title="Staffs"
-        actions={
-          <>
-            <Link to="add" className="btn btn-primary btn-sm">
-              <PlusCircleIcon /> Add Staffs
-            </Link>
-          </>
-        }
-      >
+      <SimpleContainer title="Staffs">
         <ContainerRow showSearch>
           <button className="btn btn-accent  btn-outline">Filter</button>
           <button className="btn btn-accent  btn-outline">Filter</button>
