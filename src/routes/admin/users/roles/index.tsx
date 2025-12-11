@@ -72,6 +72,11 @@ function RouteComponent() {
 
   const actions = [
     {
+      key: "edit",
+      label: "Edit",
+      action: (item: any) => console.log("Edit", item),
+    },
+    {
       key: "viewPermissions",
       label: "View Permissions",
       action: (item: any) => {
@@ -80,11 +85,6 @@ function RouteComponent() {
 
         // You might open a modal here to display permissions
       },
-    },
-    {
-      key: "edit",
-      label: "Edit",
-      action: (item: any) => console.log("Edit", item),
     },
     {
       key: "addPermissions",

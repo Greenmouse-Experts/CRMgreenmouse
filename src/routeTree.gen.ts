@@ -19,6 +19,7 @@ import { Route as AdminSettingsRouteRouteImport } from './routes/admin/settings/
 import { Route as AuthLoginIndexRouteImport } from './routes/auth/login/index'
 import { Route as AdminUsersIndexRouteImport } from './routes/admin/users/index'
 import { Route as AdminTransactionsIndexRouteImport } from './routes/admin/transactions/index'
+import { Route as AdminSubscriptionIndexRouteImport } from './routes/admin/subscription/index'
 import { Route as AdminSettingsIndexRouteImport } from './routes/admin/settings/index'
 import { Route as AdminProductsIndexRouteImport } from './routes/admin/products/index'
 import { Route as AdminUsersRolesIndexRouteImport } from './routes/admin/users/roles/index'
@@ -85,6 +86,11 @@ const AdminUsersIndexRoute = AdminUsersIndexRouteImport.update({
 const AdminTransactionsIndexRoute = AdminTransactionsIndexRouteImport.update({
   id: '/transactions/',
   path: '/transactions/',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const AdminSubscriptionIndexRoute = AdminSubscriptionIndexRouteImport.update({
+  id: '/subscription/',
+  path: '/subscription/',
   getParentRoute: () => AdminRouteRoute,
 } as any)
 const AdminSettingsIndexRoute = AdminSettingsIndexRouteImport.update({
@@ -193,6 +199,7 @@ export interface FileRoutesByFullPath {
   '/test/': typeof TestIndexRoute
   '/admin/products': typeof AdminProductsIndexRoute
   '/admin/settings/': typeof AdminSettingsIndexRoute
+  '/admin/subscription': typeof AdminSubscriptionIndexRoute
   '/admin/transactions': typeof AdminTransactionsIndexRoute
   '/admin/users': typeof AdminUsersIndexRoute
   '/auth/login': typeof AuthLoginIndexRoute
@@ -219,6 +226,7 @@ export interface FileRoutesByTo {
   '/test': typeof TestIndexRoute
   '/admin/products': typeof AdminProductsIndexRoute
   '/admin/settings': typeof AdminSettingsIndexRoute
+  '/admin/subscription': typeof AdminSubscriptionIndexRoute
   '/admin/transactions': typeof AdminTransactionsIndexRoute
   '/admin/users': typeof AdminUsersIndexRoute
   '/auth/login': typeof AuthLoginIndexRoute
@@ -249,6 +257,7 @@ export interface FileRoutesById {
   '/test/': typeof TestIndexRoute
   '/admin/products/': typeof AdminProductsIndexRoute
   '/admin/settings/': typeof AdminSettingsIndexRoute
+  '/admin/subscription/': typeof AdminSubscriptionIndexRoute
   '/admin/transactions/': typeof AdminTransactionsIndexRoute
   '/admin/users/': typeof AdminUsersIndexRoute
   '/auth/login/': typeof AuthLoginIndexRoute
@@ -280,6 +289,7 @@ export interface FileRouteTypes {
     | '/test/'
     | '/admin/products'
     | '/admin/settings/'
+    | '/admin/subscription'
     | '/admin/transactions'
     | '/admin/users'
     | '/auth/login'
@@ -306,6 +316,7 @@ export interface FileRouteTypes {
     | '/test'
     | '/admin/products'
     | '/admin/settings'
+    | '/admin/subscription'
     | '/admin/transactions'
     | '/admin/users'
     | '/auth/login'
@@ -335,6 +346,7 @@ export interface FileRouteTypes {
     | '/test/'
     | '/admin/products/'
     | '/admin/settings/'
+    | '/admin/subscription/'
     | '/admin/transactions/'
     | '/admin/users/'
     | '/auth/login/'
@@ -432,6 +444,13 @@ declare module '@tanstack/react-router' {
       path: '/transactions'
       fullPath: '/admin/transactions'
       preLoaderRoute: typeof AdminTransactionsIndexRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
+    '/admin/subscription/': {
+      id: '/admin/subscription/'
+      path: '/subscription'
+      fullPath: '/admin/subscription'
+      preLoaderRoute: typeof AdminSubscriptionIndexRouteImport
       parentRoute: typeof AdminRouteRoute
     }
     '/admin/settings/': {
@@ -575,6 +594,7 @@ interface AdminRouteRouteChildren {
   AdminSettingsRouteRoute: typeof AdminSettingsRouteRouteWithChildren
   AdminIndexRoute: typeof AdminIndexRoute
   AdminProductsIndexRoute: typeof AdminProductsIndexRoute
+  AdminSubscriptionIndexRoute: typeof AdminSubscriptionIndexRoute
   AdminTransactionsIndexRoute: typeof AdminTransactionsIndexRoute
   AdminUsersIndexRoute: typeof AdminUsersIndexRoute
   AdminAccountsInvoicesIndexRoute: typeof AdminAccountsInvoicesIndexRoute
@@ -596,6 +616,7 @@ const AdminRouteRouteChildren: AdminRouteRouteChildren = {
   AdminSettingsRouteRoute: AdminSettingsRouteRouteWithChildren,
   AdminIndexRoute: AdminIndexRoute,
   AdminProductsIndexRoute: AdminProductsIndexRoute,
+  AdminSubscriptionIndexRoute: AdminSubscriptionIndexRoute,
   AdminTransactionsIndexRoute: AdminTransactionsIndexRoute,
   AdminUsersIndexRoute: AdminUsersIndexRoute,
   AdminAccountsInvoicesIndexRoute: AdminAccountsInvoicesIndexRoute,
