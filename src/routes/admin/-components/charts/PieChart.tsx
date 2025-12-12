@@ -36,7 +36,7 @@ export const PieChartExample = ({
 }: {
   isAnimationActive?: boolean;
 }) => (
-  <div className="space-y-4 p-4 bg-base-100 rounded-box shadow">
+  <div className="space-y-4 p-4 bg-base-100 h-fit rounded-box ">
     <h2 className="text-md font-bold">User Analytics</h2>
     <div className="flex gap-2 text-xs flex-wrap">
       {data02.map((item, index) => (
@@ -52,10 +52,11 @@ export const PieChartExample = ({
     <PieChart
       style={{
         width: "100%",
-        maxWidth: "500px",
-        maxHeight: "80vh",
-        aspectRatio: 1,
+        // maxWidth: "500px",
+        height: "100%",
+        // aspectRatio: 1,
       }}
+      className="flex-1"
       responsive
       margin={{ top: 50, right: 50, bottom: 50, left: 50 }}
     >

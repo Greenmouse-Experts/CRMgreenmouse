@@ -20,13 +20,13 @@ export default function AdminCharts() {
         </div>
       </div>
       <div className="  col-span-3 lg:col-span-2  space-y-8 ">
-        <div className="space-y-4 p-4  flex flex-col bg-base-100 rounded-box ring ring-current/10  shadow">
+        <div className="space-y-4 p-4   bg-base-100 rounded-box ring ring-current/10  shadow">
           <p className="mb-2 font-bold text-xl">Total Profit</p>
           <AreaChartExample />
         </div>
         <div className="max-w-fit">{/*<AdminRecents />*/}</div>
       </div>
-      <section className=" col-span-3 lg:col-span-1 space-y-6 ring ring-current/10 rounded-box">
+      <section className=" col-span-3 lg:col-span-1 space-y-6 h-fit ring ring-current/10 rounded-box">
         {/*<AdminWallet />*/}
 
         <PieChartExample />
