@@ -25,12 +25,15 @@ function RouteComponent() {
       <div
         className={`fixed inset-0 z-[-2] h-screen w-screen rotate-180 transform bg-white dark:bg-base-300 bg-[radial-gradient(oklch(from_var(--color-base-100)_l_c_h_/_50%),oklch(from_var(--color-primary)_l_c_h_/_50%))] opacity-50`}
       ></div>
-      <div className="fixed inset-0 opacity-10 bg-[linear-gradient(to_right,#4f4f4f2e_1px,transparent_1px),linear-gradient(to_bottom,#4f4f4f2e_1px,transparent_1px)] bg-[size:14px_24px] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_0%,#000_70%,transparent_110%)]"></div>
+      <div className="fixed inset-0 opacity-20 bg-[linear-gradient(to_right,#4f4f4f2e_1px,transparent_1px),linear-gradient(to_bottom,#4f4f4f2e_1px,transparent_1px)] bg-[size:14px_24px] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_0%,#000_70%,transparent_110%)]"></div>
       <div className="w-full flex flex-col mx-auto space-y-4 px-4  z-20  ">
         <div className="mt-12">
           <h2 className="text-3xl font-bold text-center leading-normal ">
             Kinovia Crm
           </h2>
+          <p className="font-semibold text-primary mx-auto w-fit text-sm">
+            Super Admin Portal
+          </p>
         </div>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
