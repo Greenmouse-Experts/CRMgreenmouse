@@ -23,7 +23,6 @@ import { Route as AdminSubscriptionIndexRouteImport } from './routes/admin/subsc
 import { Route as AdminSettingsIndexRouteImport } from './routes/admin/settings/index'
 import { Route as AdminProductsIndexRouteImport } from './routes/admin/products/index'
 import { Route as AdminUsersRolesIndexRouteImport } from './routes/admin/users/roles/index'
-import { Route as AdminUsersPermissionsIndexRouteImport } from './routes/admin/users/permissions/index'
 import { Route as AdminUsersAddIndexRouteImport } from './routes/admin/users/add/index'
 import { Route as AdminSettingsThemeIndexRouteImport } from './routes/admin/settings/theme/index'
 import { Route as AdminSettingsProfileIndexRouteImport } from './routes/admin/settings/profile/index'
@@ -109,12 +108,6 @@ const AdminUsersRolesIndexRoute = AdminUsersRolesIndexRouteImport.update({
   path: '/users/roles/',
   getParentRoute: () => AdminRouteRoute,
 } as any)
-const AdminUsersPermissionsIndexRoute =
-  AdminUsersPermissionsIndexRouteImport.update({
-    id: '/users/permissions/',
-    path: '/users/permissions/',
-    getParentRoute: () => AdminRouteRoute,
-  } as any)
 const AdminUsersAddIndexRoute = AdminUsersAddIndexRouteImport.update({
   id: '/users/add/',
   path: '/users/add/',
@@ -220,7 +213,6 @@ export interface FileRoutesByFullPath {
   '/admin/settings/profile': typeof AdminSettingsProfileIndexRoute
   '/admin/settings/theme': typeof AdminSettingsThemeIndexRoute
   '/admin/users/add': typeof AdminUsersAddIndexRoute
-  '/admin/users/permissions': typeof AdminUsersPermissionsIndexRoute
   '/admin/users/roles': typeof AdminUsersRolesIndexRoute
   '/admin/accounts/Invoices/$id': typeof AdminAccountsInvoicesIdIndexRoute
   '/admin/contacts/customers/add': typeof AdminContactsCustomersAddIndexRoute
@@ -248,7 +240,6 @@ export interface FileRoutesByTo {
   '/admin/settings/profile': typeof AdminSettingsProfileIndexRoute
   '/admin/settings/theme': typeof AdminSettingsThemeIndexRoute
   '/admin/users/add': typeof AdminUsersAddIndexRoute
-  '/admin/users/permissions': typeof AdminUsersPermissionsIndexRoute
   '/admin/users/roles': typeof AdminUsersRolesIndexRoute
   '/admin/accounts/Invoices/$id': typeof AdminAccountsInvoicesIdIndexRoute
   '/admin/contacts/customers/add': typeof AdminContactsCustomersAddIndexRoute
@@ -280,7 +271,6 @@ export interface FileRoutesById {
   '/admin/settings/profile/': typeof AdminSettingsProfileIndexRoute
   '/admin/settings/theme/': typeof AdminSettingsThemeIndexRoute
   '/admin/users/add/': typeof AdminUsersAddIndexRoute
-  '/admin/users/permissions/': typeof AdminUsersPermissionsIndexRoute
   '/admin/users/roles/': typeof AdminUsersRolesIndexRoute
   '/admin/accounts/Invoices/$id/': typeof AdminAccountsInvoicesIdIndexRoute
   '/admin/contacts/customers/add/': typeof AdminContactsCustomersAddIndexRoute
@@ -313,7 +303,6 @@ export interface FileRouteTypes {
     | '/admin/settings/profile'
     | '/admin/settings/theme'
     | '/admin/users/add'
-    | '/admin/users/permissions'
     | '/admin/users/roles'
     | '/admin/accounts/Invoices/$id'
     | '/admin/contacts/customers/add'
@@ -341,7 +330,6 @@ export interface FileRouteTypes {
     | '/admin/settings/profile'
     | '/admin/settings/theme'
     | '/admin/users/add'
-    | '/admin/users/permissions'
     | '/admin/users/roles'
     | '/admin/accounts/Invoices/$id'
     | '/admin/contacts/customers/add'
@@ -372,7 +360,6 @@ export interface FileRouteTypes {
     | '/admin/settings/profile/'
     | '/admin/settings/theme/'
     | '/admin/users/add/'
-    | '/admin/users/permissions/'
     | '/admin/users/roles/'
     | '/admin/accounts/Invoices/$id/'
     | '/admin/contacts/customers/add/'
@@ -485,13 +472,6 @@ declare module '@tanstack/react-router' {
       path: '/users/roles'
       fullPath: '/admin/users/roles'
       preLoaderRoute: typeof AdminUsersRolesIndexRouteImport
-      parentRoute: typeof AdminRouteRoute
-    }
-    '/admin/users/permissions/': {
-      id: '/admin/users/permissions/'
-      path: '/users/permissions'
-      fullPath: '/admin/users/permissions'
-      preLoaderRoute: typeof AdminUsersPermissionsIndexRouteImport
       parentRoute: typeof AdminRouteRoute
     }
     '/admin/users/add/': {
@@ -625,7 +605,6 @@ interface AdminRouteRouteChildren {
   AdminProductsAddIndexRoute: typeof AdminProductsAddIndexRoute
   AdminProductsCategoriesIndexRoute: typeof AdminProductsCategoriesIndexRoute
   AdminUsersAddIndexRoute: typeof AdminUsersAddIndexRoute
-  AdminUsersPermissionsIndexRoute: typeof AdminUsersPermissionsIndexRoute
   AdminUsersRolesIndexRoute: typeof AdminUsersRolesIndexRoute
   AdminAccountsInvoicesIdIndexRoute: typeof AdminAccountsInvoicesIdIndexRoute
   AdminContactsCustomersAddIndexRoute: typeof AdminContactsCustomersAddIndexRoute
@@ -648,7 +627,6 @@ const AdminRouteRouteChildren: AdminRouteRouteChildren = {
   AdminProductsAddIndexRoute: AdminProductsAddIndexRoute,
   AdminProductsCategoriesIndexRoute: AdminProductsCategoriesIndexRoute,
   AdminUsersAddIndexRoute: AdminUsersAddIndexRoute,
-  AdminUsersPermissionsIndexRoute: AdminUsersPermissionsIndexRoute,
   AdminUsersRolesIndexRoute: AdminUsersRolesIndexRoute,
   AdminAccountsInvoicesIdIndexRoute: AdminAccountsInvoicesIdIndexRoute,
   AdminContactsCustomersAddIndexRoute: AdminContactsCustomersAddIndexRoute,

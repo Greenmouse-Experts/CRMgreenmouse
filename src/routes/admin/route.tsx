@@ -61,13 +61,13 @@ const nav_links = [
         type: "menu",
         children: null,
       },
-      {
-        path: "/admin/users/permissions",
-        label: "Permissions",
-        icon: <Cog size={ICON_SIZE} />,
-        type: "menu",
-        children: null,
-      },
+      // {
+      //   path: "/admin/users/permissions",
+      //   label: "Permissions",
+      //   icon: <Cog size={ICON_SIZE} />,
+      //   type: "menu",
+      //   children: null,
+      // },
     ],
   },
   {
@@ -209,7 +209,7 @@ function RouteComponent() {
                 return (
                   <li key={link.path} className="mb-2">
                     <details open>
-                      <summary className="text-md font-semibold ">
+                      <summary className="text-md  font-semibold ">
                         {link.icon}
                         {link.label}
                       </summary>
