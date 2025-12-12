@@ -140,8 +140,8 @@ const SubscriptionForm = ({
         <LocalSelect label="Roles">
           <option value="">Select a role</option>
           <option value="Admin">Admin</option>
-          <option value="Editor">Editor</option>
-          <option value="Viewer">Viewer</option>
+          <option value="Editor">Staff</option>
+          <option value="Viewer">Sub-Admin</option>
         </LocalSelect>
         {/*<SimpleInput
           label="Roles (comma-separated)"

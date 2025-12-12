@@ -5,6 +5,7 @@ import ActionButton from "@/components/buttons/ActionButton";
 import { useSelectImage } from "@/helpers/images";
 import SelectImage from "@/components/images/SelectImage";
 import SimpleTitle from "@/components/SimpleTitle";
+import LocalSelect from "@/components/inputs/LocalSelect";
 
 export const Route = createFileRoute("/admin/users/add/")({
   component: RouteComponent,
@@ -40,11 +41,12 @@ function RouteComponent() {
                 },
               })}
             />
-            <SimpleInput
-              label="Role"
-              placeholder="Enter staff role"
-              {...methods.register("role", { required: "Role is required" })}
-            />
+            <LocalSelect label="Staff Role">
+              <option value="">Select a role</option>
+              <option value="Admin">Admin</option>
+              <option value="Editor">Staff</option>
+              <option value="Viewer">Sub-Admin</option>
+            </LocalSelect>
             <SimpleInput
               label="Phone Number"
               type="tel"
