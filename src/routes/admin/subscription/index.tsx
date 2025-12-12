@@ -10,6 +10,7 @@ import SimpleInput from "@/components/inputs/SimpleInput";
 import { nanoid } from "nanoid";
 import PageHeader from "@/components/Headers/PageHeader";
 import { PlusCircleIcon } from "lucide-react";
+import LocalSelect from "@/components/inputs/LocalSelect";
 
 // Define the type for the form values
 interface SubscriptionFormValues {
@@ -136,11 +137,17 @@ const SubscriptionForm = ({
         <SimpleInput label="Plan Duration" name="planDuration" />
         <SimpleInput label="Currency" name="currency" />
         <SimpleInput label="Plan Price" name="planPrice" />
-        <SimpleInput
+        <LocalSelect label="Roles">
+          <option value="">Select a role</option>
+          <option value="Admin">Admin</option>
+          <option value="Editor">Editor</option>
+          <option value="Viewer">Viewer</option>
+        </LocalSelect>
+        {/*<SimpleInput
           label="Roles (comma-separated)"
           name="roles"
           placeholder="e.g., User, Editor"
-        />
+        />*/}
 
         <div className="modal-action flex justify-end gap-2 mt-6">
           <button type="button" className="btn btn-ghost" onClick={onCancel}>

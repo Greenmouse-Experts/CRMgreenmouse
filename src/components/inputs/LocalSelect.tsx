@@ -10,7 +10,7 @@ const LocalSelect = forwardRef<HTMLSelectElement, LocalSelectProps>(
   ({ children, className, ...props }, ref) => {
     const { label } = props;
     return (
-      <>
+      <div className="w-full flex-1 ">
         {label && (
           <div className="fieldset-label font-semibold">
             <span className="text-base">{label}</span>
@@ -18,12 +18,12 @@ const LocalSelect = forwardRef<HTMLSelectElement, LocalSelectProps>(
         )}
         <select
           ref={ref}
-          className={`select select-bordered w-full max-w-xs ${className || ""}`}
+          className={`select flex-1 select-bordered w-full  ${className || ""}`}
           {...props}
         >
           {children}
         </select>
-      </>
+      </div>
     );
   },
 );

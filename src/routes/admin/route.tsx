@@ -134,6 +134,13 @@ const nav_links = [
         type: "menu",
         children: null,
       },
+      {
+        path: "/admin/accounts/analysis",
+        label: "Analysis",
+        icon: <BarChart2 size={ICON_SIZE} />,
+        type: "menu",
+        children: null,
+      },
     ],
   },
   {
