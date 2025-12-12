@@ -4,6 +4,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import SelectImage from "@/components/images/SelectImage";
 import SimpleInput from "@/components/inputs/SimpleInput";
 import { useForm, FormProvider } from "react-hook-form"; // Added FormProvider
+import SimpleTextArea from "@/components/inputs/SimpleTextArea";
 
 interface ProductFormFields {
   name: string;
@@ -62,7 +63,7 @@ function RouteComponent() {
                 min: { value: 0.01, message: "Price must be greater than 0" },
               })}
             />
-            <SimpleInput
+            <SimpleTextArea
               label="Description"
               type="textarea"
               placeholder="Enter product description"
