@@ -4,22 +4,14 @@ import {
   Package,
   ReceiptText,
   Settings,
-  UserPlus,
   ShoppingCart,
   CreditCard,
-  Bell,
-  MessageSquare,
-  Megaphone,
   BarChart2,
   HelpCircle,
-  Cog,
-  Ticket,
-  Users,
   Shirt,
   Tag,
-  SubscriptIcon,
-  Check,
   CheckCircle,
+  Users,
 } from "lucide-react";
 import AdminHeader from "./-components/AdminHeader";
 import { Link } from "@tanstack/react-router";
@@ -228,7 +220,7 @@ function RouteComponent() {
                             <li key={childLink.path}>
                               <Link
                                 to={childLink.path}
-                                className={` ${isChildActive ? "bg-primary text-primary-content " : "opacity-70"} text-md font-bold py-2 rounded-box`}
+                                className={` ${isChildActive ? "bg-primary text-primary-content " : ""} text-md font-bold py-2 rounded-box`}
                               >
                                 {childLink.icon}
                                 {childLink.label}
