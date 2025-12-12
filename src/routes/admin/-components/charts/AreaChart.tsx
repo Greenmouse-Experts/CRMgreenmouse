@@ -2,6 +2,7 @@ import {
   Area,
   AreaChart,
   CartesianGrid,
+  ResponsiveContainer,
   Tooltip,
   XAxis,
   YAxis,
@@ -40,7 +41,7 @@ const AreaChartExample = ({ isAnimationActive = true }) => (
   <AreaChart
     style={{
       width: "100%",
-      maxWidth: "700px",
+      // maxWidth: "700px",
       maxHeight: "70vh",
       aspectRatio: 1.618,
       fontSize: "0.75rem", // Reduced base font size
