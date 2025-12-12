@@ -63,7 +63,7 @@ const StatCard = ({
           <div className="flex-1 space-y-2">
             <p className="text-xl font-extrabold mt-2">{value}</p>
             <div className="flex items-center justify-between">
-              <h2 className="card-title text-xs text-base-content ">{title}</h2>
+              <h2 className=" text-xs text-base-content ">{title}</h2>
             </div>
           </div>
           <div>
