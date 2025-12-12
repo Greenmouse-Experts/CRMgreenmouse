@@ -24,12 +24,12 @@ const SimpleInput = forwardRef<HTMLInputElement, SimpleInputProps>(
       <div className="w-full space-y-2">
         {label && (
           <div className="fieldset-label font-semibold">
-            <span className="text-base">{label}</span>
+            <span className="text-sm">{label}</span>
           </div>
         )}
 
         <div
-          className={`input input-bordered flex items-center gap-2 w-full ${
+          className={`input input-md text-sm  input-bordered flex items-center gap-2 w-full ${
             error ? "input-error" : ""
           }`}
         >

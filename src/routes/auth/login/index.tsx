@@ -1,8 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Divide } from "lucide-react";
 import { useForm } from "react-hook-form";
-import Lottie from "lottie-react";
-import anim from "./data_scan.json";
 import { useNavigate } from "@tanstack/react-router";
 import SimpleInput from "@/components/inputs/SimpleInput";
 export const Route = createFileRoute("/auth/login/")({
@@ -24,15 +21,21 @@ function RouteComponent() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-base-300">
-      <div className="w-full flex flex-col mx-auto space-y-4 px-4">
-        <h2 className="text-4xl font-bold text-center leading-normal">
-          Kinovia <br /> Crm{" "}
-        </h2>
+    <div className="min-h-screen flex items-center justify-center bg-base-300 isolate">
+      <div
+        className={`fixed inset-0 z-[-2] h-screen w-screen rotate-180 transform bg-white dark:bg-base-300 bg-[radial-gradient(oklch(from_var(--color-base-100)_l_c_h_/_50%),oklch(from_var(--color-primary)_l_c_h_/_50%))] opacity-50`}
+      ></div>
+      <div className="fixed inset-0 opacity-10 bg-[linear-gradient(to_right,#4f4f4f2e_1px,transparent_1px),linear-gradient(to_bottom,#4f4f4f2e_1px,transparent_1px)] bg-[size:14px_24px] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_0%,#000_70%,transparent_110%)]"></div>
+      <div className="w-full flex flex-col mx-auto space-y-4 px-4  z-20  ">
+        <div className="mt-12">
+          <h2 className="text-3xl font-bold text-center leading-normal ">
+            Kinovia Crm
+          </h2>
+        </div>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
           action=""
-          className="p-6 space-y-6 py-8 mx-auto  bg-base-100 shadow w-full max-w-lg m-2 "
+          className="p-6 space-y-6 py-8 mx-auto  bg-base-100 rounded-box drop-shadow-xl ring ring-current/10 w-full max-w-md m-2  "
         >
           <div className="space-y-1 ">
             <h2 className="text-2xl font-bold">Admin Login</h2>
@@ -52,6 +55,15 @@ function RouteComponent() {
             <span className="fieldset-label text-sm">Remember Me</span>
           </div>
           <button className="btn btn-primary btn-block">Login</button>
+          <div className="">
+            <section className="ring ring-current/10 bg-base-200 rounded-box p-4 text-xs text-base-content/80 space-y-2">
+              <p className="font-semibold ">Demo Credientials</p>
+              <div>
+                <p>Email: greenmousedev+admin@gmail.com</p>
+                <p>Password: admin124</p>
+              </div>
+            </section>
+          </div>
         </form>
       </div>
     </div>
