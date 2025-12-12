@@ -124,6 +124,7 @@ const SubscriptionForm = ({
       roles: "",
     },
   });
+  const { register } = methods;
 
   return (
     <FormProvider {...methods}>
@@ -133,11 +134,11 @@ const SubscriptionForm = ({
           <input type="hidden" {...methods.register("id")} />
         )}
 
-        <SimpleInput label="Name" name="name" />
-        <SimpleInput label="Plan Duration" name="planDuration" />
-        <SimpleInput label="Currency" name="currency" />
-        <SimpleInput label="Plan Price" name="planPrice" />
-        <LocalSelect label="Roles">
+        <SimpleInput label="Name" {...register("name")} />
+        <SimpleInput label="Plan Duration" {...register("planDuration")} />
+        <SimpleInput label="Currency" {...register("currency")} />
+        <SimpleInput label="Plan Price" {...register("planPrice")} />
+        <LocalSelect label="Roles" {...register("roles")}>
           <option value="">Select a role</option>
           <option value="Admin">Admin</option>
           <option value="Editor">Staff</option>

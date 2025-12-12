@@ -65,7 +65,6 @@ function RouteComponent() {
             />
             <SimpleTextArea
               label="Description"
-              type="textarea"
               placeholder="Enter product description"
               {...methods.register("description")} // Use methods.register
             />

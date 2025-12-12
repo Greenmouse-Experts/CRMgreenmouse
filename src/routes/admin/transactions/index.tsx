@@ -57,19 +57,19 @@ function RouteComponent() {
         <ContainerRow
           searchProps={props}
           showSearch={true}
-          actions={
-            <>
-              <ExportOptions
-                position="left"
-                options={[
-                  {
-                    name: "export as pdf",
-                    action: () => console.log("yes"),
-                  },
-                ]}
-              />
-            </>
-          }
+          // actions={
+          //   <>
+          //     <ExportOptions
+          //       position="left"
+          //       options={[
+          //         {
+          //           name: "export as pdf",
+          //           action: () => console.log("yes"),
+          //         },
+          //       ]}
+          //     />
+          //   </>
+          // }
         />
         <CustomTable data={transactions} columns={columns} actions={actions} />
       </SimpleContainer>
