@@ -38,7 +38,7 @@ function RouteComponent() {
         <form
           onSubmit={form.handleSubmit(onSubmit)}
           action=""
-          className="p-6 space-y-6 py-8 mx-auto  bg-base-100 rounded-box drop-shadow-xl ring ring-current/10 w-full max-w-md m-2  "
+          className="p-6 space-y-6 py-8 mx-auto  bg-base-200 rounded-box drop-shadow-xl ring ring-current/10 w-full max-w-md m-2  "
         >
           <div className="space-y-1 ">
             <h2 className="text-2xl font-bold">Admin Login</h2>
