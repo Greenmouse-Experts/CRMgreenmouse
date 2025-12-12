@@ -42,7 +42,7 @@ function RouteComponent() {
         >
           <div className="space-y-1 ">
             <h2 className="text-2xl font-bold">Admin Login</h2>
-            <p className="text-sm text-center label ">
+            <p className="text-sm text-center fieldset-label ">
               Enter your credentials to access your account
             </p>
           </div>
