@@ -3,17 +3,15 @@ import type { SelectHTMLAttributes } from "react";
 
 interface LocalSelectProps extends SelectHTMLAttributes<HTMLSelectElement> {
   label?: string;
-  // Add any specific props for your LocalSelect component here if needed
 }
 
 const LocalSelect = forwardRef<HTMLSelectElement, LocalSelectProps>(
-  ({ children, className, ...props }, ref) => {
-    const { label } = props;
+  ({ children, className, label, ...props }, ref) => {
     return (
       <div className="w-full flex-1 ">
         {label && (
-          <div className="fieldset-label font-semibold">
-            <span className="text-base">{label}</span>
+          <div className="fieldset-label font-semibold  mb-2">
+            <span className="text-sm">{label}</span>
           </div>
         )}
         <select
