@@ -40,7 +40,7 @@ export default function AdminMonthly() {
             {balanceDetails.map((item, index) => (
               <div
                 key={index}
-                className="flex flex-col items-center p-4 bg-base-200 rounded-lg shadow-md transition-all duration-200 hover:scale-[1.02] hover:shadow-lg justify-center text-center"
+                className="flex flex-col items-center p-4 bg-base-100 ring ring-current/10 rounded-box shadow-md transition-all duration-200 hover:scale-[1.02] hover:shadow-lg justify-center text-center"
               >
                 <span
                   className={`text-xl font-bold ${
