@@ -1,52 +1,54 @@
-import { faker } from "@faker-js/faker";
+import SimpleContainer from "@/components/SimpleContainer";
 import CustomTable from "@/components/tables/CustomTable";
-
-type columnType = {
-  key: string;
-  label: string;
-  render?: (value: any, item: any) => any;
-};
+import { faker } from "@faker-js/faker";
+import { Link } from "@tanstack/react-router";
 
 export default function AdminRecents() {
-  const recentUsers = Array.from({ length: 5 }, () => ({
-    id: faker.string.uuid(),
-    name: faker.person.fullName(),
-    email: faker.internet.email(),
-    registeredAt: faker.date.past().toLocaleDateString(),
+  const transactions = Array.from({ length: 5 }, (_, i) => ({
+    id: i + 1,
+    transactionId: faker.string.uuid(),
+    amount: faker.finance.amount(),
+    status: faker.helpers.arrayElement(["Completed", "Pending", "Failed"]),
+    date: faker.date.past().toLocaleDateString(),
   }));
 
-  const userColumns: columnType[] = [
-    { key: "name", label: "Name" },
-    { key: "email", label: "Email" },
-    { key: "registeredAt", label: "Registered At" },
+  const columns = [
+    { key: "transactionId", label: "Transaction ID" },
+    { key: "amount", label: "Amount" },
+    { key: "status", label: "Status" },
+    { key: "date", label: "Date" },
+  ];
+
+  const actions = [
+    {
+      key: "view",
+      label: "View",
+      action: (item: any) => console.log("View transaction:", item),
+    },
   ];
 
   return (
-    <div className="w-full">
-      <Card title="Recent Users" data={recentUsers} columns={userColumns} />
+    <div className="space-y-4">
+      <SimpleContainer
+        title="Recent Transactions"
+        actions={
+          <>
+            <Link to="/admin/transactions" className="btn btn-primary btn-sm">
+              See More
+            </Link>
+          </>
+        }
+      >
+        <CustomTable
+          ring={false}
+          data={transactions}
+          columns={columns}
+          actions={actions}
+        />
+        {/*<div className="flex justify-center mt-4">
+          <button className="btn btn-ghost">See More</button>
+        </div>*/}
+      </SimpleContainer>
     </div>
   );
 }
-
-const Card = ({
-  title,
-  data,
-  columns,
-}: {
-  title: string;
-  data: any[];
-  columns: columnType[];
-}) => {
-  return (
-    <div className="card bg-base-100 shadow-xl w-full">
-      <div className="card-body p-4">
-        <h2 className="card-title text-lg font-semibold mb-4">{title}</h2>
-        <div className="overflow-x-auto">
-          {" "}
-          {/* Added for responsiveness */}
-          <CustomTable data={data} columns={columns} />
-        </div>
-      </div>
-    </div>
-  );
-};

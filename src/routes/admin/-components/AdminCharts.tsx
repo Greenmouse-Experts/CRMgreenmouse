@@ -1,4 +1,5 @@
 import AreaChartExample from "./charts/AreaChart";
+import IncomeExpense from "./charts/IncomeExpense";
 import PieChartExample from "./charts/PieChart";
 
 export default function AdminCharts() {
@@ -19,18 +20,20 @@ export default function AdminCharts() {
           <p className="text-sm sm:text-base">Have a great day</p>
         </div>
       </div>
-      <div className="  col-span-3 lg:col-span-2  space-y-8 ">
+      <div className="col-span-3">
+        <IncomeExpense />
+      </div>
+      {/*<div className="  col-span-3 lg:col-span-2  space-y-8 ">
         <div className="space-y-4 p-4   bg-base-100 rounded-box ring ring-current/10  shadow">
           <p className="mb-2 font-bold text-xl">Total Profit</p>
           <AreaChartExample />
         </div>
-        <div className="max-w-fit">{/*<AdminRecents />*/}</div>
-      </div>
-      <section className=" col-span-3 lg:col-span-1 space-y-6 h-fit ring ring-current/10 rounded-box">
-        {/*<AdminWallet />*/}
+        <div className="max-w-fit"></div>
+      </div>*/}
+      {/*<section className=" col-span-3 lg:col-span-1 space-y-6 h-fit ring ring-current/10 rounded-box">
 
         <PieChartExample />
-      </section>
+      </section>*/}
     </div>
   );
 }

@@ -58,9 +58,9 @@ export default function AdminUserList() {
           columns={columns}
           actions={actions}
         />
-        <div className="flex justify-center mt-4">
+        {/*<div className="flex justify-center mt-4">
           <button className="btn btn-ghost">See More</button>
-        </div>
+        </div>*/}
       </SimpleContainer>
     </div>
   );

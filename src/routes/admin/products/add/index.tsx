@@ -53,6 +53,17 @@ function RouteComponent() {
               })} // Use methods.register
             />
             <SimpleInput
+              label="Quantity"
+              type="number"
+              placeholder="Enter product quantity"
+              {...methods.register("quantity", {
+                // Use methods.register
+                required: "Quantity is required",
+                valueAsNumber: true,
+                min: { value: 1, message: "Quantity must be greater than 0" },
+              })}
+            />
+            <SimpleInput
               label="Price"
               type="number"
               placeholder="Enter product price"

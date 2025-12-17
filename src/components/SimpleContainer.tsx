@@ -4,13 +4,18 @@ import type { JSX } from "react/jsx-runtime";
 interface ContainerProps extends PropsWithChildren {
   title?: string | ReactNode;
   actions?: ReactNode | JSX.Element | any;
+  fade?: boolean;
 }
 
 export default function SimpleContainer(props: ContainerProps) {
   return (
     <div className="">
       <div className="  ring ring-current/20 rounded-t-box flex h-14 bg-base-100 items-center px-4">
-        <h2 className="text-lg font-bold">{props.title || "Title"}</h2>{" "}
+        <h2
+          className={`text-lg font-bold  ${props.fade ? "text-current/80" : ""}`}
+        >
+          {props.title || "Title"}
+        </h2>{" "}
         <div className=""></div>
         <div
           className="ml-auto
