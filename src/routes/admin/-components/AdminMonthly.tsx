@@ -36,11 +36,11 @@ export default function AdminMonthly() {
           <h2 className="text-center text-5xl font-extrabold mb-6 text-primary">
             ${balance.toLocaleString()}
           </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 grow">
+          <div className="grid grid-cols-1 sm:grid-cols-2  grow overflow-hidden ring rounded-box ring-current/10">
             {balanceDetails.map((item, index) => (
               <div
                 key={index}
-                className="flex flex-col items-center p-4 bg-base-100 ring ring-current/10 rounded-box shadow-md transition-all duration-200 hover:scale-[1.02] hover:shadow-lg justify-center text-center"
+                className="flex flex-col items-center p-4 bg-base-100 ring ring-current/20 transition-all duration-200 hover:scale-[1.02] hover:shadow-lg justify-center text-center"
               >
                 <span
                   className={`text-xl font-bold ${
