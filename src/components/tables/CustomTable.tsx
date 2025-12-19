@@ -1,14 +1,13 @@
-import { MenuIcon } from "lucide-react";
 import { nanoid } from "nanoid";
 import { useState } from "react";
 import PopUp, { type Actions } from "./pop-up";
 // import CaryBinApi from "../services/CarybinBaseUrl";
 // import { Link } from "react-router-dom";
 
-type columnType = {
+export type columnType<T = any> = {
   key: string;
   label: string;
-  render?: (value: any, item: any) => any;
+  render?: (value: any, item: T) => any;
 };
 
 // type  Actions extends  = {

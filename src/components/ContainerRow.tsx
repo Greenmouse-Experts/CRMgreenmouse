@@ -18,7 +18,7 @@ export default function ContainerRow(props: ContainerRowProps) {
     <div className=" shadow-md rounded-b-box ring ring-current/20  lg:h-16 px-2 bg-base-100 flex  flex-col md:flex-row gap-2 items-center py-2">
       {props.showSearch && (
         <form
-          className="min-w-xs join w-full  md:w-fit"
+          className="min-w-xs join flex-1"
           onSubmit={form.handleSubmit((data) => {
             if (setSearch) {
               // Only call setSearch if it exists
@@ -28,7 +28,7 @@ export default function ContainerRow(props: ContainerRowProps) {
         >
           <input
             {...form.register("search")}
-            className="input join-item text-sm "
+            className="input join-item text-sm flex-1"
             placeholder="Search...."
           />
           <button className="btn btn-primary btn-square  join-item ">
@@ -49,7 +49,7 @@ export default function ContainerRow(props: ContainerRowProps) {
           )}
         </form>
       )}
-      <div className={"flex-1 flex items-center gap-2 w-full lg:w-auto"}>
+      <div className={"flex items-center gap-2 w-full lg:w-auto"}>
         {props.children}
       </div>
     </div>
