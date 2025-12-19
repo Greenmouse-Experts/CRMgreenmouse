@@ -12,6 +12,7 @@ import {
   Tag,
   CheckCircle,
   Users,
+  DollarSign,
 } from "lucide-react";
 import AdminHeader from "./-components/AdminHeader";
 import { Link } from "@tanstack/react-router";
@@ -130,6 +131,13 @@ const nav_links = [
         path: "/admin/accounts/analysis",
         label: "Analysis",
         icon: <BarChart2 size={ICON_SIZE} />,
+        type: "menu",
+        children: null,
+      },
+      {
+        path: "/admin/accounts/transactions",
+        label: "Transactions",
+        icon: <DollarSign size={ICON_SIZE} />,
         type: "menu",
         children: null,
       },
