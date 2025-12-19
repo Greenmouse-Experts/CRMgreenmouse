@@ -81,7 +81,7 @@ export const PieChartExample = ({
       </Pie>
     </PieChart>*/}
 
-    <SimpleContainer>
+    <SimpleContainer title="User Analytics">
       <div className="ring ring-current/20 rounded-b-box p-4">
         <div className="flex gap-2 text-xs flex-wrap">
           {data02.map((item, index) => (

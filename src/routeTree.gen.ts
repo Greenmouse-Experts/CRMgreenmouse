@@ -26,16 +26,19 @@ import { Route as AdminUsersRolesIndexRouteImport } from './routes/admin/users/r
 import { Route as AdminUsersAddIndexRouteImport } from './routes/admin/users/add/index'
 import { Route as AdminSettingsThemeIndexRouteImport } from './routes/admin/settings/theme/index'
 import { Route as AdminSettingsProfileIndexRouteImport } from './routes/admin/settings/profile/index'
+import { Route as AdminProductsServiceIndexRouteImport } from './routes/admin/products/service/index'
 import { Route as AdminProductsCategoriesIndexRouteImport } from './routes/admin/products/categories/index'
 import { Route as AdminProductsAddIndexRouteImport } from './routes/admin/products/add/index'
 import { Route as AdminContactsCustomersIndexRouteImport } from './routes/admin/contacts/customers/index'
 import { Route as AdminContactsCompaniesIndexRouteImport } from './routes/admin/contacts/companies/index'
 import { Route as AdminAccountsTransactionsIndexRouteImport } from './routes/admin/accounts/transactions/index'
 import { Route as AdminAccountsSalesIndexRouteImport } from './routes/admin/accounts/sales/index'
+import { Route as AdminAccountsQuotesIndexRouteImport } from './routes/admin/accounts/quotes/index'
 import { Route as AdminAccountsIncomeExpensesIndexRouteImport } from './routes/admin/accounts/income-expenses/index'
 import { Route as AdminAccountsAnalysisIndexRouteImport } from './routes/admin/accounts/analysis/index'
 import { Route as AdminAccountsInvoicesIndexRouteImport } from './routes/admin/accounts/Invoices/index'
 import { Route as AdminUsersDetailsIdIndexRouteImport } from './routes/admin/users/details/$id/index'
+import { Route as AdminProductsServiceAddIndexRouteImport } from './routes/admin/products/service/add/index'
 import { Route as AdminContactsCustomersAddIndexRouteImport } from './routes/admin/contacts/customers/add/index'
 import { Route as AdminAccountsInvoicesIdIndexRouteImport } from './routes/admin/accounts/Invoices/$id/index'
 import { Route as AdminContactsCompaniesDetailsIdIndexRouteImport } from './routes/admin/contacts/companies/details/$id/index'
@@ -126,6 +129,12 @@ const AdminSettingsProfileIndexRoute =
     path: '/profile/',
     getParentRoute: () => AdminSettingsRouteRoute,
   } as any)
+const AdminProductsServiceIndexRoute =
+  AdminProductsServiceIndexRouteImport.update({
+    id: '/products/service/',
+    path: '/products/service/',
+    getParentRoute: () => AdminRouteRoute,
+  } as any)
 const AdminProductsCategoriesIndexRoute =
   AdminProductsCategoriesIndexRouteImport.update({
     id: '/products/categories/',
@@ -160,6 +169,12 @@ const AdminAccountsSalesIndexRoute = AdminAccountsSalesIndexRouteImport.update({
   path: '/accounts/sales/',
   getParentRoute: () => AdminRouteRoute,
 } as any)
+const AdminAccountsQuotesIndexRoute =
+  AdminAccountsQuotesIndexRouteImport.update({
+    id: '/accounts/quotes/',
+    path: '/accounts/quotes/',
+    getParentRoute: () => AdminRouteRoute,
+  } as any)
 const AdminAccountsIncomeExpensesIndexRoute =
   AdminAccountsIncomeExpensesIndexRouteImport.update({
     id: '/accounts/income-expenses/',
@@ -182,6 +197,12 @@ const AdminUsersDetailsIdIndexRoute =
   AdminUsersDetailsIdIndexRouteImport.update({
     id: '/users/details/$id/',
     path: '/users/details/$id/',
+    getParentRoute: () => AdminRouteRoute,
+  } as any)
+const AdminProductsServiceAddIndexRoute =
+  AdminProductsServiceAddIndexRouteImport.update({
+    id: '/products/service/add/',
+    path: '/products/service/add/',
     getParentRoute: () => AdminRouteRoute,
   } as any)
 const AdminContactsCustomersAddIndexRoute =
@@ -220,18 +241,21 @@ export interface FileRoutesByFullPath {
   '/admin/accounts/Invoices': typeof AdminAccountsInvoicesIndexRoute
   '/admin/accounts/analysis': typeof AdminAccountsAnalysisIndexRoute
   '/admin/accounts/income-expenses': typeof AdminAccountsIncomeExpensesIndexRoute
+  '/admin/accounts/quotes': typeof AdminAccountsQuotesIndexRoute
   '/admin/accounts/sales': typeof AdminAccountsSalesIndexRoute
   '/admin/accounts/transactions': typeof AdminAccountsTransactionsIndexRoute
   '/admin/contacts/companies': typeof AdminContactsCompaniesIndexRoute
   '/admin/contacts/customers': typeof AdminContactsCustomersIndexRoute
   '/admin/products/add': typeof AdminProductsAddIndexRoute
   '/admin/products/categories': typeof AdminProductsCategoriesIndexRoute
+  '/admin/products/service': typeof AdminProductsServiceIndexRoute
   '/admin/settings/profile': typeof AdminSettingsProfileIndexRoute
   '/admin/settings/theme': typeof AdminSettingsThemeIndexRoute
   '/admin/users/add': typeof AdminUsersAddIndexRoute
   '/admin/users/roles': typeof AdminUsersRolesIndexRoute
   '/admin/accounts/Invoices/$id': typeof AdminAccountsInvoicesIdIndexRoute
   '/admin/contacts/customers/add': typeof AdminContactsCustomersAddIndexRoute
+  '/admin/products/service/add': typeof AdminProductsServiceAddIndexRoute
   '/admin/users/details/$id': typeof AdminUsersDetailsIdIndexRoute
   '/admin/contacts/companies/details/$id': typeof AdminContactsCompaniesDetailsIdIndexRoute
 }
@@ -249,18 +273,21 @@ export interface FileRoutesByTo {
   '/admin/accounts/Invoices': typeof AdminAccountsInvoicesIndexRoute
   '/admin/accounts/analysis': typeof AdminAccountsAnalysisIndexRoute
   '/admin/accounts/income-expenses': typeof AdminAccountsIncomeExpensesIndexRoute
+  '/admin/accounts/quotes': typeof AdminAccountsQuotesIndexRoute
   '/admin/accounts/sales': typeof AdminAccountsSalesIndexRoute
   '/admin/accounts/transactions': typeof AdminAccountsTransactionsIndexRoute
   '/admin/contacts/companies': typeof AdminContactsCompaniesIndexRoute
   '/admin/contacts/customers': typeof AdminContactsCustomersIndexRoute
   '/admin/products/add': typeof AdminProductsAddIndexRoute
   '/admin/products/categories': typeof AdminProductsCategoriesIndexRoute
+  '/admin/products/service': typeof AdminProductsServiceIndexRoute
   '/admin/settings/profile': typeof AdminSettingsProfileIndexRoute
   '/admin/settings/theme': typeof AdminSettingsThemeIndexRoute
   '/admin/users/add': typeof AdminUsersAddIndexRoute
   '/admin/users/roles': typeof AdminUsersRolesIndexRoute
   '/admin/accounts/Invoices/$id': typeof AdminAccountsInvoicesIdIndexRoute
   '/admin/contacts/customers/add': typeof AdminContactsCustomersAddIndexRoute
+  '/admin/products/service/add': typeof AdminProductsServiceAddIndexRoute
   '/admin/users/details/$id': typeof AdminUsersDetailsIdIndexRoute
   '/admin/contacts/companies/details/$id': typeof AdminContactsCompaniesDetailsIdIndexRoute
 }
@@ -282,18 +309,21 @@ export interface FileRoutesById {
   '/admin/accounts/Invoices/': typeof AdminAccountsInvoicesIndexRoute
   '/admin/accounts/analysis/': typeof AdminAccountsAnalysisIndexRoute
   '/admin/accounts/income-expenses/': typeof AdminAccountsIncomeExpensesIndexRoute
+  '/admin/accounts/quotes/': typeof AdminAccountsQuotesIndexRoute
   '/admin/accounts/sales/': typeof AdminAccountsSalesIndexRoute
   '/admin/accounts/transactions/': typeof AdminAccountsTransactionsIndexRoute
   '/admin/contacts/companies/': typeof AdminContactsCompaniesIndexRoute
   '/admin/contacts/customers/': typeof AdminContactsCustomersIndexRoute
   '/admin/products/add/': typeof AdminProductsAddIndexRoute
   '/admin/products/categories/': typeof AdminProductsCategoriesIndexRoute
+  '/admin/products/service/': typeof AdminProductsServiceIndexRoute
   '/admin/settings/profile/': typeof AdminSettingsProfileIndexRoute
   '/admin/settings/theme/': typeof AdminSettingsThemeIndexRoute
   '/admin/users/add/': typeof AdminUsersAddIndexRoute
   '/admin/users/roles/': typeof AdminUsersRolesIndexRoute
   '/admin/accounts/Invoices/$id/': typeof AdminAccountsInvoicesIdIndexRoute
   '/admin/contacts/customers/add/': typeof AdminContactsCustomersAddIndexRoute
+  '/admin/products/service/add/': typeof AdminProductsServiceAddIndexRoute
   '/admin/users/details/$id/': typeof AdminUsersDetailsIdIndexRoute
   '/admin/contacts/companies/details/$id/': typeof AdminContactsCompaniesDetailsIdIndexRoute
 }
@@ -316,18 +346,21 @@ export interface FileRouteTypes {
     | '/admin/accounts/Invoices'
     | '/admin/accounts/analysis'
     | '/admin/accounts/income-expenses'
+    | '/admin/accounts/quotes'
     | '/admin/accounts/sales'
     | '/admin/accounts/transactions'
     | '/admin/contacts/companies'
     | '/admin/contacts/customers'
     | '/admin/products/add'
     | '/admin/products/categories'
+    | '/admin/products/service'
     | '/admin/settings/profile'
     | '/admin/settings/theme'
     | '/admin/users/add'
     | '/admin/users/roles'
     | '/admin/accounts/Invoices/$id'
     | '/admin/contacts/customers/add'
+    | '/admin/products/service/add'
     | '/admin/users/details/$id'
     | '/admin/contacts/companies/details/$id'
   fileRoutesByTo: FileRoutesByTo
@@ -345,18 +378,21 @@ export interface FileRouteTypes {
     | '/admin/accounts/Invoices'
     | '/admin/accounts/analysis'
     | '/admin/accounts/income-expenses'
+    | '/admin/accounts/quotes'
     | '/admin/accounts/sales'
     | '/admin/accounts/transactions'
     | '/admin/contacts/companies'
     | '/admin/contacts/customers'
     | '/admin/products/add'
     | '/admin/products/categories'
+    | '/admin/products/service'
     | '/admin/settings/profile'
     | '/admin/settings/theme'
     | '/admin/users/add'
     | '/admin/users/roles'
     | '/admin/accounts/Invoices/$id'
     | '/admin/contacts/customers/add'
+    | '/admin/products/service/add'
     | '/admin/users/details/$id'
     | '/admin/contacts/companies/details/$id'
   id:
@@ -377,18 +413,21 @@ export interface FileRouteTypes {
     | '/admin/accounts/Invoices/'
     | '/admin/accounts/analysis/'
     | '/admin/accounts/income-expenses/'
+    | '/admin/accounts/quotes/'
     | '/admin/accounts/sales/'
     | '/admin/accounts/transactions/'
     | '/admin/contacts/companies/'
     | '/admin/contacts/customers/'
     | '/admin/products/add/'
     | '/admin/products/categories/'
+    | '/admin/products/service/'
     | '/admin/settings/profile/'
     | '/admin/settings/theme/'
     | '/admin/users/add/'
     | '/admin/users/roles/'
     | '/admin/accounts/Invoices/$id/'
     | '/admin/contacts/customers/add/'
+    | '/admin/products/service/add/'
     | '/admin/users/details/$id/'
     | '/admin/contacts/companies/details/$id/'
   fileRoutesById: FileRoutesById
@@ -521,6 +560,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminSettingsProfileIndexRouteImport
       parentRoute: typeof AdminSettingsRouteRoute
     }
+    '/admin/products/service/': {
+      id: '/admin/products/service/'
+      path: '/products/service'
+      fullPath: '/admin/products/service'
+      preLoaderRoute: typeof AdminProductsServiceIndexRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
     '/admin/products/categories/': {
       id: '/admin/products/categories/'
       path: '/products/categories'
@@ -563,6 +609,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminAccountsSalesIndexRouteImport
       parentRoute: typeof AdminRouteRoute
     }
+    '/admin/accounts/quotes/': {
+      id: '/admin/accounts/quotes/'
+      path: '/accounts/quotes'
+      fullPath: '/admin/accounts/quotes'
+      preLoaderRoute: typeof AdminAccountsQuotesIndexRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
     '/admin/accounts/income-expenses/': {
       id: '/admin/accounts/income-expenses/'
       path: '/accounts/income-expenses'
@@ -589,6 +642,13 @@ declare module '@tanstack/react-router' {
       path: '/users/details/$id'
       fullPath: '/admin/users/details/$id'
       preLoaderRoute: typeof AdminUsersDetailsIdIndexRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
+    '/admin/products/service/add/': {
+      id: '/admin/products/service/add/'
+      path: '/products/service/add'
+      fullPath: '/admin/products/service/add'
+      preLoaderRoute: typeof AdminProductsServiceAddIndexRouteImport
       parentRoute: typeof AdminRouteRoute
     }
     '/admin/contacts/customers/add/': {
@@ -640,16 +700,19 @@ interface AdminRouteRouteChildren {
   AdminAccountsInvoicesIndexRoute: typeof AdminAccountsInvoicesIndexRoute
   AdminAccountsAnalysisIndexRoute: typeof AdminAccountsAnalysisIndexRoute
   AdminAccountsIncomeExpensesIndexRoute: typeof AdminAccountsIncomeExpensesIndexRoute
+  AdminAccountsQuotesIndexRoute: typeof AdminAccountsQuotesIndexRoute
   AdminAccountsSalesIndexRoute: typeof AdminAccountsSalesIndexRoute
   AdminAccountsTransactionsIndexRoute: typeof AdminAccountsTransactionsIndexRoute
   AdminContactsCompaniesIndexRoute: typeof AdminContactsCompaniesIndexRoute
   AdminContactsCustomersIndexRoute: typeof AdminContactsCustomersIndexRoute
   AdminProductsAddIndexRoute: typeof AdminProductsAddIndexRoute
   AdminProductsCategoriesIndexRoute: typeof AdminProductsCategoriesIndexRoute
+  AdminProductsServiceIndexRoute: typeof AdminProductsServiceIndexRoute
   AdminUsersAddIndexRoute: typeof AdminUsersAddIndexRoute
   AdminUsersRolesIndexRoute: typeof AdminUsersRolesIndexRoute
   AdminAccountsInvoicesIdIndexRoute: typeof AdminAccountsInvoicesIdIndexRoute
   AdminContactsCustomersAddIndexRoute: typeof AdminContactsCustomersAddIndexRoute
+  AdminProductsServiceAddIndexRoute: typeof AdminProductsServiceAddIndexRoute
   AdminUsersDetailsIdIndexRoute: typeof AdminUsersDetailsIdIndexRoute
   AdminContactsCompaniesDetailsIdIndexRoute: typeof AdminContactsCompaniesDetailsIdIndexRoute
 }
@@ -664,16 +727,19 @@ const AdminRouteRouteChildren: AdminRouteRouteChildren = {
   AdminAccountsInvoicesIndexRoute: AdminAccountsInvoicesIndexRoute,
   AdminAccountsAnalysisIndexRoute: AdminAccountsAnalysisIndexRoute,
   AdminAccountsIncomeExpensesIndexRoute: AdminAccountsIncomeExpensesIndexRoute,
+  AdminAccountsQuotesIndexRoute: AdminAccountsQuotesIndexRoute,
   AdminAccountsSalesIndexRoute: AdminAccountsSalesIndexRoute,
   AdminAccountsTransactionsIndexRoute: AdminAccountsTransactionsIndexRoute,
   AdminContactsCompaniesIndexRoute: AdminContactsCompaniesIndexRoute,
   AdminContactsCustomersIndexRoute: AdminContactsCustomersIndexRoute,
   AdminProductsAddIndexRoute: AdminProductsAddIndexRoute,
   AdminProductsCategoriesIndexRoute: AdminProductsCategoriesIndexRoute,
+  AdminProductsServiceIndexRoute: AdminProductsServiceIndexRoute,
   AdminUsersAddIndexRoute: AdminUsersAddIndexRoute,
   AdminUsersRolesIndexRoute: AdminUsersRolesIndexRoute,
   AdminAccountsInvoicesIdIndexRoute: AdminAccountsInvoicesIdIndexRoute,
   AdminContactsCustomersAddIndexRoute: AdminContactsCustomersAddIndexRoute,
+  AdminProductsServiceAddIndexRoute: AdminProductsServiceAddIndexRoute,
   AdminUsersDetailsIdIndexRoute: AdminUsersDetailsIdIndexRoute,
   AdminContactsCompaniesDetailsIdIndexRoute:
     AdminContactsCompaniesDetailsIdIndexRoute,

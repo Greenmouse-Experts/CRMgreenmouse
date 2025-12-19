@@ -13,6 +13,7 @@ import {
   CheckCircle,
   Users,
   DollarSign,
+  QuoteIcon,
 } from "lucide-react";
 import AdminHeader from "./-components/AdminHeader";
 import { Link } from "@tanstack/react-router";
@@ -124,6 +125,13 @@ const nav_links = [
         path: "/admin/accounts/invoices",
         label: "Invoices",
         icon: <ShoppingCart size={ICON_SIZE} />,
+        type: "menu",
+        children: null,
+      },
+      {
+        path: "/admin/accounts/quotes",
+        label: "Quotes",
+        icon: <QuoteIcon size={ICON_SIZE} />,
         type: "menu",
         children: null,
       },
