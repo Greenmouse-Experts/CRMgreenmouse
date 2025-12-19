@@ -124,7 +124,7 @@ function RouteComponent() {
               <button
                 type="button"
                 className="btn"
-                onClick={() => modal.hideModal()}
+                onClick={() => modal.closeModal()}
               >
                 Close
               </button>

@@ -100,6 +100,13 @@ const nav_links = [
         children: null,
       },
       {
+        path: "/admin/products/service",
+        label: "Services",
+        icon: <Package size={ICON_SIZE} />,
+        type: "menu",
+        children: null,
+      },
+      {
         path: "/admin/products/categories",
         label: "Categories",
         icon: <Tag size={ICON_SIZE} />,
