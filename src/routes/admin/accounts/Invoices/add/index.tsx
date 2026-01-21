@@ -9,14 +9,22 @@ import LocalSelect from "@/components/inputs/LocalSelect";
 export const Route = createFileRoute("/admin/accounts/Invoices/add/")({
   component: RouteComponent,
 });
+interface FormValues {
+  invoiceNumber: string;
+  issuedDate: string;
+  dueDate: string;
+  customerId: string;
+  status: string;
+  billingAddress: string;
+}
 
 function RouteComponent() {
-  const methods = useForm({
+  const methods = useForm<FormValues>({
     defaultValues: {
       issuedDate: new Date().toISOString().split("T")[0],
     },
   });
-  const onSubmit = (data: any) => console.log(data);
+  const onSubmit = (data: FormValues) => console.log(data);
 
   return (
     <div className="">

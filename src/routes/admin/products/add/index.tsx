@@ -5,12 +5,14 @@ import SelectImage from "@/components/images/SelectImage";
 import SimpleInput from "@/components/inputs/SimpleInput";
 import { useForm, FormProvider } from "react-hook-form"; // Added FormProvider
 import SimpleTextArea from "@/components/inputs/SimpleTextArea";
+import LocalSelect from "@/components/inputs/LocalSelect";
 
 interface ProductFormFields {
   name: string;
   price: number;
   description: string;
   quantity: number;
+  category: string;
 }
 
 export const Route = createFileRoute("/admin/products/add/")({
@@ -53,6 +55,17 @@ function RouteComponent() {
                 required: "Product name is required",
               })} // Use methods.register
             />
+            <LocalSelect
+              label="Category"
+              {...methods.register("category", {
+                required: "Category is required",
+              })}
+            >
+              <option value="">Select a category</option>
+              <option value="electronics">Electronics</option>
+              <option value="clothing">Clothing</option>
+              <option value="home">Home & Garden</option>
+            </LocalSelect>
             <SimpleInput
               label="Quantity"
               type="number"
