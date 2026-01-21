@@ -14,6 +14,7 @@ import SelectImage from "@/components/images/SelectImage";
 import { useSelectImage } from "@/helpers/images";
 import PageHeader from "@/components/Headers/PageHeader";
 import { PlusCircleIcon } from "lucide-react";
+import { Link } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/admin/contacts/companies/")({
   component: RouteComponent,
@@ -98,14 +99,15 @@ function RouteComponent() {
         description="Manage companies and company info"
       >
         {/*//@ts-ignore*/}
-        <button
-          onClick={() => {
-            modal.showModal();
-          }}
+        <Link
+          to="/admin/contacts/companies/add"
+          // onClick={() => {
+          //   modal.showModal();
+          // }}
           className="btn btn-primary "
         >
           <PlusCircleIcon /> Add Company
-        </button>
+        </Link>
       </PageHeader>
       <Modal title="Add Company" ref={modal.ref}>
         <FormProvider {...form}>
