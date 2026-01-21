@@ -20,7 +20,7 @@ export default function ExpensesStat() {
       icon: TrendingDown,
       colorClass: "text-error",
     },
-    { title: "Saving", value: 1234, icon: PiggyBank, colorClass: "text-info" },
+    { title: "Profit", value: 1234, icon: PiggyBank, colorClass: "text-info" },
   ] as const;
 
   return (
