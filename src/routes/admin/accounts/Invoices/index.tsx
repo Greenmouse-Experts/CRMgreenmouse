@@ -7,6 +7,7 @@ import ActionButton from "@/components/buttons/ActionButton";
 import PopUp, { type Actions } from "@/components/tables/pop-up"; // Import PopUp and its Actions type
 import PageHeader from "@/components/Headers/PageHeader";
 import { PlusCircleIcon } from "lucide-react";
+import { Link } from "@tanstack/react-router";
 
 // Define the type for an invoice, inspired by the image
 interface Invoice {
@@ -201,9 +202,9 @@ function RouteComponent() {
         description="Manage your customer invoices and billing"
       >
         {/*//@ts-ignore*/}
-        <button onClick={() => {}} className="btn btn-primary ">
+        <Link to="/admin/accounts/Invoices/add" className="btn btn-primary ">
           <PlusCircleIcon /> Add Invoice
-        </button>
+        </Link>
       </PageHeader>
       <InvoicesStat />
       <SimpleContainer
