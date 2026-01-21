@@ -2,16 +2,24 @@ import { createFileRoute } from "@tanstack/react-router";
 import ContainerRow from "@/components/ContainerRow";
 import SimpleContainer from "@/components/SimpleContainer";
 import { useSearch } from "@/stores/data";
-import { PlusCircleIcon } from "lucide-react";
+import { PlusCircleIcon, Package, DollarSign, Tag } from "lucide-react";
 import CustomTable from "@/components/tables/CustomTable";
 import { faker } from "@faker-js/faker";
 import { Link } from "@tanstack/react-router";
 import PageHeader from "@/components/Headers/PageHeader";
+import Modal from "@/components/modals/DialogModal";
+import { useModal } from "@/helpers/modals";
+import SimpleInput from "@/components/inputs/SimpleInput";
+import { useState } from "react";
+
 export const Route = createFileRoute("/admin/products/")({
   component: RouteComponent,
 });
 
 function RouteComponent() {
+  const { ref, showModal, closeModal } = useModal();
+  const [selectedProduct, setSelectedProduct] = useState<any>(null);
+
   const products = Array.from({ length: 10 }, (_, i) => ({
     id: i + 1,
     name: faker.commerce.productName(),
@@ -19,6 +27,11 @@ function RouteComponent() {
     category: faker.commerce.department(),
     inStock: faker.datatype.boolean(),
   }));
+
+  const handleEdit = (product: any) => {
+    setSelectedProduct(product);
+    showModal();
+  };
 
   const columns = [
     { key: "id", label: "ID" },
@@ -36,7 +49,7 @@ function RouteComponent() {
     {
       key: "edit",
       label: "Edit",
-      action: (item: any) => console.log("Edit", item),
+      action: (item: any) => handleEdit(item),
     },
     {
       key: "delete",
@@ -52,56 +65,49 @@ function RouteComponent() {
         title="Products"
         description="Manage products and product info"
       >
-        {/*//@ts-ignore*/}
-        {/*<div>*/}
         <Link to="/admin/products/add" className="btn btn-primary ">
           <PlusCircleIcon /> Add Product
         </Link>
-        {/*</div>*/}
       </PageHeader>
       <SimpleContainer title="Products">
         {props.search}
-        <ContainerRow searchProps={props} showSearch={true}>
-          {/*<ExportOptions
-            position="left"
-            options={[
-              {
-                name: "export as pdf",
-                action: () => console.log("yes"),
-              },
-            ]}
-          />*/}
-        </ContainerRow>
+        <ContainerRow searchProps={props} showSearch={true} />
         <CustomTable data={products} columns={columns} actions={actions} />
       </SimpleContainer>
+
+      <Modal
+        ref={ref}
+        title="Edit Product"
+        actions={
+          <div className="flex gap-2">
+            <button className="btn btn-ghost" onClick={closeModal}>
+              Cancel
+            </button>
+            <button className="btn btn-primary" onClick={closeModal}>
+              Save Changes
+            </button>
+          </div>
+        }
+      >
+        <div className="space-y-4">
+          <SimpleInput
+            label="Product Name"
+            defaultValue={selectedProduct?.name}
+            icon={<Package size={18} className="text-gray-400" />}
+          />
+          <SimpleInput
+            label="Price"
+            type="number"
+            defaultValue={selectedProduct?.price}
+            icon={<DollarSign size={18} className="text-gray-400" />}
+          />
+          <SimpleInput
+            label="Category"
+            defaultValue={selectedProduct?.category}
+            icon={<Tag size={18} className="text-gray-400" />}
+          />
+        </div>
+      </Modal>
     </>
   );
 }
-
-interface ExportProps {
-  options?: [
-    {
-      name: string;
-      action: () => any;
-    },
-  ];
-  position?: "left" | "right";
-}
-const ExportOptions = (props: ExportProps) => {
-  return (
-    <div
-      className={`dropdown ${props?.position == "left" ? "dropdown-start" : "dropdown-end"}`}
-    >
-      <button className="btn btn-sm ">Export</button>
-      <ul className="dropdown-content menu bg-base-100 w-[152px] rounded-box shadow-xs">
-        {props.options?.map((option) => (
-          <li key={option.name}>
-            <a>
-              <button onClick={option.action}>{option.name}</button>
-            </a>
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
-};

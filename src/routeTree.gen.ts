@@ -25,6 +25,7 @@ import { Route as AdminProductsIndexRouteImport } from './routes/admin/products/
 import { Route as AdminUsersRolesIndexRouteImport } from './routes/admin/users/roles/index'
 import { Route as AdminUsersAddIndexRouteImport } from './routes/admin/users/add/index'
 import { Route as AdminSettingsThemeIndexRouteImport } from './routes/admin/settings/theme/index'
+import { Route as AdminSettingsSecurityIndexRouteImport } from './routes/admin/settings/security/index'
 import { Route as AdminSettingsProfileIndexRouteImport } from './routes/admin/settings/profile/index'
 import { Route as AdminProductsServiceIndexRouteImport } from './routes/admin/products/service/index'
 import { Route as AdminProductsCategoriesIndexRouteImport } from './routes/admin/products/categories/index'
@@ -123,6 +124,12 @@ const AdminSettingsThemeIndexRoute = AdminSettingsThemeIndexRouteImport.update({
   path: '/theme/',
   getParentRoute: () => AdminSettingsRouteRoute,
 } as any)
+const AdminSettingsSecurityIndexRoute =
+  AdminSettingsSecurityIndexRouteImport.update({
+    id: '/security/',
+    path: '/security/',
+    getParentRoute: () => AdminSettingsRouteRoute,
+  } as any)
 const AdminSettingsProfileIndexRoute =
   AdminSettingsProfileIndexRouteImport.update({
     id: '/profile/',
@@ -250,6 +257,7 @@ export interface FileRoutesByFullPath {
   '/admin/products/categories': typeof AdminProductsCategoriesIndexRoute
   '/admin/products/service': typeof AdminProductsServiceIndexRoute
   '/admin/settings/profile': typeof AdminSettingsProfileIndexRoute
+  '/admin/settings/security': typeof AdminSettingsSecurityIndexRoute
   '/admin/settings/theme': typeof AdminSettingsThemeIndexRoute
   '/admin/users/add': typeof AdminUsersAddIndexRoute
   '/admin/users/roles': typeof AdminUsersRolesIndexRoute
@@ -282,6 +290,7 @@ export interface FileRoutesByTo {
   '/admin/products/categories': typeof AdminProductsCategoriesIndexRoute
   '/admin/products/service': typeof AdminProductsServiceIndexRoute
   '/admin/settings/profile': typeof AdminSettingsProfileIndexRoute
+  '/admin/settings/security': typeof AdminSettingsSecurityIndexRoute
   '/admin/settings/theme': typeof AdminSettingsThemeIndexRoute
   '/admin/users/add': typeof AdminUsersAddIndexRoute
   '/admin/users/roles': typeof AdminUsersRolesIndexRoute
@@ -318,6 +327,7 @@ export interface FileRoutesById {
   '/admin/products/categories/': typeof AdminProductsCategoriesIndexRoute
   '/admin/products/service/': typeof AdminProductsServiceIndexRoute
   '/admin/settings/profile/': typeof AdminSettingsProfileIndexRoute
+  '/admin/settings/security/': typeof AdminSettingsSecurityIndexRoute
   '/admin/settings/theme/': typeof AdminSettingsThemeIndexRoute
   '/admin/users/add/': typeof AdminUsersAddIndexRoute
   '/admin/users/roles/': typeof AdminUsersRolesIndexRoute
@@ -355,6 +365,7 @@ export interface FileRouteTypes {
     | '/admin/products/categories'
     | '/admin/products/service'
     | '/admin/settings/profile'
+    | '/admin/settings/security'
     | '/admin/settings/theme'
     | '/admin/users/add'
     | '/admin/users/roles'
@@ -387,6 +398,7 @@ export interface FileRouteTypes {
     | '/admin/products/categories'
     | '/admin/products/service'
     | '/admin/settings/profile'
+    | '/admin/settings/security'
     | '/admin/settings/theme'
     | '/admin/users/add'
     | '/admin/users/roles'
@@ -422,6 +434,7 @@ export interface FileRouteTypes {
     | '/admin/products/categories/'
     | '/admin/products/service/'
     | '/admin/settings/profile/'
+    | '/admin/settings/security/'
     | '/admin/settings/theme/'
     | '/admin/users/add/'
     | '/admin/users/roles/'
@@ -553,6 +566,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminSettingsThemeIndexRouteImport
       parentRoute: typeof AdminSettingsRouteRoute
     }
+    '/admin/settings/security/': {
+      id: '/admin/settings/security/'
+      path: '/security'
+      fullPath: '/admin/settings/security'
+      preLoaderRoute: typeof AdminSettingsSecurityIndexRouteImport
+      parentRoute: typeof AdminSettingsRouteRoute
+    }
     '/admin/settings/profile/': {
       id: '/admin/settings/profile/'
       path: '/profile'
@@ -678,12 +698,14 @@ declare module '@tanstack/react-router' {
 interface AdminSettingsRouteRouteChildren {
   AdminSettingsIndexRoute: typeof AdminSettingsIndexRoute
   AdminSettingsProfileIndexRoute: typeof AdminSettingsProfileIndexRoute
+  AdminSettingsSecurityIndexRoute: typeof AdminSettingsSecurityIndexRoute
   AdminSettingsThemeIndexRoute: typeof AdminSettingsThemeIndexRoute
 }
 
 const AdminSettingsRouteRouteChildren: AdminSettingsRouteRouteChildren = {
   AdminSettingsIndexRoute: AdminSettingsIndexRoute,
   AdminSettingsProfileIndexRoute: AdminSettingsProfileIndexRoute,
+  AdminSettingsSecurityIndexRoute: AdminSettingsSecurityIndexRoute,
   AdminSettingsThemeIndexRoute: AdminSettingsThemeIndexRoute,
 }
 
