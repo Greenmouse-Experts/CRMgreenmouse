@@ -136,9 +136,9 @@ function RouteComponent() {
         </FormProvider>
       </Modal>
       <PageHeader title="Transactions">
-        <ActionButton onClick={() => modal.showModal()}>
+        {/*<ActionButton onClick={() => modal.showModal()}>
           Add Transaction
-        </ActionButton>
+        </ActionButton>*/}
       </PageHeader>
       <SimpleContainer title="Transactions">
         <ContainerRow searchProps={searchProps} showSearch />
