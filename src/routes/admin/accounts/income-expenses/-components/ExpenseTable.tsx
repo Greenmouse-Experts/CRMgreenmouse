@@ -50,7 +50,7 @@ export default function ExpenseTable() {
         </span>
       ),
     },
-    { key: "paidBy", label: "Paid By" },
+    { key: "paidBy", label: "Paid To" },
     { key: "description", label: "Description" },
   ];
 
