@@ -1,8 +1,16 @@
 import CustomTable from "@/components/tables/CustomTable";
 import { faker } from "@faker-js/faker";
 import { type Actions } from "@/components/tables/pop-up";
+import { useModal } from "@/helpers/modals";
+import Modal from "@/components/modals/DialogModal";
+import SimpleInput from "@/components/inputs/SimpleInput";
+import SimpleTextArea from "@/components/inputs/SimpleTextArea";
+import { useState } from "react";
 
 export default function ExpenseTable() {
+  const editModal = useModal();
+  const [selectedExpense, setSelectedExpense] = useState<any>(null);
+
   const columns = [
     { key: "id", label: "ID" },
     {
@@ -75,7 +83,10 @@ export default function ExpenseTable() {
     {
       key: "edit",
       label: "Edit Expense",
-      action: (item: any) => alert(`Editing expense ${item.id}`),
+      action: (item: any) => {
+        setSelectedExpense(item);
+        editModal.showModal();
+      },
     },
     {
       key: "delete",
@@ -89,6 +100,42 @@ export default function ExpenseTable() {
   return (
     <div className="">
       <CustomTable columns={columns} data={data} actions={actions} />
+
+      <Modal ref={editModal.ref} title="Edit Expense">
+        <div className="space-y-4">
+          <SimpleInput
+            label="Amount"
+            type="number"
+            defaultValue={selectedExpense?.amount}
+          />
+          <SimpleInput
+            label="Category"
+            type="text"
+            defaultValue={selectedExpense?.category}
+          />
+          <SimpleTextArea
+            label="Description"
+            defaultValue={selectedExpense?.description}
+          />
+          <div className="flex gap-2">
+            <span className="font-semibold fieldset-label">Status</span>{" "}
+            <select
+              className="select select-sm select-bordered"
+              defaultValue={selectedExpense?.status}
+            >
+              <option>Pending</option>
+              <option>Approved</option>
+              <option>Rejected</option>
+            </select>
+          </div>
+          <button
+            className="btn btn-primary btn-block"
+            onClick={() => editModal.ref.current?.close()}
+          >
+            Update Expense
+          </button>
+        </div>
+      </Modal>
     </div>
   );
 }

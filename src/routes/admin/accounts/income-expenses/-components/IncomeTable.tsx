@@ -1,8 +1,16 @@
 import CustomTable from "@/components/tables/CustomTable";
 import { faker } from "@faker-js/faker";
 import { type Actions } from "@/components/tables/pop-up";
+import { useModal } from "@/helpers/modals";
+import Modal from "@/components/modals/DialogModal";
+import SimpleInput from "@/components/inputs/SimpleInput";
+import SimpleTextArea from "@/components/inputs/SimpleTextArea";
+import { useState } from "react";
 
 export default function Incometable() {
+  const editModal = useModal();
+  const [selectedIncome, setSelectedIncome] = useState<any>(null);
+
   const columns = [
     { key: "id", label: "ID" },
     {
@@ -48,7 +56,7 @@ export default function Incometable() {
 
   const data = Array.from({ length: 10 }, (_, i) => ({
     id: i + 1,
-    date: faker.date.past().toISOString(), // Store as ISO string for consistent date parsing
+    date: faker.date.past().toISOString(),
     amount: faker.finance.amount({ min: 500, max: 5000, dec: 2 }),
     type: faker.helpers.arrayElement([
       "Salary",
@@ -74,7 +82,10 @@ export default function Incometable() {
     {
       key: "edit",
       label: "Edit Income",
-      action: (item: any) => alert(`Editing income ${item.id}`),
+      action: (item: any) => {
+        setSelectedIncome(item);
+        editModal.showModal();
+      },
     },
     {
       key: "delete",
@@ -88,6 +99,39 @@ export default function Incometable() {
   return (
     <div className="">
       <CustomTable columns={columns} data={data} actions={actions} />
+
+      <Modal ref={editModal.ref} title="Edit Income">
+        <div className="space-y-4">
+          <SimpleInput
+            label="Amount"
+            type="number"
+            defaultValue={selectedIncome?.amount}
+          />
+          <SimpleInput
+            label="Type"
+            type="text"
+            defaultValue={selectedIncome?.type}
+          />
+          <SimpleTextArea
+            label="Description"
+            defaultValue={selectedIncome?.description}
+          />
+          <div className="flex gap-2">
+            <span className="font-semibold fieldset-label">Status</span>{" "}
+            <input
+              type="checkbox"
+              className="toggle"
+              defaultChecked={selectedIncome?.status === "Received"}
+            />
+          </div>
+          <button
+            className="btn btn-primary btn-block"
+            onClick={() => editModal.ref.current?.close()}
+          >
+            Update Income
+          </button>
+        </div>
+      </Modal>
     </div>
   );
 }
