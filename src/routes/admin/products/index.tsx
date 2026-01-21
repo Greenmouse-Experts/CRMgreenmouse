@@ -26,6 +26,7 @@ function RouteComponent() {
     price: faker.commerce.price(),
     category: faker.commerce.department(),
     inStock: faker.datatype.boolean(),
+    quantity: faker.number.int({ min: 0, max: 100 }),
   }));
 
   const handleEdit = (product: any) => {
@@ -38,6 +39,7 @@ function RouteComponent() {
     { key: "name", label: "Product Name" },
     { key: "price", label: "Price" },
     { key: "category", label: "Category" },
+    { key: "quantity", label: "Quantity" },
     {
       key: "inStock",
       label: "In Stock",
