@@ -14,6 +14,7 @@ import {
   Users,
   DollarSign,
   QuoteIcon,
+  List,
 } from "lucide-react";
 import AdminHeader from "./-components/AdminHeader";
 import { Link } from "@tanstack/react-router";
@@ -157,6 +158,13 @@ const nav_links = [
         children: null,
       },
     ],
+  },
+  {
+    path: "/admin/orders",
+    label: "Orders",
+    icon: <List size={ICON_SIZE} />,
+    type: "menu",
+    children: null,
   },
   {
     path: "/admin/subscription",

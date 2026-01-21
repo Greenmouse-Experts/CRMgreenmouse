@@ -10,6 +10,7 @@ interface ProductFormFields {
   name: string;
   price: number;
   description: string;
+  quantity: number;
 }
 
 export const Route = createFileRoute("/admin/products/add/")({
