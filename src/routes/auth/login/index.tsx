@@ -1,7 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "@tanstack/react-router";
+import { useMutation } from "@tanstack/react-query";
+import { toast } from "sonner";
 import SimpleInput from "@/components/inputs/SimpleInput";
+import apiClient from "@/client/api";
+import { set_user_value } from "@/store/authStore";
+
 export const Route = createFileRoute("/auth/login/")({
   component: RouteComponent,
 });
@@ -10,15 +15,27 @@ interface LoginProps {
   email: string;
   password: string;
 }
+
 function RouteComponent() {
   const nav = useNavigate();
   const form = useForm<LoginProps>();
-  const onSubmit = (data: LoginProps) => {
-    console.log(data);
-    nav({
-      to: "/admin",
-    });
-  };
+
+  const { mutate, isPending } = useMutation({
+    mutationFn: (data: LoginProps) =>
+      apiClient.post("/auth/admin/login", data).then((res) => res.data),
+    onSuccess: (res) => {
+      set_user_value(res.data);
+      toast.success("Login successful");
+      nav({ to: "/admin" });
+    },
+    onError: (err: any) => {
+      const message =
+        err?.response?.data?.message ?? err?.message ?? "Login failed";
+      toast.error(message);
+    },
+  });
+
+  const onSubmit = (data: LoginProps) => mutate(data);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-base-300 isolate">
@@ -57,7 +74,13 @@ function RouteComponent() {
             <input type="checkbox" className="toggle" name="" id="" />{" "}
             <span className="fieldset-label text-sm">Remember Me</span>
           </div>
-          <button className="btn btn-primary btn-block">Login</button>
+          <button className="btn btn-primary btn-block" disabled={isPending}>
+            {isPending ? (
+              <span className="loading loading-spinner loading-sm" />
+            ) : (
+              "Login"
+            )}
+          </button>
           <div className="">
             <section className="ring ring-current/10 bg-base-200 rounded-box p-4 text-xs text-base-content/80 space-y-2">
               <p className="font-semibold ">Demo Credientials</p>
