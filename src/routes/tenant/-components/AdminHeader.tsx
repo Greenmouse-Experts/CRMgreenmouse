@@ -1,5 +1,5 @@
 import { Bell, Menu } from "lucide-react";
-import AdminUserProfile from "./AdminUserProfile";
+import TenantUserProfile from "./TenantUserProfile";
 
 export default function AdminHeader() {
   return (
@@ -20,7 +20,7 @@ export default function AdminHeader() {
           <span className="absolute top-0 right-0 -mt-1 mr-1 flex h-2 w-2 rounded-full bg-error"></span>
           <Bell className="!size-6"></Bell>
         </div>
-        <AdminUserProfile />
+        <TenantUserProfile />
       </div>
     </div>
   );
