@@ -33,7 +33,7 @@ apiClient.interceptors.response.use(
           throw new Error("User not found in store.");
         }
         const { data } = await axios.post(`${new_url}auth/refresh`, {
-          refreshToken: user.refreshToken,
+          refreshToken: user.refresh_token,
         });
 
         const newAccessToken = data.data.accessToken;

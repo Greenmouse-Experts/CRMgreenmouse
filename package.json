@@ -30,7 +30,7 @@
     "recharts": "^3.5.1",
     "sonner": "^2.0.7",
     "tailwindcss": "^4.0.6",
-    "zustand": "^5.0.13"
+    "zustand": "^5.0.14"
   },
   "devDependencies": {
     "@faker-js/faker": "^10.1.0",

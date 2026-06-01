@@ -13,9 +13,12 @@ import { Route as TestRouteRouteImport } from './routes/test/route'
 import { Route as AdminRouteRouteImport } from './routes/admin/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as TestIndexRouteImport } from './routes/test/index'
+import { Route as HomeIndexRouteImport } from './routes/home/index'
 import { Route as AdminIndexRouteImport } from './routes/admin/index'
 import { Route as TestHomeRouteImport } from './routes/test/home'
+import { Route as AuthRegisterRouteRouteImport } from './routes/auth/register/route'
 import { Route as AdminSettingsRouteRouteImport } from './routes/admin/settings/route'
+import { Route as AuthRegisterIndexRouteImport } from './routes/auth/register/index'
 import { Route as AuthLoginIndexRouteImport } from './routes/auth/login/index'
 import { Route as AdminUsersIndexRouteImport } from './routes/admin/users/index'
 import { Route as AdminTransactionsIndexRouteImport } from './routes/admin/transactions/index'
@@ -23,6 +26,7 @@ import { Route as AdminSubscriptionIndexRouteImport } from './routes/admin/subsc
 import { Route as AdminSettingsIndexRouteImport } from './routes/admin/settings/index'
 import { Route as AdminProductsIndexRouteImport } from './routes/admin/products/index'
 import { Route as AdminOrdersIndexRouteImport } from './routes/admin/orders/index'
+import { Route as AuthRegisterOnBoardingIndexRouteImport } from './routes/auth/register/on-boarding/index'
 import { Route as AdminUsersRolesIndexRouteImport } from './routes/admin/users/roles/index'
 import { Route as AdminUsersAddIndexRouteImport } from './routes/admin/users/add/index'
 import { Route as AdminSettingsThemeIndexRouteImport } from './routes/admin/settings/theme/index'
@@ -67,6 +71,11 @@ const TestIndexRoute = TestIndexRouteImport.update({
   path: '/',
   getParentRoute: () => TestRouteRoute,
 } as any)
+const HomeIndexRoute = HomeIndexRouteImport.update({
+  id: '/home/',
+  path: '/home/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminIndexRoute = AdminIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -77,10 +86,20 @@ const TestHomeRoute = TestHomeRouteImport.update({
   path: '/home',
   getParentRoute: () => TestRouteRoute,
 } as any)
+const AuthRegisterRouteRoute = AuthRegisterRouteRouteImport.update({
+  id: '/auth/register',
+  path: '/auth/register',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminSettingsRouteRoute = AdminSettingsRouteRouteImport.update({
   id: '/settings',
   path: '/settings',
   getParentRoute: () => AdminRouteRoute,
+} as any)
+const AuthRegisterIndexRoute = AuthRegisterIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AuthRegisterRouteRoute,
 } as any)
 const AuthLoginIndexRoute = AuthLoginIndexRouteImport.update({
   id: '/auth/login/',
@@ -117,6 +136,12 @@ const AdminOrdersIndexRoute = AdminOrdersIndexRouteImport.update({
   path: '/orders/',
   getParentRoute: () => AdminRouteRoute,
 } as any)
+const AuthRegisterOnBoardingIndexRoute =
+  AuthRegisterOnBoardingIndexRouteImport.update({
+    id: '/on-boarding/',
+    path: '/on-boarding/',
+    getParentRoute: () => AuthRegisterRouteRoute,
+  } as any)
 const AdminUsersRolesIndexRoute = AdminUsersRolesIndexRouteImport.update({
   id: '/users/roles/',
   path: '/users/roles/',
@@ -256,8 +281,10 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AdminRouteRouteWithChildren
   '/test': typeof TestRouteRouteWithChildren
   '/admin/settings': typeof AdminSettingsRouteRouteWithChildren
+  '/auth/register': typeof AuthRegisterRouteRouteWithChildren
   '/test/home': typeof TestHomeRoute
   '/admin/': typeof AdminIndexRoute
+  '/home': typeof HomeIndexRoute
   '/test/': typeof TestIndexRoute
   '/admin/orders': typeof AdminOrdersIndexRoute
   '/admin/products': typeof AdminProductsIndexRoute
@@ -266,6 +293,7 @@ export interface FileRoutesByFullPath {
   '/admin/transactions': typeof AdminTransactionsIndexRoute
   '/admin/users': typeof AdminUsersIndexRoute
   '/auth/login': typeof AuthLoginIndexRoute
+  '/auth/register/': typeof AuthRegisterIndexRoute
   '/admin/accounts/Invoices': typeof AdminAccountsInvoicesIndexRoute
   '/admin/accounts/analysis': typeof AdminAccountsAnalysisIndexRoute
   '/admin/accounts/income-expenses': typeof AdminAccountsIncomeExpensesIndexRoute
@@ -282,6 +310,7 @@ export interface FileRoutesByFullPath {
   '/admin/settings/theme': typeof AdminSettingsThemeIndexRoute
   '/admin/users/add': typeof AdminUsersAddIndexRoute
   '/admin/users/roles': typeof AdminUsersRolesIndexRoute
+  '/auth/register/on-boarding': typeof AuthRegisterOnBoardingIndexRoute
   '/admin/accounts/Invoices/$id': typeof AdminAccountsInvoicesIdIndexRoute
   '/admin/accounts/Invoices/add': typeof AdminAccountsInvoicesAddIndexRoute
   '/admin/contacts/companies/add': typeof AdminContactsCompaniesAddIndexRoute
@@ -294,6 +323,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/test/home': typeof TestHomeRoute
   '/admin': typeof AdminIndexRoute
+  '/home': typeof HomeIndexRoute
   '/test': typeof TestIndexRoute
   '/admin/orders': typeof AdminOrdersIndexRoute
   '/admin/products': typeof AdminProductsIndexRoute
@@ -302,6 +332,7 @@ export interface FileRoutesByTo {
   '/admin/transactions': typeof AdminTransactionsIndexRoute
   '/admin/users': typeof AdminUsersIndexRoute
   '/auth/login': typeof AuthLoginIndexRoute
+  '/auth/register': typeof AuthRegisterIndexRoute
   '/admin/accounts/Invoices': typeof AdminAccountsInvoicesIndexRoute
   '/admin/accounts/analysis': typeof AdminAccountsAnalysisIndexRoute
   '/admin/accounts/income-expenses': typeof AdminAccountsIncomeExpensesIndexRoute
@@ -318,6 +349,7 @@ export interface FileRoutesByTo {
   '/admin/settings/theme': typeof AdminSettingsThemeIndexRoute
   '/admin/users/add': typeof AdminUsersAddIndexRoute
   '/admin/users/roles': typeof AdminUsersRolesIndexRoute
+  '/auth/register/on-boarding': typeof AuthRegisterOnBoardingIndexRoute
   '/admin/accounts/Invoices/$id': typeof AdminAccountsInvoicesIdIndexRoute
   '/admin/accounts/Invoices/add': typeof AdminAccountsInvoicesAddIndexRoute
   '/admin/contacts/companies/add': typeof AdminContactsCompaniesAddIndexRoute
@@ -332,8 +364,10 @@ export interface FileRoutesById {
   '/admin': typeof AdminRouteRouteWithChildren
   '/test': typeof TestRouteRouteWithChildren
   '/admin/settings': typeof AdminSettingsRouteRouteWithChildren
+  '/auth/register': typeof AuthRegisterRouteRouteWithChildren
   '/test/home': typeof TestHomeRoute
   '/admin/': typeof AdminIndexRoute
+  '/home/': typeof HomeIndexRoute
   '/test/': typeof TestIndexRoute
   '/admin/orders/': typeof AdminOrdersIndexRoute
   '/admin/products/': typeof AdminProductsIndexRoute
@@ -342,6 +376,7 @@ export interface FileRoutesById {
   '/admin/transactions/': typeof AdminTransactionsIndexRoute
   '/admin/users/': typeof AdminUsersIndexRoute
   '/auth/login/': typeof AuthLoginIndexRoute
+  '/auth/register/': typeof AuthRegisterIndexRoute
   '/admin/accounts/Invoices/': typeof AdminAccountsInvoicesIndexRoute
   '/admin/accounts/analysis/': typeof AdminAccountsAnalysisIndexRoute
   '/admin/accounts/income-expenses/': typeof AdminAccountsIncomeExpensesIndexRoute
@@ -358,6 +393,7 @@ export interface FileRoutesById {
   '/admin/settings/theme/': typeof AdminSettingsThemeIndexRoute
   '/admin/users/add/': typeof AdminUsersAddIndexRoute
   '/admin/users/roles/': typeof AdminUsersRolesIndexRoute
+  '/auth/register/on-boarding/': typeof AuthRegisterOnBoardingIndexRoute
   '/admin/accounts/Invoices/$id/': typeof AdminAccountsInvoicesIdIndexRoute
   '/admin/accounts/Invoices/add/': typeof AdminAccountsInvoicesAddIndexRoute
   '/admin/contacts/companies/add/': typeof AdminContactsCompaniesAddIndexRoute
@@ -373,8 +409,10 @@ export interface FileRouteTypes {
     | '/admin'
     | '/test'
     | '/admin/settings'
+    | '/auth/register'
     | '/test/home'
     | '/admin/'
+    | '/home'
     | '/test/'
     | '/admin/orders'
     | '/admin/products'
@@ -383,6 +421,7 @@ export interface FileRouteTypes {
     | '/admin/transactions'
     | '/admin/users'
     | '/auth/login'
+    | '/auth/register/'
     | '/admin/accounts/Invoices'
     | '/admin/accounts/analysis'
     | '/admin/accounts/income-expenses'
@@ -399,6 +438,7 @@ export interface FileRouteTypes {
     | '/admin/settings/theme'
     | '/admin/users/add'
     | '/admin/users/roles'
+    | '/auth/register/on-boarding'
     | '/admin/accounts/Invoices/$id'
     | '/admin/accounts/Invoices/add'
     | '/admin/contacts/companies/add'
@@ -411,6 +451,7 @@ export interface FileRouteTypes {
     | '/'
     | '/test/home'
     | '/admin'
+    | '/home'
     | '/test'
     | '/admin/orders'
     | '/admin/products'
@@ -419,6 +460,7 @@ export interface FileRouteTypes {
     | '/admin/transactions'
     | '/admin/users'
     | '/auth/login'
+    | '/auth/register'
     | '/admin/accounts/Invoices'
     | '/admin/accounts/analysis'
     | '/admin/accounts/income-expenses'
@@ -435,6 +477,7 @@ export interface FileRouteTypes {
     | '/admin/settings/theme'
     | '/admin/users/add'
     | '/admin/users/roles'
+    | '/auth/register/on-boarding'
     | '/admin/accounts/Invoices/$id'
     | '/admin/accounts/Invoices/add'
     | '/admin/contacts/companies/add'
@@ -448,8 +491,10 @@ export interface FileRouteTypes {
     | '/admin'
     | '/test'
     | '/admin/settings'
+    | '/auth/register'
     | '/test/home'
     | '/admin/'
+    | '/home/'
     | '/test/'
     | '/admin/orders/'
     | '/admin/products/'
@@ -458,6 +503,7 @@ export interface FileRouteTypes {
     | '/admin/transactions/'
     | '/admin/users/'
     | '/auth/login/'
+    | '/auth/register/'
     | '/admin/accounts/Invoices/'
     | '/admin/accounts/analysis/'
     | '/admin/accounts/income-expenses/'
@@ -474,6 +520,7 @@ export interface FileRouteTypes {
     | '/admin/settings/theme/'
     | '/admin/users/add/'
     | '/admin/users/roles/'
+    | '/auth/register/on-boarding/'
     | '/admin/accounts/Invoices/$id/'
     | '/admin/accounts/Invoices/add/'
     | '/admin/contacts/companies/add/'
@@ -487,6 +534,8 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AdminRouteRoute: typeof AdminRouteRouteWithChildren
   TestRouteRoute: typeof TestRouteRouteWithChildren
+  AuthRegisterRouteRoute: typeof AuthRegisterRouteRouteWithChildren
+  HomeIndexRoute: typeof HomeIndexRoute
   AuthLoginIndexRoute: typeof AuthLoginIndexRoute
 }
 
@@ -520,6 +569,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TestIndexRouteImport
       parentRoute: typeof TestRouteRoute
     }
+    '/home/': {
+      id: '/home/'
+      path: '/home'
+      fullPath: '/home'
+      preLoaderRoute: typeof HomeIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/': {
       id: '/admin/'
       path: '/'
@@ -534,12 +590,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TestHomeRouteImport
       parentRoute: typeof TestRouteRoute
     }
+    '/auth/register': {
+      id: '/auth/register'
+      path: '/auth/register'
+      fullPath: '/auth/register'
+      preLoaderRoute: typeof AuthRegisterRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/settings': {
       id: '/admin/settings'
       path: '/settings'
       fullPath: '/admin/settings'
       preLoaderRoute: typeof AdminSettingsRouteRouteImport
       parentRoute: typeof AdminRouteRoute
+    }
+    '/auth/register/': {
+      id: '/auth/register/'
+      path: '/'
+      fullPath: '/auth/register/'
+      preLoaderRoute: typeof AuthRegisterIndexRouteImport
+      parentRoute: typeof AuthRegisterRouteRoute
     }
     '/auth/login/': {
       id: '/auth/login/'
@@ -589,6 +659,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin/orders'
       preLoaderRoute: typeof AdminOrdersIndexRouteImport
       parentRoute: typeof AdminRouteRoute
+    }
+    '/auth/register/on-boarding/': {
+      id: '/auth/register/on-boarding/'
+      path: '/on-boarding'
+      fullPath: '/auth/register/on-boarding'
+      preLoaderRoute: typeof AuthRegisterOnBoardingIndexRouteImport
+      parentRoute: typeof AuthRegisterRouteRoute
     }
     '/admin/users/roles/': {
       id: '/admin/users/roles/'
@@ -850,10 +927,25 @@ const TestRouteRouteWithChildren = TestRouteRoute._addFileChildren(
   TestRouteRouteChildren,
 )
 
+interface AuthRegisterRouteRouteChildren {
+  AuthRegisterIndexRoute: typeof AuthRegisterIndexRoute
+  AuthRegisterOnBoardingIndexRoute: typeof AuthRegisterOnBoardingIndexRoute
+}
+
+const AuthRegisterRouteRouteChildren: AuthRegisterRouteRouteChildren = {
+  AuthRegisterIndexRoute: AuthRegisterIndexRoute,
+  AuthRegisterOnBoardingIndexRoute: AuthRegisterOnBoardingIndexRoute,
+}
+
+const AuthRegisterRouteRouteWithChildren =
+  AuthRegisterRouteRoute._addFileChildren(AuthRegisterRouteRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRouteRoute: AdminRouteRouteWithChildren,
   TestRouteRoute: TestRouteRouteWithChildren,
+  AuthRegisterRouteRoute: AuthRegisterRouteRouteWithChildren,
+  HomeIndexRoute: HomeIndexRoute,
   AuthLoginIndexRoute: AuthLoginIndexRoute,
 }
 export const routeTree = rootRouteImport
