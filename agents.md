@@ -30,7 +30,7 @@ src/
         on-boarding/
     admin/         # Protected dashboard (contacts, accounts, orders, products, users, settings)
   store/
-    authStore.ts   # Jotai atom for User (access_token, refresh_token)
+    authStore.ts   # Jotai atom for User (accessToken, refreshToken)
     onboarding-store.ts  # Zustand store for wizard state
   stores/          # data.ts (useSearch), client.ts
 ```
@@ -46,7 +46,7 @@ src/
 - Import: `import apiClient from "@/client/api"`
 - Type: `import type { ApiResponse } from "@/client/api"`
 - Backend base URL: `https://crmgrenmouse-backend-api.onrender.com/`
-- Auth tokens stored in Jotai atom as `access_token` / `refresh_token` (snake_case)
+- Auth tokens stored in Jotai atom as `accessToken` / `refreshToken` (camelCase)
 
 ### Styling
 - Primary color: `#007047` (`--color-primary`)

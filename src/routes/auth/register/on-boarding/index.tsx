@@ -1,42 +1,139 @@
+import React, { useState } from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
 import {
-  ArrowRight, ArrowLeft,
-  ShoppingBag, Truck, Landmark, Laptop2,
-  HeartHandshake, GraduationCap, Factory, UtensilsCrossed,
-  Zap, HelpCircle,
+  ArrowRight,
+  ArrowLeft,
+  ShoppingBag,
+  Truck,
+  Landmark,
+  Laptop2,
+  HeartHandshake,
+  GraduationCap,
+  Factory,
+  UtensilsCrossed,
+  Zap,
+  HelpCircle,
 } from "lucide-react";
-import { useOnboardingStore, type OnboardingFormData } from "@/store/onboarding-store";
+import {
+  useOnboardingStore,
+  type OnboardingFormData,
+} from "@/store/onboarding-store";
 import apiClient from "@/client/api";
+import { useSelectImage } from "@/helpers/images";
+import SelectImage from "@/components/images/SelectImage";
+import { uploadImage } from "@/client/fileApi";
 
 export const Route = createFileRoute("/auth/register/on-boarding/")({
   component: OnboardingWizard,
 });
 
-const TOTAL_STEPS = 8;
+const TOTAL_STEPS = 9;
 
 const INDUSTRIES = [
-  { label: "Retail & E-Commerce",  color: "bg-pink-50 border-pink-200",     iconColor: "text-pink-500",   icon: ShoppingBag },
-  { label: "Logistics & Transport", color: "bg-blue-50 border-blue-200",    iconColor: "text-blue-500",   icon: Truck },
-  { label: "Banking & Finance",    color: "bg-yellow-50 border-yellow-200", iconColor: "text-yellow-600", icon: Landmark },
-  { label: "Technology & SaaS",    color: "bg-orange-50 border-orange-200", iconColor: "text-orange-500", icon: Laptop2 },
-  { label: "Healthcare",           color: "bg-green-50 border-green-200",   iconColor: "text-green-600",  icon: HeartHandshake },
-  { label: "Education",            color: "bg-purple-50 border-purple-200", iconColor: "text-purple-600", icon: GraduationCap },
-  { label: "Manufacturing",        color: "bg-indigo-50 border-indigo-200", iconColor: "text-indigo-500", icon: Factory },
-  { label: "Hospitality",          color: "bg-red-50 border-red-200",       iconColor: "text-red-500",    icon: UtensilsCrossed },
-  { label: "Energy",               color: "bg-teal-50 border-teal-200",     iconColor: "text-teal-500",   icon: Zap },
-  { label: "Other",                color: "bg-base-200 border-base-300",    iconColor: "text-base-content/50", icon: HelpCircle },
+  {
+    label: "Retail & E-Commerce",
+    color: "bg-pink-50 border-pink-200",
+    iconColor: "text-pink-500",
+    icon: ShoppingBag,
+  },
+  {
+    label: "Logistics & Transport",
+    color: "bg-blue-50 border-blue-200",
+    iconColor: "text-blue-500",
+    icon: Truck,
+  },
+  {
+    label: "Banking & Finance",
+    color: "bg-yellow-50 border-yellow-200",
+    iconColor: "text-yellow-600",
+    icon: Landmark,
+  },
+  {
+    label: "Technology & SaaS",
+    color: "bg-orange-50 border-orange-200",
+    iconColor: "text-orange-500",
+    icon: Laptop2,
+  },
+  {
+    label: "Healthcare",
+    color: "bg-green-50 border-green-200",
+    iconColor: "text-green-600",
+    icon: HeartHandshake,
+  },
+  {
+    label: "Education",
+    color: "bg-purple-50 border-purple-200",
+    iconColor: "text-purple-600",
+    icon: GraduationCap,
+  },
+  {
+    label: "Manufacturing",
+    color: "bg-indigo-50 border-indigo-200",
+    iconColor: "text-indigo-500",
+    icon: Factory,
+  },
+  {
+    label: "Hospitality",
+    color: "bg-red-50 border-red-200",
+    iconColor: "text-red-500",
+    icon: UtensilsCrossed,
+  },
+  {
+    label: "Energy",
+    color: "bg-teal-50 border-teal-200",
+    iconColor: "text-teal-500",
+    icon: Zap,
+  },
+  {
+    label: "Other",
+    color: "bg-base-200 border-base-300",
+    iconColor: "text-base-content/50",
+    icon: HelpCircle,
+  },
 ];
 
 const TEAM_SIZES = ["1-10", "11-50", "51-200", "201-500", "500+"];
 
 const NIGERIAN_STATES = [
-  "Abia", "Adamawa", "Akwa Ibom", "Anambra", "Bauchi", "Bayelsa", "Benue",
-  "Borno", "Cross River", "Delta", "Ebonyi", "Edo", "Ekiti", "Enugu", "FCT",
-  "Gombe", "Imo", "Jigawa", "Kaduna", "Kano", "Katsina", "Kebbi", "Kogi",
-  "Kwara", "Lagos", "Nasarawa", "Niger", "Ogun", "Ondo", "Osun", "Oyo",
-  "Plateau", "Rivers", "Sokoto", "Taraba", "Yobe", "Zamfara",
+  "Abia",
+  "Adamawa",
+  "Akwa Ibom",
+  "Anambra",
+  "Bauchi",
+  "Bayelsa",
+  "Benue",
+  "Borno",
+  "Cross River",
+  "Delta",
+  "Ebonyi",
+  "Edo",
+  "Ekiti",
+  "Enugu",
+  "FCT",
+  "Gombe",
+  "Imo",
+  "Jigawa",
+  "Kaduna",
+  "Kano",
+  "Katsina",
+  "Kebbi",
+  "Kogi",
+  "Kwara",
+  "Lagos",
+  "Nasarawa",
+  "Niger",
+  "Ogun",
+  "Ondo",
+  "Osun",
+  "Oyo",
+  "Plateau",
+  "Rivers",
+  "Sokoto",
+  "Taraba",
+  "Yobe",
+  "Zamfara",
 ];
 
 const BUSINESS_TYPES = [
@@ -63,8 +160,7 @@ function OnboardingWizard() {
 
   useQuery({
     queryKey: ["onboarding-status"],
-    queryFn: () =>
-      apiClient.get("/tenant/onboarding").then((res) => res.data),
+    queryFn: () => apiClient.get("/tenant/onboarding/").then((res) => res.data),
     onSuccess: (res: any) => {
       const d = res?.data ?? res;
       if (d) updateFormData(d);
@@ -73,7 +169,7 @@ function OnboardingWizard() {
 
   const patchMutation = useMutation({
     mutationFn: (payload: Partial<typeof formData>) =>
-      apiClient.patch("/tenant/onboarding", payload).then((r) => r.data),
+      apiClient.patch("/tenant/onboarding/", payload).then((r) => r.data),
     onError: (err: any) => {
       toast.error(err?.response?.data?.message ?? "Failed to save progress");
     },
@@ -87,7 +183,9 @@ function OnboardingWizard() {
       nav({ to: "/admin" });
     },
     onError: (err: any) => {
-      toast.error(err?.response?.data?.message ?? "Failed to complete onboarding");
+      toast.error(
+        err?.response?.data?.message ?? "Failed to complete onboarding",
+      );
     },
   });
 
@@ -151,7 +249,13 @@ interface StepProps {
   isPending: boolean;
 }
 
-function StepContent({ step, formData, advance, prevStep, isPending }: StepProps) {
+function StepContent({
+  step,
+  formData,
+  advance,
+  prevStep,
+  isPending,
+}: StepProps) {
   switch (step) {
     case 1:
       return <IndustryStep formData={formData} advance={advance} />;
@@ -185,7 +289,7 @@ function StepContent({ step, formData, advance, prevStep, isPending }: StepProps
       );
     case 6:
       return (
-        <BusinessTypeStep
+        <LogoUploadStep
           formData={formData}
           advance={advance}
           prevStep={prevStep}
@@ -193,13 +297,21 @@ function StepContent({ step, formData, advance, prevStep, isPending }: StepProps
       );
     case 7:
       return (
-        <HearAboutUsStep
+        <BusinessTypeStep
           formData={formData}
           advance={advance}
           prevStep={prevStep}
         />
       );
     case 8:
+      return (
+        <HearAboutUsStep
+          formData={formData}
+          advance={advance}
+          prevStep={prevStep}
+        />
+      );
+    case 9:
       return (
         <CreateAccountStep
           formData={formData}
@@ -289,7 +401,9 @@ function IndustryStep({
     <div className="space-y-6">
       <div className="space-y-1">
         <h2 className="text-2xl font-bold leading-snug">
-          What industry best<br />describes your business?
+          What industry best
+          <br />
+          describes your business?
         </h2>
         <p className="text-sm text-base-content/60">
           This helps us customize your experience
@@ -305,10 +419,14 @@ function IndustryStep({
               type="button"
               onClick={() => advance({ industry: ind.label })}
               className={`flex items-center gap-3 px-4 py-4 rounded-2xl border-2 text-sm font-semibold text-left transition-all hover:scale-[1.02] ${ind.color} ${
-                selected === ind.label ? "ring-2 ring-primary ring-offset-1" : ""
+                selected === ind.label
+                  ? "ring-2 ring-primary ring-offset-1"
+                  : ""
               }`}
             >
-              <span className={`flex items-center justify-center w-10 h-10 rounded-full bg-white/70 shrink-0 ${ind.iconColor}`}>
+              <span
+                className={`flex items-center justify-center w-10 h-10 rounded-full bg-white/70 shrink-0 ${ind.iconColor}`}
+              >
                 <Icon size={20} />
               </span>
               {ind.label}
@@ -339,11 +457,13 @@ function EmailStep({
     <form onSubmit={handleSubmit} className="space-y-6">
       <div className="space-y-1">
         <h2 className="text-2xl font-bold leading-snug">
-          What is your company<br />email?
+          What is your company
+          <br />
+          email?
         </h2>
         <p className="text-sm text-base-content/60">
-          We'll use this email for account notifications, billing, and
-          workspace communication.
+          We'll use this email for account notifications, billing, and workspace
+          communication.
         </p>
       </div>
 
@@ -356,7 +476,9 @@ function EmailStep({
           required
           className="input input-bordered w-full"
         />
-        <p className="text-xs text-primary italic">Ensure this email is valid.</p>
+        <p className="text-xs text-primary italic">
+          Ensure this email is valid.
+        </p>
       </div>
 
       <NavRow onBack={prevStep} />
@@ -384,7 +506,9 @@ function LocationStep({
     <form onSubmit={handleSubmit} className="space-y-6">
       <div className="space-y-1">
         <h2 className="text-2xl font-bold leading-snug">
-          Where is your business<br />located?
+          Where is your business
+          <br />
+          located?
         </h2>
         <p className="text-sm text-base-content/60">
           We'll use this to tailor your workspace experience and localization
@@ -443,7 +567,9 @@ function TeamSizeStep({
     <form onSubmit={handleSubmit} className="space-y-6">
       <div className="space-y-1">
         <h2 className="text-2xl font-bold leading-snug">
-          What is your customer<br />size?
+          What is your customer
+          <br />
+          size?
         </h2>
         <p className="text-sm text-base-content/60">
           Choose the staff strength that best matches your business operations.
@@ -532,7 +658,59 @@ function CompanyWebsiteStep({
   );
 }
 
-/* ─────────────────────── Step 6: Business Type ─────────────────────── */
+/* ─────────────────────── Step 6: Logo Upload ─────────────────────── */
+
+function LogoUploadStep({
+  formData,
+  advance,
+  prevStep,
+}: Pick<StepProps, "formData" | "advance" | "prevStep">) {
+  const [isUploading, setIsUploading] = useState(false);
+  const selectImageProps = useSelectImage();
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    if (selectImageProps.image) {
+      setIsUploading(true);
+      try {
+        const response = await uploadImage(selectImageProps.image);
+        // Using response.payload?.url or response.url based on common patterns
+        const logoUrl = (response as any).payload?.url || (response as any).url;
+        advance({ logo: logoUrl });
+      } catch (error) {
+        toast.error("Failed to upload logo. Please try again.");
+      } finally {
+        setIsUploading(false);
+      }
+    } else {
+      advance({}); // No change
+    }
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-6">
+      <div className="space-y-1">
+        <h2 className="text-2xl font-bold leading-snug">
+          Upload your company
+          <br />
+          logo
+        </h2>
+        <p className="text-sm text-base-content/60">
+          A logo helps your team and customers recognize your brand.
+        </p>
+      </div>
+
+      <div className="flex justify-center py-4">
+        <SelectImage {...selectImageProps} title="Company Logo" />
+      </div>
+
+      <NavRow onBack={prevStep} isPending={isUploading} />
+    </form>
+  );
+}
+
+/* ─────────────────────── Step 7: Business Type ─────────────────────── */
 
 function BusinessTypeStep({
   formData,
@@ -552,7 +730,9 @@ function BusinessTypeStep({
     <form onSubmit={handleSubmit} className="space-y-6">
       <div className="space-y-1">
         <h2 className="text-2xl font-bold leading-snug">
-          Business registration<br />details
+          Business registration
+          <br />
+          details
         </h2>
         <p className="text-sm text-base-content/60">
           This helps us provide the right compliance tools for your business.
@@ -599,7 +779,7 @@ function BusinessTypeStep({
   );
 }
 
-/* ─────────────────────── Step 7: Hear About Us ─────────────────────── */
+/* ─────────────────────── Step 8: Hear About us ─────────────────────── */
 
 function HearAboutUsStep({
   formData,
@@ -618,7 +798,9 @@ function HearAboutUsStep({
     <form onSubmit={handleSubmit} className="space-y-6">
       <div className="space-y-1">
         <h2 className="text-2xl font-bold leading-snug">
-          How did you hear about<br />us?
+          How did you hear about
+          <br />
+          us?
         </h2>
         <p className="text-sm text-base-content/60">
           Help us understand how businesses are discovering our platform.
@@ -646,7 +828,7 @@ function HearAboutUsStep({
   );
 }
 
-/* ─────────────────────── Step 8: Create Account ─────────────────────── */
+/* ─────────────────────── Step 9: Create Account ─────────────────────── */
 
 function CreateAccountStep({
   formData,
@@ -667,9 +849,7 @@ function CreateAccountStep({
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       <div className="space-y-1">
-        <h2 className="text-2xl font-bold leading-snug">
-          Create your account
-        </h2>
+        <h2 className="text-2xl font-bold leading-snug">Create your account</h2>
         <p className="text-sm text-base-content/60">
           Set up your login credentials to securely access your workspace.
         </p>
@@ -677,7 +857,9 @@ function CreateAccountStep({
 
       <div className="space-y-4">
         <div className="space-y-1.5">
-          <label className="text-sm font-semibold fieldset-label">Full Name</label>
+          <label className="text-sm font-semibold fieldset-label">
+            Full Name
+          </label>
           <input
             name="fullName"
             type="text"
@@ -689,7 +871,9 @@ function CreateAccountStep({
         </div>
 
         <div className="space-y-1.5">
-          <label className="text-sm font-semibold fieldset-label">Phone Number</label>
+          <label className="text-sm font-semibold fieldset-label">
+            Phone Number
+          </label>
           <input
             name="phoneNumber"
             type="tel"
@@ -701,7 +885,9 @@ function CreateAccountStep({
         </div>
 
         <div className="space-y-1.5">
-          <label className="text-sm font-semibold fieldset-label">Username</label>
+          <label className="text-sm font-semibold fieldset-label">
+            Username
+          </label>
           <input
             name="username"
             type="text"

@@ -23,9 +23,12 @@ function RouteComponent() {
   const { mutate, isPending } = useMutation({
     mutationFn: (data: RegisterForm) =>
       apiClient.post("/tenant/auth/register", data).then((res) => res.data),
-    onSuccess: () => {
-      toast.success("Account created! Please sign in.");
-      nav({ to: "/auth/login" });
+    onSuccess: (_, variables) => {
+      toast.success("Account created! Please verify your email.");
+      nav({
+        to: "/auth/verify",
+        search: { email: variables.email },
+      });
     },
     onError: (err: any) => {
       const message =

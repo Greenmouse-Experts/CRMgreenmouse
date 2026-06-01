@@ -1,9 +1,21 @@
 import { Link } from "@tanstack/react-router";
 import { Menu, X, MousePointer2, LogIn, ChevronRight } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 
 export default function HomeNav() {
   const [isOpen, setIsOpen] = useState(false);
+  const navRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleClickOutside = (e: MouseEvent) => {
+      if (navRef.current && !navRef.current.contains(e.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [isOpen]);
 
   const navLinks = [
     { name: "Features", href: "#features" },
@@ -13,7 +25,7 @@ export default function HomeNav() {
   ];
 
   return (
-    <nav className="sticky top-0 z-50 w-full border-b border-base-200 bg-base-100/70 backdrop-blur-lg">
+    <nav ref={navRef} className="sticky top-0 z-50 w-full border-b border-base-200 bg-base-100/70 backdrop-blur-lg">
       <div className="container mx-auto flex h-20 items-center justify-between">
         {/* Brand/Logo */}
         <Link

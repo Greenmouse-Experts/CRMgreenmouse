@@ -6,14 +6,16 @@ import { toast } from "sonner";
 export const new_url = "https://crmgrenmouse-backend-api.onrender.com/";
 const apiClient = axios.create({
   baseURL: new_url,
-  withCredentials: true,
+  headers: {
+    "Content-Type": "application/json",
+  },
 });
 
 // Attach access token before each request
 apiClient.interceptors.request.use((config) => {
   const user = get_user_value();
-  if (user && user.access_token) {
-    config.headers.Authorization = `Bearer ${user.access_token}`;
+  if (user && user.accessToken) {
+    config.headers.Authorization = `Bearer ${user.accessToken}`;
   }
   return config;
 });
@@ -33,7 +35,7 @@ apiClient.interceptors.response.use(
           throw new Error("User not found in store.");
         }
         const { data } = await axios.post(`${new_url}auth/refresh`, {
-          refreshToken: user.refresh_token,
+          refreshToken: user.refreshToken,
         });
 
         const newAccessToken = data.data.accessToken;
@@ -45,8 +47,8 @@ apiClient.interceptors.response.use(
 
         set_user_value({
           ...user,
-          access_token: newAccessToken,
-          refresh_token: newRefreshToken,
+          accessToken: newAccessToken,
+          refreshToken: newRefreshToken,
         });
 
         // Update header and retry

@@ -5,10 +5,14 @@ import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 import SimpleInput from "@/components/inputs/SimpleInput";
 import apiClient from "@/client/api";
-import { set_user_value } from "@/store/authStore";
+import { set_user_value, set_profile_value } from "@/store/authStore";
+import { useOnboardingStore } from "@/store/onboarding-store";
 
 export const Route = createFileRoute("/auth/login/")({
   component: RouteComponent,
+  validateSearch: (search: { email?: string }): { email: string } => {
+    return { email: search.email ?? "" };
+  },
 });
 
 interface LoginProps {
@@ -17,16 +21,50 @@ interface LoginProps {
 }
 
 function RouteComponent() {
+  const { email } = Route.useSearch();
   const nav = useNavigate();
-  const form = useForm<LoginProps>();
+  const form = useForm<LoginProps>({
+    defaultValues: {
+      email: email || "",
+    },
+  });
+  const { updateFormData } = useOnboardingStore();
 
   const { mutate, isPending } = useMutation({
     mutationFn: (data: LoginProps) =>
-      apiClient.post("/auth/admin/login", data).then((res) => res.data),
-    onSuccess: (res) => {
-      set_user_value(res.data);
+      apiClient.post("/tenant/auth/login", data).then((res) => res.data),
+    onSuccess: async (res) => {
+      // res is { accessToken, refreshToken, user }
+      set_user_value(res);
       toast.success("Login successful");
-      nav({ to: "/admin" });
+
+      try {
+        const profileRes = await apiClient
+          .get("/tenant/auth/me")
+          .then((r) => r.data);
+        const profileData = profileRes.data ?? profileRes;
+
+        if (profileData) {
+          // Store detailed profile in auth store
+          set_profile_value(profileData);
+
+          updateFormData({
+            _id: profileData.sub,
+            email: profileData.email,
+            companyName: profileData.companyName,
+            isOnboarded: profileData.isOnboarded,
+          });
+
+          if (!profileData.isOnboarded) {
+            nav({ to: "/auth/register/on-boarding" });
+            return;
+          }
+        }
+        nav({ to: "/admin" });
+      } catch (err) {
+        console.error("Failed to fetch profile", err);
+        nav({ to: "/admin" });
+      }
     },
     onError: (err: any) => {
       const message =
@@ -46,10 +84,10 @@ function RouteComponent() {
       <div className="w-full flex flex-col mx-auto space-y-4 px-4  z-20  ">
         <div className="mt-12">
           <h2 className="text-3xl font-bold text-center leading-normal ">
-            Kinovia Crm
+            CRMgreenmouse
           </h2>
           <p className="font-semibold text-primary mx-auto w-fit text-sm">
-            Super Admin Portal
+            Business Management Portal
           </p>
         </div>
         <form
@@ -58,7 +96,7 @@ function RouteComponent() {
           className="p-6 space-y-6 py-8 mx-auto  bg-base-100/70 backdrop-blur-md rounded-box drop-shadow-xl ring ring-current/10 w-full max-w-md m-2 mb-12  "
         >
           <div className="space-y-1 ">
-            <h2 className="text-2xl font-bold">Admin Login</h2>
+            <h2 className="text-2xl font-bold text-center">Login</h2>
             <p className="text-sm text-center fieldset-label ">
               Enter your credentials to access your account
             </p>

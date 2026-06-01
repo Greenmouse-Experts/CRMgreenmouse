@@ -10,14 +10,25 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TestRouteRouteImport } from './routes/test/route'
+import { Route as TenantRouteRouteImport } from './routes/tenant/route'
 import { Route as AdminRouteRouteImport } from './routes/admin/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as TestIndexRouteImport } from './routes/test/index'
+import { Route as TenantIndexRouteImport } from './routes/tenant/index'
 import { Route as HomeIndexRouteImport } from './routes/home/index'
 import { Route as AdminIndexRouteImport } from './routes/admin/index'
 import { Route as TestHomeRouteImport } from './routes/test/home'
+import { Route as TenantSettingsRouteRouteImport } from './routes/tenant/settings/route'
+import { Route as AuthVerifyRouteRouteImport } from './routes/auth/verify/route'
 import { Route as AuthRegisterRouteRouteImport } from './routes/auth/register/route'
 import { Route as AdminSettingsRouteRouteImport } from './routes/admin/settings/route'
+import { Route as TenantUsersIndexRouteImport } from './routes/tenant/users/index'
+import { Route as TenantTransactionsIndexRouteImport } from './routes/tenant/transactions/index'
+import { Route as TenantSubscriptionIndexRouteImport } from './routes/tenant/subscription/index'
+import { Route as TenantSettingsIndexRouteImport } from './routes/tenant/settings/index'
+import { Route as TenantProductsIndexRouteImport } from './routes/tenant/products/index'
+import { Route as TenantOrdersIndexRouteImport } from './routes/tenant/orders/index'
+import { Route as AuthVerifyIndexRouteImport } from './routes/auth/verify/index'
 import { Route as AuthRegisterIndexRouteImport } from './routes/auth/register/index'
 import { Route as AuthLoginIndexRouteImport } from './routes/auth/login/index'
 import { Route as AdminUsersIndexRouteImport } from './routes/admin/users/index'
@@ -26,6 +37,22 @@ import { Route as AdminSubscriptionIndexRouteImport } from './routes/admin/subsc
 import { Route as AdminSettingsIndexRouteImport } from './routes/admin/settings/index'
 import { Route as AdminProductsIndexRouteImport } from './routes/admin/products/index'
 import { Route as AdminOrdersIndexRouteImport } from './routes/admin/orders/index'
+import { Route as TenantUsersRolesIndexRouteImport } from './routes/tenant/users/roles/index'
+import { Route as TenantUsersAddIndexRouteImport } from './routes/tenant/users/add/index'
+import { Route as TenantSettingsThemeIndexRouteImport } from './routes/tenant/settings/theme/index'
+import { Route as TenantSettingsSecurityIndexRouteImport } from './routes/tenant/settings/security/index'
+import { Route as TenantSettingsProfileIndexRouteImport } from './routes/tenant/settings/profile/index'
+import { Route as TenantProductsServiceIndexRouteImport } from './routes/tenant/products/service/index'
+import { Route as TenantProductsCategoriesIndexRouteImport } from './routes/tenant/products/categories/index'
+import { Route as TenantProductsAddIndexRouteImport } from './routes/tenant/products/add/index'
+import { Route as TenantContactsCustomersIndexRouteImport } from './routes/tenant/contacts/customers/index'
+import { Route as TenantContactsCompaniesIndexRouteImport } from './routes/tenant/contacts/companies/index'
+import { Route as TenantAccountsTransactionsIndexRouteImport } from './routes/tenant/accounts/transactions/index'
+import { Route as TenantAccountsSalesIndexRouteImport } from './routes/tenant/accounts/sales/index'
+import { Route as TenantAccountsQuotesIndexRouteImport } from './routes/tenant/accounts/quotes/index'
+import { Route as TenantAccountsIncomeExpensesIndexRouteImport } from './routes/tenant/accounts/income-expenses/index'
+import { Route as TenantAccountsAnalysisIndexRouteImport } from './routes/tenant/accounts/analysis/index'
+import { Route as TenantAccountsInvoicesIndexRouteImport } from './routes/tenant/accounts/Invoices/index'
 import { Route as AuthRegisterOnBoardingIndexRouteImport } from './routes/auth/register/on-boarding/index'
 import { Route as AdminUsersRolesIndexRouteImport } from './routes/admin/users/roles/index'
 import { Route as AdminUsersAddIndexRouteImport } from './routes/admin/users/add/index'
@@ -43,17 +70,29 @@ import { Route as AdminAccountsQuotesIndexRouteImport } from './routes/admin/acc
 import { Route as AdminAccountsIncomeExpensesIndexRouteImport } from './routes/admin/accounts/income-expenses/index'
 import { Route as AdminAccountsAnalysisIndexRouteImport } from './routes/admin/accounts/analysis/index'
 import { Route as AdminAccountsInvoicesIndexRouteImport } from './routes/admin/accounts/Invoices/index'
+import { Route as TenantUsersDetailsIdIndexRouteImport } from './routes/tenant/users/details/$id/index'
+import { Route as TenantProductsServiceAddIndexRouteImport } from './routes/tenant/products/service/add/index'
+import { Route as TenantContactsCustomersAddIndexRouteImport } from './routes/tenant/contacts/customers/add/index'
+import { Route as TenantContactsCompaniesAddIndexRouteImport } from './routes/tenant/contacts/companies/add/index'
+import { Route as TenantAccountsInvoicesAddIndexRouteImport } from './routes/tenant/accounts/Invoices/add/index'
+import { Route as TenantAccountsInvoicesIdIndexRouteImport } from './routes/tenant/accounts/Invoices/$id/index'
 import { Route as AdminUsersDetailsIdIndexRouteImport } from './routes/admin/users/details/$id/index'
 import { Route as AdminProductsServiceAddIndexRouteImport } from './routes/admin/products/service/add/index'
 import { Route as AdminContactsCustomersAddIndexRouteImport } from './routes/admin/contacts/customers/add/index'
 import { Route as AdminContactsCompaniesAddIndexRouteImport } from './routes/admin/contacts/companies/add/index'
 import { Route as AdminAccountsInvoicesAddIndexRouteImport } from './routes/admin/accounts/Invoices/add/index'
 import { Route as AdminAccountsInvoicesIdIndexRouteImport } from './routes/admin/accounts/Invoices/$id/index'
+import { Route as TenantContactsCompaniesDetailsIdIndexRouteImport } from './routes/tenant/contacts/companies/details/$id/index'
 import { Route as AdminContactsCompaniesDetailsIdIndexRouteImport } from './routes/admin/contacts/companies/details/$id/index'
 
 const TestRouteRoute = TestRouteRouteImport.update({
   id: '/test',
   path: '/test',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TenantRouteRoute = TenantRouteRouteImport.update({
+  id: '/tenant',
+  path: '/tenant',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminRouteRoute = AdminRouteRouteImport.update({
@@ -71,6 +110,11 @@ const TestIndexRoute = TestIndexRouteImport.update({
   path: '/',
   getParentRoute: () => TestRouteRoute,
 } as any)
+const TenantIndexRoute = TenantIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => TenantRouteRoute,
+} as any)
 const HomeIndexRoute = HomeIndexRouteImport.update({
   id: '/home/',
   path: '/home/',
@@ -86,6 +130,16 @@ const TestHomeRoute = TestHomeRouteImport.update({
   path: '/home',
   getParentRoute: () => TestRouteRoute,
 } as any)
+const TenantSettingsRouteRoute = TenantSettingsRouteRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => TenantRouteRoute,
+} as any)
+const AuthVerifyRouteRoute = AuthVerifyRouteRouteImport.update({
+  id: '/auth/verify',
+  path: '/auth/verify',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthRegisterRouteRoute = AuthRegisterRouteRouteImport.update({
   id: '/auth/register',
   path: '/auth/register',
@@ -95,6 +149,41 @@ const AdminSettingsRouteRoute = AdminSettingsRouteRouteImport.update({
   id: '/settings',
   path: '/settings',
   getParentRoute: () => AdminRouteRoute,
+} as any)
+const TenantUsersIndexRoute = TenantUsersIndexRouteImport.update({
+  id: '/users/',
+  path: '/users/',
+  getParentRoute: () => TenantRouteRoute,
+} as any)
+const TenantTransactionsIndexRoute = TenantTransactionsIndexRouteImport.update({
+  id: '/transactions/',
+  path: '/transactions/',
+  getParentRoute: () => TenantRouteRoute,
+} as any)
+const TenantSubscriptionIndexRoute = TenantSubscriptionIndexRouteImport.update({
+  id: '/subscription/',
+  path: '/subscription/',
+  getParentRoute: () => TenantRouteRoute,
+} as any)
+const TenantSettingsIndexRoute = TenantSettingsIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => TenantSettingsRouteRoute,
+} as any)
+const TenantProductsIndexRoute = TenantProductsIndexRouteImport.update({
+  id: '/products/',
+  path: '/products/',
+  getParentRoute: () => TenantRouteRoute,
+} as any)
+const TenantOrdersIndexRoute = TenantOrdersIndexRouteImport.update({
+  id: '/orders/',
+  path: '/orders/',
+  getParentRoute: () => TenantRouteRoute,
+} as any)
+const AuthVerifyIndexRoute = AuthVerifyIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AuthVerifyRouteRoute,
 } as any)
 const AuthRegisterIndexRoute = AuthRegisterIndexRouteImport.update({
   id: '/',
@@ -136,6 +225,99 @@ const AdminOrdersIndexRoute = AdminOrdersIndexRouteImport.update({
   path: '/orders/',
   getParentRoute: () => AdminRouteRoute,
 } as any)
+const TenantUsersRolesIndexRoute = TenantUsersRolesIndexRouteImport.update({
+  id: '/users/roles/',
+  path: '/users/roles/',
+  getParentRoute: () => TenantRouteRoute,
+} as any)
+const TenantUsersAddIndexRoute = TenantUsersAddIndexRouteImport.update({
+  id: '/users/add/',
+  path: '/users/add/',
+  getParentRoute: () => TenantRouteRoute,
+} as any)
+const TenantSettingsThemeIndexRoute =
+  TenantSettingsThemeIndexRouteImport.update({
+    id: '/theme/',
+    path: '/theme/',
+    getParentRoute: () => TenantSettingsRouteRoute,
+  } as any)
+const TenantSettingsSecurityIndexRoute =
+  TenantSettingsSecurityIndexRouteImport.update({
+    id: '/security/',
+    path: '/security/',
+    getParentRoute: () => TenantSettingsRouteRoute,
+  } as any)
+const TenantSettingsProfileIndexRoute =
+  TenantSettingsProfileIndexRouteImport.update({
+    id: '/profile/',
+    path: '/profile/',
+    getParentRoute: () => TenantSettingsRouteRoute,
+  } as any)
+const TenantProductsServiceIndexRoute =
+  TenantProductsServiceIndexRouteImport.update({
+    id: '/products/service/',
+    path: '/products/service/',
+    getParentRoute: () => TenantRouteRoute,
+  } as any)
+const TenantProductsCategoriesIndexRoute =
+  TenantProductsCategoriesIndexRouteImport.update({
+    id: '/products/categories/',
+    path: '/products/categories/',
+    getParentRoute: () => TenantRouteRoute,
+  } as any)
+const TenantProductsAddIndexRoute = TenantProductsAddIndexRouteImport.update({
+  id: '/products/add/',
+  path: '/products/add/',
+  getParentRoute: () => TenantRouteRoute,
+} as any)
+const TenantContactsCustomersIndexRoute =
+  TenantContactsCustomersIndexRouteImport.update({
+    id: '/contacts/customers/',
+    path: '/contacts/customers/',
+    getParentRoute: () => TenantRouteRoute,
+  } as any)
+const TenantContactsCompaniesIndexRoute =
+  TenantContactsCompaniesIndexRouteImport.update({
+    id: '/contacts/companies/',
+    path: '/contacts/companies/',
+    getParentRoute: () => TenantRouteRoute,
+  } as any)
+const TenantAccountsTransactionsIndexRoute =
+  TenantAccountsTransactionsIndexRouteImport.update({
+    id: '/accounts/transactions/',
+    path: '/accounts/transactions/',
+    getParentRoute: () => TenantRouteRoute,
+  } as any)
+const TenantAccountsSalesIndexRoute =
+  TenantAccountsSalesIndexRouteImport.update({
+    id: '/accounts/sales/',
+    path: '/accounts/sales/',
+    getParentRoute: () => TenantRouteRoute,
+  } as any)
+const TenantAccountsQuotesIndexRoute =
+  TenantAccountsQuotesIndexRouteImport.update({
+    id: '/accounts/quotes/',
+    path: '/accounts/quotes/',
+    getParentRoute: () => TenantRouteRoute,
+  } as any)
+const TenantAccountsIncomeExpensesIndexRoute =
+  TenantAccountsIncomeExpensesIndexRouteImport.update({
+    id: '/accounts/income-expenses/',
+    path: '/accounts/income-expenses/',
+    getParentRoute: () => TenantRouteRoute,
+  } as any)
+const TenantAccountsAnalysisIndexRoute =
+  TenantAccountsAnalysisIndexRouteImport.update({
+    id: '/accounts/analysis/',
+    path: '/accounts/analysis/',
+    getParentRoute: () => TenantRouteRoute,
+  } as any)
+const TenantAccountsInvoicesIndexRoute =
+  TenantAccountsInvoicesIndexRouteImport.update({
+    id: '/accounts/Invoices/',
+    path: '/accounts/Invoices/',
+    getParentRoute: () => TenantRouteRoute,
+  } as any)
 const AuthRegisterOnBoardingIndexRoute =
   AuthRegisterOnBoardingIndexRouteImport.update({
     id: '/on-boarding/',
@@ -233,6 +415,42 @@ const AdminAccountsInvoicesIndexRoute =
     path: '/accounts/Invoices/',
     getParentRoute: () => AdminRouteRoute,
   } as any)
+const TenantUsersDetailsIdIndexRoute =
+  TenantUsersDetailsIdIndexRouteImport.update({
+    id: '/users/details/$id/',
+    path: '/users/details/$id/',
+    getParentRoute: () => TenantRouteRoute,
+  } as any)
+const TenantProductsServiceAddIndexRoute =
+  TenantProductsServiceAddIndexRouteImport.update({
+    id: '/products/service/add/',
+    path: '/products/service/add/',
+    getParentRoute: () => TenantRouteRoute,
+  } as any)
+const TenantContactsCustomersAddIndexRoute =
+  TenantContactsCustomersAddIndexRouteImport.update({
+    id: '/contacts/customers/add/',
+    path: '/contacts/customers/add/',
+    getParentRoute: () => TenantRouteRoute,
+  } as any)
+const TenantContactsCompaniesAddIndexRoute =
+  TenantContactsCompaniesAddIndexRouteImport.update({
+    id: '/contacts/companies/add/',
+    path: '/contacts/companies/add/',
+    getParentRoute: () => TenantRouteRoute,
+  } as any)
+const TenantAccountsInvoicesAddIndexRoute =
+  TenantAccountsInvoicesAddIndexRouteImport.update({
+    id: '/accounts/Invoices/add/',
+    path: '/accounts/Invoices/add/',
+    getParentRoute: () => TenantRouteRoute,
+  } as any)
+const TenantAccountsInvoicesIdIndexRoute =
+  TenantAccountsInvoicesIdIndexRouteImport.update({
+    id: '/accounts/Invoices/$id/',
+    path: '/accounts/Invoices/$id/',
+    getParentRoute: () => TenantRouteRoute,
+  } as any)
 const AdminUsersDetailsIdIndexRoute =
   AdminUsersDetailsIdIndexRouteImport.update({
     id: '/users/details/$id/',
@@ -269,6 +487,12 @@ const AdminAccountsInvoicesIdIndexRoute =
     path: '/accounts/Invoices/$id/',
     getParentRoute: () => AdminRouteRoute,
   } as any)
+const TenantContactsCompaniesDetailsIdIndexRoute =
+  TenantContactsCompaniesDetailsIdIndexRouteImport.update({
+    id: '/contacts/companies/details/$id/',
+    path: '/contacts/companies/details/$id/',
+    getParentRoute: () => TenantRouteRoute,
+  } as any)
 const AdminContactsCompaniesDetailsIdIndexRoute =
   AdminContactsCompaniesDetailsIdIndexRouteImport.update({
     id: '/contacts/companies/details/$id/',
@@ -279,12 +503,16 @@ const AdminContactsCompaniesDetailsIdIndexRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteRouteWithChildren
+  '/tenant': typeof TenantRouteRouteWithChildren
   '/test': typeof TestRouteRouteWithChildren
   '/admin/settings': typeof AdminSettingsRouteRouteWithChildren
   '/auth/register': typeof AuthRegisterRouteRouteWithChildren
+  '/auth/verify': typeof AuthVerifyRouteRouteWithChildren
+  '/tenant/settings': typeof TenantSettingsRouteRouteWithChildren
   '/test/home': typeof TestHomeRoute
   '/admin/': typeof AdminIndexRoute
   '/home': typeof HomeIndexRoute
+  '/tenant/': typeof TenantIndexRoute
   '/test/': typeof TestIndexRoute
   '/admin/orders': typeof AdminOrdersIndexRoute
   '/admin/products': typeof AdminProductsIndexRoute
@@ -294,6 +522,13 @@ export interface FileRoutesByFullPath {
   '/admin/users': typeof AdminUsersIndexRoute
   '/auth/login': typeof AuthLoginIndexRoute
   '/auth/register/': typeof AuthRegisterIndexRoute
+  '/auth/verify/': typeof AuthVerifyIndexRoute
+  '/tenant/orders': typeof TenantOrdersIndexRoute
+  '/tenant/products': typeof TenantProductsIndexRoute
+  '/tenant/settings/': typeof TenantSettingsIndexRoute
+  '/tenant/subscription': typeof TenantSubscriptionIndexRoute
+  '/tenant/transactions': typeof TenantTransactionsIndexRoute
+  '/tenant/users': typeof TenantUsersIndexRoute
   '/admin/accounts/Invoices': typeof AdminAccountsInvoicesIndexRoute
   '/admin/accounts/analysis': typeof AdminAccountsAnalysisIndexRoute
   '/admin/accounts/income-expenses': typeof AdminAccountsIncomeExpensesIndexRoute
@@ -311,19 +546,43 @@ export interface FileRoutesByFullPath {
   '/admin/users/add': typeof AdminUsersAddIndexRoute
   '/admin/users/roles': typeof AdminUsersRolesIndexRoute
   '/auth/register/on-boarding': typeof AuthRegisterOnBoardingIndexRoute
+  '/tenant/accounts/Invoices': typeof TenantAccountsInvoicesIndexRoute
+  '/tenant/accounts/analysis': typeof TenantAccountsAnalysisIndexRoute
+  '/tenant/accounts/income-expenses': typeof TenantAccountsIncomeExpensesIndexRoute
+  '/tenant/accounts/quotes': typeof TenantAccountsQuotesIndexRoute
+  '/tenant/accounts/sales': typeof TenantAccountsSalesIndexRoute
+  '/tenant/accounts/transactions': typeof TenantAccountsTransactionsIndexRoute
+  '/tenant/contacts/companies': typeof TenantContactsCompaniesIndexRoute
+  '/tenant/contacts/customers': typeof TenantContactsCustomersIndexRoute
+  '/tenant/products/add': typeof TenantProductsAddIndexRoute
+  '/tenant/products/categories': typeof TenantProductsCategoriesIndexRoute
+  '/tenant/products/service': typeof TenantProductsServiceIndexRoute
+  '/tenant/settings/profile': typeof TenantSettingsProfileIndexRoute
+  '/tenant/settings/security': typeof TenantSettingsSecurityIndexRoute
+  '/tenant/settings/theme': typeof TenantSettingsThemeIndexRoute
+  '/tenant/users/add': typeof TenantUsersAddIndexRoute
+  '/tenant/users/roles': typeof TenantUsersRolesIndexRoute
   '/admin/accounts/Invoices/$id': typeof AdminAccountsInvoicesIdIndexRoute
   '/admin/accounts/Invoices/add': typeof AdminAccountsInvoicesAddIndexRoute
   '/admin/contacts/companies/add': typeof AdminContactsCompaniesAddIndexRoute
   '/admin/contacts/customers/add': typeof AdminContactsCustomersAddIndexRoute
   '/admin/products/service/add': typeof AdminProductsServiceAddIndexRoute
   '/admin/users/details/$id': typeof AdminUsersDetailsIdIndexRoute
+  '/tenant/accounts/Invoices/$id': typeof TenantAccountsInvoicesIdIndexRoute
+  '/tenant/accounts/Invoices/add': typeof TenantAccountsInvoicesAddIndexRoute
+  '/tenant/contacts/companies/add': typeof TenantContactsCompaniesAddIndexRoute
+  '/tenant/contacts/customers/add': typeof TenantContactsCustomersAddIndexRoute
+  '/tenant/products/service/add': typeof TenantProductsServiceAddIndexRoute
+  '/tenant/users/details/$id': typeof TenantUsersDetailsIdIndexRoute
   '/admin/contacts/companies/details/$id': typeof AdminContactsCompaniesDetailsIdIndexRoute
+  '/tenant/contacts/companies/details/$id': typeof TenantContactsCompaniesDetailsIdIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/test/home': typeof TestHomeRoute
   '/admin': typeof AdminIndexRoute
   '/home': typeof HomeIndexRoute
+  '/tenant': typeof TenantIndexRoute
   '/test': typeof TestIndexRoute
   '/admin/orders': typeof AdminOrdersIndexRoute
   '/admin/products': typeof AdminProductsIndexRoute
@@ -333,6 +592,13 @@ export interface FileRoutesByTo {
   '/admin/users': typeof AdminUsersIndexRoute
   '/auth/login': typeof AuthLoginIndexRoute
   '/auth/register': typeof AuthRegisterIndexRoute
+  '/auth/verify': typeof AuthVerifyIndexRoute
+  '/tenant/orders': typeof TenantOrdersIndexRoute
+  '/tenant/products': typeof TenantProductsIndexRoute
+  '/tenant/settings': typeof TenantSettingsIndexRoute
+  '/tenant/subscription': typeof TenantSubscriptionIndexRoute
+  '/tenant/transactions': typeof TenantTransactionsIndexRoute
+  '/tenant/users': typeof TenantUsersIndexRoute
   '/admin/accounts/Invoices': typeof AdminAccountsInvoicesIndexRoute
   '/admin/accounts/analysis': typeof AdminAccountsAnalysisIndexRoute
   '/admin/accounts/income-expenses': typeof AdminAccountsIncomeExpensesIndexRoute
@@ -350,24 +616,51 @@ export interface FileRoutesByTo {
   '/admin/users/add': typeof AdminUsersAddIndexRoute
   '/admin/users/roles': typeof AdminUsersRolesIndexRoute
   '/auth/register/on-boarding': typeof AuthRegisterOnBoardingIndexRoute
+  '/tenant/accounts/Invoices': typeof TenantAccountsInvoicesIndexRoute
+  '/tenant/accounts/analysis': typeof TenantAccountsAnalysisIndexRoute
+  '/tenant/accounts/income-expenses': typeof TenantAccountsIncomeExpensesIndexRoute
+  '/tenant/accounts/quotes': typeof TenantAccountsQuotesIndexRoute
+  '/tenant/accounts/sales': typeof TenantAccountsSalesIndexRoute
+  '/tenant/accounts/transactions': typeof TenantAccountsTransactionsIndexRoute
+  '/tenant/contacts/companies': typeof TenantContactsCompaniesIndexRoute
+  '/tenant/contacts/customers': typeof TenantContactsCustomersIndexRoute
+  '/tenant/products/add': typeof TenantProductsAddIndexRoute
+  '/tenant/products/categories': typeof TenantProductsCategoriesIndexRoute
+  '/tenant/products/service': typeof TenantProductsServiceIndexRoute
+  '/tenant/settings/profile': typeof TenantSettingsProfileIndexRoute
+  '/tenant/settings/security': typeof TenantSettingsSecurityIndexRoute
+  '/tenant/settings/theme': typeof TenantSettingsThemeIndexRoute
+  '/tenant/users/add': typeof TenantUsersAddIndexRoute
+  '/tenant/users/roles': typeof TenantUsersRolesIndexRoute
   '/admin/accounts/Invoices/$id': typeof AdminAccountsInvoicesIdIndexRoute
   '/admin/accounts/Invoices/add': typeof AdminAccountsInvoicesAddIndexRoute
   '/admin/contacts/companies/add': typeof AdminContactsCompaniesAddIndexRoute
   '/admin/contacts/customers/add': typeof AdminContactsCustomersAddIndexRoute
   '/admin/products/service/add': typeof AdminProductsServiceAddIndexRoute
   '/admin/users/details/$id': typeof AdminUsersDetailsIdIndexRoute
+  '/tenant/accounts/Invoices/$id': typeof TenantAccountsInvoicesIdIndexRoute
+  '/tenant/accounts/Invoices/add': typeof TenantAccountsInvoicesAddIndexRoute
+  '/tenant/contacts/companies/add': typeof TenantContactsCompaniesAddIndexRoute
+  '/tenant/contacts/customers/add': typeof TenantContactsCustomersAddIndexRoute
+  '/tenant/products/service/add': typeof TenantProductsServiceAddIndexRoute
+  '/tenant/users/details/$id': typeof TenantUsersDetailsIdIndexRoute
   '/admin/contacts/companies/details/$id': typeof AdminContactsCompaniesDetailsIdIndexRoute
+  '/tenant/contacts/companies/details/$id': typeof TenantContactsCompaniesDetailsIdIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteRouteWithChildren
+  '/tenant': typeof TenantRouteRouteWithChildren
   '/test': typeof TestRouteRouteWithChildren
   '/admin/settings': typeof AdminSettingsRouteRouteWithChildren
   '/auth/register': typeof AuthRegisterRouteRouteWithChildren
+  '/auth/verify': typeof AuthVerifyRouteRouteWithChildren
+  '/tenant/settings': typeof TenantSettingsRouteRouteWithChildren
   '/test/home': typeof TestHomeRoute
   '/admin/': typeof AdminIndexRoute
   '/home/': typeof HomeIndexRoute
+  '/tenant/': typeof TenantIndexRoute
   '/test/': typeof TestIndexRoute
   '/admin/orders/': typeof AdminOrdersIndexRoute
   '/admin/products/': typeof AdminProductsIndexRoute
@@ -377,6 +670,13 @@ export interface FileRoutesById {
   '/admin/users/': typeof AdminUsersIndexRoute
   '/auth/login/': typeof AuthLoginIndexRoute
   '/auth/register/': typeof AuthRegisterIndexRoute
+  '/auth/verify/': typeof AuthVerifyIndexRoute
+  '/tenant/orders/': typeof TenantOrdersIndexRoute
+  '/tenant/products/': typeof TenantProductsIndexRoute
+  '/tenant/settings/': typeof TenantSettingsIndexRoute
+  '/tenant/subscription/': typeof TenantSubscriptionIndexRoute
+  '/tenant/transactions/': typeof TenantTransactionsIndexRoute
+  '/tenant/users/': typeof TenantUsersIndexRoute
   '/admin/accounts/Invoices/': typeof AdminAccountsInvoicesIndexRoute
   '/admin/accounts/analysis/': typeof AdminAccountsAnalysisIndexRoute
   '/admin/accounts/income-expenses/': typeof AdminAccountsIncomeExpensesIndexRoute
@@ -394,25 +694,52 @@ export interface FileRoutesById {
   '/admin/users/add/': typeof AdminUsersAddIndexRoute
   '/admin/users/roles/': typeof AdminUsersRolesIndexRoute
   '/auth/register/on-boarding/': typeof AuthRegisterOnBoardingIndexRoute
+  '/tenant/accounts/Invoices/': typeof TenantAccountsInvoicesIndexRoute
+  '/tenant/accounts/analysis/': typeof TenantAccountsAnalysisIndexRoute
+  '/tenant/accounts/income-expenses/': typeof TenantAccountsIncomeExpensesIndexRoute
+  '/tenant/accounts/quotes/': typeof TenantAccountsQuotesIndexRoute
+  '/tenant/accounts/sales/': typeof TenantAccountsSalesIndexRoute
+  '/tenant/accounts/transactions/': typeof TenantAccountsTransactionsIndexRoute
+  '/tenant/contacts/companies/': typeof TenantContactsCompaniesIndexRoute
+  '/tenant/contacts/customers/': typeof TenantContactsCustomersIndexRoute
+  '/tenant/products/add/': typeof TenantProductsAddIndexRoute
+  '/tenant/products/categories/': typeof TenantProductsCategoriesIndexRoute
+  '/tenant/products/service/': typeof TenantProductsServiceIndexRoute
+  '/tenant/settings/profile/': typeof TenantSettingsProfileIndexRoute
+  '/tenant/settings/security/': typeof TenantSettingsSecurityIndexRoute
+  '/tenant/settings/theme/': typeof TenantSettingsThemeIndexRoute
+  '/tenant/users/add/': typeof TenantUsersAddIndexRoute
+  '/tenant/users/roles/': typeof TenantUsersRolesIndexRoute
   '/admin/accounts/Invoices/$id/': typeof AdminAccountsInvoicesIdIndexRoute
   '/admin/accounts/Invoices/add/': typeof AdminAccountsInvoicesAddIndexRoute
   '/admin/contacts/companies/add/': typeof AdminContactsCompaniesAddIndexRoute
   '/admin/contacts/customers/add/': typeof AdminContactsCustomersAddIndexRoute
   '/admin/products/service/add/': typeof AdminProductsServiceAddIndexRoute
   '/admin/users/details/$id/': typeof AdminUsersDetailsIdIndexRoute
+  '/tenant/accounts/Invoices/$id/': typeof TenantAccountsInvoicesIdIndexRoute
+  '/tenant/accounts/Invoices/add/': typeof TenantAccountsInvoicesAddIndexRoute
+  '/tenant/contacts/companies/add/': typeof TenantContactsCompaniesAddIndexRoute
+  '/tenant/contacts/customers/add/': typeof TenantContactsCustomersAddIndexRoute
+  '/tenant/products/service/add/': typeof TenantProductsServiceAddIndexRoute
+  '/tenant/users/details/$id/': typeof TenantUsersDetailsIdIndexRoute
   '/admin/contacts/companies/details/$id/': typeof AdminContactsCompaniesDetailsIdIndexRoute
+  '/tenant/contacts/companies/details/$id/': typeof TenantContactsCompaniesDetailsIdIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
     | '/admin'
+    | '/tenant'
     | '/test'
     | '/admin/settings'
     | '/auth/register'
+    | '/auth/verify'
+    | '/tenant/settings'
     | '/test/home'
     | '/admin/'
     | '/home'
+    | '/tenant/'
     | '/test/'
     | '/admin/orders'
     | '/admin/products'
@@ -422,6 +749,13 @@ export interface FileRouteTypes {
     | '/admin/users'
     | '/auth/login'
     | '/auth/register/'
+    | '/auth/verify/'
+    | '/tenant/orders'
+    | '/tenant/products'
+    | '/tenant/settings/'
+    | '/tenant/subscription'
+    | '/tenant/transactions'
+    | '/tenant/users'
     | '/admin/accounts/Invoices'
     | '/admin/accounts/analysis'
     | '/admin/accounts/income-expenses'
@@ -439,19 +773,43 @@ export interface FileRouteTypes {
     | '/admin/users/add'
     | '/admin/users/roles'
     | '/auth/register/on-boarding'
+    | '/tenant/accounts/Invoices'
+    | '/tenant/accounts/analysis'
+    | '/tenant/accounts/income-expenses'
+    | '/tenant/accounts/quotes'
+    | '/tenant/accounts/sales'
+    | '/tenant/accounts/transactions'
+    | '/tenant/contacts/companies'
+    | '/tenant/contacts/customers'
+    | '/tenant/products/add'
+    | '/tenant/products/categories'
+    | '/tenant/products/service'
+    | '/tenant/settings/profile'
+    | '/tenant/settings/security'
+    | '/tenant/settings/theme'
+    | '/tenant/users/add'
+    | '/tenant/users/roles'
     | '/admin/accounts/Invoices/$id'
     | '/admin/accounts/Invoices/add'
     | '/admin/contacts/companies/add'
     | '/admin/contacts/customers/add'
     | '/admin/products/service/add'
     | '/admin/users/details/$id'
+    | '/tenant/accounts/Invoices/$id'
+    | '/tenant/accounts/Invoices/add'
+    | '/tenant/contacts/companies/add'
+    | '/tenant/contacts/customers/add'
+    | '/tenant/products/service/add'
+    | '/tenant/users/details/$id'
     | '/admin/contacts/companies/details/$id'
+    | '/tenant/contacts/companies/details/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/test/home'
     | '/admin'
     | '/home'
+    | '/tenant'
     | '/test'
     | '/admin/orders'
     | '/admin/products'
@@ -461,6 +819,13 @@ export interface FileRouteTypes {
     | '/admin/users'
     | '/auth/login'
     | '/auth/register'
+    | '/auth/verify'
+    | '/tenant/orders'
+    | '/tenant/products'
+    | '/tenant/settings'
+    | '/tenant/subscription'
+    | '/tenant/transactions'
+    | '/tenant/users'
     | '/admin/accounts/Invoices'
     | '/admin/accounts/analysis'
     | '/admin/accounts/income-expenses'
@@ -478,23 +843,50 @@ export interface FileRouteTypes {
     | '/admin/users/add'
     | '/admin/users/roles'
     | '/auth/register/on-boarding'
+    | '/tenant/accounts/Invoices'
+    | '/tenant/accounts/analysis'
+    | '/tenant/accounts/income-expenses'
+    | '/tenant/accounts/quotes'
+    | '/tenant/accounts/sales'
+    | '/tenant/accounts/transactions'
+    | '/tenant/contacts/companies'
+    | '/tenant/contacts/customers'
+    | '/tenant/products/add'
+    | '/tenant/products/categories'
+    | '/tenant/products/service'
+    | '/tenant/settings/profile'
+    | '/tenant/settings/security'
+    | '/tenant/settings/theme'
+    | '/tenant/users/add'
+    | '/tenant/users/roles'
     | '/admin/accounts/Invoices/$id'
     | '/admin/accounts/Invoices/add'
     | '/admin/contacts/companies/add'
     | '/admin/contacts/customers/add'
     | '/admin/products/service/add'
     | '/admin/users/details/$id'
+    | '/tenant/accounts/Invoices/$id'
+    | '/tenant/accounts/Invoices/add'
+    | '/tenant/contacts/companies/add'
+    | '/tenant/contacts/customers/add'
+    | '/tenant/products/service/add'
+    | '/tenant/users/details/$id'
     | '/admin/contacts/companies/details/$id'
+    | '/tenant/contacts/companies/details/$id'
   id:
     | '__root__'
     | '/'
     | '/admin'
+    | '/tenant'
     | '/test'
     | '/admin/settings'
     | '/auth/register'
+    | '/auth/verify'
+    | '/tenant/settings'
     | '/test/home'
     | '/admin/'
     | '/home/'
+    | '/tenant/'
     | '/test/'
     | '/admin/orders/'
     | '/admin/products/'
@@ -504,6 +896,13 @@ export interface FileRouteTypes {
     | '/admin/users/'
     | '/auth/login/'
     | '/auth/register/'
+    | '/auth/verify/'
+    | '/tenant/orders/'
+    | '/tenant/products/'
+    | '/tenant/settings/'
+    | '/tenant/subscription/'
+    | '/tenant/transactions/'
+    | '/tenant/users/'
     | '/admin/accounts/Invoices/'
     | '/admin/accounts/analysis/'
     | '/admin/accounts/income-expenses/'
@@ -521,20 +920,45 @@ export interface FileRouteTypes {
     | '/admin/users/add/'
     | '/admin/users/roles/'
     | '/auth/register/on-boarding/'
+    | '/tenant/accounts/Invoices/'
+    | '/tenant/accounts/analysis/'
+    | '/tenant/accounts/income-expenses/'
+    | '/tenant/accounts/quotes/'
+    | '/tenant/accounts/sales/'
+    | '/tenant/accounts/transactions/'
+    | '/tenant/contacts/companies/'
+    | '/tenant/contacts/customers/'
+    | '/tenant/products/add/'
+    | '/tenant/products/categories/'
+    | '/tenant/products/service/'
+    | '/tenant/settings/profile/'
+    | '/tenant/settings/security/'
+    | '/tenant/settings/theme/'
+    | '/tenant/users/add/'
+    | '/tenant/users/roles/'
     | '/admin/accounts/Invoices/$id/'
     | '/admin/accounts/Invoices/add/'
     | '/admin/contacts/companies/add/'
     | '/admin/contacts/customers/add/'
     | '/admin/products/service/add/'
     | '/admin/users/details/$id/'
+    | '/tenant/accounts/Invoices/$id/'
+    | '/tenant/accounts/Invoices/add/'
+    | '/tenant/contacts/companies/add/'
+    | '/tenant/contacts/customers/add/'
+    | '/tenant/products/service/add/'
+    | '/tenant/users/details/$id/'
     | '/admin/contacts/companies/details/$id/'
+    | '/tenant/contacts/companies/details/$id/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AdminRouteRoute: typeof AdminRouteRouteWithChildren
+  TenantRouteRoute: typeof TenantRouteRouteWithChildren
   TestRouteRoute: typeof TestRouteRouteWithChildren
   AuthRegisterRouteRoute: typeof AuthRegisterRouteRouteWithChildren
+  AuthVerifyRouteRoute: typeof AuthVerifyRouteRouteWithChildren
   HomeIndexRoute: typeof HomeIndexRoute
   AuthLoginIndexRoute: typeof AuthLoginIndexRoute
 }
@@ -546,6 +970,13 @@ declare module '@tanstack/react-router' {
       path: '/test'
       fullPath: '/test'
       preLoaderRoute: typeof TestRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/tenant': {
+      id: '/tenant'
+      path: '/tenant'
+      fullPath: '/tenant'
+      preLoaderRoute: typeof TenantRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin': {
@@ -569,6 +1000,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TestIndexRouteImport
       parentRoute: typeof TestRouteRoute
     }
+    '/tenant/': {
+      id: '/tenant/'
+      path: '/'
+      fullPath: '/tenant/'
+      preLoaderRoute: typeof TenantIndexRouteImport
+      parentRoute: typeof TenantRouteRoute
+    }
     '/home/': {
       id: '/home/'
       path: '/home'
@@ -590,6 +1028,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TestHomeRouteImport
       parentRoute: typeof TestRouteRoute
     }
+    '/tenant/settings': {
+      id: '/tenant/settings'
+      path: '/settings'
+      fullPath: '/tenant/settings'
+      preLoaderRoute: typeof TenantSettingsRouteRouteImport
+      parentRoute: typeof TenantRouteRoute
+    }
+    '/auth/verify': {
+      id: '/auth/verify'
+      path: '/auth/verify'
+      fullPath: '/auth/verify'
+      preLoaderRoute: typeof AuthVerifyRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/auth/register': {
       id: '/auth/register'
       path: '/auth/register'
@@ -603,6 +1055,55 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin/settings'
       preLoaderRoute: typeof AdminSettingsRouteRouteImport
       parentRoute: typeof AdminRouteRoute
+    }
+    '/tenant/users/': {
+      id: '/tenant/users/'
+      path: '/users'
+      fullPath: '/tenant/users'
+      preLoaderRoute: typeof TenantUsersIndexRouteImport
+      parentRoute: typeof TenantRouteRoute
+    }
+    '/tenant/transactions/': {
+      id: '/tenant/transactions/'
+      path: '/transactions'
+      fullPath: '/tenant/transactions'
+      preLoaderRoute: typeof TenantTransactionsIndexRouteImport
+      parentRoute: typeof TenantRouteRoute
+    }
+    '/tenant/subscription/': {
+      id: '/tenant/subscription/'
+      path: '/subscription'
+      fullPath: '/tenant/subscription'
+      preLoaderRoute: typeof TenantSubscriptionIndexRouteImport
+      parentRoute: typeof TenantRouteRoute
+    }
+    '/tenant/settings/': {
+      id: '/tenant/settings/'
+      path: '/'
+      fullPath: '/tenant/settings/'
+      preLoaderRoute: typeof TenantSettingsIndexRouteImport
+      parentRoute: typeof TenantSettingsRouteRoute
+    }
+    '/tenant/products/': {
+      id: '/tenant/products/'
+      path: '/products'
+      fullPath: '/tenant/products'
+      preLoaderRoute: typeof TenantProductsIndexRouteImport
+      parentRoute: typeof TenantRouteRoute
+    }
+    '/tenant/orders/': {
+      id: '/tenant/orders/'
+      path: '/orders'
+      fullPath: '/tenant/orders'
+      preLoaderRoute: typeof TenantOrdersIndexRouteImport
+      parentRoute: typeof TenantRouteRoute
+    }
+    '/auth/verify/': {
+      id: '/auth/verify/'
+      path: '/'
+      fullPath: '/auth/verify/'
+      preLoaderRoute: typeof AuthVerifyIndexRouteImport
+      parentRoute: typeof AuthVerifyRouteRoute
     }
     '/auth/register/': {
       id: '/auth/register/'
@@ -659,6 +1160,118 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin/orders'
       preLoaderRoute: typeof AdminOrdersIndexRouteImport
       parentRoute: typeof AdminRouteRoute
+    }
+    '/tenant/users/roles/': {
+      id: '/tenant/users/roles/'
+      path: '/users/roles'
+      fullPath: '/tenant/users/roles'
+      preLoaderRoute: typeof TenantUsersRolesIndexRouteImport
+      parentRoute: typeof TenantRouteRoute
+    }
+    '/tenant/users/add/': {
+      id: '/tenant/users/add/'
+      path: '/users/add'
+      fullPath: '/tenant/users/add'
+      preLoaderRoute: typeof TenantUsersAddIndexRouteImport
+      parentRoute: typeof TenantRouteRoute
+    }
+    '/tenant/settings/theme/': {
+      id: '/tenant/settings/theme/'
+      path: '/theme'
+      fullPath: '/tenant/settings/theme'
+      preLoaderRoute: typeof TenantSettingsThemeIndexRouteImport
+      parentRoute: typeof TenantSettingsRouteRoute
+    }
+    '/tenant/settings/security/': {
+      id: '/tenant/settings/security/'
+      path: '/security'
+      fullPath: '/tenant/settings/security'
+      preLoaderRoute: typeof TenantSettingsSecurityIndexRouteImport
+      parentRoute: typeof TenantSettingsRouteRoute
+    }
+    '/tenant/settings/profile/': {
+      id: '/tenant/settings/profile/'
+      path: '/profile'
+      fullPath: '/tenant/settings/profile'
+      preLoaderRoute: typeof TenantSettingsProfileIndexRouteImport
+      parentRoute: typeof TenantSettingsRouteRoute
+    }
+    '/tenant/products/service/': {
+      id: '/tenant/products/service/'
+      path: '/products/service'
+      fullPath: '/tenant/products/service'
+      preLoaderRoute: typeof TenantProductsServiceIndexRouteImport
+      parentRoute: typeof TenantRouteRoute
+    }
+    '/tenant/products/categories/': {
+      id: '/tenant/products/categories/'
+      path: '/products/categories'
+      fullPath: '/tenant/products/categories'
+      preLoaderRoute: typeof TenantProductsCategoriesIndexRouteImport
+      parentRoute: typeof TenantRouteRoute
+    }
+    '/tenant/products/add/': {
+      id: '/tenant/products/add/'
+      path: '/products/add'
+      fullPath: '/tenant/products/add'
+      preLoaderRoute: typeof TenantProductsAddIndexRouteImport
+      parentRoute: typeof TenantRouteRoute
+    }
+    '/tenant/contacts/customers/': {
+      id: '/tenant/contacts/customers/'
+      path: '/contacts/customers'
+      fullPath: '/tenant/contacts/customers'
+      preLoaderRoute: typeof TenantContactsCustomersIndexRouteImport
+      parentRoute: typeof TenantRouteRoute
+    }
+    '/tenant/contacts/companies/': {
+      id: '/tenant/contacts/companies/'
+      path: '/contacts/companies'
+      fullPath: '/tenant/contacts/companies'
+      preLoaderRoute: typeof TenantContactsCompaniesIndexRouteImport
+      parentRoute: typeof TenantRouteRoute
+    }
+    '/tenant/accounts/transactions/': {
+      id: '/tenant/accounts/transactions/'
+      path: '/accounts/transactions'
+      fullPath: '/tenant/accounts/transactions'
+      preLoaderRoute: typeof TenantAccountsTransactionsIndexRouteImport
+      parentRoute: typeof TenantRouteRoute
+    }
+    '/tenant/accounts/sales/': {
+      id: '/tenant/accounts/sales/'
+      path: '/accounts/sales'
+      fullPath: '/tenant/accounts/sales'
+      preLoaderRoute: typeof TenantAccountsSalesIndexRouteImport
+      parentRoute: typeof TenantRouteRoute
+    }
+    '/tenant/accounts/quotes/': {
+      id: '/tenant/accounts/quotes/'
+      path: '/accounts/quotes'
+      fullPath: '/tenant/accounts/quotes'
+      preLoaderRoute: typeof TenantAccountsQuotesIndexRouteImport
+      parentRoute: typeof TenantRouteRoute
+    }
+    '/tenant/accounts/income-expenses/': {
+      id: '/tenant/accounts/income-expenses/'
+      path: '/accounts/income-expenses'
+      fullPath: '/tenant/accounts/income-expenses'
+      preLoaderRoute: typeof TenantAccountsIncomeExpensesIndexRouteImport
+      parentRoute: typeof TenantRouteRoute
+    }
+    '/tenant/accounts/analysis/': {
+      id: '/tenant/accounts/analysis/'
+      path: '/accounts/analysis'
+      fullPath: '/tenant/accounts/analysis'
+      preLoaderRoute: typeof TenantAccountsAnalysisIndexRouteImport
+      parentRoute: typeof TenantRouteRoute
+    }
+    '/tenant/accounts/Invoices/': {
+      id: '/tenant/accounts/Invoices/'
+      path: '/accounts/Invoices'
+      fullPath: '/tenant/accounts/Invoices'
+      preLoaderRoute: typeof TenantAccountsInvoicesIndexRouteImport
+      parentRoute: typeof TenantRouteRoute
     }
     '/auth/register/on-boarding/': {
       id: '/auth/register/on-boarding/'
@@ -779,6 +1392,48 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminAccountsInvoicesIndexRouteImport
       parentRoute: typeof AdminRouteRoute
     }
+    '/tenant/users/details/$id/': {
+      id: '/tenant/users/details/$id/'
+      path: '/users/details/$id'
+      fullPath: '/tenant/users/details/$id'
+      preLoaderRoute: typeof TenantUsersDetailsIdIndexRouteImport
+      parentRoute: typeof TenantRouteRoute
+    }
+    '/tenant/products/service/add/': {
+      id: '/tenant/products/service/add/'
+      path: '/products/service/add'
+      fullPath: '/tenant/products/service/add'
+      preLoaderRoute: typeof TenantProductsServiceAddIndexRouteImport
+      parentRoute: typeof TenantRouteRoute
+    }
+    '/tenant/contacts/customers/add/': {
+      id: '/tenant/contacts/customers/add/'
+      path: '/contacts/customers/add'
+      fullPath: '/tenant/contacts/customers/add'
+      preLoaderRoute: typeof TenantContactsCustomersAddIndexRouteImport
+      parentRoute: typeof TenantRouteRoute
+    }
+    '/tenant/contacts/companies/add/': {
+      id: '/tenant/contacts/companies/add/'
+      path: '/contacts/companies/add'
+      fullPath: '/tenant/contacts/companies/add'
+      preLoaderRoute: typeof TenantContactsCompaniesAddIndexRouteImport
+      parentRoute: typeof TenantRouteRoute
+    }
+    '/tenant/accounts/Invoices/add/': {
+      id: '/tenant/accounts/Invoices/add/'
+      path: '/accounts/Invoices/add'
+      fullPath: '/tenant/accounts/Invoices/add'
+      preLoaderRoute: typeof TenantAccountsInvoicesAddIndexRouteImport
+      parentRoute: typeof TenantRouteRoute
+    }
+    '/tenant/accounts/Invoices/$id/': {
+      id: '/tenant/accounts/Invoices/$id/'
+      path: '/accounts/Invoices/$id'
+      fullPath: '/tenant/accounts/Invoices/$id'
+      preLoaderRoute: typeof TenantAccountsInvoicesIdIndexRouteImport
+      parentRoute: typeof TenantRouteRoute
+    }
     '/admin/users/details/$id/': {
       id: '/admin/users/details/$id/'
       path: '/users/details/$id'
@@ -820,6 +1475,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin/accounts/Invoices/$id'
       preLoaderRoute: typeof AdminAccountsInvoicesIdIndexRouteImport
       parentRoute: typeof AdminRouteRoute
+    }
+    '/tenant/contacts/companies/details/$id/': {
+      id: '/tenant/contacts/companies/details/$id/'
+      path: '/contacts/companies/details/$id'
+      fullPath: '/tenant/contacts/companies/details/$id'
+      preLoaderRoute: typeof TenantContactsCompaniesDetailsIdIndexRouteImport
+      parentRoute: typeof TenantRouteRoute
     }
     '/admin/contacts/companies/details/$id/': {
       id: '/admin/contacts/companies/details/$id/'
@@ -913,6 +1575,89 @@ const AdminRouteRouteWithChildren = AdminRouteRoute._addFileChildren(
   AdminRouteRouteChildren,
 )
 
+interface TenantSettingsRouteRouteChildren {
+  TenantSettingsIndexRoute: typeof TenantSettingsIndexRoute
+  TenantSettingsProfileIndexRoute: typeof TenantSettingsProfileIndexRoute
+  TenantSettingsSecurityIndexRoute: typeof TenantSettingsSecurityIndexRoute
+  TenantSettingsThemeIndexRoute: typeof TenantSettingsThemeIndexRoute
+}
+
+const TenantSettingsRouteRouteChildren: TenantSettingsRouteRouteChildren = {
+  TenantSettingsIndexRoute: TenantSettingsIndexRoute,
+  TenantSettingsProfileIndexRoute: TenantSettingsProfileIndexRoute,
+  TenantSettingsSecurityIndexRoute: TenantSettingsSecurityIndexRoute,
+  TenantSettingsThemeIndexRoute: TenantSettingsThemeIndexRoute,
+}
+
+const TenantSettingsRouteRouteWithChildren =
+  TenantSettingsRouteRoute._addFileChildren(TenantSettingsRouteRouteChildren)
+
+interface TenantRouteRouteChildren {
+  TenantSettingsRouteRoute: typeof TenantSettingsRouteRouteWithChildren
+  TenantIndexRoute: typeof TenantIndexRoute
+  TenantOrdersIndexRoute: typeof TenantOrdersIndexRoute
+  TenantProductsIndexRoute: typeof TenantProductsIndexRoute
+  TenantSubscriptionIndexRoute: typeof TenantSubscriptionIndexRoute
+  TenantTransactionsIndexRoute: typeof TenantTransactionsIndexRoute
+  TenantUsersIndexRoute: typeof TenantUsersIndexRoute
+  TenantAccountsInvoicesIndexRoute: typeof TenantAccountsInvoicesIndexRoute
+  TenantAccountsAnalysisIndexRoute: typeof TenantAccountsAnalysisIndexRoute
+  TenantAccountsIncomeExpensesIndexRoute: typeof TenantAccountsIncomeExpensesIndexRoute
+  TenantAccountsQuotesIndexRoute: typeof TenantAccountsQuotesIndexRoute
+  TenantAccountsSalesIndexRoute: typeof TenantAccountsSalesIndexRoute
+  TenantAccountsTransactionsIndexRoute: typeof TenantAccountsTransactionsIndexRoute
+  TenantContactsCompaniesIndexRoute: typeof TenantContactsCompaniesIndexRoute
+  TenantContactsCustomersIndexRoute: typeof TenantContactsCustomersIndexRoute
+  TenantProductsAddIndexRoute: typeof TenantProductsAddIndexRoute
+  TenantProductsCategoriesIndexRoute: typeof TenantProductsCategoriesIndexRoute
+  TenantProductsServiceIndexRoute: typeof TenantProductsServiceIndexRoute
+  TenantUsersAddIndexRoute: typeof TenantUsersAddIndexRoute
+  TenantUsersRolesIndexRoute: typeof TenantUsersRolesIndexRoute
+  TenantAccountsInvoicesIdIndexRoute: typeof TenantAccountsInvoicesIdIndexRoute
+  TenantAccountsInvoicesAddIndexRoute: typeof TenantAccountsInvoicesAddIndexRoute
+  TenantContactsCompaniesAddIndexRoute: typeof TenantContactsCompaniesAddIndexRoute
+  TenantContactsCustomersAddIndexRoute: typeof TenantContactsCustomersAddIndexRoute
+  TenantProductsServiceAddIndexRoute: typeof TenantProductsServiceAddIndexRoute
+  TenantUsersDetailsIdIndexRoute: typeof TenantUsersDetailsIdIndexRoute
+  TenantContactsCompaniesDetailsIdIndexRoute: typeof TenantContactsCompaniesDetailsIdIndexRoute
+}
+
+const TenantRouteRouteChildren: TenantRouteRouteChildren = {
+  TenantSettingsRouteRoute: TenantSettingsRouteRouteWithChildren,
+  TenantIndexRoute: TenantIndexRoute,
+  TenantOrdersIndexRoute: TenantOrdersIndexRoute,
+  TenantProductsIndexRoute: TenantProductsIndexRoute,
+  TenantSubscriptionIndexRoute: TenantSubscriptionIndexRoute,
+  TenantTransactionsIndexRoute: TenantTransactionsIndexRoute,
+  TenantUsersIndexRoute: TenantUsersIndexRoute,
+  TenantAccountsInvoicesIndexRoute: TenantAccountsInvoicesIndexRoute,
+  TenantAccountsAnalysisIndexRoute: TenantAccountsAnalysisIndexRoute,
+  TenantAccountsIncomeExpensesIndexRoute:
+    TenantAccountsIncomeExpensesIndexRoute,
+  TenantAccountsQuotesIndexRoute: TenantAccountsQuotesIndexRoute,
+  TenantAccountsSalesIndexRoute: TenantAccountsSalesIndexRoute,
+  TenantAccountsTransactionsIndexRoute: TenantAccountsTransactionsIndexRoute,
+  TenantContactsCompaniesIndexRoute: TenantContactsCompaniesIndexRoute,
+  TenantContactsCustomersIndexRoute: TenantContactsCustomersIndexRoute,
+  TenantProductsAddIndexRoute: TenantProductsAddIndexRoute,
+  TenantProductsCategoriesIndexRoute: TenantProductsCategoriesIndexRoute,
+  TenantProductsServiceIndexRoute: TenantProductsServiceIndexRoute,
+  TenantUsersAddIndexRoute: TenantUsersAddIndexRoute,
+  TenantUsersRolesIndexRoute: TenantUsersRolesIndexRoute,
+  TenantAccountsInvoicesIdIndexRoute: TenantAccountsInvoicesIdIndexRoute,
+  TenantAccountsInvoicesAddIndexRoute: TenantAccountsInvoicesAddIndexRoute,
+  TenantContactsCompaniesAddIndexRoute: TenantContactsCompaniesAddIndexRoute,
+  TenantContactsCustomersAddIndexRoute: TenantContactsCustomersAddIndexRoute,
+  TenantProductsServiceAddIndexRoute: TenantProductsServiceAddIndexRoute,
+  TenantUsersDetailsIdIndexRoute: TenantUsersDetailsIdIndexRoute,
+  TenantContactsCompaniesDetailsIdIndexRoute:
+    TenantContactsCompaniesDetailsIdIndexRoute,
+}
+
+const TenantRouteRouteWithChildren = TenantRouteRoute._addFileChildren(
+  TenantRouteRouteChildren,
+)
+
 interface TestRouteRouteChildren {
   TestHomeRoute: typeof TestHomeRoute
   TestIndexRoute: typeof TestIndexRoute
@@ -940,11 +1685,25 @@ const AuthRegisterRouteRouteChildren: AuthRegisterRouteRouteChildren = {
 const AuthRegisterRouteRouteWithChildren =
   AuthRegisterRouteRoute._addFileChildren(AuthRegisterRouteRouteChildren)
 
+interface AuthVerifyRouteRouteChildren {
+  AuthVerifyIndexRoute: typeof AuthVerifyIndexRoute
+}
+
+const AuthVerifyRouteRouteChildren: AuthVerifyRouteRouteChildren = {
+  AuthVerifyIndexRoute: AuthVerifyIndexRoute,
+}
+
+const AuthVerifyRouteRouteWithChildren = AuthVerifyRouteRoute._addFileChildren(
+  AuthVerifyRouteRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRouteRoute: AdminRouteRouteWithChildren,
+  TenantRouteRoute: TenantRouteRouteWithChildren,
   TestRouteRoute: TestRouteRouteWithChildren,
   AuthRegisterRouteRoute: AuthRegisterRouteRouteWithChildren,
+  AuthVerifyRouteRoute: AuthVerifyRouteRouteWithChildren,
   HomeIndexRoute: HomeIndexRoute,
   AuthLoginIndexRoute: AuthLoginIndexRoute,
 }
