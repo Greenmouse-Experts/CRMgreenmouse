@@ -119,7 +119,7 @@ function RouteComponent() {
               "Login"
             )}
           </button>
-          <div className="">
+          {/*<div className="">
             <section className="ring ring-current/10 bg-base-200 rounded-box p-4 text-xs text-base-content/80 space-y-2">
               <p className="font-semibold ">Demo Credientials</p>
               <div>
@@ -127,7 +127,7 @@ function RouteComponent() {
                 <p>Password: admin124</p>
               </div>
             </section>
-          </div>
+          </div>*/}
         </form>
       </div>
     </div>
