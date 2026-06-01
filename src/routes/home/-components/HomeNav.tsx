@@ -25,7 +25,10 @@ export default function HomeNav() {
   ];
 
   return (
-    <nav ref={navRef} className="sticky top-0 z-50 w-full border-b border-base-200 bg-base-100/70 backdrop-blur-lg">
+    <nav
+      ref={navRef}
+      className="sticky top-0 z-50 w-full border-b border-base-200 bg-base-100/70 backdrop-blur-lg"
+    >
       <div className="container mx-auto flex h-20 items-center justify-between">
         {/* Brand/Logo */}
         <Link
@@ -37,7 +40,7 @@ export default function HomeNav() {
           </div>
           <div className="flex flex-col leading-none">
             <span className="text-xl font-bold tracking-tight text-primary">
-              CRM<span className="text-base-content">greenmouse</span>
+              <span className="text-base-content">Kinovia</span>
             </span>
             <span className="text-[10px] font-medium tracking-[0.2em] uppercase opacity-50">
               Business Suite
