@@ -1,9 +1,9 @@
-import type { ApiResponse } from "@/api/apiClient";
-import apiClient from "@/api/apiClient";
+import type { ApiResponse } from "@/client/api";
+import apiClient from "@/client/api";
 import { useAuth } from "@/store/authStore";
 import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
-import type { AxiosError, AxiosResponse } from "axios";
+import type { AxiosError } from "axios";
 import { toast } from "sonner";
 
 export const extract_message = (data: AxiosError<ApiResponse>) => {
@@ -15,7 +15,7 @@ export const extract_message = (data: AxiosError<ApiResponse>) => {
 };
 
 export const useLogout = () => {
-  const [user, setUser] = useAuth();
+  const [, setUser] = useAuth();
   const nav = useNavigate();
   const { mutateAsync } = useMutation({
     mutationFn: async () => {

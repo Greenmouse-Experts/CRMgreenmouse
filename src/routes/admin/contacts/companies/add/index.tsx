@@ -4,7 +4,7 @@ import SimpleInput from "@/components/inputs/SimpleInput";
 import LocalSelect from "@/components/inputs/LocalSelect";
 import ActionButton from "@/components/buttons/ActionButton";
 import SimpleTitle from "@/components/SimpleTitle";
-import { Building2, Mail, Phone, Globe, MapPin, Hash } from "lucide-react";
+import { Building2, Mail, MapPin } from "lucide-react";
 
 export const Route = createFileRoute("/admin/contacts/companies/add/")({
   component: RouteComponent,

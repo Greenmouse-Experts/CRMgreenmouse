@@ -18,7 +18,7 @@ function RouteComponent() {
     phone: faker.phone.number(),
     avatar: faker.image.avatar(),
   }));
-  const props = useSearch();
+  useSearch();
 
   const columns = [
     {

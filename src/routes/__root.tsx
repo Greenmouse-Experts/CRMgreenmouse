@@ -3,8 +3,6 @@ import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import { TanStackDevtools } from "@tanstack/react-devtools";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "sonner";
-import { useTheme } from "@/stores/client";
-import { useEffect } from "react";
 
 const queryClient = new QueryClient();
 

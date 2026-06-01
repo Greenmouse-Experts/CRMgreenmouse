@@ -49,7 +49,7 @@ function RouteComponent() {
     {
       key: "view",
       label: "View",
-      action: (item: any, nav) => {
+      action: (_item: any, nav) => {
         nav({
           to: "/admin/users/details/" + "uidnfde1e",
         });

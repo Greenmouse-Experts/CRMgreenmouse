@@ -7,7 +7,6 @@ import { faker } from "@faker-js/faker";
 import PageHeader from "@/components/Headers/PageHeader";
 import ContainerRow from "@/components/ContainerRow";
 import { useSearch } from "@/stores/data";
-import ActionButton from "@/components/buttons/ActionButton";
 import { useModal } from "@/store/modals";
 import Modal from "@/components/modals/DialogModal";
 import SimpleInput from "@/components/inputs/SimpleInput";
@@ -33,7 +32,7 @@ const render_status = (status: "Pending" | "Failed" | "Completed") => {
 };
 function RouteComponent() {
   const generateTransactions = (count: number) => {
-    return Array.from({ length: count }, (_, i) => ({
+    return Array.from({ length: count }, (_) => ({
       id: faker.string.uuid(),
       date: faker.date.past().toLocaleDateString(),
       type: faker.helpers.arrayElement([
@@ -58,7 +57,7 @@ function RouteComponent() {
     {
       key: "status",
       label: "Status",
-      render: (value, item) => {
+      render: (value) => {
         return render_status(value);
       },
     },

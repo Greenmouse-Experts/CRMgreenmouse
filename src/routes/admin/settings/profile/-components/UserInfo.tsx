@@ -1,8 +1,6 @@
-import { useForm } from "react-hook-form";
 import { PenSquare } from "lucide-react";
 
 export default function UserInfo() {
-  const form = useForm();
   return (
     <div className="flex items-center ">
       <div className="flex-1 flex gap-4 items-center">

@@ -3,9 +3,8 @@ import InvoicesStat from "./-components/InvocesStat";
 import SimpleContainer from "@/components/SimpleContainer";
 import CustomTable from "@/components/tables/CustomTable";
 import { faker } from "@faker-js/faker";
-import ActionButton from "@/components/buttons/ActionButton";
-import PopUp, { type Actions } from "@/components/tables/pop-up"; // Import PopUp and its Actions type
 import PageHeader from "@/components/Headers/PageHeader";
+import type { Actions } from "@/components/tables/pop-up";
 import { PlusCircleIcon } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 
@@ -78,7 +77,7 @@ function RouteComponent() {
     {
       key: "number",
       label: "Number",
-      render: (value: string, item: Invoice) => (
+      render: (value: string, _item: Invoice) => (
         <div className="flex items-center gap-2">
           <span>{value}</span>
         </div>

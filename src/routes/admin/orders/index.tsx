@@ -46,7 +46,7 @@ const render_status = (
 
 function RouteComponent() {
   const generateOrders = (count: number) => {
-    return Array.from({ length: count }, (_, i) => ({
+    return Array.from({ length: count }, (_) => ({
       id: faker.string.alphanumeric(8).toUpperCase(),
       customer: faker.person.fullName(),
       date: faker.date.recent().toLocaleDateString(),

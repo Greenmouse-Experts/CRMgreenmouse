@@ -1,7 +1,7 @@
 import type { useSelectImage } from "@/helpers/images";
 import { XCircle, UploadCloud } from "lucide-react";
 import { nanoid } from "nanoid";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 interface ImageProps extends ReturnType<typeof useSelectImage> {
   title?: string;
 }

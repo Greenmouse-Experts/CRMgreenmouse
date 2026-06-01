@@ -10,7 +10,6 @@ export default function PageHeader(props: PageHeaderProps) {
   const {
     title = "Dashboard",
     description = "Welcome back! Here's your system overview.",
-    side,
   } = props;
   return (
     <div className="flex py-3 md:items-center flex-col md:flex-row gap-2">

@@ -45,8 +45,8 @@ apiClient.interceptors.response.use(
 
         set_user_value({
           ...user,
-          accessToken: newAccessToken,
-          refreshToken: newRefreshToken,
+          access_token: newAccessToken,
+          refresh_token: newRefreshToken,
         });
 
         // Update header and retry
@@ -63,5 +63,10 @@ apiClient.interceptors.response.use(
     return Promise.reject(error);
   },
 );
+
+export interface ApiResponse {
+  payload?: any;
+  message?: string;
+}
 
 export default apiClient;

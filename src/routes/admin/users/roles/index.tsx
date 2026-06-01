@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import ContainerRow from "@/components/ContainerRow";
 import SimpleContainer from "@/components/SimpleContainer";
 import { useSearch } from "@/stores/data";
@@ -90,7 +90,7 @@ function RouteComponent() {
     {
       key: "addPermissions",
       label: "Add Permissions",
-      action: (item: any) => {
+      action: (_item: any) => {
         addModal.showModal();
       },
     },

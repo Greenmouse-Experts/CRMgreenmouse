@@ -7,7 +7,6 @@ import {
   ShoppingBag,
   DollarSign,
   UserPlus,
-  Phone,
 } from "lucide-react";
 
 const statsData = [

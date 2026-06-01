@@ -9,7 +9,7 @@ export const Route = createFileRoute("/admin/users/details/$id/")({
 });
 
 function RouteComponent() {
-  const { id } = useParams({
+  const { id: _id } = useParams({
     strict: false,
   });
   return (

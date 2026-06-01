@@ -35,7 +35,7 @@ const render_status = (status: "Pending" | "Accepted" | "Rejected") => {
 };
 function RouteComponent() {
   const generateQuotes = (count: number) => {
-    return Array.from({ length: count }, (_, i) => ({
+    return Array.from({ length: count }, (_) => ({
       id: faker.string.uuid(),
       date: faker.date.past().toLocaleDateString(),
       client: faker.person.fullName(),
@@ -55,7 +55,7 @@ function RouteComponent() {
     {
       key: "status",
       label: "Status",
-      render: (value, item) => {
+      render: (value) => {
         return render_status(value);
       },
     },

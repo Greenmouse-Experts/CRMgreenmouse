@@ -9,7 +9,6 @@ export type Actions = {
   action: (item: any, nav: ReturnType<typeof useNavigate>) => any;
 };
 type currentIndex = number;
-type item = any;
 export default function PopUp(props: {
   actions: Actions[];
   item: any;

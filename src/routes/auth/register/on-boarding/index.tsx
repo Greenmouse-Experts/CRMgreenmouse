@@ -1,27 +1,32 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { ArrowRight, ArrowLeft, Check } from "lucide-react";
-import { useOnboardingStore } from "@/store/onboarding-store";
+import {
+  ArrowRight, ArrowLeft,
+  ShoppingBag, Truck, Landmark, Laptop2,
+  HeartHandshake, GraduationCap, Factory, UtensilsCrossed,
+  Zap, HelpCircle,
+} from "lucide-react";
+import { useOnboardingStore, type OnboardingFormData } from "@/store/onboarding-store";
 import apiClient from "@/client/api";
 
 export const Route = createFileRoute("/auth/register/on-boarding/")({
   component: OnboardingWizard,
 });
 
-const TOTAL_STEPS = 9;
+const TOTAL_STEPS = 8;
 
 const INDUSTRIES = [
-  { label: "Retail & E-Commerce", color: "bg-pink-50 border-pink-200" },
-  { label: "Logistics & Transport", color: "bg-blue-50 border-blue-200" },
-  { label: "Banking & Finance", color: "bg-yellow-50 border-yellow-200" },
-  { label: "Technology & SaaS", color: "bg-orange-50 border-orange-200" },
-  { label: "Healthcare", color: "bg-green-50 border-green-200" },
-  { label: "Education", color: "bg-purple-50 border-purple-200" },
-  { label: "Manufacturing", color: "bg-indigo-50 border-indigo-200" },
-  { label: "Hospitality", color: "bg-red-50 border-red-200" },
-  { label: "Energy", color: "bg-teal-50 border-teal-200" },
-  { label: "Other", color: "bg-base-200 border-base-300" },
+  { label: "Retail & E-Commerce",  color: "bg-pink-50 border-pink-200",     iconColor: "text-pink-500",   icon: ShoppingBag },
+  { label: "Logistics & Transport", color: "bg-blue-50 border-blue-200",    iconColor: "text-blue-500",   icon: Truck },
+  { label: "Banking & Finance",    color: "bg-yellow-50 border-yellow-200", iconColor: "text-yellow-600", icon: Landmark },
+  { label: "Technology & SaaS",    color: "bg-orange-50 border-orange-200", iconColor: "text-orange-500", icon: Laptop2 },
+  { label: "Healthcare",           color: "bg-green-50 border-green-200",   iconColor: "text-green-600",  icon: HeartHandshake },
+  { label: "Education",            color: "bg-purple-50 border-purple-200", iconColor: "text-purple-600", icon: GraduationCap },
+  { label: "Manufacturing",        color: "bg-indigo-50 border-indigo-200", iconColor: "text-indigo-500", icon: Factory },
+  { label: "Hospitality",          color: "bg-red-50 border-red-200",       iconColor: "text-red-500",    icon: UtensilsCrossed },
+  { label: "Energy",               color: "bg-teal-50 border-teal-200",     iconColor: "text-teal-500",   icon: Zap },
+  { label: "Other",                color: "bg-base-200 border-base-300",    iconColor: "text-base-content/50", icon: HelpCircle },
 ];
 
 const TEAM_SIZES = ["1-10", "11-50", "51-200", "201-500", "500+"];
@@ -140,7 +145,7 @@ function OnboardingWizard() {
 
 interface StepProps {
   step: number;
-  formData: ReturnType<typeof useOnboardingStore>["formData"];
+  formData: OnboardingFormData;
   advance: (payload: any) => void;
   prevStep: () => void;
   isPending: boolean;
@@ -180,7 +185,7 @@ function StepContent({ step, formData, advance, prevStep, isPending }: StepProps
       );
     case 6:
       return (
-        <CompanyAddressStep
+        <BusinessTypeStep
           formData={formData}
           advance={advance}
           prevStep={prevStep}
@@ -188,7 +193,7 @@ function StepContent({ step, formData, advance, prevStep, isPending }: StepProps
       );
     case 7:
       return (
-        <BusinessTypeStep
+        <HearAboutUsStep
           formData={formData}
           advance={advance}
           prevStep={prevStep}
@@ -196,16 +201,7 @@ function StepContent({ step, formData, advance, prevStep, isPending }: StepProps
       );
     case 8:
       return (
-        <LogoThemeStep
-          formData={formData}
-          advance={advance}
-          prevStep={prevStep}
-          isPending={isPending}
-        />
-      );
-    case 9:
-      return (
-        <HearAboutUsStep
+        <CreateAccountStep
           formData={formData}
           advance={advance}
           prevStep={prevStep}
@@ -301,21 +297,24 @@ function IndustryStep({
       </div>
 
       <div className="grid grid-cols-2 gap-3">
-        {INDUSTRIES.map((ind) => (
-          <button
-            key={ind.label}
-            type="button"
-            onClick={() => advance({ industry: ind.label })}
-            className={`flex items-center gap-2 px-3 py-3 rounded-xl border text-sm font-medium text-left transition-all hover:scale-[1.02] ${ind.color} ${
-              selected === ind.label ? "ring-2 ring-primary" : ""
-            }`}
-          >
-            {selected === ind.label && (
-              <Check size={14} className="text-primary shrink-0" />
-            )}
-            {ind.label}
-          </button>
-        ))}
+        {INDUSTRIES.map((ind) => {
+          const Icon = ind.icon;
+          return (
+            <button
+              key={ind.label}
+              type="button"
+              onClick={() => advance({ industry: ind.label })}
+              className={`flex items-center gap-3 px-4 py-4 rounded-2xl border-2 text-sm font-semibold text-left transition-all hover:scale-[1.02] ${ind.color} ${
+                selected === ind.label ? "ring-2 ring-primary ring-offset-1" : ""
+              }`}
+            >
+              <span className={`flex items-center justify-center w-10 h-10 rounded-full bg-white/70 shrink-0 ${ind.iconColor}`}>
+                <Icon size={20} />
+              </span>
+              {ind.label}
+            </button>
+          );
+        })}
       </div>
     </div>
   );
@@ -533,45 +532,7 @@ function CompanyWebsiteStep({
   );
 }
 
-/* ─────────────────────── Step 6: Address ─────────────────────── */
-
-function CompanyAddressStep({
-  formData,
-  advance,
-  prevStep,
-}: Pick<StepProps, "formData" | "advance" | "prevStep">) {
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const fd = new FormData(e.currentTarget);
-    advance({ companyAddress: fd.get("companyAddress") as string });
-  };
-
-  return (
-    <form onSubmit={handleSubmit} className="space-y-6">
-      <div className="space-y-1">
-        <h2 className="text-2xl font-bold leading-snug">
-          What is your business<br />address?
-        </h2>
-        <p className="text-sm text-base-content/60">
-          This appears on invoices and official documents.
-        </p>
-      </div>
-
-      <textarea
-        name="companyAddress"
-        defaultValue={formData.companyAddress}
-        placeholder="15 Marina Road, Lagos"
-        rows={3}
-        required
-        className="textarea textarea-bordered w-full resize-none"
-      />
-
-      <NavRow onBack={prevStep} />
-    </form>
-  );
-}
-
-/* ─────────────────────── Step 7: Business Type ─────────────────────── */
+/* ─────────────────────── Step 6: Business Type ─────────────────────── */
 
 function BusinessTypeStep({
   formData,
@@ -638,87 +599,13 @@ function BusinessTypeStep({
   );
 }
 
-/* ─────────────────────── Step 8: Logo + Theme ─────────────────────── */
-
-function LogoThemeStep({
-  formData,
-  advance,
-  prevStep,
-  isPending,
-}: Pick<StepProps, "formData" | "advance" | "prevStep" | "isPending">) {
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const fd = new FormData(e.currentTarget);
-    advance({
-      logo: fd.get("logo") as string,
-      theme: fd.get("theme") as string,
-    });
-  };
-
-  return (
-    <form onSubmit={handleSubmit} className="space-y-6">
-      <div className="space-y-1">
-        <h2 className="text-2xl font-bold leading-snug">
-          Personalize your workspace
-        </h2>
-        <p className="text-sm text-base-content/60">
-          Add your logo and choose a theme.
-        </p>
-      </div>
-
-      <div className="space-y-4">
-        <div className="space-y-1.5">
-          <label className="text-sm font-semibold fieldset-label">
-            Logo URL
-          </label>
-          <input
-            name="logo"
-            type="url"
-            defaultValue={formData.logo}
-            placeholder="https://res.cloudinary.com/..."
-            className="input input-bordered w-full"
-          />
-        </div>
-
-        <div className="space-y-2">
-          <label className="text-sm font-semibold fieldset-label">Theme</label>
-          <div className="flex gap-3">
-            {["light", "dark"].map((t) => (
-              <label
-                key={t}
-                className={`flex-1 flex items-center justify-center gap-2 p-3 rounded-xl border-2 cursor-pointer capitalize font-medium text-sm transition-all ${
-                  formData.theme === t
-                    ? "border-primary bg-primary/5"
-                    : "border-base-300"
-                }`}
-              >
-                <input
-                  type="radio"
-                  name="theme"
-                  value={t}
-                  defaultChecked={formData.theme === t}
-                  className="hidden"
-                />
-                {t === "light" ? "☀️" : "🌙"} {t}
-              </label>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      <NavRow onBack={prevStep} isPending={isPending} />
-    </form>
-  );
-}
-
-/* ─────────────────────── Step 9: Hear About Us ─────────────────────── */
+/* ─────────────────────── Step 7: Hear About Us ─────────────────────── */
 
 function HearAboutUsStep({
   formData,
   advance,
   prevStep,
-  isPending,
-}: Pick<StepProps, "formData" | "advance" | "prevStep" | "isPending">) {
+}: Pick<StepProps, "formData" | "advance" | "prevStep">) {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const fd = new FormData(e.currentTarget);
@@ -731,36 +618,102 @@ function HearAboutUsStep({
     <form onSubmit={handleSubmit} className="space-y-6">
       <div className="space-y-1">
         <h2 className="text-2xl font-bold leading-snug">
-          Last step! How did<br />you find us?
+          How did you hear about<br />us?
         </h2>
         <p className="text-sm text-base-content/60">
-          This helps us understand where to reach more businesses like yours.
+          Help us understand how businesses are discovering our platform.
         </p>
       </div>
 
-      <div className="grid grid-cols-2 gap-2">
+      <select
+        name="hearAboutUs"
+        defaultValue={formData.hearAboutUs ?? ""}
+        required
+        className="select select-bordered w-full max-w-xs"
+      >
+        <option value="" disabled>
+          Select Option
+        </option>
         {HEAR_ABOUT_US.map((opt) => (
-          <label
-            key={opt}
-            className={`flex items-center gap-2 px-3 py-3 rounded-xl border cursor-pointer text-sm font-medium transition-all hover:border-primary ${
-              formData.hearAboutUs === opt
-                ? "border-primary bg-primary/5"
-                : "border-base-200"
-            }`}
-          >
-            <input
-              type="radio"
-              name="hearAboutUs"
-              value={opt}
-              defaultChecked={formData.hearAboutUs === opt}
-              className="radio radio-primary radio-sm"
-            />
+          <option key={opt} value={opt}>
             {opt}
-          </label>
+          </option>
         ))}
+      </select>
+
+      <NavRow onBack={prevStep} />
+    </form>
+  );
+}
+
+/* ─────────────────────── Step 8: Create Account ─────────────────────── */
+
+function CreateAccountStep({
+  formData,
+  advance,
+  prevStep,
+  isPending,
+}: Pick<StepProps, "formData" | "advance" | "prevStep" | "isPending">) {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const fd = new FormData(e.currentTarget);
+    advance({
+      fullName: fd.get("fullName") as string,
+      phoneNumber: fd.get("phoneNumber") as string,
+      username: fd.get("username") as string,
+    });
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-6">
+      <div className="space-y-1">
+        <h2 className="text-2xl font-bold leading-snug">
+          Create your account
+        </h2>
+        <p className="text-sm text-base-content/60">
+          Set up your login credentials to securely access your workspace.
+        </p>
       </div>
 
-      <NavRow onBack={prevStep} isPending={isPending} label="Complete" />
+      <div className="space-y-4">
+        <div className="space-y-1.5">
+          <label className="text-sm font-semibold fieldset-label">Full Name</label>
+          <input
+            name="fullName"
+            type="text"
+            defaultValue={formData.fullName}
+            placeholder="Please enter your full name"
+            required
+            className="input input-bordered w-full"
+          />
+        </div>
+
+        <div className="space-y-1.5">
+          <label className="text-sm font-semibold fieldset-label">Phone Number</label>
+          <input
+            name="phoneNumber"
+            type="tel"
+            defaultValue={formData.phoneNumber}
+            placeholder="Enter your Phone Number"
+            required
+            className="input input-bordered w-full"
+          />
+        </div>
+
+        <div className="space-y-1.5">
+          <label className="text-sm font-semibold fieldset-label">Username</label>
+          <input
+            name="username"
+            type="text"
+            defaultValue={formData.username}
+            placeholder="Please enter your desired Username"
+            required
+            className="input input-bordered w-full"
+          />
+        </div>
+      </div>
+
+      <NavRow onBack={prevStep} isPending={isPending} label="Submit" />
     </form>
   );
 }

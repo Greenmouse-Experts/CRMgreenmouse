@@ -1,4 +1,4 @@
-import apiClient, { type ApiResponse } from "@/api/apiClient";
+import apiClient, { type ApiResponse } from "@/client/api";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState, type PropsWithChildren } from "react";
 
@@ -78,7 +78,7 @@ export default function SimpleSelect<T>(props: SimpleSelect<T>) {
         }}
         className="select w-full"
       >
-        {items.map((item, idx) => props.render(item))}
+        {items.map((item, idx) => props.render(item, idx))}
         <>
           <option value="null">All </option>
         </>

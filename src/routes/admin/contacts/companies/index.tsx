@@ -176,7 +176,7 @@ function RouteComponent() {
             {
               label: "View",
               key: "view",
-              action: (item, nav) => {
+              action: (_item, nav) => {
                 nav({
                   //@ts-ignore
                   to: "details/acme",

@@ -5,9 +5,6 @@ export interface OnboardingFormData {
   email: string;
   industry: string;
   teamSize: string;
-  logo: string;
-  theme: string;
-  companyAddress: string;
   companyCity: string;
   companyCountry: string;
   companyWebsite: string;
@@ -15,6 +12,9 @@ export interface OnboardingFormData {
   businessType: string;
   isCacRegistered: boolean;
   hearAboutUs: string;
+  fullName: string;
+  phoneNumber: string;
+  username: string;
 }
 
 interface OnboardingState {
@@ -31,9 +31,6 @@ const defaultFormData: OnboardingFormData = {
   email: "",
   industry: "",
   teamSize: "",
-  logo: "",
-  theme: "light",
-  companyAddress: "",
   companyCity: "",
   companyCountry: "Nigeria",
   companyWebsite: "",
@@ -41,6 +38,9 @@ const defaultFormData: OnboardingFormData = {
   businessType: "",
   isCacRegistered: false,
   hearAboutUs: "",
+  fullName: "",
+  phoneNumber: "",
+  username: "",
 };
 
 export const useOnboardingStore = create<OnboardingState>()(

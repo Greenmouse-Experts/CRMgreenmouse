@@ -1,5 +1,5 @@
 import { atomWithStorage } from "jotai/utils";
-import { useAtom, useStore } from "jotai/react";
+import { useAtom } from "jotai/react";
 import { getDefaultStore } from "jotai/vanilla";
 interface User {
   id: string;

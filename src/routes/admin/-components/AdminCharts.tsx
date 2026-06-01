@@ -1,6 +1,4 @@
-import AreaChartExample from "./charts/AreaChart";
 import IncomeExpense from "./charts/IncomeExpense";
-import PieChartExample from "./charts/PieChart";
 
 export default function AdminCharts() {
   const currentDate = new Date().toLocaleDateString("en-US", {

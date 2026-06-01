@@ -2,7 +2,6 @@ import SimpleContainer from "@/components/SimpleContainer";
 import CustomTable from "@/components/tables/CustomTable";
 import { faker } from "@faker-js/faker";
 import { Link } from "@tanstack/react-router";
-import { PlusCircleIcon } from "lucide-react";
 
 export default function AdminUserList() {
   const staffs = Array.from({ length: 5 }, (_, i) => ({

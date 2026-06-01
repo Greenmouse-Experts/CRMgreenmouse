@@ -1,4 +1,4 @@
-import React, { forwardRef, type PropsWithChildren } from "react";
+import { forwardRef, type PropsWithChildren } from "react";
 import { ArrowLeft } from "lucide-react";
 
 const SimpleTitle = forwardRef<

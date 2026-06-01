@@ -93,7 +93,7 @@ function TwoLevelPieChart({
   return (
     <div className="size-full relative">
       <div className="absolute top-0 left-0 mt-4 flex gap-2 px-4 ">
-        {data01.map((item, index) => (
+        {data01.map((item) => (
           <span
             key={`label-${item.name}`}
             className={`badge ${item.badge} badge-soft ring ring-current/50 `}

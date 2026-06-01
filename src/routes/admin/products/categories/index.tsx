@@ -98,31 +98,3 @@ function RouteComponent() {
     </>
   );
 }
-
-interface ExportProps {
-  options?: [
-    {
-      name: string;
-      action: () => any;
-    },
-  ];
-  position?: "left" | "right";
-}
-const ExportOptions = (props: ExportProps) => {
-  return (
-    <div
-      className={`dropdown ${props?.position == "left" ? "dropdown-start" : "dropdown-end"}`}
-    >
-      <button className="btn btn-sm ">Export</button>
-      <ul className="dropdown-content menu bg-base-100 w-[152px] rounded-box shadow-xs">
-        {props.options?.map((option) => (
-          <li key={option.name}>
-            <a>
-              <button onClick={option.action}>{option.name}</button>
-            </a>
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
-};

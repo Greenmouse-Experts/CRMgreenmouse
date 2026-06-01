@@ -1,4 +1,4 @@
-import { Mail, Phone, User, Briefcase, Edit } from "lucide-react";
+import { Mail, Phone, Briefcase, Edit } from "lucide-react";
 import SimpleInput from "@/components/inputs/SimpleInput";
 import { FormProvider, useForm } from "react-hook-form";
 import { useState } from "react";
