@@ -25,7 +25,7 @@ function RouteComponent() {
         </div>
 
         {/* Right Side: Image (Hidden on mobile) */}
-        <div className="hidden h-[680px] lg:block lg:w-1/2 p-8">
+        <div className="hidden h-full lg:block lg:w-1/2 p-8">
           <img
             src="/onboarding/side-image.png"
             alt="CRM illustration"

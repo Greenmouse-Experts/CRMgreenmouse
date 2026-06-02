@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "@tanstack/react-router";
 import { useMutation } from "@tanstack/react-query";
@@ -108,9 +108,18 @@ function RouteComponent() {
             {...form.register("password")}
             type="password"
           />
-          <div className="flex items-center gap-2">
-            <input type="checkbox" className="toggle" name="" id="" />{" "}
-            <span className="fieldset-label text-sm">Remember Me</span>
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex items-center gap-2">
+              <input type="checkbox" className="toggle" name="" id="" />{" "}
+              <span className="fieldset-label text-sm">Remember Me</span>
+            </div>
+            <Link
+              to="/auth/forgot-password"
+              search={{ email: form.getValues("email") }}
+              className="link link-primary text-sm font-semibold"
+            >
+              Forgot Password?
+            </Link>
           </div>
           <button className="btn btn-primary btn-block" disabled={isPending}>
             {isPending ? (
