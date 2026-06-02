@@ -1,3 +1,4 @@
+import { useProfile } from "@/store/authStore";
 import IncomeExpense from "./charts/IncomeExpense";
 
 export default function AdminCharts() {
@@ -6,6 +7,7 @@ export default function AdminCharts() {
     month: "long",
     day: "numeric",
   });
+  const [profile] = useProfile();
 
   return (
     <div className="min-h-[300px] w-full   grid lg:grid-cols-3 gap-4 py-4 ">
@@ -14,7 +16,9 @@ export default function AdminCharts() {
           <div className="bg-accent/20 text-accent-content/80 font-bold rounded-md p-2 text-xs sm:text-sm w-fit">
             {currentDate}
           </div>
-          <h2 className="text-3xl sm:text-4xl font-bold">Welcome, Admin</h2>
+          <h2 className="text-3xl sm:text-4xl font-bold">
+            Welcome, {profile?.companyName}
+          </h2>
           <p className="text-sm sm:text-base">Have a great day</p>
         </div>
       </div>

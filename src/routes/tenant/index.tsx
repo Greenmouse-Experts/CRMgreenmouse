@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import AdminCharts from "./-components/AdminCharts";
-import AdminDashStats from "./-components/AdminDashStats";
+import AdminCharts from "./-components/TenantCharts";
+import AdminDashStats from "./-components/TenantDashStats";
 import AdminUserList from "./-components/AdminUserList";
 import DashStats from "./-components/DashStats";
 import AdminRecents from "./-components/AdminRecents";
@@ -12,19 +12,19 @@ export const Route = createFileRoute("/tenant/")({
 });
 
 function RouteComponent() {
-  return (
-    <>
-      <button
-        className="btn btn-primary"
-        onClick={() => {
-          return apiClient.get("/tenant/auth/me");
-          return apiClient.get("/tenant/onboarding");
-        }}
-      >
-        Status
-      </button>
-    </>
-  );
+  // return (
+  //   <>
+  //     <button
+  //       className="btn btn-primary"
+  //       onClick={() => {
+  //         return apiClient.get("/tenant/auth/me");
+  //         return apiClient.get("/tenant/onboarding");
+  //       }}
+  //     >
+  //       Status
+  //     </button>
+  //   </>
+  // );
   return (
     <div className="pb-12 space-y-4">
       {/*<PageHeader />*/}
