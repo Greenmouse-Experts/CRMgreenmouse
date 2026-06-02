@@ -28,6 +28,8 @@ src/
       register/    # Registration page
       verify/      # OTP Email verification page
       on-boarding/ # 9-step onboarding wizard
+      forgot-password/ # Password reset request page
+        new-password/  # OTP and new password submission page
     tenant/        # Protected dashboard (contacts, accounts, orders, products, users, settings)
   store/
     authStore.ts   # Jotai atoms for User (accessToken, refreshToken) and Profile
@@ -86,6 +88,8 @@ API: `PATCH /tenant/onboarding/` (save progress), `POST /tenant/onboarding/compl
 - Registration: `POST /tenant/auth/register`
 - Email Verification: `POST /tenant/auth/verify-email` (OTP)
 - Resend OTP: `POST /tenant/auth/resend-otp`
+- Forgot Password: `POST /tenant/auth/forgot-password` (Sends OTP)
+- Reset Password: `POST /tenant/auth/reset-password` (Requires email, otp, newPassword)
 - Login: `POST /tenant/auth/login`
 - Profile Check: `GET /tenant/auth/me` (returns `isOnboarded`)
 - Logout: `PUT /auth/users/logout`
