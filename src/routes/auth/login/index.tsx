@@ -4,9 +4,10 @@ import { useNavigate } from "@tanstack/react-router";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 import SimpleInput from "@/components/inputs/SimpleInput";
-import apiClient from "@/client/api";
+import apiClient, { new_url } from "@/client/api";
 import { set_user_value, set_profile_value } from "@/store/authStore";
 import { useOnboardingStore } from "@/store/onboarding-store";
+import axios from "axios";
 
 export const Route = createFileRoute("/auth/login/")({
   component: RouteComponent,
@@ -32,7 +33,7 @@ function RouteComponent() {
 
   const { mutate, isPending } = useMutation({
     mutationFn: (data: LoginProps) =>
-      apiClient.post("/tenant/auth/login", data).then((res) => res.data),
+      axios.post(new_url + "tenant/auth/login", data).then((res) => res.data),
     onSuccess: async (res) => {
       // res is { accessToken, refreshToken, user }
       set_user_value(res);
