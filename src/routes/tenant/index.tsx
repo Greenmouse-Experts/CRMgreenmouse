@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import AdminCharts from "./-components/TenantCharts";
-import AdminDashStats from "./-components/TenantDashStats";
+import TenantDashStats from "./-components/TenantDashStats";
 import AdminUserList from "./-components/AdminUserList";
 import DashStats from "./-components/DashStats";
 import AdminRecents from "./-components/AdminRecents";
@@ -28,7 +28,7 @@ function RouteComponent() {
   return (
     <div className="pb-12 space-y-4">
       {/*<PageHeader />*/}
-      <AdminDashStats />
+      <TenantDashStats />
       <AdminCharts />
       <DashStats />
       <AdminRecents />

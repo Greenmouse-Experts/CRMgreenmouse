@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import AdminDashStats from "../../-components/AdminDashStats";
+import TenantDashStats from "../../-components/TenantDashStats";
 import IncomeExpense from "../../-components/charts/IncomeExpense";
 import AdminMonthly from "../../-components/AdminMonthly";
 import AreaChartExample from "../../-components/charts/AreaChart";
@@ -13,7 +13,7 @@ export const Route = createFileRoute("/tenant/accounts/analysis/")({
 function RouteComponent() {
   return (
     <>
-      <AdminDashStats />
+      <TenantDashStats />
       <IncomeExpense />
       <AdminMonthly />
       <div className="grid grid-cols-3 gap-6">

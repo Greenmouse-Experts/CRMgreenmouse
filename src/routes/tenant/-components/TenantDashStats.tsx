@@ -27,7 +27,7 @@ const statsData = [
   { title: "New Signups", value: 12, icon: UserPlus },
 ];
 
-export default function AdminDashStats() {
+export default function TenantDashStats() {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 ">
       {statsData.slice(0, 5).map((stat, index) => (
