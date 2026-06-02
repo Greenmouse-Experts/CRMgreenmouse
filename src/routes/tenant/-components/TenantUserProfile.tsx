@@ -2,10 +2,11 @@ import { useProfile } from "@/store/authStore";
 import { useLogout } from "@/helpers/auth";
 import { Link } from "@tanstack/react-router";
 import { LogOut, Settings, UserCircle } from "lucide-react";
+import logoutApi from "@/client/logout";
 
 export default function TenantUserProfile() {
   const [profile] = useProfile();
-  const { logout } = useLogout();
+  const { logout } = useLogout(logoutApi);
 
   return (
     <div className="flex items-center border-l pl-4 ml-2 border-current/30">

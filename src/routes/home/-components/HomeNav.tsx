@@ -1,10 +1,19 @@
 import { Link } from "@tanstack/react-router";
-import { Menu, X, MousePointer2, LogIn, ChevronRight } from "lucide-react";
+import {
+  Menu,
+  X,
+  MousePointer2,
+  LogIn,
+  ChevronRight,
+  LayoutDashboard,
+} from "lucide-react";
 import { useState, useEffect, useRef } from "react";
+import { useAuth } from "@/store/authStore";
 
 export default function HomeNav() {
   const [isOpen, setIsOpen] = useState(false);
   const navRef = useRef<HTMLElement>(null);
+  const [user] = useAuth();
 
   useEffect(() => {
     if (!isOpen) return;
@@ -63,20 +72,33 @@ export default function HomeNav() {
 
         {/* Action Buttons */}
         <div className="hidden md:flex items-center gap-3">
-          <Link
-            to="/auth/login"
-            className="btn btn-ghost btn-sm font-bold gap-2"
-          >
-            <LogIn className="size-4" />
-            Sign In
-          </Link>
-          <Link
-            to="/auth/register"
-            className="btn btn-primary btn-sm rounded-lg px-6 font-bold shadow-md shadow-primary/10 hover:shadow-primary/30"
-          >
-            Get Started
-            <ChevronRight className="size-4" />
-          </Link>
+          {user ? (
+            <Link
+              to="/tenant"
+              className="btn btn-primary btn-sm rounded-lg px-6 font-bold shadow-md shadow-primary/10 hover:shadow-primary/30 gap-2"
+            >
+              <LayoutDashboard className="size-4" />
+              Dashboard
+            </Link>
+          ) : (
+            <>
+              <Link
+                to="/auth/login"
+                search={{ email: "" }}
+                className="btn btn-ghost btn-sm font-bold gap-2"
+              >
+                <LogIn className="size-4" />
+                Sign In
+              </Link>
+              <Link
+                to="/auth/register"
+                className="btn btn-primary btn-sm rounded-lg px-6 font-bold shadow-md shadow-primary/10 hover:shadow-primary/30"
+              >
+                Get Started
+                <ChevronRight className="size-4" />
+              </Link>
+            </>
+          )}
         </div>
 
         {/* Mobile Menu Toggle */}
@@ -110,20 +132,34 @@ export default function HomeNav() {
             </a>
           ))}
           <div className="grid grid-cols-2 gap-4 mt-6">
-            <Link
-              to="/auth/login"
-              className="btn btn-outline btn-primary font-bold"
-              onClick={() => setIsOpen(false)}
-            >
-              Sign In
-            </Link>
-            <Link
-              to="/auth/register"
-              className="btn btn-primary font-bold shadow-lg shadow-primary/20"
-              onClick={() => setIsOpen(false)}
-            >
-              Join Now
-            </Link>
+            {user ? (
+              <Link
+                to="/tenant"
+                className="btn btn-primary font-bold shadow-lg shadow-primary/20 col-span-2 gap-2"
+                onClick={() => setIsOpen(false)}
+              >
+                <LayoutDashboard className="size-4" />
+                Go to Dashboard
+              </Link>
+            ) : (
+              <>
+                <Link
+                  to="/auth/login"
+                  search={{ email: "" }}
+                  className="btn btn-outline btn-primary font-bold"
+                  onClick={() => setIsOpen(false)}
+                >
+                  Sign In
+                </Link>
+                <Link
+                  to="/auth/register"
+                  className="btn btn-primary font-bold shadow-lg shadow-primary/20"
+                  onClick={() => setIsOpen(false)}
+                >
+                  Join Now
+                </Link>
+              </>
+            )}
           </div>
         </div>
       </div>
