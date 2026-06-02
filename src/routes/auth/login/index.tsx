@@ -60,10 +60,10 @@ function RouteComponent() {
             return;
           }
         }
-        nav({ to: "/admin" });
+        nav({ to: "/tenant" });
       } catch (err) {
         console.error("Failed to fetch profile", err);
-        nav({ to: "/admin" });
+        // nav({ to: "/tenant" });
       }
     },
     onError: (err: any) => {
