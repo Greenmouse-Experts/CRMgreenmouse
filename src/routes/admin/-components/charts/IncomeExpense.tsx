@@ -1,25 +1,6 @@
-export default function IncomeExpense() {
-  return (
-    <div className="w-full bg-base-100 ring shadow-lg ring-current/10  rounded-box">
-      <div className="p-4 text-xl font-bold text-current/80 h-14 border-b border-base-300 flex items-center">
-        Income & Expense
-        <div className="text-sm space-x-2 ml-auto font-medium">
-          <span className="badge badge-soft ring ring-current badge-primary">
-            Income
-          </span>
-          <span className="badge badge-soft ring ring-current badge-error">
-            Expense
-          </span>
-        </div>
-      </div>
-
-      <div className="p-4">
-        <SimpleAreaChart />
-      </div>
-    </div>
-  );
-}
-
+import { useState } from "react";
+import { useDashboardIncomeExpense } from "@/api/adminApi";
+import QueryCompLayout from "@/components/layout/QueryCompLayout";
 import {
   AreaChart,
   Area,
@@ -29,61 +10,94 @@ import {
   Tooltip,
 } from "recharts";
 
-const generateRandomData = () => {
-  const months = [
-    "Jan",
-    "Feb",
-    "Mar",
-    "Apr",
-    "May",
-    "Jun",
-    "Jul",
-    "Aug",
-    "Sep",
-    "Oct",
-    "Nov",
-    "Dec",
-  ];
-  return months.map((month) => ({
-    name: month,
-    income: Math.floor(Math.random() * 5000) + 1000, // Random income between 1000 and 6000
-    expense: Math.floor(Math.random() * 3000) + 500, // Random expense between 500 and 3500
-  }));
-};
+export default function IncomeExpense() {
+  const currentYear = new Date().getFullYear();
+  const [year, setYear] = useState<number>(currentYear);
+  const query = useDashboardIncomeExpense(year);
 
-const data = generateRandomData();
-
-// #endregion
-const SimpleAreaChart = () => {
   return (
-    <AreaChart
-      className="!text-sm bg-base-100"
-      style={{
-        width: "100%",
-        // maxWidth: "700px",
-        maxHeight: "70vh",
-        aspectRatio: 1.618,
-      }}
-      responsive
-      data={data}
-      margin={{
-        top: 20,
-        right: 0,
-        left: 0,
-        bottom: 0,
-      }}
-    >
-      <CartesianGrid strokeDasharray="4 4" className="opacity-80" />
-      <XAxis dataKey="name" />
-      <YAxis width="auto" className="" />
-      <Tooltip />
-      <Area type="monotone" dataKey="income" fill="var(--color-error)" />
-      <Area
-        type="monotone"
-        dataKey="expense"
-        // stroke="#8884d8"
-        fill="var(--color-primary)"
-      />
-    </AreaChart>
+    <div className="w-full bg-base-100 ring shadow-sm ring-base-300 rounded-box">
+      <div className="p-4 text-lg font-bold text-base-content/90 border-b border-base-200 flex flex-wrap items-center justify-between gap-3">
+        <div className="flex items-center gap-2">
+          <span>Income & Expense Overview</span>
+          <select
+            value={year}
+            onChange={(e) => setYear(Number(e.target.value))}
+            className="select select-bordered select-xs ml-2"
+          >
+            <option value={2026}>2026</option>
+            <option value={2025}>2025</option>
+            <option value={2024}>2024</option>
+          </select>
+        </div>
+        <div className="text-sm flex items-center gap-2">
+          <span className="badge badge-soft badge-primary text-xs">
+            Income
+          </span>
+          <span className="badge badge-soft badge-error text-xs">
+            Expense
+          </span>
+        </div>
+      </div>
+
+      <div className="p-4">
+        <QueryCompLayout query={query}>
+          {(incomeExpenseData) => {
+            const chartData = incomeExpenseData.months.map((month, idx) => ({
+              name: month,
+              income: incomeExpenseData.income[idx] ?? 0,
+              expense: incomeExpenseData.expense[idx] ?? 0,
+            }));
+
+            return (
+              <AreaChart
+                className="!text-sm bg-base-100"
+                style={{
+                  width: "100%",
+                  maxHeight: "350px",
+                  aspectRatio: 2.2,
+                }}
+                responsive
+                data={chartData}
+                margin={{
+                  top: 20,
+                  right: 10,
+                  left: -20,
+                  bottom: 0,
+                }}
+              >
+                <CartesianGrid strokeDasharray="3 3" className="stroke-base-300 opacity-60" />
+                <XAxis dataKey="name" stroke="currentColor" className="text-xs text-base-content/60" />
+                <YAxis width={60} stroke="currentColor" className="text-xs text-base-content/60" />
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: "var(--color-base-100)",
+                    borderColor: "var(--color-base-300)",
+                    borderRadius: "0.5rem",
+                    color: "var(--color-base-content)",
+                  }}
+                />
+                <Area
+                  type="monotone"
+                  dataKey="income"
+                  stroke="#007047"
+                  fill="#007047"
+                  fillOpacity={0.25}
+                  name="Income"
+                />
+                <Area
+                  type="monotone"
+                  dataKey="expense"
+                  stroke="#ef4444"
+                  fill="#ef4444"
+                  fillOpacity={0.25}
+                  name="Expense"
+                />
+              </AreaChart>
+            );
+          }}
+        </QueryCompLayout>
+      </div>
+    </div>
   );
-};
+}

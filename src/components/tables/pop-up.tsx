@@ -1,20 +1,25 @@
 import { Menu } from "lucide-react";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, type ReactNode } from "react";
 import { usePopper } from "react-popper";
 import Portal from "./Portal";
 import { useNavigate } from "@tanstack/react-router"; // Import useNavigate
-export type Actions = {
+
+export type Actions<T = any> = {
   key: string;
   label: string;
-  action: (item: any, nav: ReturnType<typeof useNavigate>) => any;
+  action: (item: T, nav: ReturnType<typeof useNavigate>) => any;
+  render?: (item: T) => ReactNode | string;
+  disabled?: (item: T) => boolean;
+  disable_event?: (item: T) => boolean;
 };
 type currentIndex = number;
-export default function PopUp(props: {
-  actions: Actions[];
+export default function PopUp<T>(props: {
+  actions: Actions<T>[];
   item: any;
   currentIndex: currentIndex | null;
   setIndex: (index: number | null) => void;
   itemIndex: number;
+  disable_event?: (item: T) => boolean;
 }) {
   const [referenceElement, setReferenceElement] =
     useState<HTMLDivElement | null>(null);
@@ -72,7 +77,7 @@ export default function PopUp(props: {
   return (
     <>
       <div
-        data-theme="nord"
+        data-theme="nh-light"
         ref={setReferenceElement}
         onClick={openPopup}
         className="btn btn-circle btn-ghost "
@@ -82,7 +87,7 @@ export default function PopUp(props: {
       <Portal>
         {isOpen && (
           <div
-            data-theme=""
+            data-theme="nh-light"
             ref={(el) => {
               setPopperElement(el);
               popupRef.current = el;
@@ -95,16 +100,33 @@ export default function PopUp(props: {
             {...attributes.popper}
           >
             <div className="menu w-full">
-              {props?.actions?.map((action) => (
-                <li key={action.key}>
-                  <a
-                    onClick={() => action.action(props.item, nav)}
-                    className="text-xs"
-                  >
-                    {action.label}
-                  </a>
-                </li>
-              ))}
+              {props?.actions?.map((action) => {
+                if (action.disabled && action.disabled(props.item)) {
+                  return null;
+                }
+                return (
+                  <>
+                    {" "}
+                    <li key={action.key}>
+                      <a
+                        onClick={() => {
+                          if (
+                            action.disable_event &&
+                            action.disable_event(props.item)
+                          )
+                            return;
+                          action.action(props.item, nav);
+                        }}
+                        className={`text-xs ${action.disable_event && action.disable_event(props.item) ? "cursor-not-allowed" : ""}`}
+                      >
+                        {action.render
+                          ? action.render(props.item)
+                          : action.label}
+                      </a>
+                    </li>
+                  </>
+                );
+              })}
             </div>
           </div>
         )}

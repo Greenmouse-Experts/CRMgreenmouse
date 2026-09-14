@@ -1,65 +1,107 @@
 import SimpleContainer from "@/components/SimpleContainer";
 import CustomTable from "@/components/tables/CustomTable";
-import { faker } from "@faker-js/faker";
 import { Link } from "@tanstack/react-router";
+import { useAdminTenants, type Tenant } from "@/api/adminApi";
+import QueryCompLayout from "@/components/layout/QueryCompLayout";
+import { Building2 } from "lucide-react";
 
 export default function AdminUserList() {
-  const staffs = Array.from({ length: 5 }, (_, i) => ({
-    id: i + 1,
-    name: faker.person.fullName(),
-    email: faker.internet.email(),
-    role: faker.person.jobTitle(),
-    phone: faker.phone.number(),
-    avatar: faker.image.avatar(),
-  }));
+  const query = useAdminTenants();
 
   const columns = [
     {
-      key: "avatar",
-      label: "Img",
-      render: (value: string, item: any) => (
-        <div className="avatar">
-          <div className="mask mask-squircle w-12 h-12">
-            <img src={value} alt={`Avatar of ${item.name}`} />
+      key: "companyName",
+      label: "Tenant Company",
+      render: (_value: string, item: Tenant) => (
+        <div className="flex items-center gap-3">
+          <div className="size-9 rounded-lg bg-primary/10 text-primary flex items-center justify-center font-bold">
+            <Building2 className="size-4" />
+          </div>
+          <div>
+            <div className="font-semibold text-base-content leading-tight">
+              {item.companyName || "Unnamed Business"}
+            </div>
+            <div className="text-xs text-base-content/60">{item.email}</div>
           </div>
         </div>
       ),
     },
-    { key: "name", label: "Name" },
-    { key: "role", label: "Role" },
-    { key: "email", label: "Email" },
-    { key: "phone", label: "Phone" },
-  ];
-
-  const actions = [
     {
-      key: "view",
-      label: "View",
-      action: (item: any) => console.log("View staff:", item),
+      key: "phoneNumber",
+      label: "Phone",
+      render: (value: string) => (
+        <span className="text-xs text-base-content/70">{value || "—"}</span>
+      ),
+    },
+    {
+      key: "subscriptionStatus",
+      label: "Subscription",
+      render: (value: string) => {
+        const isTrial = value === "trial";
+        const isActive = value === "active";
+        return (
+          <span
+            className={`badge badge-sm font-medium ${
+              isActive
+                ? "badge-success badge-soft"
+                : isTrial
+                  ? "badge-warning badge-soft"
+                  : "badge-ghost"
+            }`}
+          >
+            {value ? value.toUpperCase() : "N/A"}
+          </span>
+        );
+      },
+    },
+    {
+      key: "status",
+      label: "Account Status",
+      render: (value: string) => (
+        <span
+          className={`badge badge-sm ${
+            value === "active"
+              ? "badge-success text-success-content"
+              : "badge-error text-error-content"
+          }`}
+        >
+          {value === "active" ? "Active" : "Suspended"}
+        </span>
+      ),
+    },
+    {
+      key: "createdAt",
+      label: "Joined",
+      render: (value: string) => (
+        <span className="text-xs text-base-content/60">
+          {value ? new Date(value).toLocaleDateString() : "—"}
+        </span>
+      ),
     },
   ];
 
   return (
     <div className="space-y-4">
       <SimpleContainer
-        title="Staffs"
+        title="Recent Business Tenants"
         actions={
-          <>
-            <Link to="/admin/users" className="btn btn-primary btn-sm">
-              See More
-            </Link>
-          </>
+          <Link to="/admin/tenants" className="btn btn-primary btn-sm">
+            View All Tenants
+          </Link>
         }
       >
-        <CustomTable
-          ring={false}
-          data={staffs}
-          columns={columns}
-          actions={actions}
-        />
-        {/*<div className="flex justify-center mt-4">
-          <button className="btn btn-ghost">See More</button>
-        </div>*/}
+        <QueryCompLayout query={query}>
+          {(tenants) => {
+            const recentTenants = tenants.slice(0, 5);
+            return (
+              <CustomTable
+                ring={false}
+                data={recentTenants}
+                columns={columns}
+              />
+            );
+          }}
+        </QueryCompLayout>
       </SimpleContainer>
     </div>
   );

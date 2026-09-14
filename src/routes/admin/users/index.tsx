@@ -2,68 +2,100 @@ import { createFileRoute } from "@tanstack/react-router";
 import ContainerRow from "@/components/ContainerRow";
 import SimpleContainer from "@/components/SimpleContainer";
 import { useSearch } from "@/stores/data";
-import { PlusCircleIcon } from "lucide-react";
-import { faker } from "@faker-js/faker";
+import { PlusCircleIcon, User } from "lucide-react";
 import CustomTable from "@/components/tables/CustomTable";
 import UserSummary from "./-components/UsersSummary";
 import DropDownBtn from "@/components/buttons/DropdownBtn";
 import type { Actions } from "@/components/tables/pop-up";
 import { useModal } from "@/helpers/modals";
-import Modal from "@/components/modals/DialogModal";
+import Modal from "@/components/DialogModal";
 import { Link } from "@tanstack/react-router";
 import PageHeader from "@/components/Headers/PageHeader";
+import PageLoader from "@/components/layout/PageLoader";
+import { useStaffs, type StaffMember } from "@/api/adminApi";
+
 export const Route = createFileRoute("/admin/users/")({
   component: RouteComponent,
 });
 
 function RouteComponent() {
-  const staffs = Array.from({ length: 20 }, (_, i) => ({
-    id: i + 1,
-    name: faker.person.fullName(),
-    email: faker.internet.email(),
-    role: faker.person.jobTitle(),
-    phone: faker.phone.number(),
-    avatar: faker.image.avatar(),
-  }));
+  const query = useStaffs();
   const props = useSearch();
 
   const columns = [
     {
-      key: "avatar",
-      label: "Img",
-      render: (value: string, item: any) => (
+      key: "profilePic",
+      label: "Avatar",
+      render: (value: string, item: StaffMember) => (
         <div className="avatar">
-          <div className="mask mask-squircle w-12 h-12">
-            <img src={value} alt={`Avatar of ${item.name}`} />
+          <div className="mask mask-squircle w-10 h-10 bg-primary/10 text-primary flex items-center justify-center font-bold">
+            {value ? (
+              <img src={value} alt={`${item.firstName} ${item.lastName}`} />
+            ) : (
+              <User className="size-5" />
+            )}
           </div>
         </div>
       ),
     },
-    { key: "name", label: "Name" },
-    { key: "role", label: "Role" },
+    {
+      key: "name",
+      label: "Name",
+      render: (_value: any, item: StaffMember) => (
+        <span className="font-semibold text-base-content">
+          {item.firstName} {item.lastName}
+        </span>
+      ),
+    },
+    {
+      key: "role",
+      label: "Role",
+      render: (_value: any, item: StaffMember) => (
+        <span className="badge badge-sm badge-ghost">
+          {item.role?.name || "Staff"}
+        </span>
+      ),
+    },
     { key: "email", label: "Email" },
-    { key: "phone", label: "Phone" },
+    {
+      key: "phoneNumber",
+      label: "Phone",
+      render: (value: string) => value || "—",
+    },
+    {
+      key: "status",
+      label: "Status",
+      render: (value: string) => (
+        <span
+          className={`badge badge-sm ${
+            value === "active" ? "badge-success text-success-content" : "badge-ghost"
+          }`}
+        >
+          {value || "active"}
+        </span>
+      ),
+    },
   ];
 
   const actions: Actions[] = [
     {
       key: "view",
       label: "View",
-      action: (_item: any, nav) => {
+      action: (item: any, nav) => {
         nav({
-          to: "/admin/users/details/" + "uidnfde1e",
+          to: "/admin/users/details/" + (item.id || "details"),
         });
       },
     },
-    // Add more actions if needed
   ];
+
   const modal = useModal();
+
   return (
-    <div className="space-y-4">
-      <PageHeader title="Staffs">
-        {/*//@ts-ignore*/}
-        <Link to="add" className="btn btn-primary ">
-          <PlusCircleIcon /> Add Staffs
+    <div className="space-y-4 pb-12">
+      <PageHeader title="Staff Members">
+        <Link to="/admin/users/add" className="btn btn-primary btn-sm">
+          <PlusCircleIcon className="size-4" /> Add Staff
         </Link>
       </PageHeader>
       <Modal ref={modal.ref} title="Add Staff"></Modal>
@@ -71,13 +103,14 @@ function RouteComponent() {
       <SimpleContainer
         title={
           <>
-            Staffs <span className="opacity-80">(10)</span>
+            Staff Directory{" "}
+            {query.data && (
+              <span className="opacity-80 text-xs">({query.data.length})</span>
+            )}
           </>
         }
       >
-        <ContainerRow showSearch>
-          {/*<button className="btn btn-accent  btn-outline">Filter</button>
-          <button className="btn btn-accent  btn-outline">Filter</button>*/}
+        <ContainerRow showSearch searchProps={props}>
           <DropDownBtn
             title="Export"
             items={[
@@ -86,12 +119,13 @@ function RouteComponent() {
                 action: () => {},
               },
             ]}
-          ></DropDownBtn>
-          {/*<button className="btn btn-primary ml-auto">Add User</button>*/}
+          />
         </ContainerRow>
-        {props.search}
-        {/*<ContainerRow searchProps={props} />*/}
-        <CustomTable data={staffs} columns={columns} actions={actions} />
+        <PageLoader query={query}>
+          {(staffs) => (
+            <CustomTable data={staffs} columns={columns} actions={actions} />
+          )}
+        </PageLoader>
       </SimpleContainer>
     </div>
   );

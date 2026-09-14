@@ -1,24 +1,54 @@
-import { PenSquare } from "lucide-react";
+import { type AdminProfile } from "@/api/adminApi";
+import { ShieldCheck, Mail, Phone, Calendar } from "lucide-react";
 
-export default function UserInfo() {
+export default function UserInfo({ profile }: { profile: AdminProfile }) {
+  const displayName = `${profile.firstName} ${profile.lastName}`;
+
   return (
-    <div className="flex items-center ">
-      <div className="flex-1 flex gap-4 items-center">
-        <div className="avatar placeholder">
-          <div className="bg-neutral-focus text-neutral-content rounded-full w-20">
-            <img src="https://github.com/shadcn.png" alt="" />
+    <div className="card bg-base-100 p-6 border border-base-200">
+      <div className="flex flex-col sm:flex-row items-center sm:items-start gap-5">
+        <div className="avatar">
+          <div className="w-20 h-20 rounded-2xl bg-primary text-primary-content flex items-center justify-center text-2xl font-black shadow-md ring ring-primary/20 ring-offset-2 ring-offset-base-100">
+            {profile.profilePic ? (
+              <img src={profile.profilePic} alt={displayName} className="rounded-2xl" />
+            ) : (
+              <span>{displayName.charAt(0).toUpperCase()}</span>
+            )}
           </div>
         </div>
-        <div className="space-y-1">
-          <h2 className="text-xl font-bold">Rafiqur Rahman</h2>
-          <span className="text-base-content/70">Team Manager</span>
-          <p className="text-sm text-base-content/50">Leeds, United Kingdom</p>
+
+        <div className="space-y-2 text-center sm:text-left flex-1">
+          <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2">
+            <h2 className="text-2xl font-bold text-base-content">{displayName}</h2>
+            <span className="badge badge-primary badge-soft font-semibold gap-1">
+              <ShieldCheck className="size-3.5" /> Super Admin
+            </span>
+          </div>
+
+          <p className="text-sm text-base-content/70">
+            {profile.bio || "Platform Administrator & System Manager"}
+          </p>
+
+          <div className="flex flex-wrap items-center justify-center sm:justify-start gap-4 pt-1 text-xs text-base-content/60">
+            <div className="flex items-center gap-1.5">
+              <Mail className="size-3.5" />
+              <span>{profile.email}</span>
+            </div>
+            {profile.phoneNumber && (
+              <div className="flex items-center gap-1.5">
+                <Phone className="size-3.5" />
+                <span>{profile.phoneNumber}</span>
+              </div>
+            )}
+            {profile.lastLoginAt && (
+              <div className="flex items-center gap-1.5">
+                <Calendar className="size-3.5" />
+                <span>Last login: {new Date(profile.lastLoginAt).toLocaleDateString()}</span>
+              </div>
+            )}
+          </div>
         </div>
       </div>
-      <button className="btn btn-ghost btn-sm">
-        Edit
-        <PenSquare className="w-4 h-4" />
-      </button>
     </div>
   );
 }

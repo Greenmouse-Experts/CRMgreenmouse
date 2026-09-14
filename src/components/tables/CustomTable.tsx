@@ -1,5 +1,8 @@
 import { useState } from "react";
 import PopUp, { type Actions } from "./pop-up";
+import { usePagination } from "@/helpers/pagination";
+import type { CursorPaginationProps } from "../CursorPagination";
+import CursorPagination from "../CursorPagination";
 
 export type columnType<T = any> = {
   key: string;
@@ -13,17 +16,30 @@ interface CustomTableProps {
   actions?: Actions[];
   user?: any;
   ring?: boolean;
+  totalCount?: number;
+  paginationProps?: ReturnType<typeof usePagination>;
+  cursorPaginationProps?: CursorPaginationProps;
+  onRowClick?: (item: any) => void;
+  color?: "primary" | "secondary" | "acccent";
 }
 
 export default function CustomTable(props: CustomTableProps) {
   const [selectedItem, setSelectedItem] = useState<number | null>(null);
-  const [currentPage, setCurrentPage] = useState(1);
-  const { ring = true } = props;
+  const { onRowClick } = props;
+  const pagination = props?.paginationProps;
+  const page = pagination?.page || 1;
+  const pageSize = pagination?.pageSize || 10;
+  const { ring = true, totalCount = props.data?.length || 0 } = props;
+
+  const startRange = totalCount > 0 ? (page - 1) * pageSize + 1 : 0;
+  const endRange = Math.min(page * pageSize, totalCount);
+  const totalPages =
+    totalCount > 0 ? Math.max(1, Math.ceil(totalCount / pageSize)) : 1;
 
   return (
     <div
       className={
-        "bg-base-100 shadow-xl ring ring-current/20 " +
+        "bg-base-100 shadow-md ring ring-current/20 " +
         (ring ? " rounded-box " : "rounded-b-box")
       }
     >
@@ -55,7 +71,8 @@ export default function CustomTable(props: CustomTableProps) {
                 return (
                   <tr
                     key={rowIdx}
-                    className="hover:bg-base-300 border-base-300"
+                    className={`hover:bg-base-300 border-base-300 ${onRowClick ? "cursor-pointer" : ""}`}
+                    onClick={() => onRowClick?.(item)}
                   >
                     {props.columns?.map((col, colIdx) => (
                       <td
@@ -88,32 +105,56 @@ export default function CustomTable(props: CustomTableProps) {
         </table>
       </div>
 
-      {/* Dummy Paginator */}
-      <div className="flex items-center justify-between px-4 py-3 bg-base-200/30 border-t border-base-300">
-        <div className="text-sm text-base-content/60">
-          Showing <span className="font-medium">1</span> to{" "}
-          <span className="font-medium">{props.data?.length || 0}</span> of{" "}
-          <span className="font-medium">{props.data?.length || 0}</span> results
+      {props.paginationProps && (
+        <div className="flex items-center justify-between px-4 py-3 bg-base-200/30 border-t border-base-300">
+          <div className="text-sm text-base-content/60">
+            Showing <span className="font-medium">{startRange}</span> to{" "}
+            <span className="font-medium">{endRange}</span> of{" "}
+            <span className="font-medium">{totalCount}</span> results
+            {totalCount > 0 && (
+              <span className="ml-1 text-xs text-base-content/40">
+                ({totalPages} {totalPages === 1 ? "page" : "pages"})
+              </span>
+            )}
+          </div>
+          <div className="join">
+            <button
+              className="join-item btn btn-sm"
+              onClick={() => {
+                if (pagination) {
+                  pagination.setPagination(Math.max(1, page - 1));
+                }
+              }}
+              disabled={page === 1}
+            >
+              «
+            </button>
+            <button className="join-item btn btn-sm btn-active">
+              Page {page} of {totalPages}
+            </button>
+            <button
+              className="join-item btn btn-sm"
+              onClick={() => {
+                if (pagination) {
+                  pagination.setPagination(page + 1);
+                }
+              }}
+              disabled={endRange >= totalCount}
+            >
+              »
+            </button>
+          </div>
         </div>
-        <div className="join">
-          <button
-            className="join-item btn btn-sm"
-            onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-            disabled={currentPage === 1}
-          >
-            «
-          </button>
-          <button className="join-item btn btn-sm btn-active">
-            Page {currentPage}
-          </button>
-          <button
-            className="join-item btn btn-sm"
-            onClick={() => setCurrentPage((p) => p + 1)}
-          >
-            »
-          </button>
-        </div>
-      </div>
+      )}
+
+      {props.cursorPaginationProps && (
+        <CursorPagination
+          {...props.cursorPaginationProps}
+          totalCount={
+            props.totalCount ?? props.cursorPaginationProps.totalCount
+          }
+        />
+      )}
     </div>
   );
 }

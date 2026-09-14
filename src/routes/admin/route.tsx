@@ -15,6 +15,7 @@ import {
   DollarSign,
   QuoteIcon,
   List,
+  Building2,
 } from "lucide-react";
 import AdminHeader from "./-components/AdminHeader";
 import { Link } from "@tanstack/react-router";
@@ -27,12 +28,26 @@ interface Links {
   children: Partial<Links[]> | null;
 }
 [];
-const ICON_SIZE = 12;
+const ICON_SIZE = 16;
 const nav_links = [
   {
     path: "/admin",
     label: "Dashboard",
     icon: <LayoutDashboard size={ICON_SIZE} />,
+    type: "menu",
+    children: null,
+  },
+  {
+    path: "/admin/tenants",
+    label: "Tenants",
+    icon: <Building2 size={ICON_SIZE} />,
+    type: "menu",
+    children: null,
+  },
+  {
+    path: "/admin/subscription",
+    label: "Subscription Plans",
+    icon: <CheckCircle size={ICON_SIZE} />,
     type: "menu",
     children: null,
   },
@@ -163,13 +178,6 @@ const nav_links = [
     path: "/admin/orders",
     label: "Orders",
     icon: <List size={ICON_SIZE} />,
-    type: "menu",
-    children: null,
-  },
-  {
-    path: "/admin/subscription",
-    label: "Subscription",
-    icon: <CheckCircle size={ICON_SIZE} />,
     type: "menu",
     children: null,
   },

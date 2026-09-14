@@ -12,5 +12,5 @@ export const useModal = () => {
     ref.current?.close(); // ✅ call exposed method
   };
 
-  return { ref, showModal, closeModal };
+  return { ref, showModal, closeModal, open: showModal, close: closeModal };
 };

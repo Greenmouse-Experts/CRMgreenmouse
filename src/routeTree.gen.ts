@@ -32,8 +32,10 @@ import { Route as AuthVerifyIndexRouteImport } from './routes/auth/verify/index'
 import { Route as AuthRegisterIndexRouteImport } from './routes/auth/register/index'
 import { Route as AuthLoginIndexRouteImport } from './routes/auth/login/index'
 import { Route as AuthForgotPasswordIndexRouteImport } from './routes/auth/forgot-password/index'
+import { Route as AuthAdminIndexRouteImport } from './routes/auth/admin/index'
 import { Route as AdminUsersIndexRouteImport } from './routes/admin/users/index'
 import { Route as AdminTransactionsIndexRouteImport } from './routes/admin/transactions/index'
+import { Route as AdminTenantsIndexRouteImport } from './routes/admin/tenants/index'
 import { Route as AdminSubscriptionIndexRouteImport } from './routes/admin/subscription/index'
 import { Route as AdminSettingsIndexRouteImport } from './routes/admin/settings/index'
 import { Route as AdminProductsIndexRouteImport } from './routes/admin/products/index'
@@ -202,6 +204,11 @@ const AuthForgotPasswordIndexRoute = AuthForgotPasswordIndexRouteImport.update({
   path: '/auth/forgot-password/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthAdminIndexRoute = AuthAdminIndexRouteImport.update({
+  id: '/auth/admin/',
+  path: '/auth/admin/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminUsersIndexRoute = AdminUsersIndexRouteImport.update({
   id: '/users/',
   path: '/users/',
@@ -210,6 +217,11 @@ const AdminUsersIndexRoute = AdminUsersIndexRouteImport.update({
 const AdminTransactionsIndexRoute = AdminTransactionsIndexRouteImport.update({
   id: '/transactions/',
   path: '/transactions/',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const AdminTenantsIndexRoute = AdminTenantsIndexRouteImport.update({
+  id: '/tenants/',
+  path: '/tenants/',
   getParentRoute: () => AdminRouteRoute,
 } as any)
 const AdminSubscriptionIndexRoute = AdminSubscriptionIndexRouteImport.update({
@@ -532,8 +544,10 @@ export interface FileRoutesByFullPath {
   '/admin/products': typeof AdminProductsIndexRoute
   '/admin/settings/': typeof AdminSettingsIndexRoute
   '/admin/subscription': typeof AdminSubscriptionIndexRoute
+  '/admin/tenants': typeof AdminTenantsIndexRoute
   '/admin/transactions': typeof AdminTransactionsIndexRoute
   '/admin/users': typeof AdminUsersIndexRoute
+  '/auth/admin': typeof AuthAdminIndexRoute
   '/auth/forgot-password': typeof AuthForgotPasswordIndexRoute
   '/auth/login': typeof AuthLoginIndexRoute
   '/auth/register/': typeof AuthRegisterIndexRoute
@@ -604,8 +618,10 @@ export interface FileRoutesByTo {
   '/admin/products': typeof AdminProductsIndexRoute
   '/admin/settings': typeof AdminSettingsIndexRoute
   '/admin/subscription': typeof AdminSubscriptionIndexRoute
+  '/admin/tenants': typeof AdminTenantsIndexRoute
   '/admin/transactions': typeof AdminTransactionsIndexRoute
   '/admin/users': typeof AdminUsersIndexRoute
+  '/auth/admin': typeof AuthAdminIndexRoute
   '/auth/forgot-password': typeof AuthForgotPasswordIndexRoute
   '/auth/login': typeof AuthLoginIndexRoute
   '/auth/register': typeof AuthRegisterIndexRoute
@@ -684,8 +700,10 @@ export interface FileRoutesById {
   '/admin/products/': typeof AdminProductsIndexRoute
   '/admin/settings/': typeof AdminSettingsIndexRoute
   '/admin/subscription/': typeof AdminSubscriptionIndexRoute
+  '/admin/tenants/': typeof AdminTenantsIndexRoute
   '/admin/transactions/': typeof AdminTransactionsIndexRoute
   '/admin/users/': typeof AdminUsersIndexRoute
+  '/auth/admin/': typeof AuthAdminIndexRoute
   '/auth/forgot-password/': typeof AuthForgotPasswordIndexRoute
   '/auth/login/': typeof AuthLoginIndexRoute
   '/auth/register/': typeof AuthRegisterIndexRoute
@@ -765,8 +783,10 @@ export interface FileRouteTypes {
     | '/admin/products'
     | '/admin/settings/'
     | '/admin/subscription'
+    | '/admin/tenants'
     | '/admin/transactions'
     | '/admin/users'
+    | '/auth/admin'
     | '/auth/forgot-password'
     | '/auth/login'
     | '/auth/register/'
@@ -837,8 +857,10 @@ export interface FileRouteTypes {
     | '/admin/products'
     | '/admin/settings'
     | '/admin/subscription'
+    | '/admin/tenants'
     | '/admin/transactions'
     | '/admin/users'
+    | '/auth/admin'
     | '/auth/forgot-password'
     | '/auth/login'
     | '/auth/register'
@@ -916,8 +938,10 @@ export interface FileRouteTypes {
     | '/admin/products/'
     | '/admin/settings/'
     | '/admin/subscription/'
+    | '/admin/tenants/'
     | '/admin/transactions/'
     | '/admin/users/'
+    | '/auth/admin/'
     | '/auth/forgot-password/'
     | '/auth/login/'
     | '/auth/register/'
@@ -986,6 +1010,7 @@ export interface RootRouteChildren {
   AuthVerifyRouteRoute: typeof AuthVerifyRouteRouteWithChildren
   HomeIndexRoute: typeof HomeIndexRoute
   AuthForgotPasswordNewPasswordRoute: typeof AuthForgotPasswordNewPasswordRoute
+  AuthAdminIndexRoute: typeof AuthAdminIndexRoute
   AuthForgotPasswordIndexRoute: typeof AuthForgotPasswordIndexRoute
   AuthLoginIndexRoute: typeof AuthLoginIndexRoute
 }
@@ -1153,6 +1178,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthForgotPasswordIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/auth/admin/': {
+      id: '/auth/admin/'
+      path: '/auth/admin'
+      fullPath: '/auth/admin'
+      preLoaderRoute: typeof AuthAdminIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/users/': {
       id: '/admin/users/'
       path: '/users'
@@ -1165,6 +1197,13 @@ declare module '@tanstack/react-router' {
       path: '/transactions'
       fullPath: '/admin/transactions'
       preLoaderRoute: typeof AdminTransactionsIndexRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
+    '/admin/tenants/': {
+      id: '/admin/tenants/'
+      path: '/tenants'
+      fullPath: '/admin/tenants'
+      preLoaderRoute: typeof AdminTenantsIndexRouteImport
       parentRoute: typeof AdminRouteRoute
     }
     '/admin/subscription/': {
@@ -1557,6 +1596,7 @@ interface AdminRouteRouteChildren {
   AdminOrdersIndexRoute: typeof AdminOrdersIndexRoute
   AdminProductsIndexRoute: typeof AdminProductsIndexRoute
   AdminSubscriptionIndexRoute: typeof AdminSubscriptionIndexRoute
+  AdminTenantsIndexRoute: typeof AdminTenantsIndexRoute
   AdminTransactionsIndexRoute: typeof AdminTransactionsIndexRoute
   AdminUsersIndexRoute: typeof AdminUsersIndexRoute
   AdminAccountsInvoicesIndexRoute: typeof AdminAccountsInvoicesIndexRoute
@@ -1587,6 +1627,7 @@ const AdminRouteRouteChildren: AdminRouteRouteChildren = {
   AdminOrdersIndexRoute: AdminOrdersIndexRoute,
   AdminProductsIndexRoute: AdminProductsIndexRoute,
   AdminSubscriptionIndexRoute: AdminSubscriptionIndexRoute,
+  AdminTenantsIndexRoute: AdminTenantsIndexRoute,
   AdminTransactionsIndexRoute: AdminTransactionsIndexRoute,
   AdminUsersIndexRoute: AdminUsersIndexRoute,
   AdminAccountsInvoicesIndexRoute: AdminAccountsInvoicesIndexRoute,
@@ -1747,6 +1788,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthVerifyRouteRoute: AuthVerifyRouteRouteWithChildren,
   HomeIndexRoute: HomeIndexRoute,
   AuthForgotPasswordNewPasswordRoute: AuthForgotPasswordNewPasswordRoute,
+  AuthAdminIndexRoute: AuthAdminIndexRoute,
   AuthForgotPasswordIndexRoute: AuthForgotPasswordIndexRoute,
   AuthLoginIndexRoute: AuthLoginIndexRoute,
 }
