@@ -415,3 +415,88 @@ export const useRoles = () => {
     },
   });
 };
+
+export const useCreateRole = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (role: { name: string; description?: string; permissions: string[] }) => {
+      const { data } = await apiClient.post<Role>("/roles", role);
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["roles"] });
+    },
+  });
+};
+
+export const useUpdateRole = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ id, ...role }: { id: string; name?: string; description?: string; permissions?: string[] }) => {
+      const { data } = await apiClient.patch<Role>(`/roles/${id}`, role);
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["roles"] });
+    },
+  });
+};
+
+export const useDeleteRole = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (id: string) => {
+      const { data } = await apiClient.delete(`/roles/${id}`);
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["roles"] });
+    },
+  });
+};
+
+export const useCreateStaff = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (staff: {
+      email: string;
+      firstName: string;
+      lastName: string;
+      phoneNumber?: string;
+      roleId?: string;
+      profilePic?: string;
+    }) => {
+      const { data } = await apiClient.post<StaffMember>("/staffs", staff);
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["staffs"] });
+    },
+  });
+};
+
+export const useUpdateStaff = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ id, ...staff }: Partial<StaffMember> & { id: string }) => {
+      const { data } = await apiClient.patch<StaffMember>(`/staffs/${id}`, staff);
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["staffs"] });
+    },
+  });
+};
+
+export const useDeleteStaff = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (id: string) => {
+      const { data } = await apiClient.delete(`/staffs/${id}`);
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["staffs"] });
+    },
+  });
+};

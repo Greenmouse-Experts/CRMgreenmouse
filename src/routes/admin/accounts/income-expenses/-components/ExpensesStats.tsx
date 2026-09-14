@@ -1,48 +1,77 @@
+import React from "react";
 import { Wallet, TrendingUp, TrendingDown, PiggyBank } from "lucide-react";
+import type { IncomeRecord, ExpenseRecord } from "@/api/financeApi";
 
-export default function ExpensesStat() {
+interface ExpensesStatProps {
+  incomeList?: IncomeRecord[];
+  expenseList?: ExpenseRecord[];
+}
+
+export default function ExpensesStat({ incomeList = [], expenseList = [] }: ExpensesStatProps) {
+  const totalIncome = incomeList.reduce((sum, item) => sum + (Number(item.amount) || 0), 0);
+  const totalExpense = expenseList.reduce((sum, item) => sum + (Number(item.amount) || 0), 0);
+  const netBalance = totalIncome - totalExpense;
+
   const data = [
     {
-      title: "Total Balance",
-      value: 100234,
+      title: "Net Balance",
+      value: `₦${netBalance.toLocaleString()}`,
       icon: Wallet,
-      colorClass: "text-primary",
+      colorClass: netBalance >= 0 ? "border-primary text-primary" : "border-error text-error",
+      bgClass: netBalance >= 0 ? "bg-primary/10" : "bg-error/10",
+      description: "Net cash position",
     },
     {
-      title: "Income",
-      value: 1234,
+      title: "Total Income",
+      value: `₦${totalIncome.toLocaleString()}`,
       icon: TrendingUp,
-      colorClass: "text-success",
+      colorClass: "border-success text-success",
+      bgClass: "bg-success/10",
+      description: `${incomeList.length} records recorded`,
     },
     {
-      title: "Expense",
-      value: 1234,
+      title: "Total Expenses",
+      value: `₦${totalExpense.toLocaleString()}`,
       icon: TrendingDown,
-      colorClass: "text-error",
+      colorClass: "border-error text-error",
+      bgClass: "bg-error/10",
+      description: `${expenseList.length} expenses tracked`,
     },
-    { title: "Profit", value: 1234, icon: PiggyBank, colorClass: "text-info" },
-  ] as const;
+    {
+      title: "Net Cashflow",
+      value: netBalance >= 0 ? `+₦${netBalance.toLocaleString()}` : `-₦${Math.abs(netBalance).toLocaleString()}`,
+      icon: PiggyBank,
+      colorClass: "border-info text-info",
+      bgClass: "bg-info/10",
+      description: netBalance >= 0 ? "Operating surplus" : "Operating deficit",
+    },
+  ];
 
   return (
     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
       {data.map((item) => {
-        const IconComponent = item.icon; // Assign the icon component
+        const IconComponent = item.icon;
         return (
           <div
             key={item.title}
-            className={`card bg-base-100 shadow-sm rounded-xl overflow-hidden
+            className={`card bg-base-100/70 backdrop-blur-md border border-base-200 shadow-sm rounded-xl overflow-hidden
                        border-l-4 ${item.colorClass}
-                       transition-all duration-300 hover:shadow-xl hover:scale-[1.02]`}
+                       transition-all duration-300 hover:shadow-md hover:scale-[1.01]`}
           >
-            <div className="p-4 flex flex-col gap-3">
-              <div className="flex items-center gap-3 text-base-content/80">
-                <IconComponent className="h-6 w-6" /> {/* Render Lucide icon */}
-                <span className="text-sm font-semibold">{item.title}</span>
+            <div className="p-4 flex flex-col gap-2">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-semibold uppercase text-base-content/60">
+                  {item.title}
+                </span>
+                <div className={`p-2 rounded-lg ${item.bgClass} ${item.colorClass}`}>
+                  <IconComponent className="h-5 w-5" />
+                </div>
               </div>
-              <span
-                className={`text-3xl font-extrabold mt-1 text-base-content`}
-              >
-                {item.value.toLocaleString()}
+              <span className="text-2xl font-extrabold text-base-content mt-1">
+                {item.value}
+              </span>
+              <span className="text-xs text-base-content/50">
+                {item.description}
               </span>
             </div>
           </div>

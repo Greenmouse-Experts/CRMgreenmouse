@@ -1,228 +1,348 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { useState, useRef } from "react";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import InvoicesStat from "./-components/InvocesStat";
 import SimpleContainer from "@/components/SimpleContainer";
 import CustomTable from "@/components/tables/CustomTable";
-import { faker } from "@faker-js/faker";
 import PageHeader from "@/components/Headers/PageHeader";
 import type { Actions } from "@/components/tables/pop-up";
-import { PlusCircleIcon } from "lucide-react";
-import { Link } from "@tanstack/react-router";
-
-// Define the type for an invoice, inspired by the image
-interface Invoice {
-  number: string; // e.g., INV842002
-  isStarred: boolean; // For the star icon next to the number
-  status: "Draft" | "Paid" | "Overdue" | "Pending"; // Status values from image
-  date: Date; // Date object for easier formatting
-  customer: {
-    name: string;
-    avatar: string; // URL for customer avatar
-  };
-  total: number; // Total amount, e.g., 152.00
-  amountDue: number; // Amount due, e.g., 0.00
-}
-
-// Function to generate a single fake invoice
-const generateFakeInvoice = (): Invoice => {
-  const total = parseFloat(faker.finance.amount({ min: 45, max: 840, dec: 2 }));
-  const status = faker.helpers.arrayElement([
-    "Paid",
-    "Pending",
-    "Overdue",
-    "Draft",
-  ]);
-  let amountDue = 0;
-
-  if (status === "Paid" || status === "Draft") {
-    amountDue = 0;
-  } else if (status === "Pending" || status === "Overdue") {
-    // Generate amountDue that could be 0, full total, or a partial amount
-    const dueOptions = [
-      0,
-      total,
-      parseFloat(faker.finance.amount({ min: 1, max: total, dec: 2 })),
-    ];
-    amountDue = faker.helpers.arrayElement(dueOptions);
-  }
-
-  // Ensure amountDue does not exceed total
-  amountDue = Math.min(amountDue, total);
-
-  return {
-    number: `INV84${faker.string.numeric({ length: 4, exclude: ["0000"] })}`, // Unique-ish invoice number
-    isStarred: faker.datatype.boolean(0.15), // 15% chance to be starred
-    status: status,
-    date: faker.date.recent({ days: 30 }), // Dates within the last 30 days
-    customer: {
-      name: faker.person.fullName(),
-      avatar: faker.image.avatar(),
-    },
-    total: total,
-    amountDue: parseFloat(amountDue.toFixed(2)),
-  };
-};
-
-// Generate an array of fake invoices
-const fakeInvoices: Invoice[] = faker.helpers.multiple(generateFakeInvoice, {
-  count: 15, // Increased count to match the visual density of the image
-});
+import Modal, { type ModalHandle } from "@/components/DialogModal";
+import PageLoader from "@/components/layout/PageLoader";
+import ContainerRow from "@/components/ContainerRow";
+import { useSearch } from "@/stores/data";
+import {
+  useInvoices,
+  useInvoiceStats,
+  useDeleteInvoice,
+  useMarkInvoicePaid,
+  useSendInvoice,
+  type Invoice,
+} from "@/api/financeApi";
+import { PlusCircleIcon, FileText, Send, CheckCircle, Clock } from "lucide-react";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/admin/accounts/Invoices/")({
   component: RouteComponent,
 });
 
 function RouteComponent() {
-  // Define columns for the CustomTable, matching the image
-  const invoiceColumns = [
+  const query = useInvoices();
+  const statsQuery = useInvoiceStats();
+  const deleteInvoice = useDeleteInvoice();
+  const markPaid = useMarkInvoicePaid();
+  const sendInvoice = useSendInvoice();
+  const searchProps = useSearch();
+
+  const detailsModalRef = useRef<ModalHandle>(null);
+  const [selectedInvoice, setSelectedInvoice] = useState<Invoice | null>(null);
+
+  const handleOpenDetails = (invoice: Invoice) => {
+    setSelectedInvoice(invoice);
+    detailsModalRef.current?.open();
+  };
+
+  const handleMarkPaid = async (invoice: Invoice) => {
+    try {
+      await markPaid.mutateAsync(invoice.id);
+      toast.success(`Invoice marked as paid`);
+    } catch (err: any) {
+      toast.error(err?.response?.data?.message || "Failed to mark invoice as paid");
+    }
+  };
+
+  const handleSendInvoice = async (invoice: Invoice) => {
+    try {
+      await sendInvoice.mutateAsync(invoice.id);
+      toast.success(`Invoice marked as sent to customer`);
+    } catch (err: any) {
+      toast.error(err?.response?.data?.message || "Failed to mark invoice as sent");
+    }
+  };
+
+  const handleDelete = async (invoice: Invoice) => {
+    const num = invoice.invoiceNumber || invoice.id.slice(0, 8);
+    if (!confirm(`Are you sure you want to delete invoice #${num}?`)) return;
+    try {
+      await deleteInvoice.mutateAsync(invoice.id);
+      toast.success("Invoice deleted successfully");
+    } catch (err: any) {
+      toast.error(err?.response?.data?.message || "Failed to delete invoice");
+    }
+  };
+
+  const invoicesList = query.data || [];
+  const searchTerm = searchProps.search?.toLowerCase() || "";
+  const filteredInvoices = invoicesList.filter((inv) => {
+    if (!searchTerm) return true;
+    const clientName = inv.contact
+      ? `${inv.contact.firstName} ${inv.contact.lastName}`
+      : "";
+    return (
+      inv.invoiceNumber?.toLowerCase().includes(searchTerm) ||
+      clientName.toLowerCase().includes(searchTerm) ||
+      inv.status?.toLowerCase().includes(searchTerm) ||
+      inv.billingAddress?.toLowerCase().includes(searchTerm)
+    );
+  });
+
+  const columns = [
     {
-      key: "number",
-      label: "Number",
-      render: (value: string, _item: Invoice) => (
-        <div className="flex items-center gap-2">
-          <span>{value}</span>
+      key: "invoiceNumber",
+      label: "Invoice #",
+      render: (val: any, item: Invoice) => (
+        <div className="flex items-center gap-2.5">
+          <div className="size-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary font-bold">
+            <FileText className="size-4" />
+          </div>
+          <div>
+            <span className="font-semibold text-base-content block">
+              {val || `INV-${item.id.slice(0, 8).toUpperCase()}`}
+            </span>
+            <span className="text-xs text-base-content/50">
+              {item.items?.length || 0} line items
+            </span>
+          </div>
         </div>
       ),
     },
     {
-      key: "status",
-      label: "Status",
-      render: (value: "Draft" | "Paid" | "Overdue" | "Pending") => {
-        let badgeClass = "";
-        switch (value) {
-          case "Paid":
-            badgeClass = "badge-success ";
-            break;
-          case "Overdue":
-            badgeClass = "badge-error ";
-            break;
-          case "Draft":
-            badgeClass = "badge-info "; // Softer look for draft
-            break;
-          case "Pending":
-          default:
-            badgeClass = "badge-warning ";
-            break;
-        }
-        return (
-          <span
-            className={`${badgeClass} badge badge-soft ring ring-current/50 text-xs badge-sm font-bold `}
-          >
-            {value}
-          </span>
-        );
-      },
-    },
-    {
-      key: "date",
-      label: "Date",
-      render: (value: Date) => {
-        const day = value.getDate();
-        const month = value.toLocaleString("en-US", { month: "short" });
-        const year = value.getFullYear();
-
-        // Function to get day suffix (st, nd, rd, th)
-        const getDaySuffix = (d: number) => {
-          if (d > 3 && d < 21) return "th";
-          switch (d % 10) {
-            case 1:
-              return "st";
-            case 2:
-              return "nd";
-            case 3:
-              return "rd";
-            default:
-              return "th";
-          }
-        };
-        return `${day}${getDaySuffix(day)} ${month} ${year}`;
-      },
-    },
-    {
-      key: "customer",
-      label: "Customer",
-      render: (value: { name: string; avatar: string }) => (
-        <div className="flex items-center gap-2">
-          <div className="avatar">
-            <div className="mask mask-squircle w-8 h-8">
-              {" "}
-              {/* mask-squircle for circular avatars */}
-              <img
-                src={value.avatar}
-                alt={value.name}
-                className="object-cover"
-              />
-            </div>
+      key: "contact",
+      label: "Customer / Client",
+      render: (val: any, item: Invoice) => (
+        <div>
+          <div className="font-medium text-base-content">
+            {val ? `${val.firstName} ${val.lastName}` : "Direct Client"}
           </div>
-          <span>{value.name}</span>
+          <div className="text-xs text-base-content/50">{val?.email || item.billingAddress || "—"}</div>
+        </div>
+      ),
+    },
+    {
+      key: "issuedDate",
+      label: "Dates",
+      render: (val: any, item: Invoice) => (
+        <div className="text-xs space-y-0.5">
+          <div className="text-base-content/80">
+            Issued: {val ? new Date(val).toLocaleDateString() : "—"}
+          </div>
+          <div className="text-base-content/50">
+            Due: {item.dueDate ? new Date(item.dueDate).toLocaleDateString() : "—"}
+          </div>
         </div>
       ),
     },
     {
       key: "total",
-      label: "Total",
-      render: (value: number) => `${value.toFixed(2)} US$`, // Format as currency
+      label: "Amount",
+      render: (val: any, item: Invoice) => {
+        const computed =
+          val ??
+          item.items?.reduce(
+            (s, it) => s + (Number(it.unitPrice) || 0) * (Number(it.qty) || 1),
+            0
+          );
+        return (
+          <span className="font-bold text-base-content">
+            {item.currency || "₦"}{Number(computed || 0).toLocaleString()}
+          </span>
+        );
+      },
     },
     {
-      key: "amountDue",
-      label: "Amount Due",
-      render: (value: number) => `${value.toFixed(2)} US$`, // Format as currency
+      key: "status",
+      label: "Status",
+      render: (status: string) => {
+        const s = status?.toLowerCase();
+        let badgeClass = "badge-ghost";
+        if (s === "paid") badgeClass = "badge-success text-white";
+        else if (s === "sent" || s === "pending") badgeClass = "badge-info text-white";
+        else if (s === "overdue") badgeClass = "badge-error text-white";
+        else if (s === "draft") badgeClass = "badge-warning text-white";
+
+        return (
+          <span className={`badge badge-sm font-semibold capitalize ${badgeClass}`}>
+            {status || "Draft"}
+          </span>
+        );
+      },
     },
   ];
 
-  // Define actions for the PopUp component, matching the three dots in the image
-  const invoiceActions: Actions[] = [
+  const actions: Actions<Invoice>[] = [
     {
       key: "view",
       label: "View Details",
-      action: (item: any, nav) =>
-        nav({ to: `/admin/accounts/invoices/${item.number}` }),
+      action: (item) => handleOpenDetails(item),
     },
     {
-      key: "edit",
-      label: "Edit Invoice",
-      action: (item: any) => console.log("Edit invoice:", item.number),
+      key: "send",
+      label: "Mark as Sent",
+      action: (item) => handleSendInvoice(item),
     },
     {
-      key: "download",
-      label: "Download PDF",
-      action: (item: any) => console.log("Download invoice:", item.number),
+      key: "paid",
+      label: "Mark as Paid",
+      action: (item) => handleMarkPaid(item),
     },
     {
       key: "delete",
       label: "Delete",
-      action: (item: any) => console.log("Delete invoice:", item.number),
+      action: (item) => handleDelete(item),
     },
   ];
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       <PageHeader
-        title="Invoices"
-        description="Manage your customer invoices and billing"
+        title="Invoices Management"
+        description="Track client billing, invoices issuance, and payment settlements"
       >
-        {/*//@ts-ignore*/}
-        <Link to="/admin/accounts/Invoices/add" className="btn btn-primary ">
-          <PlusCircleIcon /> Add Invoice
+        <Link to="/admin/accounts/Invoices/add" className="btn btn-primary btn-sm">
+          <PlusCircleIcon className="size-4" /> Create Invoice
         </Link>
       </PageHeader>
-      <InvoicesStat />
-      <SimpleContainer
-        title="Invoices"
-        // actions={
-        //   <>
-        //     <ActionButton className="btn btn-sm btn-primary">
-        //       Add Invoice
-        //     </ActionButton>
-        //   </>
-        // }
+
+      <PageLoader
+        query={query}
+        showSuccessState={true}
+        emptyState={{
+          title: "No Invoices Found",
+          description: "Get started by creating your first client invoice.",
+          actionText: "Create Invoice",
+          onAction: () => {},
+        }}
       >
-        <CustomTable
-          ring={false} // Match the subtle border in the image
-          data={fakeInvoices}
-          columns={invoiceColumns}
-          actions={invoiceActions} // Pass actions to enable the three-dot menu
+        <InvoicesStat
+          invoices={invoicesList}
+          statsData={statsQuery.data}
         />
-      </SimpleContainer>
+
+        <SimpleContainer title="Invoices Directory">
+          <ContainerRow searchProps={searchProps} showSearch={true} />
+          <CustomTable
+            data={filteredInvoices}
+            columns={columns}
+            actions={actions}
+          />
+        </SimpleContainer>
+      </PageLoader>
+
+      {/* View Details Modal */}
+      <Modal ref={detailsModalRef} title="Invoice Summary & Breakdown">
+        {selectedInvoice && (
+          <div className="space-y-5">
+            <div className="flex items-center justify-between p-4 bg-base-200/50 rounded-xl">
+              <div>
+                <span className="text-xs text-base-content/60 font-semibold uppercase">
+                  Invoice Number
+                </span>
+                <h3 className="text-xl font-bold text-base-content">
+                  {selectedInvoice.invoiceNumber ||
+                    `INV-${selectedInvoice.id.slice(0, 8).toUpperCase()}`}
+                </h3>
+              </div>
+              <span className="badge badge-lg capitalize font-semibold">
+                {selectedInvoice.status || "Draft"}
+              </span>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4 text-xs">
+              <div className="p-3 bg-base-200/30 rounded-lg">
+                <span className="text-base-content/60 block">Billed To:</span>
+                <span className="font-semibold text-base-content text-sm block mt-0.5">
+                  {selectedInvoice.contact
+                    ? `${selectedInvoice.contact.firstName} ${selectedInvoice.contact.lastName}`
+                    : "Direct Client"}
+                </span>
+                <span className="text-base-content/50">
+                  {selectedInvoice.contact?.email || selectedInvoice.billingAddress || "—"}
+                </span>
+              </div>
+              <div className="p-3 bg-base-200/30 rounded-lg">
+                <span className="text-base-content/60 block">Payment Dates:</span>
+                <span className="text-base-content block mt-0.5">
+                  Issued:{" "}
+                  {selectedInvoice.issuedDate
+                    ? new Date(selectedInvoice.issuedDate).toLocaleDateString()
+                    : "—"}
+                </span>
+                <span className="text-base-content block">
+                  Due:{" "}
+                  {selectedInvoice.dueDate
+                    ? new Date(selectedInvoice.dueDate).toLocaleDateString()
+                    : "—"}
+                </span>
+              </div>
+            </div>
+
+            {/* Line Items */}
+            <div>
+              <span className="text-xs font-semibold text-base-content/70 block mb-2">
+                Line Items
+              </span>
+              <div className="border border-base-200 rounded-lg overflow-hidden">
+                <table className="table table-xs w-full">
+                  <thead className="bg-base-200/50">
+                    <tr>
+                      <th>Description</th>
+                      <th className="text-center">Qty</th>
+                      <th className="text-right">Rate</th>
+                      <th className="text-right">Amount</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {selectedInvoice.items?.map((it, idx) => (
+                      <tr key={idx}>
+                        <td className="font-medium">{it.description}</td>
+                        <td className="text-center">{it.qty}</td>
+                        <td className="text-right">
+                          ₦{Number(it.unitPrice).toLocaleString()}
+                        </td>
+                        <td className="text-right font-semibold">
+                          ₦{(it.qty * it.unitPrice).toLocaleString()}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div className="flex justify-end pt-2">
+              <div className="text-right space-y-1 text-sm">
+                <div className="text-base-content/70">
+                  Tax: ₦{Number(selectedInvoice.tax || 0).toLocaleString()}
+                </div>
+                {selectedInvoice.discount ? (
+                  <div className="text-base-content/70">
+                    Discount: -₦{Number(selectedInvoice.discount).toLocaleString()}
+                  </div>
+                ) : null}
+                <div className="text-lg font-bold text-primary">
+                  Total: ₦
+                  {Number(
+                    selectedInvoice.total ||
+                      selectedInvoice.items?.reduce(
+                        (s, it) => s + it.qty * it.unitPrice,
+                        0
+                      ) ||
+                      0
+                  ).toLocaleString()}
+                </div>
+              </div>
+            </div>
+
+            <div className="modal-action">
+              <button
+                type="button"
+                className="btn btn-primary"
+                onClick={() => detailsModalRef.current?.close()}
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        )}
+      </Modal>
     </div>
   );
 }
