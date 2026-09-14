@@ -1,4 +1,4 @@
-import { Search, SearchIcon, X } from "lucide-react";
+import { MilkIcon, Search, SearchIcon, X } from "lucide-react";
 import { useState, useEffect } from "react";
 
 interface SearchBarProps {
@@ -42,10 +42,10 @@ export default function SearchBar({
   return (
     <form
       onSubmit={handleSubmit}
-      className={`relative flex items-center min-w-[240px] max-w-md flex-1 ${className}`}
+      className={`relative flex items-center min-w-[240px] max-w-md flex-1 input ${className}`}
     >
-      <div className="absolute left-3 top-1/2 -translate-y-1/2 text-base-content/40 pointer-events-none flex items-center justify-center">
-        <SearchIcon className="size-4" />
+      <div className="p-2 text-base-content">
+        <SearchIcon className="size-4 " />
       </div>
 
       <input
@@ -53,7 +53,7 @@ export default function SearchBar({
         value={searchTerm}
         onChange={handleChange}
         placeholder={placeholder}
-        className="input input-sm w-full pl-9 pr-8 bg-base-100 border border-base-300 rounded-lg text-sm placeholder:text-base-content/40 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all"
+        className=""
       />
 
       {searchTerm && (
