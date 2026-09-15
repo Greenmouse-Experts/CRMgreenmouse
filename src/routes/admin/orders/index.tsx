@@ -23,7 +23,6 @@ import {
   ShoppingBag,
   Clock,
   CheckCircle2,
-  XCircle,
   Truck,
   Plus,
   Trash2,

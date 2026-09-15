@@ -1,112 +1,217 @@
+import { useIncomeRecords, useExpenseRecords } from "@/api/financeApi";
+import { Link } from "@tanstack/react-router";
+import { TrendingUp, TrendingDown, ArrowRight, DollarSign } from "lucide-react";
+
 export default function DashStats() {
-  const incomeData = [
-    { date: "17 - 12 - 25", name: "", amount: 4600.0 },
-    { date: "17 - 12 - 25", name: "Kacey Cotton Sp", amount: 18782.0 },
-    { date: "16 - 12 - 25", name: "", amount: 23000.0 },
-    { date: "16 - 12 - 25", name: "", amount: 3855.78 },
-    { date: "15 - 12 - 25", name: "", amount: 12000.0 },
-  ];
+  const { data: incomeList = [], isLoading: incomeLoading } =
+    useIncomeRecords();
+  const { data: expenseList = [], isLoading: expenseLoading } =
+    useExpenseRecords();
 
-  const expenseData = [
-    { date: "17 - 12 - 25", name: "Utility Bill", amount: 150.0 },
-    { date: "17 - 12 - 25", name: "Groceries", amount: 75.5 },
-    { date: "16 - 12 - 25", name: "Rent", amount: 1200.0 },
-    { date: "16 - 12 - 25", name: "Internet", amount: 60.0 },
-    { date: "15 - 12 - 25", name: "Dinner Out", amount: 45.75 },
-  ];
+  const recentIncome = incomeList.slice(0, 5);
+  const recentExpenses = expenseList.slice(0, 5);
 
   return (
-    <div className=" grid md:grid-cols-2 gap-6">
-      <Card title="Recent Income">
-        {incomeData.map((item, index) => (
-          <TransactionCard
-            key={index}
-            type="income"
-            date={item.date}
-            name={item.name}
-            amount={item.amount}
-          />
-        ))}
-      </Card>
-      <Card title="Recent Expenses">
-        {expenseData.map((item, index) => (
-          <TransactionCard
-            key={index}
-            type="expense"
-            date={item.date}
-            name={item.name}
-            amount={item.amount}
-          />
-        ))}
-      </Card>
-    </div>
-  );
-}
-
-const Card = (props: any) => {
-  return (
-    <div className=" ring ring-current/10 shadow-md rounded-box bg-base-100 ">
-      <div className="h-14 p-4 font-bold text-lg border-b border-current/20">
-        {props.title}
-      </div>
-      <ul className="menu w-full space-y-2">{props.children}</ul>
-    </div>
-  );
-};
-
-interface TransactionCardProps {
-  type: "income" | "expense";
-  date: string;
-  name: string;
-  amount: number;
-}
-const TransactionCard = (props: TransactionCardProps) => {
-  const { type, date, name, amount } = props;
-  const isIncome = type === "income";
-  const textColor = isIncome ? "text-success" : "text-error";
-  const bgColor = isIncome ? "bg-success/10" : "bg-error/10";
-  const iconColor = isIncome ? "text-success" : "text-error";
-  const iconPath = isIncome
-    ? "M5 10l7-7m0 0l7 7m-7-7v18"
-    : "M19 14l-7 7m0 0l-7-7m7 7V3";
-
-  return (
-    <li>
-      <a className="flex items-center p-2 rounded-lg hover:bg-base-200 transition-colors duration-200">
-        <div
-          className={`shrink-0 flex items-center justify-center w-10 h-10 rounded-full mr-3 ${bgColor}`}
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className={`h-5 w-5 ${iconColor}`}
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d={iconPath}
-            />
-          </svg>
-        </div>
-        <div className="flex-1 min-w-0">
-          <div className="font-medium text-sm truncate">
-            {name || (isIncome ? "Income" : "Expense")}
+    <div className="grid md:grid-cols-2 gap-6">
+      {/* Recent Income Card */}
+      <div className="card bg-base-100 shadow-sm border border-base-200">
+        <div className="p-4 border-b border-base-200 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <div className="p-1.5 rounded-lg bg-success/10 text-success">
+              <TrendingUp className="size-4" />
+            </div>
+            <h3 className="font-bold text-base text-base-content">
+              Recent Income
+            </h3>
           </div>
-          <div className="text-xs text-current/70">{date}</div>
+          <Link
+            to="/tenant/accounts/income-expenses"
+            className="text-xs font-semibold text-primary hover:underline flex items-center gap-1"
+          >
+            View all
+            <ArrowRight className="size-3" />
+          </Link>
         </div>
-        <div className={`ml-3 text-base font-semibold ${textColor} shrink-0`}>
-          {isIncome ? "+" : "-"}
-          {amount.toLocaleString("en-US", {
-            style: "currency",
-            currency: "USD", // Assuming USD, you might want to make this dynamic
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2,
-          })}
+
+        <div className="p-3">
+          {incomeLoading ? (
+            <div className="space-y-3 py-4">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="flex items-center justify-between p-2">
+                  <div className="flex items-center gap-3">
+                    <div className="skeleton size-9 rounded-full shrink-0" />
+                    <div className="space-y-1">
+                      <div className="skeleton h-4 w-28" />
+                      <div className="skeleton h-3 w-16" />
+                    </div>
+                  </div>
+                  <div className="skeleton h-4 w-16" />
+                </div>
+              ))}
+            </div>
+          ) : recentIncome.length === 0 ? (
+            <div className="text-center py-8 space-y-2">
+              <div className="p-2.5 bg-base-200 rounded-full w-fit mx-auto text-base-content/40">
+                <DollarSign className="size-5" />
+              </div>
+              <p className="text-xs font-medium text-base-content/60">
+                No income records yet
+              </p>
+              <Link
+                to="/tenant/accounts/income-expenses"
+                className="btn btn-xs btn-outline btn-primary"
+              >
+                Record Income
+              </Link>
+            </div>
+          ) : (
+            <ul className="space-y-1.5">
+              {recentIncome.map((item) => {
+                const dateStr =
+                  item.date || item.createdAt
+                    ? new Date(
+                        item.date || item.createdAt!,
+                      ).toLocaleDateString()
+                    : "Recent";
+                return (
+                  <li
+                    key={item.id}
+                    className="flex items-center justify-between p-2.5 rounded-xl hover:bg-base-200/60 transition-colors"
+                  >
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div className="size-9 rounded-full bg-success/10 text-success flex items-center justify-center shrink-0">
+                        <TrendingUp className="size-4" />
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-sm font-semibold truncate text-base-content">
+                          {item.source || item.type || "Income"}
+                        </p>
+                        <p className="text-xs text-base-content/60">
+                          {dateStr}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="text-right shrink-0 ml-3">
+                      <span className="text-sm font-bold text-success">
+                        +$
+                        {item.amount.toLocaleString(undefined, {
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2,
+                        })}
+                      </span>
+                      {item.status && (
+                        <p className="text-[10px] text-base-content/50 uppercase font-medium">
+                          {item.status}
+                        </p>
+                      )}
+                    </div>
+                  </li>
+                );
+              })}
+            </ul>
+          )}
         </div>
-      </a>
-    </li>
+      </div>
+
+      {/* Recent Expenses Card */}
+      <div className="card bg-base-100 shadow-sm border border-base-200">
+        <div className="p-4 border-b border-base-200 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <div className="p-1.5 rounded-lg bg-error/10 text-error">
+              <TrendingDown className="size-4" />
+            </div>
+            <h3 className="font-bold text-base text-base-content">
+              Recent Expenses
+            </h3>
+          </div>
+          <Link
+            to="/tenant/accounts/income-expenses"
+            className="text-xs font-semibold text-primary hover:underline flex items-center gap-1"
+          >
+            View all
+            <ArrowRight className="size-3" />
+          </Link>
+        </div>
+
+        <div className="p-3">
+          {expenseLoading ? (
+            <div className="space-y-3 py-4">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="flex items-center justify-between p-2">
+                  <div className="flex items-center gap-3">
+                    <div className="skeleton size-9 rounded-full shrink-0" />
+                    <div className="space-y-1">
+                      <div className="skeleton h-4 w-28" />
+                      <div className="skeleton h-3 w-16" />
+                    </div>
+                  </div>
+                  <div className="skeleton h-4 w-16" />
+                </div>
+              ))}
+            </div>
+          ) : recentExpenses.length === 0 ? (
+            <div className="text-center py-8 space-y-2">
+              <div className="p-2.5 bg-base-200 rounded-full w-fit mx-auto text-base-content/40">
+                <DollarSign className="size-5" />
+              </div>
+              <p className="text-xs font-medium text-base-content/60">
+                No expense records yet
+              </p>
+              <Link
+                to="/tenant/accounts/income-expenses"
+                className="btn btn-xs btn-outline btn-error"
+              >
+                Record Expense
+              </Link>
+            </div>
+          ) : (
+            <ul className="space-y-1.5">
+              {recentExpenses.map((item) => {
+                const dateStr =
+                  item.date || item.createdAt
+                    ? new Date(
+                        item.date || item.createdAt!,
+                      ).toLocaleDateString()
+                    : "Recent";
+                return (
+                  <li
+                    key={item.id}
+                    className="flex items-center justify-between p-2.5 rounded-xl hover:bg-base-200/60 transition-colors"
+                  >
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div className="size-9 rounded-full bg-error/10 text-error flex items-center justify-center shrink-0">
+                        <TrendingDown className="size-4" />
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-sm font-semibold truncate text-base-content">
+                          {item.paidTo || item.category || "Expense"}
+                        </p>
+                        <p className="text-xs text-base-content/60">
+                          {dateStr}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="text-right shrink-0 ml-3">
+                      <span className="text-sm font-bold text-error">
+                        -$
+                        {item.amount.toLocaleString(undefined, {
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2,
+                        })}
+                      </span>
+                      {item.status && (
+                        <p className="text-[10px] text-base-content/50 uppercase font-medium">
+                          {item.status}
+                        </p>
+                      )}
+                    </div>
+                  </li>
+                );
+              })}
+            </ul>
+          )}
+        </div>
+      </div>
+    </div>
   );
-};
+}

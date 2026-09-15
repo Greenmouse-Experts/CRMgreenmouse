@@ -2,17 +2,38 @@ import { extract_message } from "@/helpers/auth";
 import type { QueryObserverResult } from "@tanstack/react-query";
 import type { AxiosError } from "axios";
 import type { ApiResponse } from "@/api/simpleApi";
-import { Loader2, AlertCircle, RefreshCcw, ShieldOff } from "lucide-react";
+import {
+  Loader2,
+  AlertCircle,
+  RefreshCcw,
+  ShieldOff,
+  Inbox,
+} from "lucide-react";
+
+interface EmptyStateConfig {
+  title?: string;
+  description?: string;
+  actionText?: string;
+  onAction?: () => void;
+}
 
 interface PageLoaderProps<TData> {
   children?: React.ReactNode | ((data: TData) => React.ReactNode);
   query: QueryObserverResult<TData>;
   customLoading?: React.ReactNode;
   loadingText?: string;
+  showSuccessState?: boolean;
+  emptyState?: EmptyStateConfig;
 }
 
 export default function PageLoader<TData>(props: PageLoaderProps<TData>) {
-  const { query, customLoading, children, loadingText = "Loading..." } = props;
+  const {
+    query,
+    customLoading,
+    children,
+    loadingText = "Loading...",
+    emptyState,
+  } = props;
 
   if (query.isLoading) {
     if (customLoading) {
@@ -36,15 +57,7 @@ export default function PageLoader<TData>(props: PageLoaderProps<TData>) {
           <h3 className="text-lg font-semibold tracking-tight text-base-content/80">
             {loadingText}
           </h3>
-          {/*<p className="text-sm text-base-content/50 max-w-[200px] leading-relaxed">
-            Please wait while we prepare your dashboard experience.
-          </p>*/}
         </div>
-
-        {/* Progress Bar Simulation */}
-        {/*<div className="mt-8 w-48 h-1 bg-base-200 rounded-full overflow-hidden">
-          <div className="h-full bg-primary/40 rounded-full animate-progress-loading" />
-        </div>*/}
       </div>
     );
   }
@@ -91,6 +104,31 @@ export default function PageLoader<TData>(props: PageLoaderProps<TData>) {
   }
 
   if (!query.data) return null;
+
+  if (Array.isArray(query.data) && query.data.length === 0 && emptyState) {
+    return (
+      <div className="min-h-[40vh] w-full flex flex-col items-center justify-center p-6 text-center animate-in zoom-in-95 duration-300 bg-base-100 rounded-2xl border border-base-200">
+        <div className="mb-4 rounded-full bg-base-200 p-4 text-base-content/40">
+          <Inbox className="h-8 w-8" />
+        </div>
+        <h3 className="text-lg font-bold text-base-content">
+          {emptyState.title ?? "No Records Found"}
+        </h3>
+        <p className="mt-1 text-sm text-base-content/60 max-w-sm">
+          {emptyState.description ??
+            "There are currently no items available in this view."}
+        </p>
+        {emptyState.actionText && emptyState.onAction && (
+          <button
+            onClick={emptyState.onAction}
+            className="mt-5 btn btn-primary btn-sm"
+          >
+            {emptyState.actionText}
+          </button>
+        )}
+      </div>
+    );
+  }
 
   return (
     <div className="animate-in fade-in slide-in-from-bottom-2 duration-500">

@@ -11,7 +11,7 @@ import {
   type IncomeRecord,
 } from "@/api/financeApi";
 import { toast } from "sonner";
-import { TrendingUp, CheckCircle, Clock, XCircle } from "lucide-react";
+import { TrendingUp } from "lucide-react";
 
 interface IncomeTableProps {
   searchTerm?: string;

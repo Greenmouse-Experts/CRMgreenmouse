@@ -1,55 +1,38 @@
-# System and Platform Authentication
+# System & Platform Authentication API
 
-This file covers the system routes (`/`, `/healthcheck`) and the platform
-authentication surface used by super admins and staff (`/auth/*`). For
-business-account (tenant) authentication, see [`tenant.md`](./tenant.md).
+System root greetings, health checks, and platform authentication for Super Admins and Staff members.
 
-## System
+## Overview & Quick Reference
 
-### App root
-`GET /`
+| Method | Endpoint | Description |
+| :--- | :--- | :--- |
+| `GET` | [`/v1/healthcheck`](#app-controller-get-health-check) | App Controller get Health Check |
+| `POST` | [`/v1/auth/admin/login`](#super-admin-login) | Super admin login |
+| `POST` | [`/v1/auth/staff/login`](#staff-login) | Staff login |
+| `POST` | [`/v1/auth/refresh`](#refresh-access-token) | Refresh access token |
+| `POST` | [`/v1/auth/logout`](#logout-current-user) | Logout current user |
+| `GET` | [`/v1/auth/me`](#get-current-authenticated-user) | Get current authenticated user |
+| `GET` | [`/v1`](#app-controller-get-hello) | App Controller get Hello |
 
-App root endpoint; returns the app controller greeting.
+---
 
-- **Auth:** Public
+## Endpoints
 
-**Body**
+### App Controller get Health Check
 
-_No request body is provided in the collection._
-
-**Responses**
-
-- `200` — OK
-
-  _No example response body is provided in the collection._
-
-### Health check
-`GET /healthcheck`
-
-Health check endpoint.
-
-- **Auth:** Public
-
-**Body**
-
-_No request body is provided in the collection._
+`GET /v1/healthcheck`
 
 **Responses**
 
-- `200` — OK
+#### `200 OK`
 
-  _No example response body is provided in the collection._
-
-## Platform authentication
+---
 
 ### Super admin login
-`POST /auth/admin/login`
 
-Super admin login.
+`POST /v1/auth/admin/login`
 
-- **Auth:** Public
-
-**Body**
+**Request Body** (`application/json`)
 
 ```json
 {
@@ -60,18 +43,15 @@ Super admin login.
 
 **Responses**
 
-- `201` — Created
+#### `201 Created`
 
-  _No example response body is provided in the collection._
+---
 
 ### Staff login
-`POST /auth/staff/login`
 
-Staff login.
+`POST /v1/auth/staff/login`
 
-- **Auth:** Public
-
-**Body**
+**Request Body** (`application/json`)
 
 ```json
 {
@@ -82,57 +62,47 @@ Staff login.
 
 **Responses**
 
-- `201` — Created
+#### `201 Created`
 
-  _No example response body is provided in the collection._
+---
 
 ### Refresh access token
-`POST /auth/refresh`
 
-Refresh access token.
-
-- **Auth:** Public
-
-**Body**
-
-_No request body is provided in the collection._
+`POST /v1/auth/refresh`
 
 **Responses**
 
-- `201` — Created
+#### `201 Created`
 
-  _No example response body is provided in the collection._
+---
 
 ### Logout current user
-`POST /auth/logout`
 
-Logout current user.
-
-- **Auth:** Bearer
-
-**Body**
-
-_No request body is provided in the collection._
+`POST /v1/auth/logout`
 
 **Responses**
 
-- `201` — Created
+#### `201 Created`
 
-  _No example response body is provided in the collection._
+---
 
 ### Get current authenticated user
-`GET /auth/me`
 
-Get current authenticated user.
-
-- **Auth:** Bearer
-
-**Body**
-
-_No request body is provided in the collection._
+`GET /v1/auth/me`
 
 **Responses**
 
-- `200` — OK
+#### `200 OK`
 
-  _No example response body is provided in the collection._
+---
+
+### App Controller get Hello
+
+`GET /v1`
+
+**Responses**
+
+#### `200 OK`
+
+---
+

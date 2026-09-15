@@ -1,18 +1,84 @@
-# Super Admin
+# Super Admin Platform Management API
 
-Platform-operator routes under `/admin/*`, covering one-time setup, admin
-profile, permissions, subscription-plan management, and tenant management.
+Super admin initial setup, administrator profile, RBAC permission dictionary, cross-tenant management, tenant status toggle, subscription plan authoring, and platform oversight.
 
-## Setup and profile
+## Overview & Quick Reference
+
+| Method | Endpoint | Description |
+| :--- | :--- | :--- |
+| `POST` | [`/v1/admins/setup`](#create-the-super-admin-account-one-time-setup-) | Create the super admin account (one-time setup) |
+| `GET` | [`/v1/admins/profile`](#get-admin-profile) | Get admin profile |
+| `PATCH` | [`/v1/admins/profile`](#update-admin-profile) | Update admin profile |
+| `PATCH` | [`/v1/admins/change-password`](#change-admin-account-password) | Change admin account password |
+| `GET` | [`/v1/admins/permissions`](#get-all-available-permissions-with-descriptions-use-when-building-roles) | Get all available permissions with descriptions — use when building roles |
+| `GET` | [`/v1/admins/staff/:id`](#get-a-staff-member-by-id-cross-tenant-) | Get a staff member by ID (cross-tenant) |
+| `GET` | [`/v1/admins/staff`](#list-all-staff-across-all-tenants) | List all staff across all tenants |
+| `GET` | [`/v1/admins/roles/:id`](#get-a-role-by-id-cross-tenant-) | Get a role by ID (cross-tenant) |
+| `GET` | [`/v1/admins/roles`](#list-all-roles-across-all-tenants) | List all roles across all tenants |
+| `GET` | [`/v1/admins/companies/:id`](#get-a-company-by-id-cross-tenant-) | Get a company by ID (cross-tenant) |
+| `GET` | [`/v1/admins/companies`](#list-all-companies-across-all-tenants) | List all companies across all tenants |
+| `GET` | [`/v1/admins/import/jobs/:id`](#get-an-import-job-by-id-cross-tenant-) | Get an import job by ID (cross-tenant) |
+| `GET` | [`/v1/admins/import/jobs`](#list-import-jobs-across-all-tenants) | List import jobs across all tenants |
+| `GET` | [`/v1/admins/subscriptions/features`](#list-all-available-subscription-features) | List all available subscription features |
+| `GET` | [`/v1/admins/subscriptions/:id`](#get-a-single-subscription-plan) | Get a single subscription plan |
+| `PATCH` | [`/v1/admins/subscriptions/:id`](#update-a-subscription-plan) | Update a subscription plan |
+| `DELETE` | [`/v1/admins/subscriptions/:id`](#delete-a-subscription-plan) | Delete a subscription plan |
+| `POST` | [`/v1/admins/subscriptions`](#create-a-new-subscription-plan) | Create a new subscription plan |
+| `GET` | [`/v1/admins/subscriptions`](#list-all-subscription-plans-admin-view-includes-inactive-with-pagination) | List all subscription plans (admin view, includes inactive) with pagination |
+| `GET` | [`/v1/admins/contacts/:id`](#get-a-contact-by-id-cross-tenant-) | Get a contact by ID (cross-tenant) |
+| `GET` | [`/v1/admins/contacts`](#list-all-contacts-across-all-tenants) | List all contacts across all tenants |
+| `GET` | [`/v1/admins/categories/:id`](#get-a-category-by-id-cross-tenant-) | Get a category by ID (cross-tenant) |
+| `GET` | [`/v1/admins/categories`](#list-all-categories-across-all-tenants) | List all categories across all tenants |
+| `GET` | [`/v1/admins/income/:id`](#get-an-income-record-by-id-cross-tenant-) | Get an income record by ID (cross-tenant) |
+| `GET` | [`/v1/admins/income`](#list-all-income-records-across-all-tenants) | List all income records across all tenants |
+| `GET` | [`/v1/admins/expenses/:id`](#get-an-expense-record-by-id-cross-tenant-) | Get an expense record by ID (cross-tenant) |
+| `GET` | [`/v1/admins/expenses`](#list-all-expense-records-across-all-tenants) | List all expense records across all tenants |
+| `GET` | [`/v1/admins/invoices/:id`](#get-an-invoice-by-id-cross-tenant-) | Get an invoice by ID (cross-tenant) |
+| `GET` | [`/v1/admins/invoices`](#list-all-invoices-across-all-tenants) | List all invoices across all tenants |
+| `GET` | [`/v1/admins/orders/:id`](#get-an-order-by-id-cross-tenant-) | Get an order by ID (cross-tenant) |
+| `GET` | [`/v1/admins/orders`](#list-all-orders-across-all-tenants) | List all orders across all tenants |
+| `GET` | [`/v1/admins/products/:id`](#get-a-product-by-id-cross-tenant-) | Get a product by ID (cross-tenant) |
+| `GET` | [`/v1/admins/products`](#list-all-products-across-all-tenants) | List all products across all tenants |
+| `GET` | [`/v1/admins/services/:id`](#get-a-service-by-id-cross-tenant-) | Get a service by ID (cross-tenant) |
+| `GET` | [`/v1/admins/services`](#list-all-services-across-all-tenants) | List all services across all tenants |
+| `GET` | [`/v1/admins/dashboard/stats`](#dashboard-stats-for-a-specific-tenant) | Dashboard stats for a specific tenant |
+| `GET` | [`/v1/admins/dashboard/income-expense`](#income-vs-expense-chart-for-a-specific-tenant) | Income vs expense chart for a specific tenant |
+| `GET` | [`/v1/admins/dashboard/balance`](#account-balance-for-a-specific-tenant) | Account balance for a specific tenant |
+| `GET` | [`/v1/admins/dashboard/profit`](#profit-chart-for-a-specific-tenant) | Profit chart for a specific tenant |
+| `GET` | [`/v1/admins/dashboard/user-analytics`](#user-analytics-for-a-specific-tenant) | User analytics for a specific tenant |
+| `GET` | [`/v1/admins/pipelines/:id`](#get-a-pipeline-by-id-cross-tenant-) | Get a pipeline by ID (cross-tenant) |
+| `GET` | [`/v1/admins/pipelines`](#list-all-pipelines-across-all-tenants) | List all pipelines across all tenants |
+| `GET` | [`/v1/admins/tenants/stats`](#tenant-statistics-total-active-suspended-trial-) | Tenant statistics (total, active, suspended, trial) |
+| `PATCH` | [`/v1/admins/tenants/:id/status`](#activate-or-suspend-a-tenant) | Activate or suspend a tenant |
+| `PATCH` | [`/v1/admins/tenants/:id/subscription`](#assign-or-upgrade-a-tenant-subscription-plan) | Assign or upgrade a tenant subscription plan |
+| `POST` | [`/v1/admins/tenants/:id/verify-payment`](#verify-a-subscription-payment-by-paystack-reference-for-a-tenant-fallback-if-webhook-fails-) | Verify a subscription payment by Paystack reference for a tenant (fallback if webhook fails) |
+| `GET` | [`/v1/admins/tenants/:id`](#get-a-single-tenant) | Get a single tenant |
+| `GET` | [`/v1/admins/tenants`](#list-all-tenants) | List all tenants |
+| `GET` | [`/v1/admins/tickets/:id`](#get-a-ticket-by-id-cross-tenant-) | Get a ticket by ID (cross-tenant) |
+| `GET` | [`/v1/admins/tickets`](#list-all-tickets-across-all-tenants) | List all tickets across all tenants |
+| `GET` | [`/v1/admins/quotes/:id`](#get-a-quote-by-id-cross-tenant-) | Get a quote by ID (cross-tenant) |
+| `GET` | [`/v1/admins/quotes`](#list-all-quotes-across-all-tenants) | List all quotes across all tenants |
+| `GET` | [`/v1/admins/leads/:id`](#get-a-lead-by-id-cross-tenant-) | Get a lead by ID (cross-tenant) |
+| `GET` | [`/v1/admins/leads`](#list-all-leads-across-all-tenants) | List all leads across all tenants |
+| `GET` | [`/v1/admins/deals/:id/stage-history`](#get-deal-stage-history) | Get deal stage history |
+| `GET` | [`/v1/admins/deals/:id`](#get-a-deal-by-id-cross-tenant-) | Get a deal by ID (cross-tenant) |
+| `GET` | [`/v1/admins/deals`](#list-all-deals-across-all-tenants) | List all deals across all tenants |
+| `GET` | [`/v1/admins/reports/pipeline-funnel`](#pipeline-funnel-report-for-a-specific-tenant) | Pipeline funnel report for a specific tenant |
+| `GET` | [`/v1/admins/reports/win-rate`](#win-rate-report-for-a-specific-tenant) | Win rate report for a specific tenant |
+| `GET` | [`/v1/admins/reports/avg-deal`](#average-deal-value-for-a-specific-tenant) | Average deal value for a specific tenant |
+| `GET` | [`/v1/admins/reports/cycle-time`](#average-cycle-time-for-a-specific-tenant) | Average cycle time for a specific tenant |
+| `GET` | [`/v1/admins/reports/revenue-trend`](#revenue-trend-for-a-specific-tenant) | Revenue trend for a specific tenant |
+| `GET` | [`/v1/admins/reports/stage-dwell`](#average-time-per-pipeline-stage-for-a-specific-tenant) | Average time per pipeline stage for a specific tenant |
+
+---
+
+## Endpoints
 
 ### Create the super admin account (one-time setup)
-`POST /admin/setup`
 
-Create the super admin account (one-time setup).
+`POST /v1/admins/setup`
 
-- **Auth:** Public
-
-**Body**
+**Request Body** (`application/json`)
 
 ```json
 {
@@ -26,35 +92,25 @@ Create the super admin account (one-time setup).
 
 **Responses**
 
-- `201` — Created
+#### `201 Created`
 
-  _No example response body is provided in the collection._
+---
 
 ### Get admin profile
-`GET /admin/profile`
 
-Get admin profile.
-
-- **Auth:** Bearer
-
-**Body**
-
-_No request body is provided in the collection._
+`GET /v1/admins/profile`
 
 **Responses**
 
-- `200` — OK
+#### `200 OK`
 
-  _No example response body is provided in the collection._
+---
 
 ### Update admin profile
-`PATCH /admin/profile`
 
-Update admin profile.
+`PATCH /v1/admins/profile`
 
-- **Auth:** Bearer
-
-**Body**
+**Request Body** (`application/json`)
 
 ```json
 {
@@ -73,18 +129,15 @@ Update admin profile.
 
 **Responses**
 
-- `200` — OK
+#### `200 OK`
 
-  _No example response body is provided in the collection._
+---
 
 ### Change admin account password
-`PATCH /admin/change-password`
 
-Change admin account password.
+`PATCH /v1/admins/change-password`
 
-- **Auth:** Bearer
-
-**Body**
+**Request Body** (`application/json`)
 
 ```json
 {
@@ -96,132 +149,180 @@ Change admin account password.
 
 **Responses**
 
-- `200` — OK
+#### `200 OK`
 
-  _No example response body is provided in the collection._
+---
 
-### Get all available permissions with descriptions
-`GET /admin/permissions`
+### Get all available permissions with descriptions — use when building roles
 
-Get all available permissions with descriptions — use when building roles.
-
-- **Auth:** Bearer
-
-**Body**
-
-_No request body is provided in the collection._
+`GET /v1/admins/permissions`
 
 **Responses**
 
-- `200` — OK
+#### `200 OK`
 
-  _No example response body is provided in the collection._
+---
 
-## Subscription plans (admin)
+### Get a staff member by ID (cross-tenant)
 
-### List all subscription plans (admin)
-`GET /admin/subscriptions`
+`GET /v1/admins/staff/:id`
 
-List all subscription plans (admin view, includes inactive) with pagination.
+**Path Parameters**
 
-- **Auth:** Bearer
-- **Query params:**
-
-  | Param | Type | Description |
-  | --- | --- | --- |
-  | `page` | number | Page number (starts from 1) |
-  | `limit` | number | Number of items per page (default: 10, max: 100) |
-  | `isActive` | boolean | Filter by active status (optional) |
-
-**Body**
-
-_No request body is provided in the collection._
+| Parameter | Description |
+| :--- | :--- |
+| `id` | Resource identifier |
 
 **Responses**
 
-- `200` — OK
-  ```json
-  {
-    "data": [
-      [],
-      []
-    ],
-    "page": 1,
-    "limit": 10,
-    "total": 50,
-    "totalPages": 5,
-    "hasNextPage": true,
-    "hasPrevPage": false
-  }
-  ```
+#### `200 OK`
 
-### Create a new subscription plan
-`POST /admin/subscriptions`
+---
 
-Create a new subscription plan.
+### List all staff across all tenants
 
-- **Auth:** Bearer
-
-**Body**
-
-```json
-{
-  "name": "Starter Plan",
-  "description": "Perfect for small teams getting started",
-  "priceMonthly": 15000,
-  "priceYearly": 150000,
-  "trialDays": 14,
-  "maxStaff": 3,
-  "maxContacts": 50,
-  "maxProducts": 10,
-  "maxServices": 5,
-  "maxInvoicesPerMonth": 10,
-  "maxOrdersPerMonth": 30,
-  "maxCategories": 5,
-  "features": [
-    "analytics",
-    "data_export"
-  ],
-  "paystackPlanCodeMonthly": "PLN_abc123",
-  "paystackPlanCodeYearly": "PLN_xyz456",
-  "isCustomPrice": false,
-  "isActive": true
-}
-```
+`GET /v1/admins/staff`
 
 **Responses**
 
-- `201` — Created
+#### `200 OK`
 
-  _No example response body is provided in the collection._
+---
+
+### Get a role by ID (cross-tenant)
+
+`GET /v1/admins/roles/:id`
+
+**Path Parameters**
+
+| Parameter | Description |
+| :--- | :--- |
+| `id` | Resource identifier |
+
+**Responses**
+
+#### `200 OK`
+
+---
+
+### List all roles across all tenants
+
+`GET /v1/admins/roles`
+
+**Responses**
+
+#### `200 OK`
+
+---
+
+### Get a company by ID (cross-tenant)
+
+`GET /v1/admins/companies/:id`
+
+**Path Parameters**
+
+| Parameter | Description |
+| :--- | :--- |
+| `id` | Resource identifier |
+
+**Responses**
+
+#### `200 OK`
+
+---
+
+### List all companies across all tenants
+
+`GET /v1/admins/companies?search=string`
+
+**Query Parameters**
+
+| Parameter | Type / Example | Description |
+| :--- | :--- | :--- |
+| `search` | `string` | Filter / pagination param |
+
+**Responses**
+
+#### `200 OK`
+
+---
+
+### Get an import job by ID (cross-tenant)
+
+`GET /v1/admins/import/jobs/:id?tenantId=string`
+
+**Path Parameters**
+
+| Parameter | Description |
+| :--- | :--- |
+| `id` | Resource identifier |
+
+**Query Parameters**
+
+| Parameter | Type / Example | Description |
+| :--- | :--- | :--- |
+| `tenantId` | `string` | Filter / pagination param |
+
+**Responses**
+
+#### `200 OK`
+
+---
+
+### List import jobs across all tenants
+
+`GET /v1/admins/import/jobs?tenantId=string&limit=string`
+
+**Query Parameters**
+
+| Parameter | Type / Example | Description |
+| :--- | :--- | :--- |
+| `tenantId` | `string` | Filter / pagination param |
+| `limit` | `string` | Filter / pagination param |
+
+**Responses**
+
+#### `200 OK`
+
+---
+
+### List all available subscription features
+
+`GET /v1/admins/subscriptions/features`
+
+**Responses**
+
+#### `200 OK`
+
+---
 
 ### Get a single subscription plan
-`GET /admin/subscriptions/:id`
 
-Get a single subscription plan.
+`GET /v1/admins/subscriptions/:id`
 
-- **Auth:** Bearer
-- **Path params:** `id` — string
+**Path Parameters**
 
-**Body**
-
-_No request body is provided in the collection._
+| Parameter | Description |
+| :--- | :--- |
+| `id` | Resource identifier |
 
 **Responses**
 
-- `200` — OK
+#### `200 OK`
 
-  _No example response body is provided in the collection._
+---
 
 ### Update a subscription plan
-`PATCH /admin/subscriptions/:id`
 
-Update a subscription plan.
+`PATCH /v1/admins/subscriptions/:id`
 
-- **Auth:** Bearer
-- **Path params:** `id` — string
+**Path Parameters**
 
-**Body**
+| Parameter | Description |
+| :--- | :--- |
+| `id` | Resource identifier |
+
+**Request Body** (`application/json`)
 
 ```json
 {
@@ -237,6 +338,8 @@ Update a subscription plan.
   "maxInvoicesPerMonth": 10,
   "maxOrdersPerMonth": 30,
   "maxCategories": 5,
+  "maxLeads": 50,
+  "maxCompanies": 10,
   "features": [
     "analytics",
     "data_export"
@@ -250,116 +353,475 @@ Update a subscription plan.
 
 **Responses**
 
-- `200` — OK
+#### `200 OK`
 
-  _No example response body is provided in the collection._
+---
 
 ### Delete a subscription plan
-`DELETE /admin/subscriptions/:id`
 
-Delete a subscription plan.
+`DELETE /v1/admins/subscriptions/:id`
 
-- **Auth:** Bearer
-- **Path params:** `id` — string
+**Path Parameters**
 
-**Body**
-
-_No request body is provided in the collection._
+| Parameter | Description |
+| :--- | :--- |
+| `id` | Resource identifier |
 
 **Responses**
 
-- `200` — OK
+#### `200 OK`
 
-  _No example response body is provided in the collection._
+---
 
-## Tenants
+### Create a new subscription plan
 
-### List all tenants
-`GET /admin/tenants`
+`POST /v1/admins/subscriptions`
 
-List all tenants.
+**Request Body** (`application/json`)
 
-- **Auth:** Bearer
-- **Query params:**
-
-  | Param | Type | Description |
-  | --- | --- | --- |
-  | `search` | string | — |
-  | `subscriptionStatus` | string | — |
-  | `status` | string | — |
-
-**Body**
-
-_No request body is provided in the collection._
-
-**Responses**
-
-- `200` — OK
-
-  _No example response body is provided in the collection._
-
-### Tenant statistics
-`GET /admin/tenants/stats`
-
-Tenant statistics (total, active, suspended, trial).
-
-- **Auth:** Bearer
-
-**Body**
-
-_No request body is provided in the collection._
+```json
+{
+  "name": "Starter Plan",
+  "description": "Perfect for small teams getting started",
+  "priceMonthly": 15000,
+  "priceYearly": 150000,
+  "trialDays": 14,
+  "maxStaff": 3,
+  "maxContacts": 50,
+  "maxProducts": 10,
+  "maxServices": 5,
+  "maxInvoicesPerMonth": 10,
+  "maxOrdersPerMonth": 30,
+  "maxCategories": 5,
+  "maxLeads": 50,
+  "maxCompanies": 10,
+  "features": [
+    "analytics",
+    "data_export"
+  ],
+  "paystackPlanCodeMonthly": "PLN_abc123",
+  "paystackPlanCodeYearly": "PLN_xyz456",
+  "isCustomPrice": false,
+  "isActive": true
+}
+```
 
 **Responses**
 
-- `200` — OK
+#### `201 Created`
 
-  _No example response body is provided in the collection._
+---
 
-### Get a single tenant
-`GET /admin/tenants/:id`
+### List all subscription plans (admin view, includes inactive) with pagination
 
-Get a single tenant.
+`GET /v1/admins/subscriptions?page=1&limit=10&isActive=true`
 
-- **Auth:** Bearer
-- **Path params:** `id` — string
+**Query Parameters**
 
-**Body**
-
-_No request body is provided in the collection._
+| Parameter | Type / Example | Description |
+| :--- | :--- | :--- |
+| `page` | `1` | Page number (starts from 1) |
+| `limit` | `10` | Number of items per page (default: 10, max: 100) |
+| `isActive` | `true` | Filter by active status (optional) |
 
 **Responses**
 
-- `200` — OK
+#### `200 OK`
 
-  _No example response body is provided in the collection._
+```json
+{
+  "data": [
+    [],
+    []
+  ],
+  "page": 1,
+  "limit": 10,
+  "total": 50,
+  "totalPages": 5,
+  "hasNextPage": true,
+  "hasPrevPage": false
+}
+```
+
+---
+
+### Get a contact by ID (cross-tenant)
+
+`GET /v1/admins/contacts/:id`
+
+**Path Parameters**
+
+| Parameter | Description |
+| :--- | :--- |
+| `id` | Resource identifier |
+
+**Responses**
+
+#### `200 OK`
+
+---
+
+### List all contacts across all tenants
+
+`GET /v1/admins/contacts`
+
+**Responses**
+
+#### `200 OK`
+
+---
+
+### Get a category by ID (cross-tenant)
+
+`GET /v1/admins/categories/:id`
+
+**Path Parameters**
+
+| Parameter | Description |
+| :--- | :--- |
+| `id` | Resource identifier |
+
+**Responses**
+
+#### `200 OK`
+
+---
+
+### List all categories across all tenants
+
+`GET /v1/admins/categories`
+
+**Responses**
+
+#### `200 OK`
+
+---
+
+### Get an income record by ID (cross-tenant)
+
+`GET /v1/admins/income/:id`
+
+**Path Parameters**
+
+| Parameter | Description |
+| :--- | :--- |
+| `id` | Resource identifier |
+
+**Responses**
+
+#### `200 OK`
+
+---
+
+### List all income records across all tenants
+
+`GET /v1/admins/income`
+
+**Responses**
+
+#### `200 OK`
+
+---
+
+### Get an expense record by ID (cross-tenant)
+
+`GET /v1/admins/expenses/:id`
+
+**Path Parameters**
+
+| Parameter | Description |
+| :--- | :--- |
+| `id` | Resource identifier |
+
+**Responses**
+
+#### `200 OK`
+
+---
+
+### List all expense records across all tenants
+
+`GET /v1/admins/expenses`
+
+**Responses**
+
+#### `200 OK`
+
+---
+
+### Get an invoice by ID (cross-tenant)
+
+`GET /v1/admins/invoices/:id`
+
+**Path Parameters**
+
+| Parameter | Description |
+| :--- | :--- |
+| `id` | Resource identifier |
+
+**Responses**
+
+#### `200 OK`
+
+---
+
+### List all invoices across all tenants
+
+`GET /v1/admins/invoices?status=string`
+
+**Query Parameters**
+
+| Parameter | Type / Example | Description |
+| :--- | :--- | :--- |
+| `status` | `string` | Filter / pagination param |
+
+**Responses**
+
+#### `200 OK`
+
+---
+
+### Get an order by ID (cross-tenant)
+
+`GET /v1/admins/orders/:id`
+
+**Path Parameters**
+
+| Parameter | Description |
+| :--- | :--- |
+| `id` | Resource identifier |
+
+**Responses**
+
+#### `200 OK`
+
+---
+
+### List all orders across all tenants
+
+`GET /v1/admins/orders?status=string`
+
+**Query Parameters**
+
+| Parameter | Type / Example | Description |
+| :--- | :--- | :--- |
+| `status` | `string` | Filter / pagination param |
+
+**Responses**
+
+#### `200 OK`
+
+---
+
+### Get a product by ID (cross-tenant)
+
+`GET /v1/admins/products/:id`
+
+**Path Parameters**
+
+| Parameter | Description |
+| :--- | :--- |
+| `id` | Resource identifier |
+
+**Responses**
+
+#### `200 OK`
+
+---
+
+### List all products across all tenants
+
+`GET /v1/admins/products?search=string`
+
+**Query Parameters**
+
+| Parameter | Type / Example | Description |
+| :--- | :--- | :--- |
+| `search` | `string` | Filter / pagination param |
+
+**Responses**
+
+#### `200 OK`
+
+---
+
+### Get a service by ID (cross-tenant)
+
+`GET /v1/admins/services/:id`
+
+**Path Parameters**
+
+| Parameter | Description |
+| :--- | :--- |
+| `id` | Resource identifier |
+
+**Responses**
+
+#### `200 OK`
+
+---
+
+### List all services across all tenants
+
+`GET /v1/admins/services?search=string`
+
+**Query Parameters**
+
+| Parameter | Type / Example | Description |
+| :--- | :--- | :--- |
+| `search` | `string` | Filter / pagination param |
+
+**Responses**
+
+#### `200 OK`
+
+---
+
+### Dashboard stats for a specific tenant
+
+`GET /v1/admins/dashboard/stats?tenantId=string`
+
+**Query Parameters**
+
+| Parameter | Type / Example | Description |
+| :--- | :--- | :--- |
+| `tenantId` | `string` | Filter / pagination param |
+
+**Responses**
+
+#### `200 OK`
+
+---
+
+### Income vs expense chart for a specific tenant
+
+`GET /v1/admins/dashboard/income-expense?tenantId=string&year=string`
+
+**Query Parameters**
+
+| Parameter | Type / Example | Description |
+| :--- | :--- | :--- |
+| `tenantId` | `string` | Filter / pagination param |
+| `year` | `string` | Filter / pagination param |
+
+**Responses**
+
+#### `200 OK`
+
+---
+
+### Account balance for a specific tenant
+
+`GET /v1/admins/dashboard/balance?tenantId=string`
+
+**Query Parameters**
+
+| Parameter | Type / Example | Description |
+| :--- | :--- | :--- |
+| `tenantId` | `string` | Filter / pagination param |
+
+**Responses**
+
+#### `200 OK`
+
+---
+
+### Profit chart for a specific tenant
+
+`GET /v1/admins/dashboard/profit?tenantId=string&year=string`
+
+**Query Parameters**
+
+| Parameter | Type / Example | Description |
+| :--- | :--- | :--- |
+| `tenantId` | `string` | Filter / pagination param |
+| `year` | `string` | Filter / pagination param |
+
+**Responses**
+
+#### `200 OK`
+
+---
+
+### User analytics for a specific tenant
+
+`GET /v1/admins/dashboard/user-analytics?tenantId=string`
+
+**Query Parameters**
+
+| Parameter | Type / Example | Description |
+| :--- | :--- | :--- |
+| `tenantId` | `string` | Filter / pagination param |
+
+**Responses**
+
+#### `200 OK`
+
+---
+
+### Get a pipeline by ID (cross-tenant)
+
+`GET /v1/admins/pipelines/:id`
+
+**Path Parameters**
+
+| Parameter | Description |
+| :--- | :--- |
+| `id` | Resource identifier |
+
+**Responses**
+
+#### `200 OK`
+
+---
+
+### List all pipelines across all tenants
+
+`GET /v1/admins/pipelines`
+
+**Responses**
+
+#### `200 OK`
+
+---
+
+### Tenant statistics (total, active, suspended, trial)
+
+`GET /v1/admins/tenants/stats`
+
+**Responses**
+
+#### `200 OK`
+
+---
 
 ### Activate or suspend a tenant
-`PATCH /admin/tenants/:id/status`
 
-Activate or suspend a tenant.
+`PATCH /v1/admins/tenants/:id/status`
 
-- **Auth:** Bearer
-- **Path params:** `id` — string
+**Path Parameters**
 
-**Body**
-
-_No request body is provided in the collection._
+| Parameter | Description |
+| :--- | :--- |
+| `id` | Resource identifier |
 
 **Responses**
 
-- `200` — OK
+#### `200 OK`
 
-  _No example response body is provided in the collection._
+---
 
 ### Assign or upgrade a tenant subscription plan
-`PATCH /admin/tenants/:id/subscription`
 
-Assign or upgrade a tenant subscription plan.
+`PATCH /v1/admins/tenants/:id/subscription`
 
-- **Auth:** Bearer
-- **Path params:** `id` — string
+**Path Parameters**
 
-**Body**
+| Parameter | Description |
+| :--- | :--- |
+| `id` | Resource identifier |
+
+**Request Body** (`application/json`)
 
 ```json
 {
@@ -370,6 +832,303 @@ Assign or upgrade a tenant subscription plan.
 
 **Responses**
 
-- `200` — OK
+#### `200 OK`
 
-  _No example response body is provided in the collection._
+---
+
+### Verify a subscription payment by Paystack reference for a tenant (fallback if webhook fails)
+
+`POST /v1/admins/tenants/:id/verify-payment`
+
+**Path Parameters**
+
+| Parameter | Description |
+| :--- | :--- |
+| `id` | Resource identifier |
+
+**Request Body** (`application/json`)
+
+```json
+{
+  "reference": "abc123xyz"
+}
+```
+
+**Responses**
+
+#### `201 Created`
+
+---
+
+### Get a single tenant
+
+`GET /v1/admins/tenants/:id`
+
+**Path Parameters**
+
+| Parameter | Description |
+| :--- | :--- |
+| `id` | Resource identifier |
+
+**Responses**
+
+#### `200 OK`
+
+---
+
+### List all tenants
+
+`GET /v1/admins/tenants?search=string&subscriptionStatus=string&status=cancelled`
+
+**Query Parameters**
+
+| Parameter | Type / Example | Description |
+| :--- | :--- | :--- |
+| `search` | `string` | Filter / pagination param |
+| `subscriptionStatus` | `string` | Filter / pagination param |
+| `status` | `cancelled` | Filter / pagination param |
+
+**Responses**
+
+#### `200 OK`
+
+---
+
+### Get a ticket by ID (cross-tenant)
+
+`GET /v1/admins/tickets/:id`
+
+**Path Parameters**
+
+| Parameter | Description |
+| :--- | :--- |
+| `id` | Resource identifier |
+
+**Responses**
+
+#### `200 OK`
+
+---
+
+### List all tickets across all tenants
+
+`GET /v1/admins/tickets`
+
+**Responses**
+
+#### `200 OK`
+
+---
+
+### Get a quote by ID (cross-tenant)
+
+`GET /v1/admins/quotes/:id`
+
+**Path Parameters**
+
+| Parameter | Description |
+| :--- | :--- |
+| `id` | Resource identifier |
+
+**Responses**
+
+#### `200 OK`
+
+---
+
+### List all quotes across all tenants
+
+`GET /v1/admins/quotes?status=string`
+
+**Query Parameters**
+
+| Parameter | Type / Example | Description |
+| :--- | :--- | :--- |
+| `status` | `string` | Filter / pagination param |
+
+**Responses**
+
+#### `200 OK`
+
+---
+
+### Get a lead by ID (cross-tenant)
+
+`GET /v1/admins/leads/:id`
+
+**Path Parameters**
+
+| Parameter | Description |
+| :--- | :--- |
+| `id` | Resource identifier |
+
+**Responses**
+
+#### `200 OK`
+
+---
+
+### List all leads across all tenants
+
+`GET /v1/admins/leads?search=string&status=string&source=string`
+
+**Query Parameters**
+
+| Parameter | Type / Example | Description |
+| :--- | :--- | :--- |
+| `search` | `string` | Filter / pagination param |
+| `status` | `string` | Filter / pagination param |
+| `source` | `string` | Filter / pagination param |
+
+**Responses**
+
+#### `200 OK`
+
+---
+
+### Get deal stage history
+
+`GET /v1/admins/deals/:id/stage-history`
+
+**Path Parameters**
+
+| Parameter | Description |
+| :--- | :--- |
+| `id` | Resource identifier |
+
+**Responses**
+
+#### `200 OK`
+
+---
+
+### Get a deal by ID (cross-tenant)
+
+`GET /v1/admins/deals/:id`
+
+**Path Parameters**
+
+| Parameter | Description |
+| :--- | :--- |
+| `id` | Resource identifier |
+
+**Responses**
+
+#### `200 OK`
+
+---
+
+### List all deals across all tenants
+
+`GET /v1/admins/deals`
+
+**Responses**
+
+#### `200 OK`
+
+---
+
+### Pipeline funnel report for a specific tenant
+
+`GET /v1/admins/reports/pipeline-funnel?tenantId=string&pipelineId=string`
+
+**Query Parameters**
+
+| Parameter | Type / Example | Description |
+| :--- | :--- | :--- |
+| `tenantId` | `string` | Filter / pagination param |
+| `pipelineId` | `string` | Filter / pagination param |
+
+**Responses**
+
+#### `200 OK`
+
+---
+
+### Win rate report for a specific tenant
+
+`GET /v1/admins/reports/win-rate?tenantId=string&pipelineId=string&year=string`
+
+**Query Parameters**
+
+| Parameter | Type / Example | Description |
+| :--- | :--- | :--- |
+| `tenantId` | `string` | Filter / pagination param |
+| `pipelineId` | `string` | Filter / pagination param |
+| `year` | `string` | Filter / pagination param |
+
+**Responses**
+
+#### `200 OK`
+
+---
+
+### Average deal value for a specific tenant
+
+`GET /v1/admins/reports/avg-deal?tenantId=string&pipelineId=string&year=string`
+
+**Query Parameters**
+
+| Parameter | Type / Example | Description |
+| :--- | :--- | :--- |
+| `tenantId` | `string` | Filter / pagination param |
+| `pipelineId` | `string` | Filter / pagination param |
+| `year` | `string` | Filter / pagination param |
+
+**Responses**
+
+#### `200 OK`
+
+---
+
+### Average cycle time for a specific tenant
+
+`GET /v1/admins/reports/cycle-time?tenantId=string&pipelineId=string`
+
+**Query Parameters**
+
+| Parameter | Type / Example | Description |
+| :--- | :--- | :--- |
+| `tenantId` | `string` | Filter / pagination param |
+| `pipelineId` | `string` | Filter / pagination param |
+
+**Responses**
+
+#### `200 OK`
+
+---
+
+### Revenue trend for a specific tenant
+
+`GET /v1/admins/reports/revenue-trend?tenantId=string&year=string`
+
+**Query Parameters**
+
+| Parameter | Type / Example | Description |
+| :--- | :--- | :--- |
+| `tenantId` | `string` | Filter / pagination param |
+| `year` | `string` | Filter / pagination param |
+
+**Responses**
+
+#### `200 OK`
+
+---
+
+### Average time per pipeline stage for a specific tenant
+
+`GET /v1/admins/reports/stage-dwell?tenantId=string&pipelineId=string`
+
+**Query Parameters**
+
+| Parameter | Type / Example | Description |
+| :--- | :--- | :--- |
+| `tenantId` | `string` | Filter / pagination param |
+| `pipelineId` | `string` | Filter / pagination param |
+
+**Responses**
+
+#### `200 OK`
+
+---
+

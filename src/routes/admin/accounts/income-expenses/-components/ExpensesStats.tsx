@@ -1,4 +1,4 @@
-import React from "react";
+
 import { Wallet, TrendingUp, TrendingDown, PiggyBank } from "lucide-react";
 import type { IncomeRecord, ExpenseRecord } from "@/api/financeApi";
 

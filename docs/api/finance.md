@@ -1,40 +1,123 @@
-# Finance
+# Finance, Billing, Income, Expenses & Invoices API
 
-Income records, expenses, and invoices.
+Revenue tracking, operating expense entries, status updates, invoice generation, custom HTML/PDF rendering, white-label branding, and payment reconciliation.
 
-## Income
+## Overview & Quick Reference
 
-### Get all income records
-`GET /income?search=string&status=Approved&type=Grant`
+| Method | Endpoint | Description |
+| :--- | :--- | :--- |
+| `PATCH` | [`/v1/income/:id/status`](#update-income-status) | Update income status |
+| `GET` | [`/v1/income/:id`](#get-an-income-record-by-id) | Get an income record by ID |
+| `PATCH` | [`/v1/income/:id`](#update-an-income-record) | Update an income record |
+| `DELETE` | [`/v1/income/:id`](#delete-an-income-record) | Delete an income record |
+| `POST` | [`/v1/income`](#create-an-income-record) | Create an income record |
+| `GET` | [`/v1/income`](#get-all-income-records) | Get all income records |
+| `PATCH` | [`/v1/expenses/:id/status`](#update-expense-status) | Update expense status |
+| `GET` | [`/v1/expenses/:id`](#get-an-expense-record-by-id) | Get an expense record by ID |
+| `PATCH` | [`/v1/expenses/:id`](#update-an-expense-record) | Update an expense record |
+| `DELETE` | [`/v1/expenses/:id`](#delete-an-expense-record) | Delete an expense record |
+| `POST` | [`/v1/expenses`](#create-an-expense-record) | Create an expense record |
+| `GET` | [`/v1/expenses`](#get-all-expense-records) | Get all expense records |
+| `GET` | [`/v1/invoices/stats`](#get-invoice-statistics-by-status) | Get invoice statistics by status |
+| `GET` | [`/v1/invoices/branding`](#get-my-invoice-brand-settings-merged-over-defaults-) | Get my invoice brand settings (merged over defaults) |
+| `PATCH` | [`/v1/invoices/branding`](#create-or-update-invoice-brand-settings-requires-invoice-branding-feature-) | Create or update invoice brand settings (requires invoice_branding feature) |
+| `GET` | [`/v1/invoices/:id/html`](#render-invoice-as-html-branded-when-plan-has-invoice-branding-plain-greenmouse-template-otherwise-) | Render invoice as HTML (branded when plan has invoice_branding, plain Greenmouse template otherwise) |
+| `GET` | [`/v1/invoices/:id/pdf`](#download-invoice-as-pdf-branded-when-plan-has-invoice-branding-) | Download invoice as PDF (branded when plan has invoice_branding) |
+| `PATCH` | [`/v1/invoices/:id/send`](#mark-invoice-as-sent) | Mark invoice as sent |
+| `PATCH` | [`/v1/invoices/:id/mark-paid`](#mark-invoice-as-paid-records-paidat-timestamp-) | Mark invoice as paid (records paidAt timestamp) |
+| `PATCH` | [`/v1/invoices/:id/status`](#update-invoice-status) | Update invoice status |
+| `GET` | [`/v1/invoices/:id`](#get-an-invoice-by-id) | Get an invoice by ID |
+| `PATCH` | [`/v1/invoices/:id`](#update-a-draft-invoice) | Update a draft invoice |
+| `DELETE` | [`/v1/invoices/:id`](#delete-an-invoice) | Delete an invoice |
+| `POST` | [`/v1/invoices`](#create-a-new-invoice-invoice-number-auto-generated-) | Create a new invoice (invoice number auto-generated) |
+| `GET` | [`/v1/invoices`](#list-all-invoices) | List all invoices |
 
-Get all income records.
+---
 
-- **Auth:** Bearer
-- **Query params:**
+## Endpoints
 
-  | Param | Type | Description |
-  | --- | --- | --- |
-  | `search` | string | — |
-  | `status` | string | — |
-  | `type` | string | — |
+### Update income status
 
-**Body**
+`PATCH /v1/income/:id/status`
 
-_No request body is provided in the collection._
+**Path Parameters**
+
+| Parameter | Description |
+| :--- | :--- |
+| `id` | Resource identifier |
 
 **Responses**
 
-- `200` — OK
-  _No example response body is provided in the collection._
+#### `200 OK`
+
+---
+
+### Get an income record by ID
+
+`GET /v1/income/:id`
+
+**Path Parameters**
+
+| Parameter | Description |
+| :--- | :--- |
+| `id` | Resource identifier |
+
+**Responses**
+
+#### `200 OK`
+
+---
+
+### Update an income record
+
+`PATCH /v1/income/:id`
+
+**Path Parameters**
+
+| Parameter | Description |
+| :--- | :--- |
+| `id` | Resource identifier |
+
+**Request Body** (`application/json`)
+
+```json
+{
+  "amount": 2000,
+  "type": "Rental",
+  "source": "Greenmouse Ltd.",
+  "description": "Updated description",
+  "status": "Approved"
+}
+```
+
+**Responses**
+
+#### `200 OK`
+
+---
+
+### Delete an income record
+
+`DELETE /v1/income/:id`
+
+**Path Parameters**
+
+| Parameter | Description |
+| :--- | :--- |
+| `id` | Resource identifier |
+
+**Responses**
+
+#### `200 OK`
+
+---
 
 ### Create an income record
-`POST /income`
 
-Create an income record.
+`POST /v1/income`
 
-- **Auth:** Bearer
+**Request Body** (`application/json`)
 
-**Body**
 ```json
 {
   "amount": 1500,
@@ -47,117 +130,110 @@ Create an income record.
 
 **Responses**
 
-- `201` — Created
-  _No example response body is provided in the collection._
+#### `201 Created`
 
-### Get an income record by ID
-`GET /income/:id`
+---
 
-Get an income record by ID.
+### Get all income records
 
-- **Auth:** Bearer
-- **Path params:** `id` — string
+`GET /v1/income?search=string&status=Paid&type=Grant`
 
-**Body**
+**Query Parameters**
 
-_No request body is provided in the collection._
+| Parameter | Type / Example | Description |
+| :--- | :--- | :--- |
+| `search` | `string` | Filter / pagination param |
+| `status` | `Paid` | Filter / pagination param |
+| `type` | `Grant` | Filter / pagination param |
 
 **Responses**
 
-- `200` — OK
-  _No example response body is provided in the collection._
+#### `200 OK`
 
-### Update an income record
-`PATCH /income/:id`
+---
 
-Update an income record.
+### Update expense status
 
-- **Auth:** Bearer
-- **Path params:** `id` — string
+`PATCH /v1/expenses/:id/status`
 
-**Body**
+**Path Parameters**
+
+| Parameter | Description |
+| :--- | :--- |
+| `id` | Resource identifier |
+
+**Responses**
+
+#### `200 OK`
+
+---
+
+### Get an expense record by ID
+
+`GET /v1/expenses/:id`
+
+**Path Parameters**
+
+| Parameter | Description |
+| :--- | :--- |
+| `id` | Resource identifier |
+
+**Responses**
+
+#### `200 OK`
+
+---
+
+### Update an expense record
+
+`PATCH /v1/expenses/:id`
+
+**Path Parameters**
+
+| Parameter | Description |
+| :--- | :--- |
+| `id` | Resource identifier |
+
+**Request Body** (`application/json`)
+
 ```json
 {
-  "amount": 2000,
-  "type": "Commission",
-  "source": "Greenmouse Ltd.",
+  "amount": 750,
+  "category": "Hardware",
+  "paidTo": "Jane Smith",
   "description": "Updated description",
-  "status": "Pending"
+  "status": "Approved"
 }
 ```
 
 **Responses**
 
-- `200` — OK
-  _No example response body is provided in the collection._
+#### `200 OK`
 
-### Delete an income record
-`DELETE /income/:id`
+---
 
-Delete an income record.
+### Delete an expense record
 
-- **Auth:** Bearer
-- **Path params:** `id` — string
+`DELETE /v1/expenses/:id`
 
-**Body**
+**Path Parameters**
 
-_No request body is provided in the collection._
-
-**Responses**
-
-- `200` — OK
-  _No example response body is provided in the collection._
-
-### Update income status
-`PATCH /income/:id/status`
-
-Update income status.
-
-- **Auth:** Bearer
-- **Path params:** `id` — string
-
-**Body**
-
-_No request body is provided in the collection._
+| Parameter | Description |
+| :--- | :--- |
+| `id` | Resource identifier |
 
 **Responses**
 
-- `200` — OK
-  _No example response body is provided in the collection._
+#### `200 OK`
 
-## Expenses
-
-### Get all expense records
-`GET /expenses?search=string&status=Approved&category=Software`
-
-Get all expense records.
-
-- **Auth:** Bearer
-- **Query params:**
-
-  | Param | Type | Description |
-  | --- | --- | --- |
-  | `search` | string | — |
-  | `status` | string | — |
-  | `category` | string | — |
-
-**Body**
-
-_No request body is provided in the collection._
-
-**Responses**
-
-- `200` — OK
-  _No example response body is provided in the collection._
+---
 
 ### Create an expense record
-`POST /expenses`
 
-Create an expense record.
+`POST /v1/expenses`
 
-- **Auth:** Bearer
+**Request Body** (`application/json`)
 
-**Body**
 ```json
 {
   "amount": 526.15,
@@ -170,194 +246,189 @@ Create an expense record.
 
 **Responses**
 
-- `201` — Created
-  _No example response body is provided in the collection._
+#### `201 Created`
 
-### Get an expense record by ID
-`GET /expenses/:id`
+---
 
-Get an expense record by ID.
+### Get all expense records
 
-- **Auth:** Bearer
-- **Path params:** `id` — string
+`GET /v1/expenses?search=string&status=Paid&category=Hardware`
 
-**Body**
+**Query Parameters**
 
-_No request body is provided in the collection._
-
-**Responses**
-
-- `200` — OK
-  _No example response body is provided in the collection._
-
-### Update an expense record
-`PATCH /expenses/:id`
-
-Update an expense record.
-
-- **Auth:** Bearer
-- **Path params:** `id` — string
-
-**Body**
-```json
-{
-  "amount": 750,
-  "category": "Insurance",
-  "paidTo": "Jane Smith",
-  "description": "Updated description",
-  "status": "Approved"
-}
-```
+| Parameter | Type / Example | Description |
+| :--- | :--- | :--- |
+| `search` | `string` | Filter / pagination param |
+| `status` | `Paid` | Filter / pagination param |
+| `category` | `Hardware` | Filter / pagination param |
 
 **Responses**
 
-- `200` — OK
-  _No example response body is provided in the collection._
+#### `200 OK`
 
-### Delete an expense record
-`DELETE /expenses/:id`
-
-Delete an expense record.
-
-- **Auth:** Bearer
-- **Path params:** `id` — string
-
-**Body**
-
-_No request body is provided in the collection._
-
-**Responses**
-
-- `200` — OK
-  _No example response body is provided in the collection._
-
-### Update expense status
-`PATCH /expenses/:id/status`
-
-Update expense status.
-
-- **Auth:** Bearer
-- **Path params:** `id` — string
-
-**Body**
-
-_No request body is provided in the collection._
-
-**Responses**
-
-- `200` — OK
-  _No example response body is provided in the collection._
-
-## Invoices
-
-### List all invoices
-`GET /invoices?search=string&contactId=string&status=sent`
-
-List all invoices.
-
-- **Auth:** Bearer
-- **Query params:**
-
-  | Param | Type | Description |
-  | --- | --- | --- |
-  | `search` | string | Search by invoice number |
-  | `contactId` | string | — |
-  | `status` | string | — |
-
-**Body**
-
-_No request body is provided in the collection._
-
-**Responses**
-
-- `200` — OK
-  _No example response body is provided in the collection._
-
-### Create a new invoice
-`POST /invoices`
-
-Create a new invoice (invoice number auto-generated).
-
-- **Auth:** Bearer
-
-**Body**
-```json
-{
-  "issuedDate": "2026-05-25",
-  "dueDate": "2026-06-25",
-  "items": [
-    {
-      "description": "Web Design Service",
-      "qty": 2,
-      "unitPrice": 50000
-    },
-    {
-      "description": "Web Design Service",
-      "qty": 2,
-      "unitPrice": 50000
-    }
-  ],
-  "orderId": "664f1b2c9d3e4a5b6c7d8e9f",
-  "contactId": "664f1b2c9d3e4a5b6c7d8e9f",
-  "billingAddress": "15 Marina Road, Lagos, Nigeria",
-  "discount": 5000,
-  "tax": 3750,
-  "currency": "NGN",
-  "status": "draft"
-}
-```
-
-**Responses**
-
-- `201` — Created
-  _No example response body is provided in the collection._
+---
 
 ### Get invoice statistics by status
-`GET /invoices/stats`
 
-Get invoice statistics by status.
-
-- **Auth:** Bearer
-
-**Body**
-
-_No request body is provided in the collection._
+`GET /v1/invoices/stats`
 
 **Responses**
 
-- `200` — OK
-  _No example response body is provided in the collection._
+#### `200 OK`
 
-### Get an invoice by ID
-`GET /invoices/:id`
+---
 
-Get an invoice by ID.
+### Get my invoice brand settings (merged over defaults)
 
-- **Auth:** Bearer
-- **Path params:** `id` — string
-
-**Body**
-
-_No request body is provided in the collection._
+`GET /v1/invoices/branding`
 
 **Responses**
 
-- `200` — OK
-  _No example response body is provided in the collection._
+#### `200 OK`
 
-### Update a draft invoice
-`PATCH /invoices/:id`
+---
 
-Update a draft invoice.
+### Create or update invoice brand settings (requires invoice_branding feature)
 
-- **Auth:** Bearer
-- **Path params:** `id` — string
+`PATCH /v1/invoices/branding`
 
-**Body**
+**Request Body** (`application/json`)
+
 ```json
 {
-  "orderId": "664f1b2c9d3e4a5b6c7d8e9f",
-  "contactId": "664f1b2c9d3e4a5b6c7d8e9f",
+  "logoUrl": "https://res.cloudinary.com/example/logo.png",
+  "accentColor": "#1a7c4a",
+  "footerNotes": "Payment due within 14 days. Bank: 0123456789 (GTB).",
+  "displayName": "Acme Trading Co."
+}
+```
+
+**Responses**
+
+#### `200 OK`
+
+---
+
+### Render invoice as HTML (branded when plan has invoice_branding, plain Greenmouse template otherwise)
+
+`GET /v1/invoices/:id/html`
+
+**Path Parameters**
+
+| Parameter | Description |
+| :--- | :--- |
+| `id` | Resource identifier |
+
+**Responses**
+
+#### `200 OK`
+
+---
+
+### Download invoice as PDF (branded when plan has invoice_branding)
+
+`GET /v1/invoices/:id/pdf`
+
+**Path Parameters**
+
+| Parameter | Description |
+| :--- | :--- |
+| `id` | Resource identifier |
+
+**Responses**
+
+#### `200 OK`
+
+---
+
+### Mark invoice as sent
+
+`PATCH /v1/invoices/:id/send`
+
+**Path Parameters**
+
+| Parameter | Description |
+| :--- | :--- |
+| `id` | Resource identifier |
+
+**Responses**
+
+#### `200 OK`
+
+---
+
+### Mark invoice as paid (records paidAt timestamp)
+
+`PATCH /v1/invoices/:id/mark-paid`
+
+**Path Parameters**
+
+| Parameter | Description |
+| :--- | :--- |
+| `id` | Resource identifier |
+
+**Responses**
+
+#### `200 OK`
+
+---
+
+### Update invoice status
+
+`PATCH /v1/invoices/:id/status`
+
+**Path Parameters**
+
+| Parameter | Description |
+| :--- | :--- |
+| `id` | Resource identifier |
+
+**Request Body** (`application/json`)
+
+```json
+{
+  "status": "overdue"
+}
+```
+
+**Responses**
+
+#### `200 OK`
+
+---
+
+### Get an invoice by ID
+
+`GET /v1/invoices/:id`
+
+**Path Parameters**
+
+| Parameter | Description |
+| :--- | :--- |
+| `id` | Resource identifier |
+
+**Responses**
+
+#### `200 OK`
+
+---
+
+### Update a draft invoice
+
+`PATCH /v1/invoices/:id`
+
+**Path Parameters**
+
+| Parameter | Description |
+| :--- | :--- |
+| `id` | Resource identifier |
+
+**Request Body** (`application/json`)
+
+```json
+{
+  "orderId": "664f1b2c-9d3e-4a5b-8c7d-8e9f0a1b2c3d",
+  "contactId": "664f1b2c-9d3e-4a5b-8c7d-8e9f0a1b2c3d",
   "billingAddress": "15 Marina Road, Lagos, Nigeria",
   "issuedDate": "2026-05-25",
   "dueDate": "2026-06-25",
@@ -383,76 +454,79 @@ Update a draft invoice.
 
 **Responses**
 
-- `200` — OK
-  _No example response body is provided in the collection._
+#### `200 OK`
+
+---
 
 ### Delete an invoice
-`DELETE /invoices/:id`
 
-Delete an invoice.
+`DELETE /v1/invoices/:id`
 
-- **Auth:** Bearer
-- **Path params:** `id` — string
+**Path Parameters**
 
-**Body**
-
-_No request body is provided in the collection._
+| Parameter | Description |
+| :--- | :--- |
+| `id` | Resource identifier |
 
 **Responses**
 
-- `200` — OK
-  _No example response body is provided in the collection._
+#### `200 OK`
 
-### Update invoice status
-`PATCH /invoices/:id/status`
+---
 
-Update invoice status.
+### Create a new invoice (invoice number auto-generated)
 
-- **Auth:** Bearer
-- **Path params:** `id` — string
+`POST /v1/invoices`
 
-**Body**
+**Request Body** (`application/json`)
+
 ```json
 {
-  "status": "paid"
+  "issuedDate": "2026-05-25",
+  "dueDate": "2026-06-25",
+  "items": [
+    {
+      "description": "Web Design Service",
+      "qty": 2,
+      "unitPrice": 50000
+    },
+    {
+      "description": "Web Design Service",
+      "qty": 2,
+      "unitPrice": 50000
+    }
+  ],
+  "orderId": "664f1b2c-9d3e-4a5b-8c7d-8e9f0a1b2c3d",
+  "contactId": "664f1b2c-9d3e-4a5b-8c7d-8e9f0a1b2c3d",
+  "billingAddress": "15 Marina Road, Lagos, Nigeria",
+  "discount": 5000,
+  "tax": 3750,
+  "currency": "NGN",
+  "status": "draft"
 }
 ```
 
 **Responses**
 
-- `200` — OK
-  _No example response body is provided in the collection._
+#### `201 Created`
 
-### Mark invoice as sent
-`PATCH /invoices/:id/send`
+---
 
-Mark invoice as sent.
+### List all invoices
 
-- **Auth:** Bearer
-- **Path params:** `id` — string
+`GET /v1/invoices?search=string&contactId=string&status=paid`
 
-**Body**
+**Query Parameters**
 
-_No request body is provided in the collection._
-
-**Responses**
-
-- `200` — OK
-  _No example response body is provided in the collection._
-
-### Mark invoice as paid
-`PATCH /invoices/:id/mark-paid`
-
-Mark invoice as paid (records paidAt timestamp).
-
-- **Auth:** Bearer
-- **Path params:** `id` — string
-
-**Body**
-
-_No request body is provided in the collection._
+| Parameter | Type / Example | Description |
+| :--- | :--- | :--- |
+| `search` | `string` | Search by invoice number |
+| `contactId` | `string` | Filter / pagination param |
+| `status` | `paid` | Filter / pagination param |
 
 **Responses**
 
-- `200` — OK
-  _No example response body is provided in the collection._
+#### `200 OK`
+
+---
+

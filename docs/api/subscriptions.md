@@ -1,123 +1,118 @@
-# Subscriptions and Billing
+# Subscription Plans, Billing & Paystack Integration API
 
-Public plan browsing, tenant subscription and billing, and the Paystack webhook.
-Paths are shown relative to the [base URL](./README.md#base-url); responses use the
-[standard envelope](./README.md#response-envelopes) unless noted otherwise.
+Public plan catalog, tenant subscription tier management (upgrade, downgrade, cancel, payment verification), and automated Paystack webhooks.
 
-## Public plans
+## Overview & Quick Reference
 
-### Browse all active subscription plans
-`GET /subscriptions?page=1&limit=10&isActive=true`
+| Method | Endpoint | Description |
+| :--- | :--- | :--- |
+| `GET` | [`/v1/subscriptions/:id`](#get-a-single-subscription-plan-by-id-public-) | Get a single subscription plan by ID (public) |
+| `GET` | [`/v1/subscriptions`](#browse-all-active-subscription-plans-public-) | Browse all active subscription plans (public) |
+| `GET` | [`/v1/tenant/subscription/current`](#get-current-subscription-details-and-plan) | Get current subscription details and plan |
+| `GET` | [`/v1/tenant/subscription/plans`](#browse-available-subscription-plans) | Browse available subscription plans |
+| `GET` | [`/v1/tenant/subscription/history`](#get-subscription-change-history-paginated-) | Get subscription change history (paginated) |
+| `POST` | [`/v1/tenant/subscription/upgrade`](#initiate-a-subscription-upgrade-creates-paystack-payment-) | Initiate a subscription upgrade (creates Paystack payment) |
+| `POST` | [`/v1/tenant/subscription/downgrade`](#downgrade-to-a-lower-priced-plan-takes-effect-immediately-) | Downgrade to a lower-priced plan (takes effect immediately) |
+| `POST` | [`/v1/tenant/subscription/cancel`](#cancel-subscription-data-preserved-access-ends-at-period-close-) | Cancel subscription (data preserved, access ends at period close) |
+| `POST` | [`/v1/tenant/subscription/verify`](#verify-a-subscription-payment-by-paystack-reference-fallback-if-webhook-fails-) | Verify a subscription payment by Paystack reference (fallback if webhook fails) |
+| `POST` | [`/v1/webhook/paystack`](#paystack-webhook-endpoint) | Paystack webhook endpoint |
 
-Browse all active subscription plans (public).
+---
 
-- **Auth:** Public
-- **Query params:**
+## Endpoints
 
-  | Param | Type | Description |
-  | --- | --- | --- |
-  | `page` | integer | Page number (starts from 1) |
-  | `limit` | integer | Number of items per page (default: 10, max: 100) |
-  | `isActive` | boolean | Filter by active status (optional) |
+### Get a single subscription plan by ID (public)
 
-**Body**
-_No request body is provided in the collection._
+`GET /v1/subscriptions/:id`
 
-**Responses**
+**Path Parameters**
 
-- `200` — Paginated subscription plans
-  ```json
-  {
-    "data": [
-      [],
-      []
-    ],
-    "page": 1,
-    "limit": 10,
-    "total": 50,
-    "totalPages": 5,
-    "hasNextPage": true,
-    "hasPrevPage": false
-  }
-  ```
-
-### Get a single subscription plan by ID
-`GET /subscriptions/:id`
-
-Get a single subscription plan by ID (public).
-
-- **Auth:** Public
-- **Path params:** `id` — string
-
-**Body**
-_No request body is provided in the collection._
+| Parameter | Description |
+| :--- | :--- |
+| `id` | Resource identifier |
 
 **Responses**
 
-- `200` — OK
-  _No example response body is provided in the collection._
+#### `200 OK`
 
-## Tenant subscription
+---
+
+### Browse all active subscription plans (public)
+
+`GET /v1/subscriptions?page=1&limit=10&isActive=true`
+
+**Query Parameters**
+
+| Parameter | Type / Example | Description |
+| :--- | :--- | :--- |
+| `page` | `1` | Page number (starts from 1) |
+| `limit` | `10` | Number of items per page (default: 10, max: 100) |
+| `isActive` | `true` | Filter by active status (optional) |
+
+**Responses**
+
+#### `200 OK`
+
+```json
+{
+  "data": [
+    [],
+    []
+  ],
+  "page": 1,
+  "limit": 10,
+  "total": 50,
+  "totalPages": 5,
+  "hasNextPage": true,
+  "hasPrevPage": false
+}
+```
+
+---
 
 ### Get current subscription details and plan
-`GET /tenant/subscription/current`
 
-Get current subscription details and plan.
-
-- **Auth:** Bearer
-
-**Body**
-_No request body is provided in the collection._
+`GET /v1/tenant/subscription/current`
 
 **Responses**
 
-- `200` — OK
-  _No example response body is provided in the collection._
+#### `200 OK`
+
+---
 
 ### Browse available subscription plans
-`GET /tenant/subscription/plans`
 
-Browse available subscription plans.
-
-- **Auth:** Bearer
-
-**Body**
-_No request body is provided in the collection._
+`GET /v1/tenant/subscription/plans`
 
 **Responses**
 
-- `200` — OK
-  _No example response body is provided in the collection._
+#### `200 OK`
 
-### Get subscription change history
-`GET /tenant/subscription/history?page=1&limit=20`
+---
 
-Get subscription change history (paginated).
+### Get subscription change history (paginated)
 
-- **Auth:** Bearer
-- **Query params:**
+`GET /v1/tenant/subscription/history?page=1&limit=20`
 
-  | Param | Type | Description |
-  | --- | --- | --- |
-  | `page` | integer | Page number (starts from 1). |
-  | `limit` | integer | Number of items per page. |
+**Query Parameters**
 
-**Body**
-_No request body is provided in the collection._
+| Parameter | Type / Example | Description |
+| :--- | :--- | :--- |
+| `page` | `1` | Filter / pagination param |
+| `limit` | `20` | Filter / pagination param |
 
 **Responses**
 
-- `200` — OK
-  _No example response body is provided in the collection._
+#### `200 OK`
 
-### Initiate a subscription upgrade
-`POST /tenant/subscription/upgrade`
+---
 
-Initiate a subscription upgrade (creates Paystack payment).
+### Initiate a subscription upgrade (creates Paystack payment)
 
-- **Auth:** Bearer
+`POST /v1/tenant/subscription/upgrade`
 
-**Body**
+**Request Body** (`application/json`)
+
 ```json
 {
   "planId": "string",
@@ -127,22 +122,63 @@ Initiate a subscription upgrade (creates Paystack payment).
 
 **Responses**
 
-- `201` — Created
-  _No example response body is provided in the collection._
+#### `201 Created`
 
-## Webhooks
+---
 
-### Paystack webhook
-`POST /webhook/paystack`
+### Downgrade to a lower-priced plan (takes effect immediately)
 
-Paystack webhook endpoint (public; no example body).
+`POST /v1/tenant/subscription/downgrade`
 
-- **Auth:** Public
+**Request Body** (`application/json`)
 
-**Body**
-_No request body is provided in the collection._
+```json
+{
+  "planId": "string"
+}
+```
 
 **Responses**
 
-- `200` — Webhook received
-  _No example response body is provided in the collection._
+#### `201 Created`
+
+---
+
+### Cancel subscription (data preserved, access ends at period close)
+
+`POST /v1/tenant/subscription/cancel`
+
+**Responses**
+
+#### `201 Created`
+
+---
+
+### Verify a subscription payment by Paystack reference (fallback if webhook fails)
+
+`POST /v1/tenant/subscription/verify`
+
+**Request Body** (`application/json`)
+
+```json
+{
+  "reference": "abc123xyz"
+}
+```
+
+**Responses**
+
+#### `201 Created`
+
+---
+
+### Paystack webhook endpoint
+
+`POST /v1/webhook/paystack`
+
+**Responses**
+
+#### `200 OK`
+
+---
+

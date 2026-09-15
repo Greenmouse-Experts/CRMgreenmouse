@@ -16,7 +16,7 @@ import {
   useCreateIncome,
   useCreateExpense,
 } from "@/api/financeApi";
-import { PlusCircleIcon, TrendingUp, TrendingDown } from "lucide-react";
+import { PlusCircleIcon } from "lucide-react";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/admin/accounts/income-expenses/")({
@@ -143,7 +143,7 @@ function RouteComponent() {
       </PageHeader>
 
       <PageLoader
-        query={isIncome ? incomeQuery : expenseQuery}
+        query={(isIncome ? incomeQuery : expenseQuery) as any}
         showSuccessState={true}
       >
         <ExpensesStat
@@ -159,9 +159,9 @@ function RouteComponent() {
 
           <div>
             {isIncome ? (
-              <IncomeTable searchTerm={searchProps.search} />
+              <IncomeTable searchTerm={searchProps.search || ""} />
             ) : (
-              <ExpenseTable searchTerm={searchProps.search} />
+              <ExpenseTable searchTerm={searchProps.search || ""} />
             )}
           </div>
         </div>

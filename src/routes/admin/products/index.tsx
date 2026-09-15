@@ -3,7 +3,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import SimpleContainer from "@/components/SimpleContainer";
 import ContainerRow from "@/components/ContainerRow";
 import { useSearch } from "@/stores/data";
-import { PlusCircleIcon, Package, DollarSign, Tag, Layers, RefreshCw } from "lucide-react";
+import { PlusCircleIcon, Package, Layers } from "lucide-react";
 import CustomTable from "@/components/tables/CustomTable";
 import type { Actions } from "@/components/tables/pop-up";
 import Modal, { type ModalHandle } from "@/components/DialogModal";
@@ -210,7 +210,6 @@ function RouteComponent() {
       label: "Stock Level",
       render: (_: any, item: Product) => {
         const qty = item.stock ?? item.quantity ?? 0;
-        const isLow = qty <= 5;
         return (
           <span
             className={`badge badge-sm font-semibold ${

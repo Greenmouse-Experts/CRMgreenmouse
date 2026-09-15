@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 
 interface QueryCompLayoutProps<T> {
   query: UseQueryResult<T>;
-  children: (data: T) => ReactNode;
+  children: ReactNode | ((data: T) => ReactNode);
 }
 
 export default function QueryCompLayout<T>({
@@ -25,5 +25,7 @@ export default function QueryCompLayout<T>({
     );
   }
   if (!query.data) return null;
-  return <>{children(query.data)}</>;
+  return (
+    <>{typeof children === "function" ? children(query.data) : children}</>
+  );
 }

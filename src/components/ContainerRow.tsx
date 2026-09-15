@@ -29,7 +29,7 @@ export default function ContainerRow({
 
   return (
     <div
-      className={`p-3 sm:px-4 sm:py-3 bg-base-100 border border-base-200 border-b-0 rounded-t-xl flex flex-col sm:flex-row gap-3 items-center justify-between ${className}`}
+      className={`p-3 sm:px-4 sm:py-3 bg-base-100 border border-base-200 border-b-0 ring ring-current/20 flex flex-col border-l border-r bg  sm:flex-row gap-3 items-center justify-between ${className}`}
     >
       {showSearch && (
         <SearchBar

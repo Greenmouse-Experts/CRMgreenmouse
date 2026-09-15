@@ -37,7 +37,7 @@ const defaultFormData: OnboardingFormData = {
   _id: "",
   email: "",
   industry: "",
-  teamSize: "",
+  teamSize: "1-20",
   companyName: "",
   companyCity: "",
   companyCountry: "Nigeria",
@@ -65,7 +65,11 @@ export const useOnboardingStore = create<OnboardingState>()(
       prevStep: () => set((state) => ({ step: Math.max(1, state.step - 1) })),
       updateFormData: (data) =>
         set((state) => ({
-          formData: { ...state.formData, ...data },
+          formData: {
+            ...state.formData,
+            ...data,
+            teamSize: data.teamSize || state.formData.teamSize || "1-20",
+          },
         })),
       reset: () =>
         set({
@@ -73,6 +77,17 @@ export const useOnboardingStore = create<OnboardingState>()(
           formData: { ...defaultFormData },
         }),
     }),
-    { name: "onboarding-storage" },
+    {
+      name: "onboarding-storage",
+      merge: (persistedState: any, currentState) => ({
+        ...currentState,
+        ...persistedState,
+        formData: {
+          ...currentState.formData,
+          ...(persistedState?.formData ?? {}),
+          teamSize: persistedState?.formData?.teamSize || "1-20",
+        },
+      }),
+    },
   ),
 );

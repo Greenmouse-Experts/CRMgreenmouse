@@ -17,7 +17,7 @@ import {
   useSendInvoice,
   type Invoice,
 } from "@/api/financeApi";
-import { PlusCircleIcon, FileText, Send, CheckCircle, Clock } from "lucide-react";
+import { PlusCircleIcon, FileText } from "lucide-react";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/admin/accounts/Invoices/")({

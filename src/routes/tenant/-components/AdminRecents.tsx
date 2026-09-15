@@ -1,29 +1,92 @@
 import SimpleContainer from "@/components/SimpleContainer";
-import CustomTable from "@/components/tables/CustomTable";
-import { faker } from "@faker-js/faker";
+import CustomTable, { type columnType } from "@/components/tables/CustomTable";
 import { Link } from "@tanstack/react-router";
+import { useTransactions, type Transaction } from "@/api/financeApi";
+import QueryCompLayout from "@/components/layout/QueryCompLayout";
 
 export default function AdminRecents() {
-  const transactions = Array.from({ length: 5 }, (_, i) => ({
-    id: i + 1,
-    transactionId: faker.string.uuid(),
-    amount: faker.finance.amount(),
-    status: faker.helpers.arrayElement(["Completed", "Pending", "Failed"]),
-    date: faker.date.past().toLocaleDateString(),
-  }));
+  const query = useTransactions();
 
-  const columns = [
-    { key: "transactionId", label: "Transaction ID" },
-    { key: "amount", label: "Amount" },
-    { key: "status", label: "Status" },
-    { key: "date", label: "Date" },
-  ];
-
-  const actions = [
+  const columns: columnType[] = [
     {
-      key: "view",
-      label: "View",
-      action: (item: any) => console.log("View transaction:", item),
+      key: "date",
+      label: "Date",
+      render: (value: string) => (
+        <span className="text-xs text-base-content/70">
+          {value ? new Date(value).toLocaleDateString() : "—"}
+        </span>
+      ),
+    },
+    {
+      key: "description",
+      label: "Description",
+      render: (value: string, item: Transaction) => (
+        <div>
+          <div className="font-semibold text-sm text-base-content">
+            {value || "Transaction"}
+          </div>
+          {item.category && (
+            <div className="text-xs text-base-content/60">{item.category}</div>
+          )}
+        </div>
+      ),
+    },
+    {
+      key: "type",
+      label: "Type",
+      render: (value: string) => {
+        const isIncome = (value || "").toLowerCase() === "income";
+        return (
+          <span
+            className={`badge badge-sm font-medium ${
+              isIncome ? "badge-success badge-soft" : "badge-error badge-soft"
+            }`}
+          >
+            {value || "General"}
+          </span>
+        );
+      },
+    },
+    {
+      key: "amount",
+      label: "Amount",
+      render: (value: number, item: Transaction) => {
+        const isIncome = (item.type || "").toLowerCase() === "income";
+        const val = Math.abs(Number(value) || 0);
+        return (
+          <span
+            className={`font-bold text-sm ${
+              isIncome ? "text-success" : "text-error"
+            }`}
+          >
+            {isIncome ? "+" : "-"}$
+            {val.toLocaleString(undefined, {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            })}
+          </span>
+        );
+      },
+    },
+    {
+      key: "status",
+      label: "Status",
+      render: (value: string) => {
+        const status = (value || "Completed").toLowerCase();
+        return (
+          <span
+            className={`badge badge-sm ${
+              status === "completed" || status === "approved"
+                ? "badge-success text-success-content"
+                : status === "pending"
+                  ? "badge-warning text-warning-content"
+                  : "badge-error text-error-content"
+            }`}
+          >
+            {value || "Completed"}
+          </span>
+        );
+      },
     },
   ];
 
@@ -32,22 +95,20 @@ export default function AdminRecents() {
       <SimpleContainer
         title="Recent Transactions"
         actions={
-          <>
-            <Link to="/tenant/transactions" className="btn btn-primary btn-sm">
-              See More
-            </Link>
-          </>
+          <Link
+            to="/tenant/accounts/transactions"
+            className="btn btn-primary btn-sm"
+          >
+            View All Transactions
+          </Link>
         }
       >
-        <CustomTable
-          ring={false}
-          data={transactions}
-          columns={columns}
-          actions={actions}
-        />
-        {/*<div className="flex justify-center mt-4">
-          <button className="btn btn-ghost">See More</button>
-        </div>*/}
+        <QueryCompLayout query={query}>
+          {(transactions) => {
+            const recent = (transactions || []).slice(0, 5);
+            return <CustomTable ring={false} data={recent} columns={columns} />;
+          }}
+        </QueryCompLayout>
       </SimpleContainer>
     </div>
   );

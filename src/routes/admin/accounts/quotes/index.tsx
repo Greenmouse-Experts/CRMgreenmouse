@@ -17,7 +17,7 @@ import {
   useUpdateQuoteStatus,
   type Quote,
 } from "@/api/salesApi";
-import { PlusCircleIcon, FileText, CheckCircle2, Clock, XCircle, DollarSign } from "lucide-react";
+import { PlusCircleIcon, FileText, CheckCircle2, Clock, DollarSign } from "lucide-react";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/admin/accounts/quotes/")({

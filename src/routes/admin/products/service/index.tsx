@@ -4,7 +4,7 @@ import PageHeader from "@/components/Headers/PageHeader";
 import SimpleContainer from "@/components/SimpleContainer";
 import ContainerRow from "@/components/ContainerRow";
 import { useSearch } from "@/stores/data";
-import { PlusCircleIcon, Wrench, CheckCircle, AlertCircle, DollarSign, Layers } from "lucide-react";
+import { PlusCircleIcon, Wrench, CheckCircle, DollarSign, Layers } from "lucide-react";
 import CustomTable from "@/components/tables/CustomTable";
 import type { Actions } from "@/components/tables/pop-up";
 import Modal, { type ModalHandle } from "@/components/DialogModal";

@@ -11,7 +11,7 @@ import {
   type ExpenseRecord,
 } from "@/api/financeApi";
 import { toast } from "sonner";
-import { TrendingDown, CheckCircle, XCircle } from "lucide-react";
+import { TrendingDown } from "lucide-react";
 
 interface ExpenseTableProps {
   searchTerm?: string;

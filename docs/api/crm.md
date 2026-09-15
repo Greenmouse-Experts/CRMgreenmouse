@@ -1,83 +1,77 @@
-# CRM
+# CRM Contacts & Companies API
 
-Reference for managing companies, contacts, and categories.
+Customer contacts and company accounts directory, interaction notes, streaming CSV export, and bulk synchronous/asynchronous CSV imports.
 
-## Companies
+## Overview & Quick Reference
 
-### Get all companies
-`GET /companies`
+| Method | Endpoint | Description |
+| :--- | :--- | :--- |
+| `GET` | [`/v1/companies/export`](#export-companies-to-csv-streamed-download-mirrors-list-filters-) | Export companies to CSV (streamed download, mirrors list filters) |
+| `GET` | [`/v1/companies/:id`](#get-a-company-by-id) | Get a company by ID |
+| `PATCH` | [`/v1/companies/:id`](#update-a-company) | Update a company |
+| `DELETE` | [`/v1/companies/:id`](#delete-a-company) | Delete a company |
+| `POST` | [`/v1/companies/import/async`](#bulk-import-companies-from-a-large-csv-async-up-to-100mb-partial-success-sse-progress-) | Bulk import companies from a large CSV (async, up to 100MB, partial success, SSE progress) |
+| `POST` | [`/v1/companies/import`](#bulk-import-companies-from-csv-sync-2mb-1000-rows-all-or-nothing-) | Bulk import companies from CSV (sync, ≤2MB / 1000 rows, all-or-nothing) |
+| `POST` | [`/v1/companies`](#create-a-new-company) | Create a new company |
+| `GET` | [`/v1/companies`](#get-all-companies) | Get all companies |
+| `GET` | [`/v1/contacts/export`](#export-contacts-to-csv-streamed-download-) | Export contacts to CSV (streamed download) |
+| `POST` | [`/v1/contacts/:id/notes`](#add-a-note-to-a-contact) | Add a note to a contact |
+| `GET` | [`/v1/contacts/:id`](#get-a-contact-by-id) | Get a contact by ID |
+| `PATCH` | [`/v1/contacts/:id`](#update-a-contact) | Update a contact |
+| `DELETE` | [`/v1/contacts/:id`](#delete-a-contact) | Delete a contact |
+| `POST` | [`/v1/contacts/import/async`](#bulk-import-contacts-from-a-large-csv-async-up-to-100mb-partial-success-sse-progress-) | Bulk import contacts from a large CSV (async, up to 100MB, partial success, SSE progress) |
+| `POST` | [`/v1/contacts/import`](#bulk-import-contacts-from-csv-sync-2mb-1000-rows-all-or-nothing-) | Bulk import contacts from CSV (sync, ≤2MB / 1000 rows, all-or-nothing) |
+| `POST` | [`/v1/contacts`](#create-a-new-contact) | Create a new contact |
+| `GET` | [`/v1/contacts`](#list-all-contacts) | List all contacts |
 
-Get all companies.
+---
 
-- **Auth:** Bearer
+## Endpoints
 
-**Body**
+### Export companies to CSV (streamed download, mirrors list filters)
 
-_No request body is provided in the collection._
+`GET /v1/companies/export?search=string`
 
-**Responses**
+**Query Parameters**
 
-- `200` — OK
-  _No example response body is provided in the collection._
-
-### Create a new company
-`POST /companies`
-
-Create a new company.
-
-- **Auth:** Bearer
-
-**Body**
-```json
-{
-  "name": "Acme Corporation",
-  "industry": "Technology",
-  "federalIdNumber": "12-3456789",
-  "groupName": "Marketing",
-  "workPhone": "555-000-0000",
-  "email": "contact@company.com",
-  "website": "https://www.company.com",
-  "dateJoined": "2026-04-14",
-  "addressLine1": "123 Main Street",
-  "addressLine2": "Suite 100",
-  "city": "Anytown",
-  "state": "California",
-  "zipCode": "90210",
-  "country": "United States of America"
-}
-```
+| Parameter | Type / Example | Description |
+| :--- | :--- | :--- |
+| `search` | `string` | Filter / pagination param |
 
 **Responses**
 
-- `201` — Created
-  _No example response body is provided in the collection._
+#### `200 OK`
+
+---
 
 ### Get a company by ID
-`GET /companies/:id`
 
-Get a company by ID.
+`GET /v1/companies/:id`
 
-- **Auth:** Bearer
-- **Path params:** `id` — string
+**Path Parameters**
 
-**Body**
-
-_No request body is provided in the collection._
+| Parameter | Description |
+| :--- | :--- |
+| `id` | Resource identifier |
 
 **Responses**
 
-- `200` — OK
-  _No example response body is provided in the collection._
+#### `200 OK`
+
+---
 
 ### Update a company
-`PATCH /companies/:id`
 
-Update a company.
+`PATCH /v1/companies/:id`
 
-- **Auth:** Bearer
-- **Path params:** `id` — string
+**Path Parameters**
 
-**Body**
+| Parameter | Description |
+| :--- | :--- |
+| `id` | Resource identifier |
+
+**Request Body** (`application/json`)
+
 ```json
 {
   "name": "Acme Corporation",
@@ -99,160 +93,127 @@ Update a company.
 
 **Responses**
 
-- `200` — OK
-  _No example response body is provided in the collection._
+#### `200 OK`
+
+---
 
 ### Delete a company
-`DELETE /companies/:id`
 
-Delete a company.
+`DELETE /v1/companies/:id`
 
-- **Auth:** Bearer
-- **Path params:** `id` — string
+**Path Parameters**
 
-**Body**
-
-_No request body is provided in the collection._
+| Parameter | Description |
+| :--- | :--- |
+| `id` | Resource identifier |
 
 **Responses**
 
-- `200` — OK
-  _No example response body is provided in the collection._
+#### `200 OK`
 
-## Contacts
+---
 
-### List all contacts
-`GET /contacts`
+### Bulk import companies from a large CSV (async, up to 100MB, partial success, SSE progress)
 
-List all contacts.
+`POST /v1/companies/import/async`
 
-- **Auth:** Bearer
+**Request Body** (`multipart/form-data`)
 
-**Body**
-
-_No request body is provided in the collection._
+| Field | Type | Description |
+| :--- | :--- | :--- |
+| `file` | `file` | Upload payload field |
 
 **Responses**
 
-- `200` — OK
-  _No example response body is provided in the collection._
+#### `201 Created`
 
-### Create a new contact
-`POST /contacts`
+---
 
-Create a new contact.
+### Bulk import companies from CSV (sync, ≤2MB / 1000 rows, all-or-nothing)
 
-- **Auth:** Bearer
+`POST /v1/companies/import`
 
-**Body**
+**Request Body** (`multipart/form-data`)
+
+| Field | Type | Description |
+| :--- | :--- | :--- |
+| `file` | `file` | Upload payload field |
+
+**Responses**
+
+#### `201 Created`
+
+---
+
+### Create a new company
+
+`POST /v1/companies`
+
+**Request Body** (`application/json`)
+
 ```json
 {
-  "firstName": "John",
-  "lastName": "Doe",
-  "type": "individual",
-  "companyName": "Acme Corp",
-  "email": "john@example.com",
-  "phone": "+2348012345678",
-  "address": "123 Main Street",
-  "city": "Lagos",
-  "state": "Lagos State",
-  "zipCode": "100001",
-  "country": "Nigeria",
-  "tags": [
-    "VIP",
-    "Wholesale"
-  ],
-  "assignedTo": "664f1b2c9d3e4a5b6c7d8e9f",
-  "source": "Referral",
-  "status": "lead"
+  "name": "Acme Corporation",
+  "industry": "Technology",
+  "federalIdNumber": "12-3456789",
+  "groupName": "Marketing",
+  "workPhone": "555-000-0000",
+  "email": "contact@company.com",
+  "website": "https://www.company.com",
+  "dateJoined": "2026-04-14",
+  "addressLine1": "123 Main Street",
+  "addressLine2": "Suite 100",
+  "city": "Anytown",
+  "state": "California",
+  "zipCode": "90210",
+  "country": "United States of America"
 }
 ```
 
 **Responses**
 
-- `201` — Created
-  _No example response body is provided in the collection._
+#### `201 Created`
 
-### Get a contact by ID
-`GET /contacts/:id`
+---
 
-Get a contact by ID.
+### Get all companies
 
-- **Auth:** Bearer
-- **Path params:** `id` — string
+`GET /v1/companies?search=string`
 
-**Body**
+**Query Parameters**
 
-_No request body is provided in the collection._
-
-**Responses**
-
-- `200` — OK
-  _No example response body is provided in the collection._
-
-### Update a contact
-`PATCH /contacts/:id`
-
-Update a contact.
-
-- **Auth:** Bearer
-- **Path params:** `id` — string
-
-**Body**
-```json
-{
-  "type": "individual",
-  "firstName": "John",
-  "lastName": "Doe",
-  "companyName": "Acme Corp",
-  "email": "john@example.com",
-  "phone": "+2348012345678",
-  "address": "123 Main Street",
-  "city": "Lagos",
-  "state": "Lagos State",
-  "zipCode": "100001",
-  "country": "Nigeria",
-  "tags": [
-    "VIP",
-    "Wholesale"
-  ],
-  "assignedTo": "664f1b2c9d3e4a5b6c7d8e9f",
-  "source": "Referral",
-  "status": "lead"
-}
-```
+| Parameter | Type / Example | Description |
+| :--- | :--- | :--- |
+| `search` | `string` | Filter / pagination param |
 
 **Responses**
 
-- `200` — OK
-  _No example response body is provided in the collection._
+#### `200 OK`
 
-### Delete a contact
-`DELETE /contacts/:id`
+---
 
-Delete a contact.
+### Export contacts to CSV (streamed download)
 
-- **Auth:** Bearer
-- **Path params:** `id` — string
-
-**Body**
-
-_No request body is provided in the collection._
+`GET /v1/contacts/export`
 
 **Responses**
 
-- `200` — OK
-  _No example response body is provided in the collection._
+#### `200 OK`
+
+---
 
 ### Add a note to a contact
-`POST /contacts/:id/notes`
 
-Add a note to a contact.
+`POST /v1/contacts/:id/notes`
 
-- **Auth:** Bearer
-- **Path params:** `id` — string
+**Path Parameters**
 
-**Body**
+| Parameter | Description |
+| :--- | :--- |
+| `id` | Resource identifier |
+
+**Request Body** (`application/json`)
+
 ```json
 {
   "content": "Customer called to enquire about pricing."
@@ -261,103 +222,157 @@ Add a note to a contact.
 
 **Responses**
 
-- `201` — Created
-  _No example response body is provided in the collection._
+#### `201 Created`
 
-## Categories
+---
 
-### Get all categories
-`GET /categories?search=string`
+### Get a contact by ID
 
-Get all categories.
+`GET /v1/contacts/:id`
 
-- **Auth:** Bearer
-- **Query params:**
+**Path Parameters**
 
-  | Param | Type | Description |
-  | --- | --- | --- |
-  | `search` | string | Search by category name |
-
-**Body**
-
-_No request body is provided in the collection._
+| Parameter | Description |
+| :--- | :--- |
+| `id` | Resource identifier |
 
 **Responses**
 
-- `200` — OK
-  _No example response body is provided in the collection._
+#### `200 OK`
 
-### Create a new category
-`POST /categories`
+---
 
-Create a new category.
+### Update a contact
 
-- **Auth:** Bearer
+`PATCH /v1/contacts/:id`
 
-**Body**
+**Path Parameters**
+
+| Parameter | Description |
+| :--- | :--- |
+| `id` | Resource identifier |
+
+**Request Body** (`application/json`)
+
 ```json
 {
-  "name": "Electronics",
-  "description": "All electronic products and gadgets"
+  "type": "individual",
+  "firstName": "John",
+  "lastName": "Doe",
+  "companyName": "Acme Corp",
+  "email": "john@example.com",
+  "phone": "+2348012345678",
+  "address": "123 Main Street",
+  "city": "Lagos",
+  "state": "Lagos State",
+  "zipCode": "100001",
+  "country": "Nigeria",
+  "tags": [
+    "VIP",
+    "Wholesale"
+  ],
+  "assignedTo": "664f1b2c-9d3e-4a5b-8c7d-8e9f0a1b2c3d",
+  "source": "Referral",
+  "status": "lead"
 }
 ```
 
 **Responses**
 
-- `201` — Created
-  _No example response body is provided in the collection._
+#### `200 OK`
 
-### Get a category by ID
-`GET /categories/:id`
+---
 
-Get a category by ID.
+### Delete a contact
 
-- **Auth:** Bearer
-- **Path params:** `id` — string
+`DELETE /v1/contacts/:id`
 
-**Body**
+**Path Parameters**
 
-_No request body is provided in the collection._
+| Parameter | Description |
+| :--- | :--- |
+| `id` | Resource identifier |
 
 **Responses**
 
-- `200` — OK
-  _No example response body is provided in the collection._
+#### `200 OK`
 
-### Update a category
-`PATCH /categories/:id`
+---
 
-Update a category.
+### Bulk import contacts from a large CSV (async, up to 100MB, partial success, SSE progress)
 
-- **Auth:** Bearer
-- **Path params:** `id` — string
+`POST /v1/contacts/import/async`
 
-**Body**
+**Request Body** (`multipart/form-data`)
+
+| Field | Type | Description |
+| :--- | :--- | :--- |
+| `file` | `file` | Upload payload field |
+
+**Responses**
+
+#### `201 Created`
+
+---
+
+### Bulk import contacts from CSV (sync, ≤2MB / 1000 rows, all-or-nothing)
+
+`POST /v1/contacts/import`
+
+**Request Body** (`multipart/form-data`)
+
+| Field | Type | Description |
+| :--- | :--- | :--- |
+| `file` | `file` | Upload payload field |
+
+**Responses**
+
+#### `201 Created`
+
+---
+
+### Create a new contact
+
+`POST /v1/contacts`
+
+**Request Body** (`application/json`)
+
 ```json
 {
-  "name": "Electronics",
-  "description": "All electronic products and gadgets"
+  "firstName": "John",
+  "lastName": "Doe",
+  "type": "individual",
+  "companyName": "Acme Corp",
+  "email": "john@example.com",
+  "phone": "+2348012345678",
+  "address": "123 Main Street",
+  "city": "Lagos",
+  "state": "Lagos State",
+  "zipCode": "100001",
+  "country": "Nigeria",
+  "tags": [
+    "VIP",
+    "Wholesale"
+  ],
+  "assignedTo": "664f1b2c-9d3e-4a5b-8c7d-8e9f0a1b2c3d",
+  "source": "Referral",
+  "status": "lead"
 }
 ```
 
 **Responses**
 
-- `200` — OK
-  _No example response body is provided in the collection._
+#### `201 Created`
 
-### Delete a category
-`DELETE /categories/:id`
+---
 
-Delete a category.
+### List all contacts
 
-- **Auth:** Bearer
-- **Path params:** `id` — string
-
-**Body**
-
-_No request body is provided in the collection._
+`GET /v1/contacts`
 
 **Responses**
 
-- `200` — OK
-  _No example response body is provided in the collection._
+#### `200 OK`
+
+---
+

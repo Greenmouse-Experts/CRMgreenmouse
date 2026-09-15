@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
@@ -155,7 +155,7 @@ const INDUSTRIES = [
   },
 ];
 
-const TEAM_SIZES = ["1-10", "11-50", "51-200", "201-500", "500+"];
+const TEAM_SIZES = ["1-20", "11-50", "51-200", "201-500", "500+"];
 
 const NIGERIAN_STATES = [
   "Abia",
@@ -219,14 +219,22 @@ function OnboardingWizard() {
   const { step, formData, nextStep, prevStep, updateFormData, setStep } =
     useOnboardingStore();
 
-  useQuery({
+  const { data: onboardingData } = useQuery({
     queryKey: ["onboarding-status"],
-    queryFn: () => apiClient.get("/tenant/onboarding/").then((res) => res.data),
-    onSuccess: (res: any) => {
-      const d = res?.data ?? res;
-      if (d) updateFormData(d);
-    },
-  } as any);
+    queryFn: () =>
+      apiClient
+        .get("/tenant/onboarding/")
+        .then((res) => res.data?.data ?? res.data),
+  });
+
+  useEffect(() => {
+    if (onboardingData) {
+      updateFormData({
+        ...onboardingData,
+        teamSize: onboardingData.teamSize || "1-20",
+      });
+    }
+  }, [onboardingData, updateFormData]);
 
   const patchMutation = useMutation({
     mutationFn: (payload: Partial<typeof formData>) =>
@@ -241,7 +249,7 @@ function OnboardingWizard() {
       apiClient.post("/tenant/onboarding/complete").then((r) => r.data),
     onSuccess: () => {
       toast.success("Onboarding complete! Welcome aboard.");
-      nav({ to: "/admin" });
+      nav({ to: "/tenant" });
     },
     onError: (err: any) => {
       toast.error(
@@ -251,12 +259,27 @@ function OnboardingWizard() {
   });
 
   const advance = async (payload: Partial<typeof formData>) => {
-    updateFormData(payload);
+    const updated = {
+      ...formData,
+      ...payload,
+      teamSize: payload.teamSize || formData.teamSize || "1-20",
+    };
+    updateFormData(updated);
+
+    const { _id, isOnboarded, ...patchPayload } = updated as any;
+
     if (step === TOTAL_STEPS) {
-      await patchMutation.mutateAsync({ ...formData, ...payload });
-      completeMutation.mutate();
+      try {
+        await patchMutation.mutateAsync(patchPayload);
+        completeMutation.mutate();
+      } catch {
+        // Handled in patchMutation.onError
+      }
     } else {
-      patchMutation.mutate({ ...formData, ...payload });
+      // Update/patch on every other step (steps 2, 4, 6, 8) to avoid overwhelming the backend
+      if (step % 2 === 0) {
+        patchMutation.mutate(patchPayload);
+      }
       nextStep();
     }
   };
@@ -349,13 +372,7 @@ function StepContent({
         />
       );
     case 6:
-      return (
-        <LogoUploadStep
-          formData={formData}
-          advance={advance}
-          prevStep={prevStep}
-        />
-      );
+      return <LogoUploadStep advance={advance} prevStep={prevStep} />;
     case 7:
       return (
         <BusinessTypeStep
@@ -624,6 +641,11 @@ function TeamSizeStep({
     advance({ teamSize });
   };
 
+  const defaultTeamSize =
+    formData.teamSize && TEAM_SIZES.includes(formData.teamSize)
+      ? formData.teamSize
+      : "1-20";
+
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       <div className="space-y-1">
@@ -639,7 +661,7 @@ function TeamSizeStep({
 
       <select
         name="teamSize"
-        defaultValue={formData.teamSize}
+        defaultValue={defaultTeamSize}
         required
         className="select select-bordered w-full max-w-xs"
       >
@@ -722,10 +744,9 @@ function CompanyWebsiteStep({
 /* ─────────────────────── Step 6: Logo Upload ─────────────────────── */
 
 function LogoUploadStep({
-  formData,
   advance,
   prevStep,
-}: Pick<StepProps, "formData" | "advance" | "prevStep">) {
+}: Pick<StepProps, "advance" | "prevStep">) {
   const [isUploading, setIsUploading] = useState(false);
   const selectImageProps = useSelectImage();
 

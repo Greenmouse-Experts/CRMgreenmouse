@@ -1,95 +1,80 @@
-# Dashboard
+# Tenant Dashboard & Real-Time Analytics API
 
-Aggregated stat cards and chart data. These endpoints return computed/aggregate payloads; the collection provides no example response bodies.
+Key performance indicator metrics, cash balance summaries, monthly income vs. expense cash flows, profit breakdown, and user analytics.
 
-## Dashboard
+## Overview & Quick Reference
 
-### Get dashboard statistics
-`GET /dashboard/stats`
+| Method | Endpoint | Description |
+| :--- | :--- | :--- |
+| `GET` | [`/v1/dashboard/stats`](#stat-cards-total-staffs-invoices-pending-orders-customers-products) | Stat cards — total staffs, invoices, pending orders, customers, products |
+| `GET` | [`/v1/dashboard/income-expense`](#monthly-income-vs-expense-chart-for-a-given-year) | Monthly income vs expense chart for a given year |
+| `GET` | [`/v1/dashboard/balance`](#balance-summary-total-today-this-month) | Balance summary — total, today, this month |
+| `GET` | [`/v1/dashboard/profit`](#monthly-profit-chart-income-expense-for-a-given-year) | Monthly profit chart (income − expense) for a given year |
+| `GET` | [`/v1/dashboard/user-analytics`](#user-analytics-donut-chart-users-products-expenses-revenue) | User analytics donut chart — users, products, expenses, revenue |
 
-Stat cards: total staffs, invoices, pending orders, customers, products.
+---
 
-- **Auth:** Bearer
+## Endpoints
 
-**Body**
+### Stat cards — total staffs, invoices, pending orders, customers, products
 
-_No request body is provided in the collection._
-
-**Responses**
-
-- `200` — OK
-  _No example response body is provided in the collection._
-
-### Get monthly income vs expense
-`GET /dashboard/income-expense?year=2026`
-
-Monthly income vs expense chart for a given year.
-
-- **Auth:** Bearer
-- **Query params:**
-
-  | Param | Type | Description |
-  | --- | --- | --- |
-  | `year` | string | Year to chart. |
-
-**Body**
-
-_No request body is provided in the collection._
+`GET /v1/dashboard/stats`
 
 **Responses**
 
-- `200` — OK
-  _No example response body is provided in the collection._
+#### `200 OK`
 
-### Get balance summary
-`GET /dashboard/balance`
+---
 
-Balance summary: total, today, this month.
+### Monthly income vs expense chart for a given year
 
-- **Auth:** Bearer
+`GET /v1/dashboard/income-expense?year=2026`
 
-**Body**
+**Query Parameters**
 
-_No request body is provided in the collection._
-
-**Responses**
-
-- `200` — OK
-  _No example response body is provided in the collection._
-
-### Get monthly profit
-`GET /dashboard/profit?year=2026`
-
-Monthly profit chart (income − expense) for a given year.
-
-- **Auth:** Bearer
-- **Query params:**
-
-  | Param | Type | Description |
-  | --- | --- | --- |
-  | `year` | string | Year to chart. |
-
-**Body**
-
-_No request body is provided in the collection._
+| Parameter | Type / Example | Description |
+| :--- | :--- | :--- |
+| `year` | `2026` | Filter / pagination param |
 
 **Responses**
 
-- `200` — OK
-  _No example response body is provided in the collection._
+#### `200 OK`
 
-### Get user analytics
-`GET /dashboard/user-analytics`
+---
 
-User analytics donut chart: users, products, expenses, revenue.
+### Balance summary — total, today, this month
 
-- **Auth:** Bearer
-
-**Body**
-
-_No request body is provided in the collection._
+`GET /v1/dashboard/balance`
 
 **Responses**
 
-- `200` — OK
-  _No example response body is provided in the collection._
+#### `200 OK`
+
+---
+
+### Monthly profit chart (income − expense) for a given year
+
+`GET /v1/dashboard/profit?year=2026`
+
+**Query Parameters**
+
+| Parameter | Type / Example | Description |
+| :--- | :--- | :--- |
+| `year` | `2026` | Filter / pagination param |
+
+**Responses**
+
+#### `200 OK`
+
+---
+
+### User analytics donut chart — users, products, expenses, revenue
+
+`GET /v1/dashboard/user-analytics`
+
+**Responses**
+
+#### `200 OK`
+
+---
+

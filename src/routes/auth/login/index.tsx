@@ -11,8 +11,10 @@ import axios from "axios";
 
 export const Route = createFileRoute("/auth/login/")({
   component: RouteComponent,
-  validateSearch: (search: { email?: string }): { email: string } => {
-    return { email: search.email ?? "" };
+  validateSearch: (search: Record<string, unknown>): { email?: string } => {
+    return {
+      email: typeof search.email === "string" ? search.email : undefined,
+    };
   },
 });
 
@@ -88,56 +90,66 @@ function RouteComponent() {
             CRMgreenmouse
           </h2>
           <p className="font-semibold text-primary mx-auto w-fit text-sm">
-            Business Management Portal
+            Sign In to your workspace
           </p>
         </div>
         <form
+          className="card max-w-sm w-full mx-auto bg-base-100 border border-base-content/10 shadow-lg p-6 space-y-4"
           onSubmit={form.handleSubmit(onSubmit)}
-          action=""
-          className="p-6 space-y-6 py-8 mx-auto  bg-base-100/70 backdrop-blur-md rounded-box drop-shadow-xl ring ring-current/10 w-full max-w-md m-2 mb-12  "
         >
-          <div className="space-y-1 ">
-            <h2 className="text-2xl font-bold text-center">Login</h2>
-            <p className="text-sm text-center fieldset-label ">
-              Enter your credentials to access your account
-            </p>
-          </div>
+          <SimpleInput
+            label="Email Address"
+            type="email"
+            required
+            placeholder="destiny@greenmouse.com"
+            {...form.register("email", { required: true })}
+          />
 
-          <SimpleInput label="Email Address" {...form.register("email")} />
           <SimpleInput
             label="Password"
-            {...form.register("password")}
             type="password"
+            required
+            placeholder="••••••••"
+            {...form.register("password", { required: true })}
           />
-          <div className="flex items-center justify-between gap-2">
-            <div className="flex items-center gap-2">
-              <input type="checkbox" className="toggle" name="" id="" />{" "}
-              <span className="fieldset-label text-sm">Remember Me</span>
-            </div>
+
+          <div className="flex items-center justify-between text-xs">
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input
+                type="checkbox"
+                className="checkbox checkbox-primary checkbox-xs"
+              />
+              <span>Remember me</span>
+            </label>
             <Link
               to="/auth/forgot-password"
-              search={{ email: form.getValues("email") }}
-              className="link link-primary text-sm font-semibold"
+              className="text-primary hover:underline"
             >
-              Forgot Password?
+              Forgot password?
             </Link>
           </div>
-          <button className="btn btn-primary btn-block" disabled={isPending}>
+
+          <button
+            type="submit"
+            disabled={isPending}
+            className="btn btn-primary w-full text-white font-semibold"
+          >
             {isPending ? (
               <span className="loading loading-spinner loading-sm" />
             ) : (
-              "Login"
+              "Sign In"
             )}
           </button>
-          {/*<div className="">
-            <section className="ring ring-current/10 bg-base-200 rounded-box p-4 text-xs text-base-content/80 space-y-2">
-              <p className="font-semibold ">Demo Credientials</p>
-              <div>
-                <p>Email: greenmousedev+admin@gmail.com</p>
-                <p>Password: admin124</p>
-              </div>
-            </section>
-          </div>*/}
+
+          <p className="text-center text-xs text-base-content/60 pt-2">
+            Don't have an account?{" "}
+            <Link
+              to="/auth/register"
+              className="text-primary font-semibold hover:underline"
+            >
+              Register your business
+            </Link>
+          </p>
         </form>
       </div>
     </div>

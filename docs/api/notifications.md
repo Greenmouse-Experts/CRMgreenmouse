@@ -1,98 +1,71 @@
-# Notifications
+# Notifications & Real-Time Alerts API
 
-The notification routes used by the frontend client. These endpoints are wired up in
-the frontend client but are not part of the Postman collection. They are documented
-here from `src/api/notifications-api.ts`. Paths are shown relative to the
-[base URL](./README.md#base-url) and every route requires a bearer token.
+Tenant notification bell alerts, unread counts, mark-read actions, and bulk acknowledgment.
 
-### List notifications
-`GET /notifications?limit=20&cursor=<token>`
+## Overview & Quick Reference
 
-List notifications for the current user (cursor-paginated).
+| Method | Endpoint | Description |
+| :--- | :--- | :--- |
+| `GET` | [`/v1/notifications/unread-count`](#get-unread-notification-count) | Get unread notification count |
+| `PATCH` | [`/v1/notifications/:id/read`](#mark-a-single-notification-as-read) | Mark a single notification as read |
+| `PATCH` | [`/v1/notifications/read-all`](#mark-all-notifications-as-read) | Mark all notifications as read |
+| `GET` | [`/v1/notifications`](#list-notifications-for-the-current-tenant) | List notifications for the current tenant |
 
-- **Auth:** Bearer
-- **Query params:**
+---
 
-  | Param | Type | Description |
-  | --- | --- | --- |
-  | `limit` | integer | Number of notifications to return (defaults to `20`). |
-  | `cursor` | string | Opaque cursor for the next page. Omit for the first page. |
+## Endpoints
 
-**Responses**
+### Get unread notification count
 
-- `200` — OK
-  ```json
-  {
-    "data": {
-      "notifications": [],
-      "hasMore": true,
-      "nextCursor": "string",
-      "total": 0
-    }
-  }
-  ```
-
-  `data.notifications` is an array of [`Notification`](#notification-object) objects.
-  `hasMore`, `nextCursor`, and `total` follow the cursor pagination convention
-  described in the [house README](./README.md#pagination): pass the previous
-  `nextCursor` as `cursor` to fetch the next page.
-
-### Mark one notification as read
-`PATCH /notifications/:id/read`
-
-Mark a single notification as read.
-
-- **Auth:** Bearer
-- **Path params:** `id` — string
+`GET /v1/notifications/unread-count`
 
 **Responses**
 
-- `200` — OK
+#### `200 OK`
 
-  The frontend client does not consume a response body here
-  (`markNotificationRead` returns `void`).
+---
+
+### Mark a single notification as read
+
+`PATCH /v1/notifications/:id/read`
+
+**Path Parameters**
+
+| Parameter | Description |
+| :--- | :--- |
+| `id` | Resource identifier |
+
+**Responses**
+
+#### `200 OK`
+
+---
 
 ### Mark all notifications as read
-`PATCH /notifications/read-all`
 
-Mark every notification for the current user as read.
-
-- **Auth:** Bearer
+`PATCH /v1/notifications/read-all`
 
 **Responses**
 
-- `200` — OK
+#### `200 OK`
 
-  The frontend client does not consume a response body here
-  (`markAllNotificationsRead` returns `void`).
+---
 
-### Unread notification count
-`GET /notifications/unread-count`
+### List notifications for the current tenant
 
-Return the number of unread notifications.
+`GET /v1/notifications?page=1&limit=20&unreadOnly=true`
 
-- **Auth:** Bearer
+**Query Parameters**
+
+| Parameter | Type / Example | Description |
+| :--- | :--- | :--- |
+| `page` | `1` | Filter / pagination param |
+| `limit` | `20` | Filter / pagination param |
+| `unreadOnly` | `true` | Filter to unread only |
 
 **Responses**
 
-- `200` — OK
-  ```json
-  {
-    "data": {
-      "count": 0
-    }
-  }
-  ```
+#### `200 OK`
 
-## Notification object
+---
 
-```ts
-interface Notification {
-  id: string;
-  title: string;
-  message: string;
-  isRead: boolean;
-  createdAt: string;
-  type?: string;
-}
-```

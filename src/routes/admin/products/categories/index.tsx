@@ -3,7 +3,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import ContainerRow from "@/components/ContainerRow";
 import SimpleContainer from "@/components/SimpleContainer";
 import { useSearch } from "@/stores/data";
-import { PlusCircleIcon, Tag, Layers, FolderPlus } from "lucide-react";
+import { PlusCircleIcon, Tag } from "lucide-react";
 import CustomTable from "@/components/tables/CustomTable";
 import type { Actions } from "@/components/tables/pop-up";
 import PageHeader from "@/components/Headers/PageHeader";

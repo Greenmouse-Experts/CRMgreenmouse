@@ -1,406 +1,91 @@
-# Greenmouse CRM API
+# Greenmouse CRM API Documentation
 
-Reference documentation for the Greenmouse CRM backend, derived from
-`Greenmouse CRM API.postman_collection.json` and the frontend API client in
-`src/api/`.
+Comprehensive reference documentation for the Greenmouse CRM backend, generated directly from the authoritative Postman collection (`Greenmouse CRM API.postman_collection.json`) covering all **244** API endpoints across platform administration, tenant operations, and CRM modules.
 
-The API is a multi-tenant SaaS backend for a CRM. It exposes two authentication
-surfaces — one for the platform (super admin + staff) and one for businesses
-(tenants) — plus shared resource routes for contacts, products, orders,
-invoices, subscriptions, and analytics.
+---
 
-## Contents
+## 📌 Architecture & Base URL
 
-| File | Covers |
-| --- | --- |
-| [`authentication.md`](./authentication.md) | System routes and platform auth (`/`, `/healthcheck`, `/auth/*`) |
-| [`admin.md`](./admin.md) | Super admin setup, profile, permissions, plans, and tenant management (`/admin/*`) |
-| [`staff-and-roles.md`](./staff-and-roles.md) | Staff members and role/permission management (`/staffs`, `/roles`) |
-| [`media.md`](./media.md) | File/image upload to Cloudinary (`/multimedia/*`) |
-| [`crm.md`](./crm.md) | Companies, contacts, and categories |
-| [`finance.md`](./finance.md) | Income, expenses, and invoices |
-| [`catalog.md`](./catalog.md) | Products and services |
-| [`sales.md`](./sales.md) | Orders and quotes |
-| [`support.md`](./support.md) | Support tickets and message threads (`/tickets`) |
-| [`dashboard.md`](./dashboard.md) | Dashboard stat cards and chart data (`/dashboard/*`) |
-| [`subscriptions.md`](./subscriptions.md) | Public plans, tenant subscription/billing, Paystack webhook |
-| [`tenant.md`](./tenant.md) | Tenant onboarding, auth, and login activity (`/tenant/*`) |
-| [`notifications.md`](./notifications.md) | Notifications endpoints used by the frontend client |
+The API is organized under the `/v1` route namespace on the backend server:
 
-> The notification routes are not present in the Postman collection. They are
-> documented separately from `src/api/notifications-api.ts`.
+| Environment | Base URL | Description |
+| :--- | :--- | :--- |
+| **Production API** | `https://crmgrenmouse-backend-api.onrender.com/` | Hosted Render deployment |
+| **Vite Client Prefix** | `import.meta.env.VITE_API_URL` | Configured in `.env` / `.env.local` |
 
-## Base URL
+> **Route Prefix Note**: In this documentation, all routes are specified with the full `/v1/...` path matching the backend service definitions. If the client Axios instance (`src/api/simpleApi.ts`) specifies a `baseURL` that already ends in `/v1`, subsequent paths can omit the leading `/v1`.
 
-Requests are made against a single configurable base URL.
+---
 
-| Source | Value |
-| --- | --- |
-| `src/api/simpleApi.ts` (active client) | `import.meta.env.VITE_API_URL ?? "https://agbajo-backend.onrender.com/"` |
-| `src/client/api.ts` (legacy client) | `https://crmgrenmouse-backend-api.onrender.com/` |
+## 🔐 Authentication Surfaces
 
-Set `VITE_API_URL` in `.env` / `.env.local` to point the frontend at your
-environment. When the variable is unset, the active client falls back to the
-Render deployment above.
+Greenmouse CRM provides two distinct authentication surfaces:
 
-All routes below are shown relative to that base URL using a `{{baseUrl}}`
-placeholder, matching the collection.
+1. **Platform Authentication** (`auth.md`, `staff-and-roles.md`):
+   - Super Admin: `POST /v1/auth/admin/login`
+   - Staff Members: `POST /v1/auth/staff/login`
+   - Token refresh & logout: `POST /v1/auth/refresh`, `POST /v1/auth/logout`
 
-## Client setup
+2. **Tenant Business Accounts** (`tenant.md`):
+   - Self-serve registration: `POST /v1/tenant/auth/register`
+   - Email verification via OTP: `POST /v1/tenant/auth/verify-email`
+   - Tenant Login: `POST /v1/tenant/auth/login`
+   - Onboarding Wizard: `GET /v1/tenant/onboarding`, `PATCH /v1/tenant/onboarding`, `POST /v1/tenant/onboarding/complete`
 
-The application talks to the API through a single Axios instance.
-
-```ts
-// src/api/simpleApi.ts
-import apiClient from "@/api/simpleApi";
-
-const { data } = await apiClient.get("/contacts");
-```
-
-Key behaviour of the active client (`src/api/simpleApi.ts`):
-
-- `withCredentials: true` is enabled, so cookies are sent with requests.
-- A request interceptor reads the stored user from the Jotai `user_atom`
-  (`localStorage["user"]`) and attaches
-  `Authorization: Bearer <accessToken>` to every request when a token exists.
-- A response interceptor reacts to `401` responses by showing a
-  "Session expired" toast and redirecting to `/home/auth/login`.
-- The active client does **not** perform automatic token refresh. Call
-  `POST /auth/refresh` (or `POST /tenant/auth/refresh`) yourself when the access
-  token expires.
-- `test_route(route)` is a small TanStack Query helper for ad-hoc GETs.
-
-The legacy client (`src/client/api.ts`) additionally performs a transparent
-refresh through `POST /auth/refresh` on `401` responses. Prefer the active
-client for new code.
-
-## Authentication
-
-Two bearer-token surfaces exist:
-
-| Surface | Login route | Token audience |
-| --- | --- | --- |
-| Platform (super admin / staff) | `POST /auth/admin/login`, `POST /auth/staff/login` | Platform users |
-| Tenant (business owner) | `POST /tenant/auth/login` | Business accounts |
-
-Both return `accessToken` / `refreshToken` pairs. Send the access token as:
-
+All authenticated endpoints require an HTTP Bearer header:
 ```http
 Authorization: Bearer <accessToken>
 ```
 
-The token is stored on the frontend as part of the `user` object
-(`accessToken`, `refreshToken`, `user`). See `src/store/authStore.ts`.
+---
 
-### Public routes
+## 📦 API Modules Directory
 
-The following routes are used before authentication. Treat every other route as
-requiring a bearer token, even when the collection does not set auth explicitly.
+| File | Module | Endpoints | Description |
+| :--- | :--- | :---: | :--- |
+| [`authentication.md`](./authentication.md) | **System & Platform Auth** | 7 | Root check, healthcheck, super admin & staff login, token refresh. |
+| [`tenant.md`](./tenant.md) | **Tenant Portal & Auth** | 15 | Tenant registration, OTP verify, password reset, onboarding, login history. |
+| [`admin.md`](./admin.md) | **Super Admin Platform** | 63 | Platform setup, tenant management, subscription plans, cross-tenant auditing. |
+| [`staff-and-roles.md`](./staff-and-roles.md) | **Staff & RBAC Roles** | 12 | Workspace staff management and granular permission assignments. |
+| [`crm.md`](./crm.md) | **Contacts & Companies** | 17 | Customer directory, business companies, contact notes, and CSV imports. |
+| [`catalog.md`](./catalog.md) | **Catalog & Inventory** | 23 | Products, service catalog, item categories, and stock adjustments. |
+| [`finance.md`](./finance.md) | **Finance & Invoicing** | 25 | Income, expense logging, invoice generation, branding, PDF/HTML renders. |
+| [`sales.md`](./sales.md) | **Sales & Pipeline** | 41 | Leads, visual Kanban deals, pipelines, quotes, and customer orders. |
+| [`subscriptions.md`](./subscriptions.md) | **Subscriptions & Billing** | 10 | Public plans, tenant upgrade/downgrade, Paystack payments & webhooks. |
+| [`dashboard.md`](./dashboard.md) | **Tenant Dashboard** | 5 | Live stat cards, monthly cashflow, balances, and profit calculations. |
+| [`reports.md`](./reports.md) | **Analytics Reports** | 6 | Pipeline funnel, win rates, average deal value, cycle times, revenue trends. |
+| [`support.md`](./support.md) | **Support & Helpdesk** | 8 | Support tickets, staff assignment, priority status, reply threads. |
+| [`notifications.md`](./notifications.md) | **Notifications** | 4 | In-app alerts, unread counters, mark-as-read updates. |
+| [`media.md`](./media.md) | **Multimedia Upload** | 1 | Cloudinary file upload for logos, attachments, and avatars. |
+| [`import.md`](./import.md) | **Import Engine (SSE)** | 5 | CSV schemas, templates, background import jobs, and SSE progress stream. |
+| [`reminders.md`](./reminders.md) | **Reminders Preferences** | 2 | Tenant alert preferences, reminder timings, and channels. |
 
-- `GET /`
-- `GET /healthcheck`
-- `POST /auth/admin/login`
-- `POST /auth/staff/login`
-- `POST /auth/refresh`
-- `POST /admin/setup`
-- `POST /tenant/auth/register`
-- `POST /tenant/auth/verify-email`
-- `POST /tenant/auth/resend-otp`
-- `PATCH /tenant/auth/change-email`
-- `POST /tenant/auth/login`
-- `POST /tenant/auth/refresh`
-- `POST /tenant/auth/forgot-password`
-- `POST /tenant/auth/reset-password`
-- `GET /subscriptions`
-- `GET /subscriptions/:id`
-- `POST /webhook/paystack`
+---
 
-The collection marks `bearer` auth explicitly on the tenant-scoped routes under
-`/tenant/*`.
+## ⚡ Global Conventions & Response Shapes
 
-## Response envelopes
-
-The frontend types responses with two envelopes. Exact shapes vary per endpoint;
-treat the fields below as the common contract rather than a guarantee.
-
-### Standard envelope
-
-```ts
-// src/api/simpleApi.ts
-interface ApiResponse<T = any> {
-  message: string;
-  data: T;
-  statusCode: number;
-  path: string;
-  pagination: Pagination;
-}
-
-interface Pagination {
-  hasMore: boolean;
-  limit: number;
-  nextCursor: string | null;
-  total: number;
+### 1. Standard Response Envelope
+```json
+{
+  "message": "Operation successful",
+  "data": { ... },
+  "statusCode": 200,
+  "path": "/v1/...",
+  "pagination": {
+    "total": 50,
+    "limit": 10,
+    "hasMore": true,
+    "nextCursor": null
+  }
 }
 ```
 
-`pagination` is populated on list endpoints that return a bare collection in
-`data`.
+### 2. Paginated Query Parameters
+Most list endpoints support standard pagination and query filtering:
+- `page` (number): 1-indexed page number
+- `limit` (number): records per page (default: 10 or 20)
+- `search` (string): search query term
+- `status` (string): filter by lifecycle status
 
-### Nested envelope (v2)
-
-```ts
-interface ApiResponseV2<T = any> {
-  message?: string;
-  data: { data: T; pagination: Pagination } & { [key: string]: any };
-  status: number;
-  path: string;
-}
-```
-
-### Type declarations
-
-`types/api.d.ts` also declares global helpers used by older code:
-
-```ts
-interface APIRESPONSE<T = any> {
-  data: T;
-  message: string;
-}
-
-interface APIRESPONSEV2<T = any> {
-  data: { data: T; message: string };
-  meta: Record<string, any>;
-}
-```
-
-Some endpoints (for example the subscription plan listing) return a plain
-paginated object with `data`, `page`, `limit`, `total`, `totalPages`,
-`hasNextPage`, and `hasPrevPage`. Where the collection provides an example
-body, it is reproduced verbatim in the relevant file.
-
-## Pagination
-
-Two conventions are in use. Check the individual endpoint, since the same
-resource can differ between routes.
-
-- **Page/limit** — `?page=1&limit=10`. The subscription plan lists return
-  `{ data, page, limit, total, totalPages, hasNextPage, hasPrevPage }`.
-- **Cursor** — `?limit=20&cursor=<token>`. The notification endpoint returns a
-  `Pagination` object with `hasMore` and `nextCursor`; to fetch the next page,
-  pass the previous `nextCursor` as `cursor`.
-
-## Errors
-
-The collection defines the following error responses explicitly:
-
-| Status | Meaning | Example route |
-| --- | --- | --- |
-| `400` | Invalid input, OTP, or reset code | `POST /tenant/auth/verify-email` |
-| `401` | Invalid credentials or expired token/refresh token | `POST /tenant/auth/login`, `POST /tenant/auth/refresh` |
-| `409` | Email already registered / already in use | `POST /tenant/auth/register`, `PATCH /tenant/auth/change-email` |
-
-The active client globally handles `401` by clearing the session UI and
-redirecting to the login route.
-
-## Endpoint index
-
-### System and platform auth — [`authentication.md`](./authentication.md)
-
-| Method | Path | Description |
-| --- | --- | --- |
-| `GET` | `/` | App root |
-| `GET` | `/healthcheck` | Health check |
-| `POST` | `/auth/admin/login` | Super admin login |
-| `POST` | `/auth/staff/login` | Staff login |
-| `POST` | `/auth/refresh` | Refresh access token |
-| `POST` | `/auth/logout` | Logout current user |
-| `GET` | `/auth/me` | Get current authenticated user |
-
-### Super admin — [`admin.md`](./admin.md)
-
-| Method | Path | Description |
-| --- | --- | --- |
-| `POST` | `/admin/setup` | Create the super admin account (one-time setup) |
-| `GET` | `/admin/profile` | Get admin profile |
-| `PATCH` | `/admin/profile` | Update admin profile |
-| `PATCH` | `/admin/change-password` | Change admin account password |
-| `GET` | `/admin/permissions` | List available permissions with descriptions |
-| `GET` | `/admin/subscriptions` | List all subscription plans (includes inactive) |
-| `POST` | `/admin/subscriptions` | Create a subscription plan |
-| `GET` | `/admin/subscriptions/:id` | Get a subscription plan |
-| `PATCH` | `/admin/subscriptions/:id` | Update a subscription plan |
-| `DELETE` | `/admin/subscriptions/:id` | Delete a subscription plan |
-| `GET` | `/admin/tenants` | List all tenants |
-| `GET` | `/admin/tenants/stats` | Tenant statistics |
-| `GET` | `/admin/tenants/:id` | Get a single tenant |
-| `PATCH` | `/admin/tenants/:id/status` | Activate or suspend a tenant |
-| `PATCH` | `/admin/tenants/:id/subscription` | Assign or upgrade a tenant plan |
-
-### Staff and roles — [`staff-and-roles.md`](./staff-and-roles.md)
-
-| Method | Path | Description |
-| --- | --- | --- |
-| `GET` | `/staffs` | Get all staff members |
-| `POST` | `/staffs` | Create a staff member |
-| `GET` | `/staffs/:id` | Get a staff member |
-| `PATCH` | `/staffs/:id` | Update a staff member |
-| `DELETE` | `/staffs/:id` | Delete a staff member |
-| `GET` | `/roles` | Get all roles |
-| `POST` | `/roles` | Create a role |
-| `GET` | `/roles/:id` | Get a role |
-| `PATCH` | `/roles/:id` | Update a role |
-| `DELETE` | `/roles/:id` | Delete a role |
-| `PATCH` | `/roles/:id/permissions` | Assign permissions to a role |
-
-### Media — [`media.md`](./media.md)
-
-| Method | Path | Description |
-| --- | --- | --- |
-| `POST` | `/multimedia/upload` | Upload a file (image, video, or PDF) to Cloudinary |
-
-### CRM — [`crm.md`](./crm.md)
-
-| Method | Path | Description |
-| --- | --- | --- |
-| `GET` | `/companies` | Get all companies |
-| `POST` | `/companies` | Create a company |
-| `GET` | `/companies/:id` | Get a company |
-| `PATCH` | `/companies/:id` | Update a company |
-| `DELETE` | `/companies/:id` | Delete a company |
-| `GET` | `/contacts` | List all contacts |
-| `POST` | `/contacts` | Create a contact |
-| `GET` | `/contacts/:id` | Get a contact |
-| `PATCH` | `/contacts/:id` | Update a contact |
-| `DELETE` | `/contacts/:id` | Delete a contact |
-| `POST` | `/contacts/:id/notes` | Add a note to a contact |
-| `GET` | `/categories` | Get all categories |
-| `POST` | `/categories` | Create a category |
-| `GET` | `/categories/:id` | Get a category |
-| `PATCH` | `/categories/:id` | Update a category |
-| `DELETE` | `/categories/:id` | Delete a category |
-
-### Finance — [`finance.md`](./finance.md)
-
-| Method | Path | Description |
-| --- | --- | --- |
-| `GET` | `/income` | Get all income records |
-| `POST` | `/income` | Create an income record |
-| `GET` | `/income/:id` | Get an income record |
-| `PATCH` | `/income/:id` | Update an income record |
-| `DELETE` | `/income/:id` | Delete an income record |
-| `PATCH` | `/income/:id/status` | Update income status |
-| `GET` | `/expenses` | Get all expense records |
-| `POST` | `/expenses` | Create an expense record |
-| `GET` | `/expenses/:id` | Get an expense record |
-| `PATCH` | `/expenses/:id` | Update an expense record |
-| `DELETE` | `/expenses/:id` | Delete an expense record |
-| `PATCH` | `/expenses/:id/status` | Update expense status |
-| `GET` | `/invoices` | List all invoices |
-| `POST` | `/invoices` | Create an invoice |
-| `GET` | `/invoices/stats` | Invoice statistics by status |
-| `GET` | `/invoices/:id` | Get an invoice |
-| `PATCH` | `/invoices/:id` | Update a draft invoice |
-| `DELETE` | `/invoices/:id` | Delete an invoice |
-| `PATCH` | `/invoices/:id/status` | Update invoice status |
-| `PATCH` | `/invoices/:id/send` | Mark invoice as sent |
-| `PATCH` | `/invoices/:id/mark-paid` | Mark invoice as paid |
-
-### Catalog — [`catalog.md`](./catalog.md)
-
-| Method | Path | Description |
-| --- | --- | --- |
-| `GET` | `/products` | List products |
-| `POST` | `/products` | Create a product or service |
-| `GET` | `/products/:id` | Get a product |
-| `PATCH` | `/products/:id` | Update a product |
-| `DELETE` | `/products/:id` | Delete a product |
-| `PATCH` | `/products/:id/stock` | Adjust stock quantity |
-| `GET` | `/services` | Get all services |
-| `POST` | `/services` | Create a service |
-| `GET` | `/services/:id` | Get a service |
-| `PATCH` | `/services/:id` | Update a service |
-| `DELETE` | `/services/:id` | Delete a service |
-| `PATCH` | `/services/:id/toggle-active` | Toggle service active status |
-
-### Sales — [`sales.md`](./sales.md)
-
-| Method | Path | Description |
-| --- | --- | --- |
-| `GET` | `/orders` | List all orders |
-| `POST` | `/orders` | Create an order |
-| `GET` | `/orders/stats` | Order statistics by status |
-| `GET` | `/orders/:id` | Get an order with full item details |
-| `PATCH` | `/orders/:id` | Update an order |
-| `DELETE` | `/orders/:id` | Cancel / delete an order |
-| `PATCH` | `/orders/:id/status` | Update order status |
-| `GET` | `/quotes` | List all quotes |
-| `POST` | `/quotes` | Create a quote |
-| `GET` | `/quotes/stats` | Quote statistics by status |
-| `GET` | `/quotes/:id` | Get a quote |
-| `PATCH` | `/quotes/:id` | Update a quote |
-| `DELETE` | `/quotes/:id` | Delete a quote |
-| `PATCH` | `/quotes/:id/status` | Update quote status |
-
-### Support — [`support.md`](./support.md)
-
-| Method | Path | Description |
-| --- | --- | --- |
-| `GET` | `/tickets` | List all tickets |
-| `POST` | `/tickets` | Create a support ticket |
-| `GET` | `/tickets/:id` | Get ticket detail with message thread |
-| `PATCH` | `/tickets/:id` | Update ticket subject, description, or priority |
-| `DELETE` | `/tickets/:id` | Delete a ticket |
-| `PATCH` | `/tickets/:id/status` | Change ticket status |
-| `PATCH` | `/tickets/:id/assign` | Assign ticket to a staff member |
-| `POST` | `/tickets/:id/messages` | Reply to a ticket thread |
-
-### Dashboard — [`dashboard.md`](./dashboard.md)
-
-| Method | Path | Description |
-| --- | --- | --- |
-| `GET` | `/dashboard/stats` | Stat cards |
-| `GET` | `/dashboard/income-expense` | Monthly income vs expense |
-| `GET` | `/dashboard/balance` | Balance summary |
-| `GET` | `/dashboard/profit` | Monthly profit |
-| `GET` | `/dashboard/user-analytics` | User analytics donut |
-
-### Subscriptions and billing — [`subscriptions.md`](./subscriptions.md)
-
-| Method | Path | Description |
-| --- | --- | --- |
-| `GET` | `/subscriptions` | Browse active plans (public) |
-| `GET` | `/subscriptions/:id` | Get a plan (public) |
-| `GET` | `/tenant/subscription/current` | Current subscription and plan |
-| `GET` | `/tenant/subscription/plans` | Available plans |
-| `GET` | `/tenant/subscription/history` | Subscription change history |
-| `POST` | `/tenant/subscription/upgrade` | Initiate upgrade (Paystack) |
-| `POST` | `/webhook/paystack` | Paystack webhook |
-
-### Tenant — [`tenant.md`](./tenant.md)
-
-| Method | Path | Description |
-| --- | --- | --- |
-| `POST` | `/tenant/auth/register` | Register a business account |
-| `POST` | `/tenant/auth/verify-email` | Verify email with OTP |
-| `POST` | `/tenant/auth/resend-otp` | Resend verification OTP |
-| `PATCH` | `/tenant/auth/change-email` | Change email before verification |
-| `POST` | `/tenant/auth/login` | Business owner login |
-| `POST` | `/tenant/auth/refresh` | Refresh access token |
-| `POST` | `/tenant/auth/forgot-password` | Request password reset OTP |
-| `POST` | `/tenant/auth/reset-password` | Reset password using OTP |
-| `POST` | `/tenant/auth/logout` | Logout current tenant |
-| `GET` | `/tenant/auth/me` | Get current tenant profile |
-| `GET` | `/tenant/onboarding` | Get onboarding status and data |
-| `PATCH` | `/tenant/onboarding` | Save onboarding step data |
-| `POST` | `/tenant/onboarding/complete` | Mark onboarding complete |
-| `GET` | `/tenant/login-activity` | Recent login activities |
-| `GET` | `/tenant/login-activity/latest` | Latest login activity |
-
-### Notifications — [`notifications.md`](./notifications.md)
-
-| Method | Path | Description |
-| --- | --- | --- |
-| `GET` | `/notifications` | List notifications (cursor-paginated) |
-| `PATCH` | `/notifications/:id/read` | Mark one notification as read |
-| `PATCH` | `/notifications/read-all` | Mark all notifications as read |
-| `GET` | `/notifications/unread-count` | Unread notification count |
+---
+*Documentation synchronized from `Greenmouse CRM API.postman_collection.json`.*

@@ -1,4 +1,4 @@
-import React from "react";
+
 import { FileText, CheckCircle2, Clock, AlertCircle } from "lucide-react";
 import type { Invoice } from "@/api/financeApi";
 

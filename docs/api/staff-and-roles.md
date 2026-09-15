@@ -1,82 +1,55 @@
-# Staff and Roles
+# Staff Members & RBAC Roles API
 
-Reference for staff account management and role-based access control. Staff
-members are platform users; each one can be assigned a role that carries a set
-of permissions.
+Tenant staff invitations, team directory, custom role creation, granular permission assignment, and privilege escalation management.
 
-## Staff
+## Overview & Quick Reference
 
-### Get all staff members
+| Method | Endpoint | Description |
+| :--- | :--- | :--- |
+| `GET` | [`/v1/staffs/:id`](#get-a-staff-member-by-id) | Get a staff member by ID |
+| `PATCH` | [`/v1/staffs/:id`](#update-a-staff-member) | Update a staff member |
+| `DELETE` | [`/v1/staffs/:id`](#delete-a-staff-member) | Delete a staff member |
+| `POST` | [`/v1/staffs`](#create-a-new-staff-member) | Create a new staff member |
+| `GET` | [`/v1/staffs`](#get-all-staff-members) | Get all staff members |
+| `GET` | [`/v1/roles/permissions`](#list-assignable-permissions-with-descriptions-use-when-creating-updating-roles) | List assignable permissions with descriptions — use when creating/updating roles |
+| `PATCH` | [`/v1/roles/:id/permissions`](#assign-permissions-to-a-role) | Assign permissions to a role |
+| `GET` | [`/v1/roles/:id`](#get-a-role-by-id) | Get a role by ID |
+| `PATCH` | [`/v1/roles/:id`](#update-role-name-or-description) | Update role name or description |
+| `DELETE` | [`/v1/roles/:id`](#delete-a-role) | Delete a role |
+| `POST` | [`/v1/roles`](#create-a-new-role) | Create a new role |
+| `GET` | [`/v1/roles`](#get-all-roles) | Get all roles |
 
-`GET /staffs`
+---
 
-Get all staff members.
-
-- **Auth:** Bearer
-
-**Body**
-
-_No request body is provided in the collection._
-
-**Responses**
-
-- `200` — OK
-  _No example response body is provided in the collection._
-
-### Create a new staff member
-
-`POST /staffs`
-
-Create a new staff member.
-
-- **Auth:** Bearer
-
-**Body**
-
-```json
-{
-  "email": "staff@greenmouse.com",
-  "firstName": "Jane",
-  "lastName": "Doe",
-  "phoneNumber": "+2348012345678",
-  "roleId": "110e8400-e29b-41d4-a716-446655440000",
-  "profilePic": "https://res.cloudinary.com/..."
-}
-```
-
-**Responses**
-
-- `201` — Created
-  _No example response body is provided in the collection._
+## Endpoints
 
 ### Get a staff member by ID
 
-`GET /staffs/:id`
+`GET /v1/staffs/:id`
 
-Get a staff member by ID.
+**Path Parameters**
 
-- **Auth:** Bearer
-- **Path params:** `id` — string
-
-**Body**
-
-_No request body is provided in the collection._
+| Parameter | Description |
+| :--- | :--- |
+| `id` | Resource identifier |
 
 **Responses**
 
-- `200` — OK
-  _No example response body is provided in the collection._
+#### `200 OK`
+
+---
 
 ### Update a staff member
 
-`PATCH /staffs/:id`
+`PATCH /v1/staffs/:id`
 
-Update a staff member.
+**Path Parameters**
 
-- **Auth:** Bearer
-- **Path params:** `id` — string
+| Parameter | Description |
+| :--- | :--- |
+| `id` | Resource identifier |
 
-**Body**
+**Request Body** (`application/json`)
 
 ```json
 {
@@ -92,147 +65,187 @@ Update a staff member.
 
 **Responses**
 
-- `200` — OK
-  _No example response body is provided in the collection._
+#### `200 OK`
+
+---
 
 ### Delete a staff member
 
-`DELETE /staffs/:id`
+`DELETE /v1/staffs/:id`
 
-Delete a staff member.
+**Path Parameters**
 
-- **Auth:** Bearer
-- **Path params:** `id` — string
-
-**Body**
-
-_No request body is provided in the collection._
+| Parameter | Description |
+| :--- | :--- |
+| `id` | Resource identifier |
 
 **Responses**
 
-- `200` — OK
-  _No example response body is provided in the collection._
+#### `200 OK`
 
-## Roles
+---
 
-### Get all roles
+### Create a new staff member
 
-`GET /roles`
+`POST /v1/staffs`
 
-Get all roles.
-
-- **Auth:** Bearer
-
-**Body**
-
-_No request body is provided in the collection._
-
-**Responses**
-
-- `200` — OK
-  _No example response body is provided in the collection._
-
-### Create a new role
-
-`POST /roles`
-
-Create a new role.
-
-- **Auth:** Bearer
-
-**Body**
+**Request Body** (`application/json`)
 
 ```json
 {
-  "name": "Sales Rep",
-  "description": "Can manage customers and view orders",
-  "permissions": ["customers:read", "orders:read"]
+  "email": "staff@greenmouse.com",
+  "firstName": "Jane",
+  "lastName": "Doe",
+  "phoneNumber": "+2348012345678",
+  "roleId": "110e8400-e29b-41d4-a716-446655440000",
+  "profilePic": "https://res.cloudinary.com/..."
 }
 ```
 
 **Responses**
 
-- `201` — Created
-  _No example response body is provided in the collection._
+#### `201 Created`
 
-### Get a role by ID
+---
 
-`GET /roles/:id`
+### Get all staff members
 
-Get a role by ID.
-
-- **Auth:** Bearer
-- **Path params:** `id` — string
-
-**Body**
-
-_No request body is provided in the collection._
+`GET /v1/staffs`
 
 **Responses**
 
-- `200` — OK
-  _No example response body is provided in the collection._
+#### `200 OK`
+
+---
+
+### List assignable permissions with descriptions — use when creating/updating roles
+
+`GET /v1/roles/permissions`
+
+**Responses**
+
+#### `200 OK`
+
+---
+
+### Assign permissions to a role
+
+`PATCH /v1/roles/:id/permissions`
+
+**Path Parameters**
+
+| Parameter | Description |
+| :--- | :--- |
+| `id` | Resource identifier |
+
+**Request Body** (`application/json`)
+
+```json
+{
+  "permissions": [
+    "customers:read",
+    "orders:read"
+  ]
+}
+```
+
+**Responses**
+
+#### `200 OK`
+
+---
+
+### Get a role by ID
+
+`GET /v1/roles/:id`
+
+**Path Parameters**
+
+| Parameter | Description |
+| :--- | :--- |
+| `id` | Resource identifier |
+
+**Responses**
+
+#### `200 OK`
+
+---
 
 ### Update role name or description
 
-`PATCH /roles/:id`
+`PATCH /v1/roles/:id`
 
-Update role name or description.
+**Path Parameters**
 
-- **Auth:** Bearer
-- **Path params:** `id` — string
+| Parameter | Description |
+| :--- | :--- |
+| `id` | Resource identifier |
 
-**Body**
+**Request Body** (`application/json`)
 
 ```json
 {
   "name": "Sales Manager",
   "description": "Manages sales team and customer accounts",
-  "permissions": ["customers:read", "orders:read"]
+  "permissions": [
+    "customers:read",
+    "orders:read"
+  ]
 }
 ```
 
 **Responses**
 
-- `200` — OK
-  _No example response body is provided in the collection._
+#### `200 OK`
+
+---
 
 ### Delete a role
 
-`DELETE /roles/:id`
+`DELETE /v1/roles/:id`
 
-Delete a role.
+**Path Parameters**
 
-- **Auth:** Bearer
-- **Path params:** `id` — string
-
-**Body**
-
-_No request body is provided in the collection._
+| Parameter | Description |
+| :--- | :--- |
+| `id` | Resource identifier |
 
 **Responses**
 
-- `200` — OK
-  _No example response body is provided in the collection._
+#### `200 OK`
 
-### Assign permissions to a role
+---
 
-`PATCH /roles/:id/permissions`
+### Create a new role
 
-Assign permissions to a role.
+`POST /v1/roles`
 
-- **Auth:** Bearer
-- **Path params:** `id` — string
-
-**Body**
+**Request Body** (`application/json`)
 
 ```json
 {
-  "permissions": ["customers:read", "orders:read"]
+  "name": "Sales Rep",
+  "description": "Can manage customers and view orders",
+  "permissions": [
+    "customers:read",
+    "orders:read"
+  ]
 }
 ```
 
 **Responses**
 
-- `200` — OK
-  _No example response body is provided in the collection._
+#### `201 Created`
+
+---
+
+### Get all roles
+
+`GET /v1/roles`
+
+**Responses**
+
+#### `200 OK`
+
+---
+

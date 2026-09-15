@@ -1,166 +1,84 @@
-# Support
+# Support Tickets & Helpdesk Threading API
 
-Support tickets and their message threads.
+Customer support tickets, agent ticket assignment, priority escalation, lifecycle status updates, and chronological reply threads.
 
-## Tickets
+## Overview & Quick Reference
 
-### List all tickets
-`GET /tickets?priority=medium&assignedTo=string&status=in_progress`
+| Method | Endpoint | Description |
+| :--- | :--- | :--- |
+| `PATCH` | [`/v1/tickets/:id/status`](#change-ticket-status) | Change ticket status |
+| `PATCH` | [`/v1/tickets/:id/assign`](#assign-ticket-to-a-staff-member) | Assign ticket to a staff member |
+| `POST` | [`/v1/tickets/:id/messages`](#reply-to-a-ticket-thread) | Reply to a ticket thread |
+| `GET` | [`/v1/tickets/:id`](#get-ticket-detail-with-full-message-thread) | Get ticket detail with full message thread |
+| `PATCH` | [`/v1/tickets/:id`](#update-ticket-subject-description-or-priority) | Update ticket subject, description or priority |
+| `DELETE` | [`/v1/tickets/:id`](#delete-a-ticket) | Delete a ticket |
+| `POST` | [`/v1/tickets`](#create-a-new-support-ticket) | Create a new support ticket |
+| `GET` | [`/v1/tickets`](#list-all-tickets-filter-by-status-priority-assigned-staff-) | List all tickets (filter by status, priority, assigned staff) |
 
-List all tickets (filter by status, priority, assigned staff).
+---
 
-- **Auth:** Bearer
-- **Query params:**
-
-  | Param | Type | Description |
-  | --- | --- | --- |
-  | `priority` | string | Filter by priority. |
-  | `assignedTo` | string | Filter by staff ID |
-  | `status` | string | Filter by status. |
-
-**Body**
-
-_No request body is provided in the collection._
-
-**Responses**
-
-- `200` — OK
-  _No example response body is provided in the collection._
-
-### Create a new support ticket
-`POST /tickets`
-
-Create a new support ticket.
-
-- **Auth:** Bearer
-
-**Body**
-```json
-{
-  "subject": "Unable to process payment",
-  "contactId": "664f1b2c9d3e4a5b6c7d8e9f",
-  "description": "Payment fails at checkout with error code 500",
-  "priority": "medium",
-  "attachments": [
-    "https://res.cloudinary.com/example/screenshot.png"
-  ]
-}
-```
-
-**Responses**
-
-- `201` — Created
-  _No example response body is provided in the collection._
-
-### Get ticket detail
-`GET /tickets/:id`
-
-Get ticket detail with full message thread.
-
-- **Auth:** Bearer
-- **Path params:** `id` — string
-
-**Body**
-
-_No request body is provided in the collection._
-
-**Responses**
-
-- `200` — OK
-  _No example response body is provided in the collection._
-
-### Update a ticket
-`PATCH /tickets/:id`
-
-Update ticket subject, description or priority.
-
-- **Auth:** Bearer
-- **Path params:** `id` — string
-
-**Body**
-```json
-{
-  "contactId": "664f1b2c9d3e4a5b6c7d8e9f",
-  "subject": "Unable to process payment",
-  "description": "Payment fails at checkout with error code 500",
-  "priority": "medium",
-  "attachments": [
-    "https://res.cloudinary.com/example/screenshot.png"
-  ]
-}
-```
-
-**Responses**
-
-- `200` — OK
-  _No example response body is provided in the collection._
-
-### Delete a ticket
-`DELETE /tickets/:id`
-
-Delete a ticket.
-
-- **Auth:** Bearer
-- **Path params:** `id` — string
-
-**Body**
-
-_No request body is provided in the collection._
-
-**Responses**
-
-- `200` — OK
-  _No example response body is provided in the collection._
+## Endpoints
 
 ### Change ticket status
-`PATCH /tickets/:id/status`
 
-Change ticket status.
+`PATCH /v1/tickets/:id/status`
 
-- **Auth:** Bearer
-- **Path params:** `id` — string
+**Path Parameters**
 
-**Body**
+| Parameter | Description |
+| :--- | :--- |
+| `id` | Resource identifier |
+
+**Request Body** (`application/json`)
+
 ```json
 {
-  "status": "open"
+  "status": "waiting"
 }
 ```
 
 **Responses**
 
-- `200` — OK
-  _No example response body is provided in the collection._
+#### `200 OK`
+
+---
 
 ### Assign ticket to a staff member
-`PATCH /tickets/:id/assign`
 
-Assign ticket to a staff member.
+`PATCH /v1/tickets/:id/assign`
 
-- **Auth:** Bearer
-- **Path params:** `id` — string
+**Path Parameters**
 
-**Body**
+| Parameter | Description |
+| :--- | :--- |
+| `id` | Resource identifier |
+
+**Request Body** (`application/json`)
+
 ```json
 {
-  "staffId": "664f1b2c9d3e4a5b6c7d8e9f"
+  "staffId": "664f1b2c-9d3e-4a5b-8c7d-8e9f0a1b2c3d"
 }
 ```
 
 **Responses**
 
-- `200` — OK
-  _No example response body is provided in the collection._
+#### `200 OK`
+
+---
 
 ### Reply to a ticket thread
-`POST /tickets/:id/messages`
 
-Reply to a ticket thread.
+`POST /v1/tickets/:id/messages`
 
-- **Auth:** Bearer
-- **Path params:** `id` — string
+**Path Parameters**
 
-**Body**
+| Parameter | Description |
+| :--- | :--- |
+| `id` | Resource identifier |
+
+**Request Body** (`application/json`)
+
 ```json
 {
   "content": "We are looking into this issue and will update you shortly.",
@@ -172,5 +90,111 @@ Reply to a ticket thread.
 
 **Responses**
 
-- `201` — Created
-  _No example response body is provided in the collection._
+#### `201 Created`
+
+---
+
+### Get ticket detail with full message thread
+
+`GET /v1/tickets/:id`
+
+**Path Parameters**
+
+| Parameter | Description |
+| :--- | :--- |
+| `id` | Resource identifier |
+
+**Responses**
+
+#### `200 OK`
+
+---
+
+### Update ticket subject, description or priority
+
+`PATCH /v1/tickets/:id`
+
+**Path Parameters**
+
+| Parameter | Description |
+| :--- | :--- |
+| `id` | Resource identifier |
+
+**Request Body** (`application/json`)
+
+```json
+{
+  "contactId": "664f1b2c-9d3e-4a5b-8c7d-8e9f0a1b2c3d",
+  "subject": "Unable to process payment",
+  "description": "Payment fails at checkout with error code 500",
+  "priority": "medium",
+  "attachments": [
+    "https://res.cloudinary.com/example/screenshot.png"
+  ]
+}
+```
+
+**Responses**
+
+#### `200 OK`
+
+---
+
+### Delete a ticket
+
+`DELETE /v1/tickets/:id`
+
+**Path Parameters**
+
+| Parameter | Description |
+| :--- | :--- |
+| `id` | Resource identifier |
+
+**Responses**
+
+#### `200 OK`
+
+---
+
+### Create a new support ticket
+
+`POST /v1/tickets`
+
+**Request Body** (`application/json`)
+
+```json
+{
+  "subject": "Unable to process payment",
+  "contactId": "664f1b2c-9d3e-4a5b-8c7d-8e9f0a1b2c3d",
+  "description": "Payment fails at checkout with error code 500",
+  "priority": "medium",
+  "attachments": [
+    "https://res.cloudinary.com/example/screenshot.png"
+  ]
+}
+```
+
+**Responses**
+
+#### `201 Created`
+
+---
+
+### List all tickets (filter by status, priority, assigned staff)
+
+`GET /v1/tickets?priority=high&assignedTo=string&status=in_progress`
+
+**Query Parameters**
+
+| Parameter | Type / Example | Description |
+| :--- | :--- | :--- |
+| `priority` | `high` | Filter / pagination param |
+| `assignedTo` | `string` | Filter by staff ID |
+| `status` | `in_progress` | Filter / pagination param |
+
+**Responses**
+
+#### `200 OK`
+
+---
+

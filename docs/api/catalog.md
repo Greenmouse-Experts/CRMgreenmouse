@@ -1,47 +1,278 @@
-# Catalog
+# Product Catalog, Services & Categories API
 
-Products and services, including inventory adjustment.
+Inventory items, physical products, recurring/one-off services, item categories, stock level adjustments, CSV bulk exports, and streaming async imports.
 
-## Products
+## Overview & Quick Reference
 
-### List products
-`GET /products?search=string&categoryId=string&isActive=false&type=service`
+| Method | Endpoint | Description |
+| :--- | :--- | :--- |
+| `GET` | [`/v1/categories/:id`](#get-a-category-by-id) | Get a category by ID |
+| `PATCH` | [`/v1/categories/:id`](#update-a-category) | Update a category |
+| `DELETE` | [`/v1/categories/:id`](#delete-a-category) | Delete a category |
+| `POST` | [`/v1/categories`](#create-a-new-category) | Create a new category |
+| `GET` | [`/v1/categories`](#get-all-categories) | Get all categories |
+| `GET` | [`/v1/products/export`](#export-products-to-csv-streamed-download-mirrors-list-filters-) | Export products to CSV (streamed download, mirrors list filters) |
+| `PATCH` | [`/v1/products/:id/stock`](#adjust-stock-quantity-positive-to-add-negative-to-subtract-) | Adjust stock quantity (positive to add, negative to subtract) |
+| `GET` | [`/v1/products/:id`](#get-a-product-by-id) | Get a product by ID |
+| `PATCH` | [`/v1/products/:id`](#update-a-product) | Update a product |
+| `DELETE` | [`/v1/products/:id`](#delete-a-product) | Delete a product |
+| `POST` | [`/v1/products/import/async`](#bulk-import-products-from-a-large-csv-async-up-to-100mb-partial-success-sse-progress-) | Bulk import products from a large CSV (async, up to 100MB, partial success, SSE progress) |
+| `POST` | [`/v1/products/import`](#bulk-import-products-from-csv-sync-2mb-1000-rows-all-or-nothing-) | Bulk import products from CSV (sync, ≤2MB / 1000 rows, all-or-nothing) |
+| `POST` | [`/v1/products`](#create-a-product-or-service) | Create a product or service |
+| `GET` | [`/v1/products`](#list-products-filter-by-category-type-stock-status-) | List products (filter by category, type, stock status) |
+| `GET` | [`/v1/services/export`](#export-services-to-csv-streamed-download-mirrors-list-filters-) | Export services to CSV (streamed download, mirrors list filters) |
+| `PATCH` | [`/v1/services/:id/toggle-active`](#toggle-service-active-status) | Toggle service active status |
+| `GET` | [`/v1/services/:id`](#get-a-service-by-id) | Get a service by ID |
+| `PATCH` | [`/v1/services/:id`](#update-a-service) | Update a service |
+| `DELETE` | [`/v1/services/:id`](#delete-a-service) | Delete a service |
+| `POST` | [`/v1/services/import/async`](#bulk-import-services-from-a-large-csv-async-up-to-100mb-partial-success-sse-progress-) | Bulk import services from a large CSV (async, up to 100MB, partial success, SSE progress) |
+| `POST` | [`/v1/services/import`](#bulk-import-services-from-csv-sync-2mb-1000-rows-all-or-nothing-) | Bulk import services from CSV (sync, ≤2MB / 1000 rows, all-or-nothing) |
+| `POST` | [`/v1/services`](#create-a-new-service) | Create a new service |
+| `GET` | [`/v1/services`](#get-all-services) | Get all services |
 
-List products (filter by category, type, stock status).
+---
 
-- **Auth:** Bearer
-- **Query params:**
+## Endpoints
 
-  | Param | Type | Description |
-  | --- | --- | --- |
-  | `search` | string | — |
-  | `categoryId` | string | — |
-  | `isActive` | boolean | — |
-  | `type` | string | — |
+### Get a category by ID
 
-**Body**
+`GET /v1/categories/:id`
 
-_No request body is provided in the collection._
+**Path Parameters**
+
+| Parameter | Description |
+| :--- | :--- |
+| `id` | Resource identifier |
 
 **Responses**
 
-- `200` — OK
-  _No example response body is provided in the collection._
+#### `200 OK`
+
+---
+
+### Update a category
+
+`PATCH /v1/categories/:id`
+
+**Path Parameters**
+
+| Parameter | Description |
+| :--- | :--- |
+| `id` | Resource identifier |
+
+**Request Body** (`application/json`)
+
+```json
+{
+  "name": "Electronics",
+  "description": "All electronic products and gadgets"
+}
+```
+
+**Responses**
+
+#### `200 OK`
+
+---
+
+### Delete a category
+
+`DELETE /v1/categories/:id`
+
+**Path Parameters**
+
+| Parameter | Description |
+| :--- | :--- |
+| `id` | Resource identifier |
+
+**Responses**
+
+#### `200 OK`
+
+---
+
+### Create a new category
+
+`POST /v1/categories`
+
+**Request Body** (`application/json`)
+
+```json
+{
+  "name": "Electronics",
+  "description": "All electronic products and gadgets"
+}
+```
+
+**Responses**
+
+#### `201 Created`
+
+---
+
+### Get all categories
+
+`GET /v1/categories?search=string`
+
+**Query Parameters**
+
+| Parameter | Type / Example | Description |
+| :--- | :--- | :--- |
+| `search` | `string` | Search by category name |
+
+**Responses**
+
+#### `200 OK`
+
+---
+
+### Export products to CSV (streamed download, mirrors list filters)
+
+`GET /v1/products/export?search=string&categoryId=string&isActive=string`
+
+**Query Parameters**
+
+| Parameter | Type / Example | Description |
+| :--- | :--- | :--- |
+| `search` | `string` | Filter / pagination param |
+| `categoryId` | `string` | Filter / pagination param |
+| `isActive` | `string` | Filter / pagination param |
+
+**Responses**
+
+#### `200 OK`
+
+---
+
+### Adjust stock quantity (positive to add, negative to subtract)
+
+`PATCH /v1/products/:id/stock`
+
+**Path Parameters**
+
+| Parameter | Description |
+| :--- | :--- |
+| `id` | Resource identifier |
+
+**Request Body** (`application/json`)
+
+```json
+{
+  "adjustment": 10
+}
+```
+
+**Responses**
+
+#### `200 OK`
+
+---
+
+### Get a product by ID
+
+`GET /v1/products/:id`
+
+**Path Parameters**
+
+| Parameter | Description |
+| :--- | :--- |
+| `id` | Resource identifier |
+
+**Responses**
+
+#### `200 OK`
+
+---
+
+### Update a product
+
+`PATCH /v1/products/:id`
+
+**Path Parameters**
+
+| Parameter | Description |
+| :--- | :--- |
+| `id` | Resource identifier |
+
+**Request Body** (`application/json`)
+
+```json
+{
+  "name": "Electronic Metal Hat v2",
+  "categoryId": "664f1b2c-9d3e-4a5b-8c7d-8e9f0a1b2c3d",
+  "price": 950,
+  "quantity": 20,
+  "inStock": true,
+  "description": "Updated description"
+}
+```
+
+**Responses**
+
+#### `200 OK`
+
+---
+
+### Delete a product
+
+`DELETE /v1/products/:id`
+
+**Path Parameters**
+
+| Parameter | Description |
+| :--- | :--- |
+| `id` | Resource identifier |
+
+**Responses**
+
+#### `200 OK`
+
+---
+
+### Bulk import products from a large CSV (async, up to 100MB, partial success, SSE progress)
+
+`POST /v1/products/import/async`
+
+**Request Body** (`multipart/form-data`)
+
+| Field | Type | Description |
+| :--- | :--- | :--- |
+| `file` | `file` | Upload payload field |
+
+**Responses**
+
+#### `201 Created`
+
+---
+
+### Bulk import products from CSV (sync, ≤2MB / 1000 rows, all-or-nothing)
+
+`POST /v1/products/import`
+
+**Request Body** (`multipart/form-data`)
+
+| Field | Type | Description |
+| :--- | :--- | :--- |
+| `file` | `file` | Upload payload field |
+
+**Responses**
+
+#### `201 Created`
+
+---
 
 ### Create a product or service
-`POST /products`
 
-Create a product or service.
+`POST /v1/products`
 
-- **Auth:** Bearer
+**Request Body** (`application/json`)
 
-**Body**
 ```json
 {
   "name": "Office Chair",
   "price": 45000,
   "description": "Ergonomic office chair with lumbar support",
-  "categoryId": "664f1b2c9d3e4a5b6c7d8e9f",
+  "categoryId": "664f1b2c-9d3e-4a5b-8c7d-8e9f0a1b2c3d",
   "type": "product",
   "cost": 30000,
   "currency": "NGN",
@@ -56,169 +287,97 @@ Create a product or service.
 
 **Responses**
 
-- `201` — Created
-  _No example response body is provided in the collection._
+#### `201 Created`
 
-### Get a product by ID
-`GET /products/:id`
+---
 
-Get a product by ID.
+### List products (filter by category, type, stock status)
 
-- **Auth:** Bearer
-- **Path params:** `id` — string
+`GET /v1/products?search=string&categoryId=string&isActive=true&type=service`
 
-**Body**
+**Query Parameters**
 
-_No request body is provided in the collection._
-
-**Responses**
-
-- `200` — OK
-  _No example response body is provided in the collection._
-
-### Update a product
-`PATCH /products/:id`
-
-Update a product.
-
-- **Auth:** Bearer
-- **Path params:** `id` — string
-
-**Body**
-```json
-{
-  "name": "Electronic Metal Hat v2",
-  "categoryId": "664f1b2c9d3e4a5b6c7d8e9f",
-  "price": 950,
-  "quantity": 20,
-  "inStock": true,
-  "description": "Updated description"
-}
-```
+| Parameter | Type / Example | Description |
+| :--- | :--- | :--- |
+| `search` | `string` | Filter / pagination param |
+| `categoryId` | `string` | Filter / pagination param |
+| `isActive` | `true` | Filter / pagination param |
+| `type` | `service` | Filter / pagination param |
 
 **Responses**
 
-- `200` — OK
-  _No example response body is provided in the collection._
+#### `200 OK`
 
-### Delete a product
-`DELETE /products/:id`
+---
 
-Delete a product.
+### Export services to CSV (streamed download, mirrors list filters)
 
-- **Auth:** Bearer
-- **Path params:** `id` — string
+`GET /v1/services/export?search=string&categoryId=string&isActive=string`
 
-**Body**
+**Query Parameters**
 
-_No request body is provided in the collection._
-
-**Responses**
-
-- `200` — OK
-  _No example response body is provided in the collection._
-
-### Adjust stock quantity
-`PATCH /products/:id/stock`
-
-Adjust stock quantity (positive to add, negative to subtract).
-
-- **Auth:** Bearer
-- **Path params:** `id` — string
-
-**Body**
-```json
-{
-  "adjustment": 10
-}
-```
+| Parameter | Type / Example | Description |
+| :--- | :--- | :--- |
+| `search` | `string` | Filter / pagination param |
+| `categoryId` | `string` | Filter / pagination param |
+| `isActive` | `string` | Filter / pagination param |
 
 **Responses**
 
-- `200` — OK
-  _No example response body is provided in the collection._
+#### `200 OK`
 
-## Services
+---
 
-### Get all services
-`GET /services?search=string&categoryId=string&isActive=false`
+### Toggle service active status
 
-Get all services.
+`PATCH /v1/services/:id/toggle-active`
 
-- **Auth:** Bearer
-- **Query params:**
+**Path Parameters**
 
-  | Param | Type | Description |
-  | --- | --- | --- |
-  | `search` | string | Search by service name |
-  | `categoryId` | string | — |
-  | `isActive` | boolean | — |
-
-**Body**
-
-_No request body is provided in the collection._
+| Parameter | Description |
+| :--- | :--- |
+| `id` | Resource identifier |
 
 **Responses**
 
-- `200` — OK
-  _No example response body is provided in the collection._
+#### `200 OK`
 
-### Create a new service
-`POST /services`
-
-Create a new service.
-
-- **Auth:** Bearer
-
-**Body**
-```json
-{
-  "name": "Electronic Wooden Fish",
-  "price": 324.99,
-  "image": "https://res.cloudinary.com/...",
-  "categoryId": "664f1b2c9d3e4a5b6c7d8e9f",
-  "description": "Premium wooden fish service with electronic components",
-  "isActive": true
-}
-```
-
-**Responses**
-
-- `201` — Created
-  _No example response body is provided in the collection._
+---
 
 ### Get a service by ID
-`GET /services/:id`
 
-Get a service by ID.
+`GET /v1/services/:id`
 
-- **Auth:** Bearer
-- **Path params:** `id` — string
+**Path Parameters**
 
-**Body**
-
-_No request body is provided in the collection._
+| Parameter | Description |
+| :--- | :--- |
+| `id` | Resource identifier |
 
 **Responses**
 
-- `200` — OK
-  _No example response body is provided in the collection._
+#### `200 OK`
+
+---
 
 ### Update a service
-`PATCH /services/:id`
 
-Update a service.
+`PATCH /v1/services/:id`
 
-- **Auth:** Bearer
-- **Path params:** `id` — string
+**Path Parameters**
 
-**Body**
+| Parameter | Description |
+| :--- | :--- |
+| `id` | Resource identifier |
+
+**Request Body** (`application/json`)
+
 ```json
 {
   "name": "Electronic Wooden Fish Pro",
   "image": "https://res.cloudinary.com/...",
   "price": 399.99,
-  "categoryId": "664f1b2c9d3e4a5b6c7d8e9f",
+  "categoryId": "664f1b2c-9d3e-4a5b-8c7d-8e9f0a1b2c3d",
   "description": "Updated description",
   "isActive": false
 }
@@ -226,39 +385,96 @@ Update a service.
 
 **Responses**
 
-- `200` — OK
-  _No example response body is provided in the collection._
+#### `200 OK`
+
+---
 
 ### Delete a service
-`DELETE /services/:id`
 
-Delete a service.
+`DELETE /v1/services/:id`
 
-- **Auth:** Bearer
-- **Path params:** `id` — string
+**Path Parameters**
 
-**Body**
-
-_No request body is provided in the collection._
+| Parameter | Description |
+| :--- | :--- |
+| `id` | Resource identifier |
 
 **Responses**
 
-- `200` — OK
-  _No example response body is provided in the collection._
+#### `200 OK`
 
-### Toggle service active status
-`PATCH /services/:id/toggle-active`
+---
 
-Toggle service active status.
+### Bulk import services from a large CSV (async, up to 100MB, partial success, SSE progress)
 
-- **Auth:** Bearer
-- **Path params:** `id` — string
+`POST /v1/services/import/async`
 
-**Body**
+**Request Body** (`multipart/form-data`)
 
-_No request body is provided in the collection._
+| Field | Type | Description |
+| :--- | :--- | :--- |
+| `file` | `file` | Upload payload field |
 
 **Responses**
 
-- `200` — OK
-  _No example response body is provided in the collection._
+#### `201 Created`
+
+---
+
+### Bulk import services from CSV (sync, ≤2MB / 1000 rows, all-or-nothing)
+
+`POST /v1/services/import`
+
+**Request Body** (`multipart/form-data`)
+
+| Field | Type | Description |
+| :--- | :--- | :--- |
+| `file` | `file` | Upload payload field |
+
+**Responses**
+
+#### `201 Created`
+
+---
+
+### Create a new service
+
+`POST /v1/services`
+
+**Request Body** (`application/json`)
+
+```json
+{
+  "name": "Electronic Wooden Fish",
+  "price": 324.99,
+  "image": "https://res.cloudinary.com/...",
+  "categoryId": "664f1b2c-9d3e-4a5b-8c7d-8e9f0a1b2c3d",
+  "description": "Premium wooden fish service with electronic components",
+  "isActive": true
+}
+```
+
+**Responses**
+
+#### `201 Created`
+
+---
+
+### Get all services
+
+`GET /v1/services?search=string&categoryId=string&isActive=true`
+
+**Query Parameters**
+
+| Parameter | Type / Example | Description |
+| :--- | :--- | :--- |
+| `search` | `string` | Search by service name |
+| `categoryId` | `string` | Filter / pagination param |
+| `isActive` | `true` | Filter / pagination param |
+
+**Responses**
+
+#### `200 OK`
+
+---
+
