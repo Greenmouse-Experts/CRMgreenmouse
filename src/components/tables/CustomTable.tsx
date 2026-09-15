@@ -3,7 +3,7 @@ import PopUp, { type Actions } from "./pop-up";
 import { usePagination } from "@/helpers/pagination";
 import type { CursorPaginationProps } from "../CursorPagination";
 import CursorPagination from "../CursorPagination";
-
+//table type
 export type columnType<T = any> = {
   key: string;
   label: string;
