@@ -1,136 +1,262 @@
+import { useState, useRef } from "react";
 import CustomTable from "@/components/tables/CustomTable";
-import { faker } from "@faker-js/faker";
 import { type Actions } from "@/components/tables/pop-up";
-import { useModal } from "@/helpers/modals";
-import Modal from "@/components/modals/DialogModal";
+import Modal, { type ModalHandle } from "@/components/DialogModal";
 import SimpleInput from "@/components/inputs/SimpleInput";
 import SimpleTextArea from "@/components/inputs/SimpleTextArea";
-import { useState } from "react";
+import LocalSelect from "@/components/inputs/LocalSelect";
+import PageLoader from "@/components/layout/PageLoader";
+import {
+  useIncomeRecords,
+  useUpdateIncome,
+  useDeleteIncome,
+  type IncomeRecord,
+} from "@/api/financeApi";
+import { toast } from "sonner";
+import { Edit, Trash2 } from "lucide-react";
 
-export default function Incometable() {
-  const editModal = useModal();
-  const [selectedIncome, setSelectedIncome] = useState<any>(null);
+export default function IncomeTable() {
+  const query = useIncomeRecords();
+  const updateIncome = useUpdateIncome();
+  const deleteIncome = useDeleteIncome();
+
+  const editModalRef = useRef<ModalHandle>(null);
+  const [editingItem, setEditingItem] = useState<Partial<IncomeRecord>>({});
+
+  const incomeList = query.data || [];
+
+  const handleOpenEdit = (item: IncomeRecord) => {
+    setEditingItem({ ...item });
+    editModalRef.current?.open();
+  };
+
+  const handleSaveEdit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingItem.id || !editingItem.amount) {
+      toast.error("Amount is required.");
+      return;
+    }
+
+    try {
+      await updateIncome.mutateAsync({
+        id: editingItem.id,
+        amount: Number(editingItem.amount),
+        type: editingItem.type,
+        source: editingItem.source,
+        description: editingItem.description,
+        status: editingItem.status,
+      });
+      toast.success("Income record updated successfully.");
+      editModalRef.current?.close();
+    } catch (err: any) {
+      toast.error(
+        err.response?.data?.message || "Failed to update income record.",
+      );
+    }
+  };
+
+  const handleDelete = async (item: IncomeRecord) => {
+    if (
+      !window.confirm(
+        `Are you sure you want to delete this income entry for $${item.amount}?`,
+      )
+    ) {
+      return;
+    }
+    try {
+      await deleteIncome.mutateAsync(item.id);
+      toast.success("Income entry deleted.");
+    } catch (err: any) {
+      toast.error(
+        err.response?.data?.message || "Failed to delete income entry.",
+      );
+    }
+  };
 
   const columns = [
-    { key: "id", label: "ID" },
     {
       key: "date",
       label: "Date",
-      render: (value: string) =>
-        new Intl.DateTimeFormat("en-US", {
-          year: "numeric",
-          month: "short",
-          day: "numeric",
-        }).format(new Date(value)),
+      render: (_value: any, item: IncomeRecord) => {
+        const d = item.date || item.createdAt;
+        return (
+          <span className="text-xs text-base-content/70">
+            {d ? new Date(d).toLocaleDateString() : "—"}
+          </span>
+        );
+      },
     },
     {
       key: "amount",
       label: "Amount",
-      render: (value: number) =>
-        new Intl.NumberFormat("en-US", {
-          style: "currency",
-          currency: "USD",
-        }).format(value),
-    },
-    { key: "type", label: "Type" },
-    { key: "source", label: "Source" },
-    {
-      key: "status",
-      label: "Status",
-      render: (value: string) => (
-        <span
-          className={` badge badge-soft ring ring-current/50 text-xs font-bold badge-sm ${
-            value === "Received"
-              ? "badge-success"
-              : value === "Pending"
-                ? "badge-warning"
-                : "badge-error"
-          }`}
-        >
-          {value}
+      render: (value: number) => (
+        <span className="font-semibold text-success">
+          +$
+          {Number(value || 0).toLocaleString(undefined, {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          })}
         </span>
       ),
     },
-    { key: "description", label: "Description" },
-  ];
-
-  const data = Array.from({ length: 10 }, (_, i) => ({
-    id: i + 1,
-    date: faker.date.past().toISOString(),
-    amount: faker.finance.amount({ min: 500, max: 5000, dec: 2 }),
-    type: faker.helpers.arrayElement([
-      "Salary",
-      "Freelance",
-      "Investment",
-      "Bonus",
-      "Rental Income",
-    ]),
-    source: faker.company.name(),
-    status: faker.helpers.arrayElement(["Pending", "Received", "Overdue"]),
-    description: faker.lorem.sentence({ min: 5, max: 15 }),
-  }));
-
-  const actions: Actions[] = [
     {
-      key: "view",
-      label: "View Details",
-      action: (item: any) =>
-        alert(
-          `Viewing income ${item.id}\nDescription: ${item.description}\nAmount: $${item.amount}`,
-        ),
+      key: "type",
+      label: "Category / Type",
+      render: (value: string) => (
+        <span className="badge badge-sm badge-outline font-medium">
+          {value || "General"}
+        </span>
+      ),
     },
     {
-      key: "edit",
-      label: "Edit Income",
-      action: (item: any) => {
-        setSelectedIncome(item);
-        editModal.showModal();
+      key: "source",
+      label: "Payer / Source",
+      render: (value: string) => (
+        <span className="font-medium text-base-content">{value || "—"}</span>
+      ),
+    },
+    {
+      key: "status",
+      label: "Status",
+      render: (value: string) => {
+        const s = (value || "Pending").toLowerCase();
+        let badge = "badge-warning";
+        if (s === "approved" || s === "received" || s === "paid") {
+          badge = "badge-success";
+        } else if (s === "rejected" || s === "overdue") {
+          badge = "badge-error";
+        }
+        return (
+          <span
+            className={`badge badge-soft ring ring-current/50 text-[10px] uppercase font-bold badge-sm ${badge}`}
+          >
+            {value || "Pending"}
+          </span>
+        );
       },
     },
     {
+      key: "description",
+      label: "Description",
+      render: (value: string) => (
+        <span className="text-xs text-base-content/60 max-w-xs truncate block">
+          {value || "—"}
+        </span>
+      ),
+    },
+  ];
+
+  const actions: Actions<IncomeRecord>[] = [
+    {
+      key: "edit",
+      label: "Edit",
+      render: () => (
+        <span className="flex items-center gap-2">
+          <Edit className="size-4" /> Edit Record
+        </span>
+      ),
+      action: (item: IncomeRecord) => handleOpenEdit(item),
+    },
+    {
       key: "delete",
-      label: "Delete Income",
-      action: (item: any) =>
-        confirm(`Are you sure you want to delete income ${item.id}?`) &&
-        alert(`Income ${item.id} deleted!`),
+      label: "Delete",
+      render: () => (
+        <span className="flex items-center gap-2 text-error">
+          <Trash2 className="size-4" /> Delete
+        </span>
+      ),
+      action: (item: IncomeRecord) => handleDelete(item),
     },
   ];
 
   return (
-    <div className="">
-      <CustomTable columns={columns} data={data} actions={actions} />
+    <div>
+      <PageLoader query={query}>
+        <CustomTable
+          ring={false}
+          data={incomeList}
+          columns={columns}
+          actions={actions}
+        />
+      </PageLoader>
 
-      <Modal ref={editModal.ref} title="Edit Income">
-        <div className="space-y-4">
+      <Modal ref={editModalRef} title="Edit Income Record">
+        <form onSubmit={handleSaveEdit} className="space-y-4 pt-2">
           <SimpleInput
-            label="Amount"
+            label="Amount ($)"
             type="number"
-            defaultValue={selectedIncome?.amount}
+            step="0.01"
+            value={editingItem.amount ?? ""}
+            onChange={(e) =>
+              setEditingItem((prev) => ({
+                ...prev,
+                amount: parseFloat(e.target.value) || 0,
+              }))
+            }
+            required
           />
-          <SimpleInput
+          <LocalSelect
             label="Type"
+            value={editingItem.type || "Sales"}
+            onChange={(e) =>
+              setEditingItem((prev) => ({ ...prev, type: e.target.value }))
+            }
+          >
+            <option value="Sales">Sales</option>
+            <option value="Consulting">Consulting</option>
+            <option value="Freelance">Freelance</option>
+            <option value="Investment">Investment</option>
+            <option value="Bonus">Bonus</option>
+            <option value="Rental Income">Rental Income</option>
+            <option value="Other">Other</option>
+          </LocalSelect>
+          <SimpleInput
+            label="Payer / Source"
             type="text"
-            defaultValue={selectedIncome?.type}
+            value={editingItem.source || ""}
+            onChange={(e) =>
+              setEditingItem((prev) => ({ ...prev, source: e.target.value }))
+            }
+            required
           />
+          <LocalSelect
+            label="Status"
+            value={editingItem.status || "Received"}
+            onChange={(e) =>
+              setEditingItem((prev) => ({ ...prev, status: e.target.value }))
+            }
+          >
+            <option value="Received">Received</option>
+            <option value="Pending">Pending</option>
+            <option value="Overdue">Overdue</option>
+          </LocalSelect>
           <SimpleTextArea
             label="Description"
-            defaultValue={selectedIncome?.description}
+            value={editingItem.description || ""}
+            onChange={(e) =>
+              setEditingItem((prev) => ({
+                ...prev,
+                description: e.target.value,
+              }))
+            }
           />
-          <div className="flex gap-2">
-            <span className="font-semibold fieldset-label">Status</span>{" "}
-            <input
-              type="checkbox"
-              className="toggle"
-              defaultChecked={selectedIncome?.status === "Received"}
-            />
+          <div className="modal-action">
+            <button
+              type="button"
+              className="btn btn-ghost"
+              onClick={() => editModalRef.current?.close()}
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              disabled={updateIncome.isPending}
+              className="btn btn-primary"
+            >
+              {updateIncome.isPending ? "Saving..." : "Update Income"}
+            </button>
           </div>
-          <button
-            className="btn btn-primary btn-block"
-            onClick={() => editModal.ref.current?.close()}
-          >
-            Update Income
-          </button>
-        </div>
+        </form>
       </Modal>
     </div>
   );

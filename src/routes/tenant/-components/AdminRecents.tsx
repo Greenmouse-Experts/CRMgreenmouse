@@ -50,17 +50,17 @@ export default function AdminRecents() {
     {
       key: "amount",
       label: "Amount",
-      render: (value: number, item: Transaction) => {
-        const isIncome = (item.type || "").toLowerCase() === "income";
-        const val = Math.abs(Number(value) || 0);
+      render: (val: number, item: Transaction) => {
+        const isPositive =
+          (item.type || "").toLowerCase() === "income" || val > 0;
         return (
           <span
-            className={`font-bold text-sm ${
-              isIncome ? "text-success" : "text-error"
+            className={`font-semibold ${
+              isPositive ? "text-success" : "text-error"
             }`}
           >
-            {isIncome ? "+" : "-"}$
-            {val.toLocaleString(undefined, {
+            {isPositive ? "+" : "-"}$
+            {Math.abs(val || 0).toLocaleString(undefined, {
               minimumFractionDigits: 2,
               maximumFractionDigits: 2,
             })}
@@ -71,19 +71,21 @@ export default function AdminRecents() {
     {
       key: "status",
       label: "Status",
-      render: (value: string) => {
-        const status = (value || "Completed").toLowerCase();
+      render: (status: string) => {
+        const s = (status || "").toLowerCase();
+        let badge = "badge-ghost";
+        if (s === "completed" || s === "approved" || s === "paid") {
+          badge = "badge-success badge-soft";
+        } else if (s === "pending") {
+          badge = "badge-warning badge-soft";
+        } else if (s === "failed" || s === "rejected") {
+          badge = "badge-error badge-soft";
+        }
         return (
           <span
-            className={`badge badge-sm ${
-              status === "completed" || status === "approved"
-                ? "badge-success text-success-content"
-                : status === "pending"
-                  ? "badge-warning text-warning-content"
-                  : "badge-error text-error-content"
-            }`}
+            className={`badge badge-xs uppercase font-bold text-[10px] ${badge}`}
           >
-            {value || "Completed"}
+            {status || "Completed"}
           </span>
         );
       },
@@ -104,7 +106,7 @@ export default function AdminRecents() {
         }
       >
         <QueryCompLayout query={query}>
-          {(transactions) => {
+          {(transactions: Transaction[]) => {
             const recent = (transactions || []).slice(0, 5);
             return <CustomTable ring={false} data={recent} columns={columns} />;
           }}

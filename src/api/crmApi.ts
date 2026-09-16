@@ -1,8 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import apiClient from "./simpleApi";
 
-// ==================== COMPANIES ====================
-
+// ==================== COMPANIES ====================\n
 export interface Company {
   id: string;
   name: string;
@@ -23,12 +22,15 @@ export interface Company {
   updatedAt?: string;
 }
 
-export const useCompanies = () => {
+export const useCompanies = (params?: { search?: string }) => {
   return useQuery<Company[]>({
-    queryKey: ["companies"],
+    queryKey: ["companies", params],
     queryFn: async () => {
-      const { data } = await apiClient.get<Company[]>("/companies");
-      return data;
+      const { data } = await apiClient.get<any>("/companies", { params });
+      if (Array.isArray(data)) return data;
+      if (Array.isArray(data?.data)) return data.data;
+      if (Array.isArray(data?.companies)) return data.companies;
+      return [];
     },
   });
 };
@@ -38,8 +40,8 @@ export const useCompany = (id?: string) => {
     queryKey: ["companies", id],
     queryFn: async () => {
       if (!id) throw new Error("Company ID required");
-      const { data } = await apiClient.get<Company>(`/companies/${id}`);
-      return data;
+      const { data } = await apiClient.get<any>(`/companies/${id}`);
+      return data?.data || data;
     },
     enabled: !!id,
   });
@@ -49,8 +51,8 @@ export const useCreateCompany = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (company: Partial<Company>) => {
-      const { data } = await apiClient.post<Company>("/companies", company);
-      return data;
+      const { data } = await apiClient.post<any>("/companies", company);
+      return data?.data || data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["companies"] });
@@ -61,9 +63,12 @@ export const useCreateCompany = () => {
 export const useUpdateCompany = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async ({ id, ...company }: Partial<Company> & { id: string }) => {
-      const { data } = await apiClient.patch<Company>(`/companies/${id}`, company);
-      return data;
+    mutationFn: async ({
+      id,
+      ...company
+    }: Partial<Company> & { id: string }) => {
+      const { data } = await apiClient.patch<any>(`/companies/${id}`, company);
+      return data?.data || data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["companies"] });
@@ -76,7 +81,7 @@ export const useDeleteCompany = () => {
   return useMutation({
     mutationFn: async (id: string) => {
       const { data } = await apiClient.delete(`/companies/${id}`);
-      return data;
+      return data?.data || data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["companies"] });
@@ -84,90 +89,175 @@ export const useDeleteCompany = () => {
   });
 };
 
-// ==================== CUSTOMERS ====================
+// ==================== CONTACTS / CUSTOMERS ====================\n
+export interface ContactNote {
+  id?: string;
+  content: string;
+  createdAt?: string;
+}
 
-export interface Customer {
+export interface Contact {
   id: string;
   firstName: string;
   lastName: string;
-  email: string;
-  workPhone?: string;
-  cellPhone?: string;
+  type?: "individual" | "business" | string;
+  companyName?: string;
   companyId?: string;
   company?: Company;
-  source?: string;
-  assignedStaffId?: string;
+  email: string;
+  phone?: string;
+  workPhone?: string;
+  cellPhone?: string;
+  address?: string;
   addressLine1?: string;
   city?: string;
   state?: string;
+  zipCode?: string;
   country?: string;
+  tags?: string[];
+  assignedTo?: string;
+  assignedStaffId?: string;
+  source?: string;
+  status?: "lead" | "customer" | "active" | "inactive" | string;
+  notes?: ContactNote[] | string[];
   createdAt?: string;
   updatedAt?: string;
 }
 
-export const useCustomers = () => {
-  return useQuery<Customer[]>({
-    queryKey: ["customers"],
+// Backward compatibility alias
+export type Customer = Contact;
+
+export const useContacts = (params?: { search?: string; status?: string }) => {
+  return useQuery<Contact[]>({
+    queryKey: ["contacts", params],
     queryFn: async () => {
-      const { data } = await apiClient.get<Customer[]>("/customers");
-      return data;
+      try {
+        const { data } = await apiClient.get<any>("/contacts", { params });
+        if (Array.isArray(data)) return data;
+        if (Array.isArray(data?.data)) return data.data;
+        if (Array.isArray(data?.contacts)) return data.contacts;
+        return [];
+      } catch {
+        const { data } = await apiClient.get<any>("/customers", { params });
+        if (Array.isArray(data)) return data;
+        if (Array.isArray(data?.data)) return data.data;
+        return [];
+      }
     },
   });
 };
 
-export const useCustomer = (id?: string) => {
-  return useQuery<Customer>({
-    queryKey: ["customers", id],
+// Backward compatibility alias
+export const useCustomers = useContacts;
+
+export const useContact = (id?: string) => {
+  return useQuery<Contact>({
+    queryKey: ["contacts", id],
     queryFn: async () => {
-      if (!id) throw new Error("Customer ID required");
-      const { data } = await apiClient.get<Customer>(`/customers/${id}`);
-      return data;
+      if (!id) throw new Error("Contact ID required");
+      try {
+        const { data } = await apiClient.get<any>(`/contacts/${id}`);
+        return data?.data || data;
+      } catch {
+        const { data } = await apiClient.get<any>(`/customers/${id}`);
+        return data?.data || data;
+      }
     },
     enabled: !!id,
   });
 };
 
-export const useCreateCustomer = () => {
+// Backward compatibility alias
+export const useCustomer = useContact;
+
+export const useCreateContact = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (customer: Partial<Customer>) => {
-      const { data } = await apiClient.post<Customer>("/customers", customer);
-      return data;
+    mutationFn: async (contact: Partial<Contact>) => {
+      try {
+        const { data } = await apiClient.post<any>("/contacts", contact);
+        return data?.data || data;
+      } catch {
+        const { data } = await apiClient.post<any>("/customers", contact);
+        return data?.data || data;
+      }
     },
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["contacts"] });
       queryClient.invalidateQueries({ queryKey: ["customers"] });
     },
   });
 };
 
-export const useUpdateCustomer = () => {
+// Backward compatibility alias
+export const useCreateCustomer = useCreateContact;
+
+export const useUpdateContact = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async ({ id, ...customer }: Partial<Customer> & { id: string }) => {
-      const { data } = await apiClient.patch<Customer>(`/customers/${id}`, customer);
-      return data;
+    mutationFn: async ({
+      id,
+      ...contact
+    }: Partial<Contact> & { id: string }) => {
+      try {
+        const { data } = await apiClient.patch<any>(`/contacts/${id}`, contact);
+        return data?.data || data;
+      } catch {
+        const { data } = await apiClient.patch<any>(
+          `/customers/${id}`,
+          contact,
+        );
+        return data?.data || data;
+      }
     },
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["contacts"] });
       queryClient.invalidateQueries({ queryKey: ["customers"] });
     },
   });
 };
 
-export const useDeleteCustomer = () => {
+// Backward compatibility alias
+export const useUpdateCustomer = useUpdateContact;
+
+export const useDeleteContact = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (id: string) => {
-      const { data } = await apiClient.delete(`/customers/${id}`);
-      return data;
+      try {
+        const { data } = await apiClient.delete(`/contacts/${id}`);
+        return data?.data || data;
+      } catch {
+        const { data } = await apiClient.delete(`/customers/${id}`);
+        return data?.data || data;
+      }
     },
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["contacts"] });
       queryClient.invalidateQueries({ queryKey: ["customers"] });
     },
   });
 };
 
-// ==================== CATEGORIES ====================
+// Backward compatibility alias
+export const useDeleteCustomer = useDeleteContact;
 
+export const useAddContactNote = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ id, content }: { id: string; content: string }) => {
+      const { data } = await apiClient.post<any>(`/contacts/${id}/notes`, {
+        content,
+      });
+      return data?.data || data;
+    },
+    onSuccess: (_data, variables) => {
+      queryClient.invalidateQueries({ queryKey: ["contacts", variables.id] });
+    },
+  });
+};
+
+// ==================== CATEGORIES ====================\n
 export interface Category {
   id: string;
   name: string;
@@ -180,8 +270,11 @@ export const useCategories = () => {
   return useQuery<Category[]>({
     queryKey: ["categories"],
     queryFn: async () => {
-      const { data } = await apiClient.get<Category[]>("/categories");
-      return data;
+      const { data } = await apiClient.get<any>("/categories");
+      if (Array.isArray(data)) return data;
+      if (Array.isArray(data?.data)) return data.data;
+      if (Array.isArray(data?.categories)) return data.categories;
+      return [];
     },
   });
 };
@@ -190,8 +283,8 @@ export const useCreateCategory = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (category: Partial<Category>) => {
-      const { data } = await apiClient.post<Category>("/categories", category);
-      return data;
+      const { data } = await apiClient.post<any>("/categories", category);
+      return data?.data || data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["categories"] });
@@ -202,9 +295,15 @@ export const useCreateCategory = () => {
 export const useUpdateCategory = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async ({ id, ...category }: Partial<Category> & { id: string }) => {
-      const { data } = await apiClient.patch<Category>(`/categories/${id}`, category);
-      return data;
+    mutationFn: async ({
+      id,
+      ...category
+    }: Partial<Category> & { id: string }) => {
+      const { data } = await apiClient.patch<any>(
+        `/categories/${id}`,
+        category,
+      );
+      return data?.data || data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["categories"] });
@@ -217,7 +316,7 @@ export const useDeleteCategory = () => {
   return useMutation({
     mutationFn: async (id: string) => {
       const { data } = await apiClient.delete(`/categories/${id}`);
-      return data;
+      return data?.data || data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["categories"] });

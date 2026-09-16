@@ -1,139 +1,231 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useForm, FormProvider } from "react-hook-form";
 import SimpleInput from "@/components/inputs/SimpleInput";
 import ActionButton from "@/components/buttons/ActionButton";
 import SimpleTitle from "@/components/SimpleTitle";
-import SelectImage from "@/components/images/SelectImage";
-import { useSelectImage } from "@/helpers/images";
 import FormWrapper from "@/components/forms/FormWrapper";
 import LocalSelect from "@/components/inputs/LocalSelect";
+import { useCreateContact, useCompanies } from "@/api/crmApi";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/tenant/contacts/customers/add/")({
   component: RouteComponent,
 });
 
+interface CustomerFormData {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  type: string;
+  companyName: string;
+  address: string;
+  city: string;
+  state: string;
+  zipCode: string;
+  country: string;
+  source: string;
+  status: string;
+}
+
 function RouteComponent() {
-  const methods = useForm();
-  const onSubmit = (data: any) => console.log(data);
-  const props = useSelectImage();
+  const navigate = useNavigate();
+  const createContact = useCreateContact();
+  const { data: companies = [] } = useCompanies();
+
+  const methods = useForm<CustomerFormData>({
+    defaultValues: {
+      firstName: "",
+      lastName: "",
+      email: "",
+      phone: "",
+      type: "individual",
+      companyName: "",
+      address: "",
+      city: "",
+      state: "",
+      zipCode: "",
+      country: "United States",
+      source: "Referral",
+      status: "customer",
+    },
+  });
+
+  const onSubmit = async (data: CustomerFormData) => {
+    try {
+      await createContact.mutateAsync({
+        firstName: data.firstName,
+        lastName: data.lastName,
+        email: data.email,
+        phone: data.phone,
+        workPhone: data.phone,
+        cellPhone: data.phone,
+        type: data.type,
+        companyName: data.companyName,
+        address: data.address,
+        addressLine1: data.address,
+        city: data.city,
+        state: data.state,
+        zipCode: data.zipCode,
+        country: data.country,
+        source: data.source,
+        status: data.status,
+      });
+      toast.success(
+        `Customer "${data.firstName} ${data.lastName}" added successfully!`,
+      );
+      navigate({ to: "/tenant/contacts/customers" });
+    } catch (err: any) {
+      toast.error(
+        err.response?.data?.message ||
+          "Failed to create customer. Please try again.",
+      );
+    }
+  };
 
   return (
-    <div className="">
-      <SimpleTitle title={"Add Customer"}></SimpleTitle>
-      <section className="p-4 bg-base-100 shadow rounded-box py-8 space-y-4">
-        <SelectImage {...props} title="Profile Pic" />
-
+    <div className="p-2 space-y-6">
+      <SimpleTitle title="Add New Customer" />
+      <section className="p-6 bg-base-100 shadow rounded-box">
         <FormProvider {...methods}>
-          <form
-            onSubmit={methods.handleSubmit(onSubmit)}
-            className="space-y-4 grid md:grid-cols-2 gap-4"
-          >
-            <FormWrapper title="User Details">
-              <SimpleInput
-                label="Full Name"
-                placeholder="Enter full name"
-                {...methods.register("fullName", {
-                  required: "Full Name is required",
-                })}
-              />
-              <SimpleInput
-                label="Email"
-                type="email"
-                placeholder="Enter email address"
-                {...methods.register("email", {
-                  required: "Email is required",
-                  pattern: {
-                    value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
-                    message: "Invalid email address",
-                  },
-                })}
-              />
-              <SimpleInput
-                label="Phone Number"
-                type="tel"
-                placeholder="Enter phone number"
-                {...methods.register("phone", {
-                  required: "Phone number is required",
-                })}
-              />
-              <SimpleInput
-                label="Username"
-                placeholder="Enter username"
-                defaultValue="demo@example.com"
-                {...methods.register("username", {
-                  required: "Username is required",
-                })}
-              />
-              <SimpleInput
-                label="Password"
-                type="password"
-                placeholder="Enter password"
-                {...methods.register("password", {
-                  required: "Password is required",
-                })}
-              />
+          <form onSubmit={methods.handleSubmit(onSubmit)} className="space-y-6">
+            <div className="grid md:grid-cols-2 gap-6">
+              {/* Contact Identity */}
+              <FormWrapper title="Customer Identity">
+                <div className="grid grid-cols-2 gap-3">
+                  <SimpleInput
+                    label="First Name"
+                    placeholder="Jane"
+                    {...methods.register("firstName", {
+                      required: "First Name is required",
+                    })}
+                  />
+                  <SimpleInput
+                    label="Last Name"
+                    placeholder="Doe"
+                    {...methods.register("lastName", {
+                      required: "Last Name is required",
+                    })}
+                  />
+                </div>
+                <SimpleInput
+                  label="Email Address"
+                  type="email"
+                  placeholder="jane.doe@example.com"
+                  {...methods.register("email", {
+                    required: "Email is required",
+                    pattern: {
+                      value:
+                        /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
+                      message: "Invalid email address",
+                    },
+                  })}
+                />
+                <SimpleInput
+                  label="Phone Number"
+                  type="tel"
+                  placeholder="+1 (555) 000-0000"
+                  {...methods.register("phone", {
+                    required: "Phone number is required",
+                  })}
+                />
+                <LocalSelect
+                  label="Customer Type"
+                  {...methods.register("type")}
+                >
+                  <option value="individual">Individual</option>
+                  <option value="business">Business / Commercial</option>
+                  <option value="partner">Partner</option>
+                </LocalSelect>
+              </FormWrapper>
+
+              {/* Company & Organization */}
+              <FormWrapper title="Company Affiliation">
+                <div className="space-y-4">
+                  <LocalSelect
+                    label="Assign Company (Optional)"
+                    {...methods.register("companyName")}
+                  >
+                    <option value="">None / Independent</option>
+                    {companies.map((c) => (
+                      <option key={c.id} value={c.name}>
+                        {c.name}
+                      </option>
+                    ))}
+                  </LocalSelect>
+                  <LocalSelect label="Status" {...methods.register("status")}>
+                    <option value="customer">Active Customer</option>
+                    <option value="lead">Lead / Prospect</option>
+                    <option value="inactive">Inactive</option>
+                  </LocalSelect>
+                  <LocalSelect
+                    label="Lead Source"
+                    {...methods.register("source")}
+                  >
+                    <option value="Referral">Referral</option>
+                    <option value="Website">Website Form</option>
+                    <option value="Organic Search">Organic Search</option>
+                    <option value="Social Media">Social Media</option>
+                    <option value="Direct Call">Direct Call</option>
+                    <option value="Other">Other</option>
+                  </LocalSelect>
+                </div>
+              </FormWrapper>
+            </div>
+
+            {/* Address Information */}
+            <FormWrapper title="Physical & Billing Address">
+              <div className="grid md:grid-cols-2 gap-4">
+                <SimpleInput
+                  label="Street Address"
+                  placeholder="123 Market Street"
+                  {...methods.register("address")}
+                />
+                <SimpleInput
+                  label="City"
+                  placeholder="San Francisco"
+                  {...methods.register("city")}
+                />
+                <SimpleInput
+                  label="State / Province / Region"
+                  placeholder="California"
+                  {...methods.register("state")}
+                />
+                <SimpleInput
+                  label="ZIP / Postal Code"
+                  placeholder="94103"
+                  {...methods.register("zipCode")}
+                />
+                <div className="md:col-span-2">
+                  <SimpleInput
+                    label="Country"
+                    placeholder="United States"
+                    {...methods.register("country")}
+                  />
+                </div>
+              </div>
             </FormWrapper>
 
-            <FormWrapper title="Address Information">
-              <SimpleInput
-                label="Address"
-                placeholder="Enter address"
-                {...methods.register("address")}
+            <div className="flex justify-end gap-3 pt-4 border-t border-base-200">
+              <button
+                type="button"
+                className="btn btn-ghost"
+                onClick={() => navigate({ to: "/tenant/contacts/customers" })}
+              >
+                Cancel
+              </button>
+              <ActionButton
+                type="submit"
+                title={
+                  createContact.isPending ? "Creating..." : "Save Customer"
+                }
+                className="btn btn-primary"
+                disabled={createContact.isPending}
               />
-              <SimpleInput
-                label="City"
-                placeholder="Enter city"
-                {...methods.register("city")}
-              />
-              <SimpleInput
-                label="State/Region"
-                placeholder="Enter state or region"
-                {...methods.register("stateRegion")}
-              />
-              <SimpleInput
-                label="ZIP/Postal Code"
-                placeholder="Enter ZIP or postal code"
-                {...methods.register("zipPostalCode")}
-              />
-              <SimpleInput
-                label="Country"
-                placeholder="Enter country"
-                defaultValue="United States"
-                {...methods.register("country")}
-              />
-            </FormWrapper>
-
-            {/*<FormWrapper title="Account Details"></FormWrapper>*/}
-
-            <FormWrapper
-              title="Additional Information"
-              className="md:col-span-2"
-            >
-              <LocalSelect label="Company">
-                <option value={"ACME"}>ACME</option>
-                <option value={"Flutter"}>Flutter</option>
-                <option value={"Comany"}>Comany</option>
-              </LocalSelect>
-              <SimpleInput
-                label="Prepared by"
-                placeholder="Enter preparer's name"
-                {...methods.register("preparedBy")}
-              />
-              <SimpleInput
-                label="Tag"
-                placeholder="Add a tag"
-                {...methods.register("tag")}
-              />
-            </FormWrapper>
-
-            <ActionButton
-              type="submit"
-              title="Add Customer"
-              className="btn btn-primary md:col-span-2"
-            />
+            </div>
           </form>
         </FormProvider>
       </section>
     </div>
-  )
+  );
 }

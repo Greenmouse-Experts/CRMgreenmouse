@@ -1,27 +1,45 @@
 import SummaryCard from "@/components/SummaryCard";
 import SummaryGrid from "@/components/SummaryGrid";
+import { useContacts, type Contact } from "@/api/crmApi";
 
-const customers = [
-  {
-    title: "Total Customers",
-    value: 100,
-  },
-  {
-    title: "Active Customers",
-    value: 80,
-  },
-  {
-    title: "Inactive Customers",
-    value: 20,
-  },
-];
+interface CustomerSummaryProps {
+  contacts?: Contact[];
+}
 
-export default function CustomerSummary() {
+export default function CustomerSummary({
+  contacts: propContacts,
+}: CustomerSummaryProps) {
+  const { data: fetchedContacts = [] } = useContacts();
+  const list = propContacts || fetchedContacts;
+
+  const total = list.length;
+  const active = list.filter(
+    (c) => c.status !== "inactive" && c.status !== "lead",
+  ).length;
+  const leads = list.filter(
+    (c) => c.status === "lead" || c.status === "inactive",
+  ).length;
+
+  const stats = [
+    {
+      title: "Total Contacts",
+      value: total,
+    },
+    {
+      title: "Active Customers",
+      value: active,
+    },
+    {
+      title: "Leads & Prospects",
+      value: leads,
+    },
+  ];
+
   return (
-    <div className="">
+    <div>
       <SummaryGrid>
-        {customers.map((customer) => (
-          <SummaryCard item={customer} />
+        {stats.map((item, index) => (
+          <SummaryCard key={index} item={item} />
         ))}
       </SummaryGrid>
     </div>

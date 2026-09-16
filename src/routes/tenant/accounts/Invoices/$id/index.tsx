@@ -1,6 +1,21 @@
 import SimpleTitle from "@/components/SimpleTitle";
 import { useParams } from "@tanstack/react-router";
 import { createFileRoute } from "@tanstack/react-router";
+import {
+  useInvoice,
+  useSendInvoice,
+  useMarkInvoicePaid,
+} from "@/api/financeApi";
+import PageLoader from "@/components/layout/PageLoader";
+import { toast } from "sonner";
+import {
+  Send,
+  CheckCircle,
+  FileText,
+  Calendar,
+  Building,
+  Mail,
+} from "lucide-react";
 
 export const Route = createFileRoute("/tenant/accounts/Invoices/$id/")({
   component: RouteComponent,
@@ -10,115 +25,235 @@ function RouteComponent() {
   const { id } = useParams({
     strict: false,
   });
+
+  const query = useInvoice(id);
+  const sendInvoice = useSendInvoice();
+  const markPaid = useMarkInvoicePaid();
+
+  const invoice = query.data;
+
+  const handleSend = async () => {
+    if (!id) return;
+    try {
+      await sendInvoice.mutateAsync(id);
+      toast.success("Invoice sent to customer.");
+    } catch (err: any) {
+      toast.error(err.response?.data?.message || "Failed to send invoice.");
+    }
+  };
+
+  const handleMarkPaid = async () => {
+    if (!id) return;
+    try {
+      await markPaid.mutateAsync(id);
+      toast.success("Invoice marked as paid.");
+    } catch (err: any) {
+      toast.error(
+        err.response?.data?.message || "Failed to mark invoice paid.",
+      );
+    }
+  };
+
   return (
-    <section className="">
-      <SimpleTitle backBtn title={"Invoice Details: " + id} />
+    <section className="space-y-6">
+      <SimpleTitle
+        backBtn
+        title={`Invoice Details: ${invoice?.invoiceNumber || id || ""}`}
+      />
 
-      <section className="space-y-4 max-w-4xl mx-auto">
-        {/*<div className="text-2xl font-bold mb-4">New Invoices: {id}</div>*/}
+      <PageLoader query={query}>
+        {invoice && (
+          <section className="space-y-6 max-w-4xl mx-auto">
+            {/* Header / Brand Card */}
+            <div className="card bg-primary text-primary-content shadow-lg">
+              <div className="card-body p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                <div className="flex items-center gap-4">
+                  <div className="size-14 rounded-2xl bg-white/20 grid place-items-center font-bold text-2xl">
+                    <FileText className="size-7" />
+                  </div>
+                  <div>
+                    <h2 className="text-xl font-bold">
+                      {invoice.invoiceNumber || `INV-${invoice.id.slice(0, 8)}`}
+                    </h2>
+                    <p className="text-sm opacity-85">Greenmouse CRM Billing</p>
+                  </div>
+                </div>
 
-        <div className="card bg-accent  shadow text-accent-content  ">
-          <div className="card-body p-6">
-            <div className="flex items-center mb-4">
-              <div className="avatar placeholder mr-4">
-                <div className="bg-neutral grid place-items-center text-neutral-content rounded-full w-12">
-                  <span className="text-xl">M</span>
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="badge badge-lg bg-white/20 text-white font-semibold uppercase tracking-wider border-0">
+                    {invoice.status || "Draft"}
+                  </span>
+                  {invoice.status !== "paid" && (
+                    <button
+                      onClick={handleMarkPaid}
+                      disabled={markPaid.isPending}
+                      className="btn btn-sm btn-accent text-accent-content"
+                    >
+                      <CheckCircle className="size-4 mr-1" /> Mark Paid
+                    </button>
+                  )}
+                  <button
+                    onClick={handleSend}
+                    disabled={sendInvoice.isPending}
+                    className="btn btn-sm btn-neutral"
+                  >
+                    <Send className="size-4 mr-1" /> Send
+                  </button>
                 </div>
               </div>
-              <div>
-                <h2 className="card-title text-lg">Maglo</h2>
-                <p className="text-sm">sales@maglo.com</p>
-              </div>
-            </div>
-            <div className="text-right text-sm">
-              <p>1333 Grey Fox Farm Road</p>
-              <p>Houston, TX 77060</p>
-              <p>Bloomfield Hills, Michigan(M), 48301</p>
-            </div>
-          </div>
-        </div>
-
-        <div className="card bg-base-100  ring ring-current/10 shadow  mb-6">
-          <div className="card-body p-6">
-            <div className="grid grid-cols-2 gap-4 mb-4">
-              <div>
-                <h3 className="font-bold text-lg mb-2">Invoice Number</h3>
-                <p>MAG 2541420</p>
-                <p className="text-sm">Issued Date: 10 Apr 2022</p>
-                <p className="text-sm">Due Date: 20 Apr 2022</p>
-              </div>
-              <div className="text-right">
-                <h3 className="font-bold text-lg mb-2">Billed to</h3>
-                <p>Sajib Rahman</p>
-                <p>3471 Rainy Day Drive</p>
-                <p>Needham, MA 02192</p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="card bg-base-100 ring ring-current/10 shadow mb-6">
-          <div className="card-body p-6">
-            <h3 className="font-bold text-lg mb-2">Item Details</h3>
-            <p className="text-sm text-gray-500 mb-4">
-              Details item with more info
-            </p>
-
-            <div className="overflow-x-auto">
-              <table className="table w-full">
-                <thead>
-                  <tr>
-                    <th>ITEM</th>
-                    <th className="text-center">ORDER/TYPE</th>
-                    <th className="text-right">RATE</th>
-                    <th className="text-right">AMOUNT</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>iPhone 13 Pro Max</td>
-                    <td className="text-center">01</td>
-                    <td className="text-right">$244</td>
-                    <td className="text-right">$244.00</td>
-                  </tr>
-                  <tr>
-                    <td>Netflix Subscription</td>
-                    <td className="text-center">01</td>
-                    <td className="text-right">$420</td>
-                    <td className="text-right">$420.00</td>
-                  </tr>
-                </tbody>
-              </table>
             </div>
 
-            <button className="btn btn-link text-success mt-4 justify-start">
-              Add item
-            </button>
+            {/* Invoice Meta Grid */}
+            <div className="card bg-base-100 shadow border border-base-200">
+              <div className="card-body p-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <h3 className="font-bold text-base mb-3 flex items-center gap-2 text-base-content">
+                      <Calendar className="size-4 text-primary" /> Invoice
+                      Schedule
+                    </h3>
+                    <div className="text-sm space-y-1 text-base-content/70">
+                      <div>
+                        <span className="font-semibold">Issued Date: </span>
+                        {invoice.issuedDate
+                          ? new Date(invoice.issuedDate).toLocaleDateString()
+                          : "—"}
+                      </div>
+                      <div>
+                        <span className="font-semibold">Due Date: </span>
+                        {invoice.dueDate
+                          ? new Date(invoice.dueDate).toLocaleDateString()
+                          : "—"}
+                      </div>
+                      {invoice.paidAt && (
+                        <div>
+                          <span className="font-semibold text-success">
+                            Paid Date:{" "}
+                          </span>
+                          {new Date(invoice.paidAt).toLocaleDateString()}
+                        </div>
+                      )}
+                    </div>
+                  </div>
 
-            <div className="divider"></div>
-
-            <div className="flex justify-end mt-4">
-              <div className="w-1/2">
-                <div className="grid grid-cols-2 gap-2">
-                  <div className="font-bold">Subtotal</div>
-                  <div className="text-right">$664.00</div>
-
-                  <div className="font-bold">Discount</div>
-                  <div className="text-right text-success">Add</div>
-
-                  <div className="font-bold">Tax</div>
-                  <div className="text-right text-success">Add</div>
-
-                  <div className="font-bold text-lg mt-4">Total</div>
-                  <div className="text-right font-bold text-lg mt-4">
-                    $664.00
+                  <div>
+                    <h3 className="font-bold text-base mb-3 flex items-center gap-2 text-base-content">
+                      <Building className="size-4 text-primary" /> Billed To
+                    </h3>
+                    <div className="text-sm space-y-1 text-base-content/70">
+                      <div className="font-semibold text-base-content">
+                        {invoice.contact
+                          ? `${invoice.contact.firstName} ${invoice.contact.lastName}`
+                          : "General Customer"}
+                      </div>
+                      {invoice.contact?.email && (
+                        <div className="flex items-center gap-1">
+                          <Mail className="size-3" /> {invoice.contact.email}
+                        </div>
+                      )}
+                      {invoice.billingAddress && (
+                        <div>{invoice.billingAddress}</div>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
-        </div>
-      </section>
+
+            {/* Line Items Table */}
+            <div className="card bg-base-100 shadow border border-base-200">
+              <div className="card-body p-6 space-y-4">
+                <h3 className="font-bold text-base text-base-content">
+                  Line Items
+                </h3>
+
+                <div className="overflow-x-auto">
+                  <table className="table w-full">
+                    <thead className="bg-base-200/50 text-xs">
+                      <tr>
+                        <th>ITEM / DESCRIPTION</th>
+                        <th className="text-center">QTY</th>
+                        <th className="text-right">UNIT RATE</th>
+                        <th className="text-right">AMOUNT</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {invoice.items && invoice.items.length > 0 ? (
+                        invoice.items.map((item, idx) => (
+                          <tr key={idx}>
+                            <td className="font-medium text-base-content">
+                              {item.description}
+                            </td>
+                            <td className="text-center">{item.qty}</td>
+                            <td className="text-right">
+                              ${item.unitPrice.toFixed(2)}
+                            </td>
+                            <td className="text-right font-semibold">
+                              ${(item.qty * item.unitPrice).toFixed(2)}
+                            </td>
+                          </tr>
+                        ))
+                      ) : (
+                        <tr>
+                          <td
+                            colSpan={4}
+                            className="text-center py-4 text-base-content/60"
+                          >
+                            No items recorded.
+                          </td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+
+                <div className="divider"></div>
+
+                <div className="flex justify-end">
+                  <div className="w-72 space-y-2 text-sm">
+                    <div className="flex justify-between">
+                      <span className="text-base-content/70">Subtotal</span>
+                      <span className="font-medium">
+                        $
+                        {(
+                          invoice.items?.reduce(
+                            (a, b) => a + (b.qty || 1) * (b.unitPrice || 0),
+                            0,
+                          ) || 0
+                        ).toFixed(2)}
+                      </span>
+                    </div>
+
+                    {!!invoice.discount && (
+                      <div className="flex justify-between text-success">
+                        <span>Discount</span>
+                        <span>-${Number(invoice.discount).toFixed(2)}</span>
+                      </div>
+                    )}
+
+                    {!!invoice.tax && (
+                      <div className="flex justify-between">
+                        <span className="text-base-content/70">Tax</span>
+                        <span>+${Number(invoice.tax).toFixed(2)}</span>
+                      </div>
+                    )}
+
+                    <div className="divider my-1"></div>
+
+                    <div className="flex justify-between text-base font-bold text-base-content">
+                      <span>Total Amount</span>
+                      <span className="text-primary">
+                        ${(invoice.total || 0).toFixed(2)}{" "}
+                        {invoice.currency || "USD"}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+        )}
+      </PageLoader>
     </section>
   );
 }

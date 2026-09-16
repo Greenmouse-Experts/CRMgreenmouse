@@ -1,8 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import apiClient from "./simpleApi";
 
-// ==================== INCOME ====================
-
+// ==================== INCOME ====================\n
 export interface IncomeRecord {
   id: string;
   amount: number;
@@ -25,10 +24,13 @@ export const useIncomeRecords = (params?: IncomeQueryParams) => {
   return useQuery<IncomeRecord[]>({
     queryKey: ["income", params],
     queryFn: async () => {
-      const { data } = await apiClient.get<IncomeRecord[]>("/income", {
+      const { data } = await apiClient.get<any>("/income", {
         params,
       });
-      return data;
+      if (Array.isArray(data)) return data;
+      if (Array.isArray(data?.data)) return data.data;
+      if (Array.isArray(data?.income)) return data.income;
+      return [];
     },
   });
 };
@@ -37,8 +39,8 @@ export const useCreateIncome = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (record: Partial<IncomeRecord>) => {
-      const { data } = await apiClient.post<IncomeRecord>("/income", record);
-      return data;
+      const { data } = await apiClient.post<any>("/income", record);
+      return data?.data || data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["income"] });
@@ -49,9 +51,12 @@ export const useCreateIncome = () => {
 export const useUpdateIncome = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async ({ id, ...record }: Partial<IncomeRecord> & { id: string }) => {
-      const { data } = await apiClient.patch<IncomeRecord>(`/income/${id}`, record);
-      return data;
+    mutationFn: async ({
+      id,
+      ...record
+    }: Partial<IncomeRecord> & { id: string }) => {
+      const { data } = await apiClient.patch<any>(`/income/${id}`, record);
+      return data?.data || data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["income"] });
@@ -64,7 +69,7 @@ export const useDeleteIncome = () => {
   return useMutation({
     mutationFn: async (id: string) => {
       const { data } = await apiClient.delete(`/income/${id}`);
-      return data;
+      return data?.data || data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["income"] });
@@ -76,8 +81,10 @@ export const useUpdateIncomeStatus = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async ({ id, status }: { id: string; status: string }) => {
-      const { data } = await apiClient.patch(`/income/${id}/status`, { status });
-      return data;
+      const { data } = await apiClient.patch(`/income/${id}/status`, {
+        status,
+      });
+      return data?.data || data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["income"] });
@@ -85,8 +92,7 @@ export const useUpdateIncomeStatus = () => {
   });
 };
 
-// ==================== EXPENSES ====================
-
+// ==================== EXPENSES ====================\n
 export interface ExpenseRecord {
   id: string;
   amount: number;
@@ -109,10 +115,13 @@ export const useExpenseRecords = (params?: ExpenseQueryParams) => {
   return useQuery<ExpenseRecord[]>({
     queryKey: ["expenses", params],
     queryFn: async () => {
-      const { data } = await apiClient.get<ExpenseRecord[]>("/expenses", {
+      const { data } = await apiClient.get<any>("/expenses", {
         params,
       });
-      return data;
+      if (Array.isArray(data)) return data;
+      if (Array.isArray(data?.data)) return data.data;
+      if (Array.isArray(data?.expenses)) return data.expenses;
+      return [];
     },
   });
 };
@@ -121,8 +130,8 @@ export const useCreateExpense = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (record: Partial<ExpenseRecord>) => {
-      const { data } = await apiClient.post<ExpenseRecord>("/expenses", record);
-      return data;
+      const { data } = await apiClient.post<any>("/expenses", record);
+      return data?.data || data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["expenses"] });
@@ -133,9 +142,12 @@ export const useCreateExpense = () => {
 export const useUpdateExpense = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async ({ id, ...record }: Partial<ExpenseRecord> & { id: string }) => {
-      const { data } = await apiClient.patch<ExpenseRecord>(`/expenses/${id}`, record);
-      return data;
+    mutationFn: async ({
+      id,
+      ...record
+    }: Partial<ExpenseRecord> & { id: string }) => {
+      const { data } = await apiClient.patch<any>(`/expenses/${id}`, record);
+      return data?.data || data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["expenses"] });
@@ -148,7 +160,7 @@ export const useDeleteExpense = () => {
   return useMutation({
     mutationFn: async (id: string) => {
       const { data } = await apiClient.delete(`/expenses/${id}`);
-      return data;
+      return data?.data || data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["expenses"] });
@@ -160,8 +172,10 @@ export const useUpdateExpenseStatus = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async ({ id, status }: { id: string; status: string }) => {
-      const { data } = await apiClient.patch(`/expenses/${id}/status`, { status });
-      return data;
+      const { data } = await apiClient.patch(`/expenses/${id}/status`, {
+        status,
+      });
+      return data?.data || data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["expenses"] });
@@ -169,8 +183,7 @@ export const useUpdateExpenseStatus = () => {
   });
 };
 
-// ==================== INVOICES ====================
-
+// ==================== INVOICES ====================\n
 export interface InvoiceItem {
   description: string;
   qty: number;
@@ -199,6 +212,7 @@ export interface Invoice {
   status: "draft" | "sent" | "paid" | "overdue" | "cancelled" | string;
   pdfUrl?: string;
   total?: number;
+  amountDue?: number;
   createdAt?: string;
   updatedAt?: string;
 }
@@ -213,10 +227,13 @@ export const useInvoices = (params?: InvoiceQueryParams) => {
   return useQuery<Invoice[]>({
     queryKey: ["invoices", params],
     queryFn: async () => {
-      const { data } = await apiClient.get<Invoice[]>("/invoices", {
+      const { data } = await apiClient.get<any>("/invoices", {
         params,
       });
-      return data;
+      if (Array.isArray(data)) return data;
+      if (Array.isArray(data?.data)) return data.data;
+      if (Array.isArray(data?.invoices)) return data.invoices;
+      return [];
     },
   });
 };
@@ -226,27 +243,35 @@ export const useInvoice = (id?: string) => {
     queryKey: ["invoices", id],
     queryFn: async () => {
       if (!id) throw new Error("Invoice ID required");
-      const { data } = await apiClient.get<Invoice>(`/invoices/${id}`);
-      return data;
+      const { data } = await apiClient.get<any>(`/invoices/${id}`);
+      return data?.data || data;
     },
     enabled: !!id,
   });
 };
 
+export interface InvoiceStatsData {
+  total?: number;
+  paid?: number;
+  pending?: number;
+  overdue?: number;
+  draft?: number;
+  sent?: number;
+  revenue?: number;
+  paidAmount?: number;
+  pendingAmount?: number;
+}
+
 export const useInvoiceStats = () => {
-  return useQuery<{
-    total?: number;
-    paid?: number;
-    pending?: number;
-    overdue?: number;
-    draft?: number;
-    sent?: number;
-    revenue?: number;
-  }>({
+  return useQuery<InvoiceStatsData>({
     queryKey: ["invoices", "stats"],
     queryFn: async () => {
-      const { data } = await apiClient.get("/invoices/stats");
-      return data;
+      try {
+        const { data } = await apiClient.get<any>("/invoices/stats");
+        return data?.data || data || {};
+      } catch {
+        return {};
+      }
     },
   });
 };
@@ -255,8 +280,8 @@ export const useCreateInvoice = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (invoice: Partial<Invoice>) => {
-      const { data } = await apiClient.post<Invoice>("/invoices", invoice);
-      return data;
+      const { data } = await apiClient.post<any>("/invoices", invoice);
+      return data?.data || data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["invoices"] });
@@ -267,9 +292,12 @@ export const useCreateInvoice = () => {
 export const useUpdateInvoice = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async ({ id, ...invoice }: Partial<Invoice> & { id: string }) => {
-      const { data } = await apiClient.patch<Invoice>(`/invoices/${id}`, invoice);
-      return data;
+    mutationFn: async ({
+      id,
+      ...invoice
+    }: Partial<Invoice> & { id: string }) => {
+      const { data } = await apiClient.patch<any>(`/invoices/${id}`, invoice);
+      return data?.data || data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["invoices"] });
@@ -282,7 +310,7 @@ export const useDeleteInvoice = () => {
   return useMutation({
     mutationFn: async (id: string) => {
       const { data } = await apiClient.delete(`/invoices/${id}`);
-      return data;
+      return data?.data || data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["invoices"] });
@@ -294,8 +322,10 @@ export const useUpdateInvoiceStatus = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async ({ id, status }: { id: string; status: string }) => {
-      const { data } = await apiClient.patch(`/invoices/${id}/status`, { status });
-      return data;
+      const { data } = await apiClient.patch(`/invoices/${id}/status`, {
+        status,
+      });
+      return data?.data || data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["invoices"] });
@@ -308,7 +338,7 @@ export const useSendInvoice = () => {
   return useMutation({
     mutationFn: async (id: string) => {
       const { data } = await apiClient.patch(`/invoices/${id}/send`);
-      return data;
+      return data?.data || data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["invoices"] });
@@ -321,7 +351,7 @@ export const useMarkInvoicePaid = () => {
   return useMutation({
     mutationFn: async (id: string) => {
       const { data } = await apiClient.patch(`/invoices/${id}/mark-paid`);
-      return data;
+      return data?.data || data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["invoices"] });
@@ -329,12 +359,30 @@ export const useMarkInvoicePaid = () => {
   });
 };
 
-// ==================== TRANSACTIONS ====================
+export const useCancelInvoice = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (id: string) => {
+      const { data } = await apiClient.patch(`/invoices/${id}/cancel`);
+      return data?.data || data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["invoices"] });
+    },
+  });
+};
 
+// ==================== TRANSACTIONS ====================\n
 export interface Transaction {
   id: string;
   date: string;
-  type: "Income" | "Expense" | "Invoice Payment" | "Deposit" | "Withdrawal" | string;
+  type:
+    | "Income"
+    | "Expense"
+    | "Invoice Payment"
+    | "Deposit"
+    | "Withdrawal"
+    | string;
   amount: number;
   description: string;
   status: "Completed" | "Pending" | "Failed" | string;
@@ -347,43 +395,69 @@ export const useTransactions = () => {
     queryKey: ["transactions"],
     queryFn: async () => {
       try {
-        const { data } = await apiClient.get<Transaction[]>("/transactions");
-        return data;
+        const { data } = await apiClient.get<any>("/transactions");
+        const res = Array.isArray(data)
+          ? data
+          : data?.data || data?.transactions;
+        if (Array.isArray(res)) return res;
+        throw new Error("Not an array");
       } catch (err: any) {
         // Fallback: If no standalone /transactions endpoint, synthesize from Income & Expenses
-        if (err?.response?.status === 404) {
+        if (err?.response?.status === 404 || !err?.response) {
           const [incomeRes, expenseRes] = await Promise.allSettled([
-            apiClient.get<IncomeRecord[]>("/income"),
-            apiClient.get<ExpenseRecord[]>("/expenses"),
+            apiClient.get<any>("/income"),
+            apiClient.get<any>("/expenses"),
           ]);
           const list: Transaction[] = [];
-          if (incomeRes.status === "fulfilled" && Array.isArray(incomeRes.value.data)) {
-            incomeRes.value.data.forEach((inc) => {
-              list.push({
-                id: inc.id,
-                date: inc.date || inc.createdAt || new Date().toISOString(),
-                type: "Income",
-                amount: Number(inc.amount),
-                description: inc.description || `Income from ${inc.source}`,
-                status: inc.status === "Approved" ? "Completed" : inc.status === "Rejected" ? "Failed" : "Pending",
-                category: inc.type,
+          if (incomeRes.status === "fulfilled") {
+            const incData = Array.isArray(incomeRes.value.data)
+              ? incomeRes.value.data
+              : incomeRes.value.data?.data || [];
+            if (Array.isArray(incData)) {
+              incData.forEach((inc: any) => {
+                list.push({
+                  id: inc.id,
+                  date: inc.date || inc.createdAt || new Date().toISOString(),
+                  type: "Income",
+                  amount: Number(inc.amount),
+                  description: inc.description || `Income from ${inc.source}`,
+                  status:
+                    inc.status === "Approved"
+                      ? "Completed"
+                      : inc.status === "Rejected"
+                        ? "Failed"
+                        : "Pending",
+                  category: inc.type,
+                });
               });
-            });
+            }
           }
-          if (expenseRes.status === "fulfilled" && Array.isArray(expenseRes.value.data)) {
-            expenseRes.value.data.forEach((exp) => {
-              list.push({
-                id: exp.id,
-                date: exp.date || exp.createdAt || new Date().toISOString(),
-                type: "Expense",
-                amount: -Math.abs(Number(exp.amount)),
-                description: exp.description || `Payment to ${exp.paidTo}`,
-                status: exp.status === "Approved" ? "Completed" : exp.status === "Rejected" ? "Failed" : "Pending",
-                category: exp.category,
+          if (expenseRes.status === "fulfilled") {
+            const expData = Array.isArray(expenseRes.value.data)
+              ? expenseRes.value.data
+              : expenseRes.value.data?.data || [];
+            if (Array.isArray(expData)) {
+              expData.forEach((exp: any) => {
+                list.push({
+                  id: exp.id,
+                  date: exp.date || exp.createdAt || new Date().toISOString(),
+                  type: "Expense",
+                  amount: -Math.abs(Number(exp.amount)),
+                  description: exp.description || `Payment to ${exp.paidTo}`,
+                  status:
+                    exp.status === "Approved"
+                      ? "Completed"
+                      : exp.status === "Rejected"
+                        ? "Failed"
+                        : "Pending",
+                  category: exp.category,
+                });
               });
-            });
+            }
           }
-          return list.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+          return list.sort(
+            (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
+          );
         }
         throw err;
       }

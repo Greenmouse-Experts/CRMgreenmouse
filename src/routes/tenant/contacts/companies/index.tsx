@@ -1,192 +1,312 @@
-import ActionButton from "@/components/buttons/ActionButton";
+import { useState, useRef, useMemo } from "react";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import SimpleContainer from "@/components/SimpleContainer";
+import ContainerRow from "@/components/ContainerRow";
 import CustomTable from "@/components/tables/CustomTable";
-import { createFileRoute } from "@tanstack/react-router";
+import type { Actions } from "@/components/tables/pop-up";
 import CompanySummary from "./-components/CompanySummary";
-import { useModal } from "@/helpers/modals";
-import Modal from "@/components/modals/DialogModal";
-import SimpleInput from "@/components/inputs/SimpleInput";
-import { FormProvider, useForm } from "react-hook-form";
-import { toast } from "sonner";
-import { faker } from "@faker-js/faker";
-import { useState } from "react";
-import SelectImage from "@/components/images/SelectImage";
-import { useSelectImage } from "@/helpers/images";
+import Modal, { type ModalHandle } from "@/components/DialogModal";
 import PageHeader from "@/components/Headers/PageHeader";
-import { PlusCircleIcon } from "lucide-react";
-import { Link } from "@tanstack/react-router";
+import PageLoader from "@/components/layout/PageLoader";
+import { useSearch } from "@/stores/data";
+import { useCompanies, useDeleteCompany, type Company } from "@/api/crmApi";
+import { toast } from "sonner";
+import {
+  PlusCircleIcon,
+  Building2,
+  Mail,
+  Phone,
+  Globe,
+  MapPin,
+  Eye,
+  Trash2,
+} from "lucide-react";
 
 export const Route = createFileRoute("/tenant/contacts/companies/")({
   component: RouteComponent,
 });
 
-interface AddCompanyProps {
-  email: string;
-  name: string;
-  location: string;
-  contactPerson: string;
-  phone: string;
-}
-
-interface Company {
-  id: string;
-  name: string;
-  email: string;
-  location: string;
-  contactPerson: string;
-  phone: string;
-  logo: string;
-}
-
-const createRandomCompany = (): Company => {
-  return {
-    id: faker.string.uuid(),
-    name: faker.company.name(),
-    email: faker.internet.email(),
-    location: faker.location.city() + ", " + faker.location.country(),
-    contactPerson: faker.person.fullName(),
-    phone: faker.phone.number(),
-    logo: faker.image.url(),
-  };
-};
-
 function RouteComponent() {
-  const modal = useModal();
-  const form = useForm<AddCompanyProps>();
-  const { register, handleSubmit, reset } = form;
-  const [companies, setCompanies] = useState<Company[]>(
-    faker.helpers.multiple(createRandomCompany, {
-      count: 10,
-    }),
-  );
+  const query = useCompanies();
+  const deleteCompany = useDeleteCompany();
+  const searchProps = useSearch();
 
-  const handleAddCompany = (data: AddCompanyProps) => {
-    const newCompany: Company = {
-      id: faker.string.uuid(),
-      logo: faker.image.url(),
-      ...data,
-    };
-    setCompanies((prev) => [...prev, newCompany]);
-    toast.success("Company added successfully!");
-    modal.closeModal();
-    reset(); // Reset form fields after successful submission
+  const detailsModalRef = useRef<ModalHandle>(null);
+  const [selectedCompany, setSelectedCompany] = useState<Company | null>(null);
+
+  const companies = query.data || [];
+
+  const filteredCompanies = useMemo(() => {
+    const q = (searchProps.search || "").toLowerCase().trim();
+    if (!q) return companies;
+    return companies.filter((c) => {
+      const name = (c.name || "").toLowerCase();
+      const industry = (c.industry || "").toLowerCase();
+      const email = (c.email || "").toLowerCase();
+      const city = (c.city || "").toLowerCase();
+      return (
+        name.includes(q) ||
+        industry.includes(q) ||
+        email.includes(q) ||
+        city.includes(q)
+      );
+    });
+  }, [companies, searchProps.search]);
+
+  const handleDelete = async (company: Company) => {
+    if (
+      !window.confirm(
+        `Are you sure you want to delete company account "${company.name}"?`,
+      )
+    ) {
+      return;
+    }
+
+    try {
+      await deleteCompany.mutateAsync(company.id);
+      toast.success(`Company "${company.name}" deleted successfully.`);
+    } catch (err: any) {
+      toast.error(err.response?.data?.message || "Failed to delete company.");
+    }
   };
 
   const companyColumns = [
     {
-      key: "logo",
-      label: "Logo",
-      render: (value: string) => (
-        <img
-          src={value}
-          alt="Company Logo"
-          className="w-8 h-8 rounded-full object-cover"
-        />
+      key: "name",
+      label: "Company",
+      render: (_value: any, item: Company) => (
+        <div className="flex items-center gap-3">
+          <div className="size-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center font-bold">
+            <Building2 className="size-5" />
+          </div>
+          <div>
+            <div className="font-semibold text-base-content leading-tight">
+              {item.name}
+            </div>
+            <div className="text-xs text-base-content/60">
+              {item.industry || "General Industry"}
+            </div>
+          </div>
+        </div>
       ),
     },
-    { key: "name", label: "Company Name" },
-    { key: "email", label: "Email" },
-    { key: "location", label: "Location" },
-    { key: "contactPerson", label: "Contact Person" },
-    { key: "phone", label: "Phone" },
+    {
+      key: "email",
+      label: "Email",
+      render: (value: string) => (
+        <span className="text-xs text-base-content/70">{value || "—"}</span>
+      ),
+    },
+    {
+      key: "workPhone",
+      label: "Phone",
+      render: (value: string) => (
+        <span className="text-xs text-base-content/70">{value || "—"}</span>
+      ),
+    },
+    {
+      key: "location",
+      label: "Location",
+      render: (_value: any, item: Company) => (
+        <span className="text-xs text-base-content/60">
+          {[item.city, item.state, item.country].filter(Boolean).join(", ") ||
+            "—"}
+        </span>
+      ),
+    },
+    {
+      key: "website",
+      label: "Website",
+      render: (value: string) =>
+        value ? (
+          <a
+            href={value.startsWith("http") ? value : `https://${value}`}
+            target="_blank"
+            rel="noreferrer"
+            className="text-xs text-primary hover:underline flex items-center gap-1"
+          >
+            <Globe className="size-3" /> Visit
+          </a>
+        ) : (
+          <span className="text-xs text-base-content/40">—</span>
+        ),
+    },
   ];
 
-  const props = useSelectImage();
+  const actions: Actions<Company>[] = [
+    {
+      key: "view",
+      label: "View Details",
+      render: () => (
+        <span className="flex items-center gap-2">
+          <Eye className="size-4" /> View Details
+        </span>
+      ),
+      action: (item: Company) => {
+        setSelectedCompany(item);
+        detailsModalRef.current?.open();
+      },
+    },
+    {
+      key: "delete",
+      label: "Delete Company",
+      render: () => (
+        <span className="flex items-center gap-2 text-error">
+          <Trash2 className="size-4" /> Delete
+        </span>
+      ),
+      action: (item: Company) => handleDelete(item),
+    },
+  ];
+
   return (
     <>
       <PageHeader
         title="Companies"
-        description="Manage companies and company info"
+        description="Directory of enterprise accounts, corporate partners, and suppliers"
       >
-        {/*//@ts-ignore*/}
-        <Link
-          to="/tenant/contacts/companies/add"
-          // onClick={() => {
-          //   modal.showModal();
-          // }}
-          className="btn btn-primary "
-        >
-          <PlusCircleIcon /> Add Company
-        </Link>
+        <div>
+          <Link to="/tenant/contacts/companies/add" className="btn btn-primary">
+            <PlusCircleIcon className="size-4 mr-1" /> Add Company
+          </Link>
+        </div>
       </PageHeader>
-      <Modal title="Add Company" ref={modal.ref}>
-        <FormProvider {...form}>
-          <form
-            action=""
-            className="space-y-4"
-            onSubmit={handleSubmit(handleAddCompany)}
-          >
-            <SelectImage title="Company logo" {...props} />
-            <SimpleInput
-              title="Company Name"
-              label="Company Name"
-              {...register("name", {
-                required: "Company Name is Required",
-              })}
-              placeholder="Enter company name"
+
+      <CompanySummary companies={companies} />
+
+      <SimpleContainer title="Company Accounts">
+        <ContainerRow searchProps={searchProps} />
+        <PageLoader query={query}>
+          <div className="bg-base-100">
+            <CustomTable
+              ring={false}
+              data={filteredCompanies}
+              columns={companyColumns}
+              actions={actions}
             />
-            <SimpleInput
-              title="Email"
-              label="Email"
-              {...register("email", {
-                required: "Email is Required",
-                pattern: {
-                  value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                  message: "Invalid email address",
-                },
-              })}
-              placeholder="Enter company email"
-            />
-            <SimpleInput
-              title="Location"
-              label="Location"
-              {...register("location", {
-                required: "Location is Required",
-              })}
-              placeholder="Enter company location"
-            />
-            <SimpleInput
-              title="Contact Person"
-              label="Contact Person"
-              {...register("contactPerson", {
-                required: "Contact Person is Required",
-              })}
-              placeholder="Enter contact person's name"
-            />
-            <SimpleInput
-              title="Phone"
-              label="Phone"
-              {...register("phone", {
-                required: "Phone number is Required",
-              })}
-              placeholder="Enter phone number"
-            />
-            <div className="flex justify-end mt-4">
-              <ActionButton type="submit">Add Company</ActionButton>
-            </div>
-          </form>
-        </FormProvider>
-      </Modal>
-      <CompanySummary />
-      <SimpleContainer title="Companies">
-        <CustomTable
-          ring={false}
-          actions={[
-            {
-              label: "View",
-              key: "view",
-              action: (_item, nav) => {
-                nav({
-                  //@ts-ignore
-                  to: "details/acme",
-                });
-              },
-            },
-          ]}
-          data={companies}
-          columns={companyColumns}
-        />
+          </div>
+        </PageLoader>
       </SimpleContainer>
+
+      {/* View Company Modal */}
+      <Modal ref={detailsModalRef} title="Company Account Profile">
+        {selectedCompany && (
+          <div className="space-y-6 pt-2">
+            <div className="flex items-center gap-4 bg-base-200/50 p-4 rounded-xl">
+              <div className="size-14 rounded-xl bg-primary/20 text-primary flex items-center justify-center font-bold text-xl">
+                <Building2 className="size-7" />
+              </div>
+              <div>
+                <h3 className="text-lg font-bold text-base-content">
+                  {selectedCompany.name}
+                </h3>
+                <div className="flex items-center gap-2 text-xs text-base-content/60 mt-0.5">
+                  <span className="badge badge-sm badge-outline">
+                    {selectedCompany.industry || "General Industry"}
+                  </span>
+                  {selectedCompany.groupName && (
+                    <>
+                      <span>•</span>
+                      <span>{selectedCompany.groupName}</span>
+                    </>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="bg-base-200/40 p-3 rounded-lg flex items-start gap-3">
+                <Mail className="size-4 text-primary mt-1 shrink-0" />
+                <div>
+                  <div className="text-xs text-base-content/60">
+                    Business Email
+                  </div>
+                  <div className="text-sm font-medium text-base-content break-all">
+                    {selectedCompany.email || "—"}
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-base-200/40 p-3 rounded-lg flex items-start gap-3">
+                <Phone className="size-4 text-primary mt-1 shrink-0" />
+                <div>
+                  <div className="text-xs text-base-content/60">
+                    Phone Number
+                  </div>
+                  <div className="text-sm font-medium text-base-content">
+                    {selectedCompany.workPhone || "—"}
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-base-200/40 p-3 rounded-lg flex items-start gap-3">
+                <Globe className="size-4 text-primary mt-1 shrink-0" />
+                <div>
+                  <div className="text-xs text-base-content/60">Website</div>
+                  <div className="text-sm font-medium text-base-content">
+                    {selectedCompany.website ? (
+                      <a
+                        href={
+                          selectedCompany.website.startsWith("http")
+                            ? selectedCompany.website
+                            : `https://${selectedCompany.website}`
+                        }
+                        target="_blank"
+                        rel="noreferrer"
+                        className="text-primary hover:underline"
+                      >
+                        {selectedCompany.website}
+                      </a>
+                    ) : (
+                      "—"
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-base-200/40 p-3 rounded-lg flex items-start gap-3">
+                <MapPin className="size-4 text-primary mt-1 shrink-0" />
+                <div>
+                  <div className="text-xs text-base-content/60">
+                    Headquarters
+                  </div>
+                  <div className="text-sm font-medium text-base-content">
+                    {[
+                      selectedCompany.addressLine1,
+                      selectedCompany.city,
+                      selectedCompany.state,
+                      selectedCompany.country,
+                    ]
+                      .filter(Boolean)
+                      .join(", ") || "—"}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {selectedCompany.federalIdNumber && (
+              <div className="bg-base-200/30 p-3 rounded-lg text-xs">
+                <span className="font-semibold text-base-content/70">
+                  Federal Tax ID:{" "}
+                </span>
+                <span className="font-mono text-base-content">
+                  {selectedCompany.federalIdNumber}
+                </span>
+              </div>
+            )}
+
+            <div className="modal-action">
+              <button
+                type="button"
+                className="btn btn-ghost"
+                onClick={() => detailsModalRef.current?.close()}
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        )}
+      </Modal>
     </>
   );
 }

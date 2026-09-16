@@ -1,154 +1,318 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { useState } from "react";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useForm, FormProvider } from "react-hook-form";
 import SimpleInput from "@/components/inputs/SimpleInput";
 import ActionButton from "@/components/buttons/ActionButton";
 import SimpleTitle from "@/components/SimpleTitle";
 import FormWrapper from "@/components/forms/FormWrapper";
 import LocalSelect from "@/components/inputs/LocalSelect";
+import { useCreateInvoice, type InvoiceItem } from "@/api/financeApi";
+import { useContacts } from "@/api/crmApi";
+import { toast } from "sonner";
+import { Plus, Trash2 } from "lucide-react";
 
 export const Route = createFileRoute("/tenant/accounts/Invoices/add/")({
   component: RouteComponent,
 });
+
 interface FormValues {
   invoiceNumber: string;
   issuedDate: string;
   dueDate: string;
-  customerId: string;
-  status: string;
+  contactId: string;
   billingAddress: string;
+  currency: string;
+  tax: number;
+  discount: number;
 }
 
 function RouteComponent() {
+  const navigate = useNavigate();
+  const createInvoice = useCreateInvoice();
+  const { data: contacts = [] } = useContacts();
+
+  const [items, setItems] = useState<InvoiceItem[]>([
+    { description: "Standard Consultation & Service", qty: 1, unitPrice: 150 },
+  ]);
+
   const methods = useForm<FormValues>({
     defaultValues: {
+      invoiceNumber: `INV-${Date.now().toString().slice(-6)}`,
       issuedDate: new Date().toISOString().split("T")[0],
+      dueDate: new Date(Date.now() + 14 * 86400000).toISOString().split("T")[0],
+      contactId: "",
+      billingAddress: "",
+      currency: "USD",
+      tax: 0,
+      discount: 0,
     },
   });
-  const onSubmit = (data: FormValues) => console.log(data);
+
+  const handleAddItem = () => {
+    setItems((prev) => [...prev, { description: "", qty: 1, unitPrice: 0 }]);
+  };
+
+  const handleRemoveItem = (index: number) => {
+    if (items.length <= 1) {
+      toast.error("Invoice must contain at least one item.");
+      return;
+    }
+    setItems((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const handleItemChange = (
+    index: number,
+    field: keyof InvoiceItem,
+    value: any,
+  ) => {
+    setItems((prev) => {
+      const copy = [...prev];
+      copy[index] = { ...copy[index], [field]: value };
+      return copy;
+    });
+  };
+
+  const subtotal = items.reduce(
+    (acc, curr) =>
+      acc + (Number(curr.qty) || 0) * (Number(curr.unitPrice) || 0),
+    0,
+  );
+
+  const onSubmit = async (data: FormValues) => {
+    if (items.some((i) => !i.description.trim())) {
+      toast.error("Please provide descriptions for all line items.");
+      return;
+    }
+
+    const discountVal = Number(data.discount) || 0;
+    const taxVal = Number(data.tax) || 0;
+    const total = Math.max(0, subtotal - discountVal + taxVal);
+
+    try {
+      await createInvoice.mutateAsync({
+        invoiceNumber: data.invoiceNumber,
+        issuedDate: data.issuedDate,
+        dueDate: data.dueDate,
+        contactId: data.contactId || undefined,
+        billingAddress: data.billingAddress,
+        currency: data.currency,
+        items,
+        discount: discountVal,
+        tax: taxVal,
+        total,
+        status: "draft",
+      });
+      toast.success(`Invoice "${data.invoiceNumber}" created successfully!`);
+      navigate({ to: "/tenant/accounts/Invoices" });
+    } catch (err: any) {
+      toast.error(
+        err.response?.data?.message ||
+          "Failed to create invoice. Please try again.",
+      );
+    }
+  };
 
   return (
-    <div className="">
-      <SimpleTitle title={"Create New Invoice"} backBtn></SimpleTitle>
-      <section className="p-4 bg-base-100 shadow rounded-box py-8 space-y-4">
+    <div className="space-y-6">
+      <SimpleTitle title="Create New Invoice" backBtn />
+      <section className="p-6 bg-base-100 shadow rounded-box">
         <FormProvider {...methods}>
-          <form
-            onSubmit={methods.handleSubmit(onSubmit)}
-            className="space-y-4 grid md:grid-cols-2 gap-4"
-          >
-            <FormWrapper title="Invoice Details">
-              <SimpleInput
-                label="Invoice Number"
-                placeholder="e.g. MAG 2541420"
-                {...methods.register("invoiceNumber", {
-                  required: "Invoice Number is required",
-                })}
-              />
-              <SimpleInput
-                label="Issued Date"
-                type="date"
-                {...methods.register("issuedDate", {
-                  required: "Issued Date is required",
-                })}
-              />
-              <SimpleInput
-                label="Due Date"
-                type="date"
-                {...methods.register("dueDate", {
-                  required: "Due Date is required",
-                })}
-              />
-            </FormWrapper>
+          <form onSubmit={methods.handleSubmit(onSubmit)} className="space-y-6">
+            <div className="grid md:grid-cols-2 gap-6">
+              <FormWrapper title="Invoice Details">
+                <SimpleInput
+                  label="Invoice Number"
+                  placeholder="e.g. INV-00123"
+                  {...methods.register("invoiceNumber", {
+                    required: "Invoice Number is required",
+                  })}
+                />
+                <SimpleInput
+                  label="Issue Date"
+                  type="date"
+                  {...methods.register("issuedDate", {
+                    required: "Issue Date is required",
+                  })}
+                />
+                <SimpleInput
+                  label="Due Date"
+                  type="date"
+                  {...methods.register("dueDate", {
+                    required: "Due Date is required",
+                  })}
+                />
+                <LocalSelect label="Currency" {...methods.register("currency")}>
+                  <option value="USD">USD ($)</option>
+                  <option value="EUR">EUR (€)</option>
+                  <option value="GBP">GBP (£)</option>
+                  <option value="NGN">NGN (₦)</option>
+                </LocalSelect>
+              </FormWrapper>
 
-            <FormWrapper title="Billing Information">
-              <LocalSelect
-                label="Select Customer"
-                {...methods.register("customerId")}
-              >
-                <option value="">Select a customer</option>
-                <option value="1">Sajib Rahman</option>
-                <option value="2">John Doe</option>
-              </LocalSelect>
-              <SimpleInput
-                label="Billing Address"
-                placeholder="Enter billing address"
-                {...methods.register("billingAddress")}
-              />
-            </FormWrapper>
+              <FormWrapper title="Customer & Billing Details">
+                <LocalSelect
+                  label="Select Customer / Contact"
+                  {...methods.register("contactId")}
+                >
+                  <option value="">General Client / Unassigned</option>
+                  {contacts.map((c) => (
+                    <option key={c.id} value={c.id}>
+                      {c.firstName} {c.lastName} ({c.email})
+                    </option>
+                  ))}
+                </LocalSelect>
+                <SimpleInput
+                  label="Billing Address"
+                  placeholder="Street, City, State, Country"
+                  {...methods.register("billingAddress")}
+                />
+              </FormWrapper>
+            </div>
 
-            <FormWrapper title="Items & Totals" className="md:col-span-2">
-              <div className="overflow-x-auto">
+            <FormWrapper title="Invoice Line Items" className="space-y-4">
+              <div className="overflow-x-auto border border-base-200 rounded-lg">
                 <table className="table w-full">
-                  <thead>
+                  <thead className="bg-base-200/50 text-xs">
                     <tr>
-                      <th>ITEM</th>
-                      <th className="text-center">QTY</th>
-                      <th className="text-right">RATE</th>
-                      <th className="text-right">AMOUNT</th>
+                      <th className="w-1/2">Item Description</th>
+                      <th className="text-center w-24">Qty</th>
+                      <th className="text-right w-36">Unit Price</th>
+                      <th className="text-right w-36">Line Total</th>
+                      <th className="w-12"></th>
                     </tr>
                   </thead>
                   <tbody>
-                    <tr>
-                      <td>
-                        <input
-                          type="text"
-                          placeholder="Item name"
-                          className="input input-bordered input-sm w-full"
-                        />
-                      </td>
-                      <td className="text-center">
-                        <input
-                          type="number"
-                          defaultValue="1"
-                          className="input input-bordered input-sm w-20 text-center"
-                        />
-                      </td>
-                      <td className="text-right">
-                        <input
-                          type="number"
-                          placeholder="0.00"
-                          className="input input-bordered input-sm w-24 text-right"
-                        />
-                      </td>
-                      <td className="text-right font-bold">$0.00</td>
-                    </tr>
+                    {items.map((item, idx) => {
+                      const lineTotal =
+                        (Number(item.qty) || 0) * (Number(item.unitPrice) || 0);
+                      return (
+                        <tr key={idx}>
+                          <td>
+                            <input
+                              type="text"
+                              value={item.description}
+                              onChange={(e) =>
+                                handleItemChange(
+                                  idx,
+                                  "description",
+                                  e.target.value,
+                                )
+                              }
+                              placeholder="Service or product name..."
+                              className="input input-bordered input-sm w-full"
+                              required
+                            />
+                          </td>
+                          <td>
+                            <input
+                              type="number"
+                              min="1"
+                              value={item.qty}
+                              onChange={(e) =>
+                                handleItemChange(
+                                  idx,
+                                  "qty",
+                                  parseInt(e.target.value) || 1,
+                                )
+                              }
+                              className="input input-bordered input-sm w-20 text-center mx-auto block"
+                            />
+                          </td>
+                          <td>
+                            <input
+                              type="number"
+                              min="0"
+                              step="0.01"
+                              value={item.unitPrice}
+                              onChange={(e) =>
+                                handleItemChange(
+                                  idx,
+                                  "unitPrice",
+                                  parseFloat(e.target.value) || 0,
+                                )
+                              }
+                              className="input input-bordered input-sm w-32 text-right ml-auto block"
+                            />
+                          </td>
+                          <td className="text-right font-semibold">
+                            ${lineTotal.toFixed(2)}
+                          </td>
+                          <td className="text-center">
+                            <button
+                              type="button"
+                              onClick={() => handleRemoveItem(idx)}
+                              className="btn btn-ghost btn-xs text-error"
+                            >
+                              <Trash2 className="size-4" />
+                            </button>
+                          </td>
+                        </tr>
+                      );
+                    })}
                   </tbody>
                 </table>
               </div>
-              <button
-                type="button"
-                className="btn btn-link text-success p-0 h-auto min-h-0"
-              >
-                + Add Item
-              </button>
-            </FormWrapper>
 
-            <div className="md:col-span-2 flex justify-end">
-              <div className="w-full md:w-1/3 space-y-2">
-                <div className="flex justify-between">
-                  <span className="font-bold">Subtotal</span>
-                  <span>$0.00</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="font-bold">Tax (%)</span>
-                  <input
-                    type="number"
-                    className="input input-bordered input-sm w-20 text-right"
-                    defaultValue="0"
-                  />
-                </div>
-                <div className="divider my-1"></div>
-                <div className="flex justify-between text-lg font-bold">
-                  <span>Total</span>
-                  <span>$0.00</span>
+              <div className="flex justify-between items-start pt-2">
+                <button
+                  type="button"
+                  onClick={handleAddItem}
+                  className="btn btn-sm btn-outline btn-primary gap-1"
+                >
+                  <Plus className="size-4" /> Add Item
+                </button>
+
+                <div className="w-72 space-y-2 bg-base-200/40 p-4 rounded-xl">
+                  <div className="flex justify-between text-sm">
+                    <span className="text-base-content/70">Subtotal:</span>
+                    <span className="font-medium">${subtotal.toFixed(2)}</span>
+                  </div>
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-base-content/70">Discount ($):</span>
+                    <input
+                      type="number"
+                      min="0"
+                      step="0.01"
+                      className="input input-bordered input-xs w-24 text-right"
+                      {...methods.register("discount")}
+                    />
+                  </div>
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-base-content/70">Tax ($):</span>
+                    <input
+                      type="number"
+                      min="0"
+                      step="0.01"
+                      className="input input-bordered input-xs w-24 text-right"
+                      {...methods.register("tax")}
+                    />
+                  </div>
+                  <div className="divider my-1"></div>
+                  <div className="flex justify-between text-base font-bold">
+                    <span>Grand Total:</span>
+                    <span className="text-primary">${subtotal.toFixed(2)}</span>
+                  </div>
                 </div>
               </div>
-            </div>
+            </FormWrapper>
 
-            <ActionButton
-              type="submit"
-              title="Create Invoice"
-              className="btn btn-primary md:col-span-2"
-            />
+            <div className="flex justify-end gap-3 pt-4 border-t border-base-200">
+              <button
+                type="button"
+                className="btn btn-ghost"
+                onClick={() => navigate({ to: "/tenant/accounts/Invoices" })}
+              >
+                Cancel
+              </button>
+              <ActionButton
+                type="submit"
+                title={
+                  createInvoice.isPending ? "Generating..." : "Save Invoice"
+                }
+                className="btn btn-primary"
+                disabled={createInvoice.isPending}
+              />
+            </div>
           </form>
         </FormProvider>
       </section>

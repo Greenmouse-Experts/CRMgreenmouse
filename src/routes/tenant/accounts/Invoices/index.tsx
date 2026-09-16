@@ -1,196 +1,219 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { useMemo } from "react";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import InvoicesStat from "./-components/InvocesStat";
 import SimpleContainer from "@/components/SimpleContainer";
+import ContainerRow from "@/components/ContainerRow";
 import CustomTable from "@/components/tables/CustomTable";
-import { faker } from "@faker-js/faker";
 import PageHeader from "@/components/Headers/PageHeader";
+import PageLoader from "@/components/layout/PageLoader";
 import type { Actions } from "@/components/tables/pop-up";
-import { PlusCircleIcon } from "lucide-react";
-import { Link } from "@tanstack/react-router";
-
-// Define the type for an invoice, inspired by the image
-interface Invoice {
-  number: string; // e.g., INV842002
-  isStarred: boolean; // For the star icon next to the number
-  status: "Draft" | "Paid" | "Overdue" | "Pending"; // Status values from image
-  date: Date; // Date object for easier formatting
-  customer: {
-    name: string;
-    avatar: string; // URL for customer avatar
-  };
-  total: number; // Total amount, e.g., 152.00
-  amountDue: number; // Amount due, e.g., 0.00
-}
-
-// Function to generate a single fake invoice
-const generateFakeInvoice = (): Invoice => {
-  const total = parseFloat(faker.finance.amount({ min: 45, max: 840, dec: 2 }));
-  const status = faker.helpers.arrayElement([
-    "Paid",
-    "Pending",
-    "Overdue",
-    "Draft",
-  ]);
-  let amountDue = 0;
-
-  if (status === "Paid" || status === "Draft") {
-    amountDue = 0;
-  } else if (status === "Pending" || status === "Overdue") {
-    // Generate amountDue that could be 0, full total, or a partial amount
-    const dueOptions = [
-      0,
-      total,
-      parseFloat(faker.finance.amount({ min: 1, max: total, dec: 2 })),
-    ];
-    amountDue = faker.helpers.arrayElement(dueOptions);
-  }
-
-  // Ensure amountDue does not exceed total
-  amountDue = Math.min(amountDue, total);
-
-  return {
-    number: `INV84${faker.string.numeric({ length: 4, exclude: ["0000"] })}`, // Unique-ish invoice number
-    isStarred: faker.datatype.boolean(0.15), // 15% chance to be starred
-    status: status,
-    date: faker.date.recent({ days: 30 }), // Dates within the last 30 days
-    customer: {
-      name: faker.person.fullName(),
-      avatar: faker.image.avatar(),
-    },
-    total: total,
-    amountDue: parseFloat(amountDue.toFixed(2)),
-  };
-};
-
-// Generate an array of fake invoices
-const fakeInvoices: Invoice[] = faker.helpers.multiple(generateFakeInvoice, {
-  count: 15, // Increased count to match the visual density of the image
-});
+import { PlusCircleIcon, Send, CheckCircle, Trash2, Eye } from "lucide-react";
+import { useSearch } from "@/stores/data";
+import {
+  useInvoices,
+  useSendInvoice,
+  useMarkInvoicePaid,
+  useDeleteInvoice,
+  type Invoice,
+} from "@/api/financeApi";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/tenant/accounts/Invoices/")({
   component: RouteComponent,
 });
 
 function RouteComponent() {
-  // Define columns for the CustomTable, matching the image
+  const query = useInvoices();
+  const sendInvoice = useSendInvoice();
+  const markPaid = useMarkInvoicePaid();
+  const deleteInvoice = useDeleteInvoice();
+  const searchProps = useSearch();
+  const navigate = useNavigate();
+
+  const invoices = query.data || [];
+
+  const filteredInvoices = useMemo(() => {
+    const q = (searchProps.search || "").toLowerCase().trim();
+    if (!q) return invoices;
+    return invoices.filter((inv) => {
+      const invNum = (inv.invoiceNumber || inv.id || "").toLowerCase();
+      const customerName =
+        `${inv.contact?.firstName || ""} ${inv.contact?.lastName || ""}`.toLowerCase();
+      const email = (inv.contact?.email || "").toLowerCase();
+      const status = (inv.status || "").toLowerCase();
+      return (
+        invNum.includes(q) ||
+        customerName.includes(q) ||
+        email.includes(q) ||
+        status.includes(q)
+      );
+    });
+  }, [invoices, searchProps.search]);
+
+  const handleSend = async (inv: Invoice) => {
+    try {
+      await sendInvoice.mutateAsync(inv.id);
+      toast.success(
+        `Invoice ${inv.invoiceNumber || inv.id} sent successfully.`,
+      );
+    } catch (err: any) {
+      toast.error(err.response?.data?.message || "Failed to send invoice.");
+    }
+  };
+
+  const handleMarkPaid = async (inv: Invoice) => {
+    try {
+      await markPaid.mutateAsync(inv.id);
+      toast.success(`Invoice ${inv.invoiceNumber || inv.id} marked as paid.`);
+    } catch (err: any) {
+      toast.error(err.response?.data?.message || "Failed to update invoice.");
+    }
+  };
+
+  const handleDelete = async (inv: Invoice) => {
+    if (
+      !window.confirm(
+        `Are you sure you want to delete invoice ${inv.invoiceNumber || inv.id}?`,
+      )
+    ) {
+      return;
+    }
+    try {
+      await deleteInvoice.mutateAsync(inv.id);
+      toast.success("Invoice deleted.");
+    } catch (err: any) {
+      toast.error(err.response?.data?.message || "Failed to delete invoice.");
+    }
+  };
+
   const invoiceColumns = [
     {
-      key: "number",
-      label: "Number",
-      render: (value: string, _item: Invoice) => (
-        <div className="flex items-center gap-2">
-          <span>{value}</span>
-        </div>
+      key: "invoiceNumber",
+      label: "Invoice #",
+      render: (_value: any, item: Invoice) => (
+        <span className="font-mono font-medium text-base-content">
+          {item.invoiceNumber || `#${item.id.slice(0, 8)}`}
+        </span>
       ),
     },
     {
       key: "status",
       label: "Status",
-      render: (value: "Draft" | "Paid" | "Overdue" | "Pending") => {
-        let badgeClass = "";
-        switch (value) {
-          case "Paid":
-            badgeClass = "badge-success ";
-            break;
-          case "Overdue":
-            badgeClass = "badge-error ";
-            break;
-          case "Draft":
-            badgeClass = "badge-info "; // Softer look for draft
-            break;
-          case "Pending":
-          default:
-            badgeClass = "badge-warning ";
-            break;
-        }
+      render: (status: string) => {
+        const s = (status || "draft").toLowerCase();
+        let badgeClass = "badge-ghost";
+        if (s === "paid") badgeClass = "badge-success badge-soft";
+        else if (s === "pending" || s === "sent")
+          badgeClass = "badge-warning badge-soft";
+        else if (s === "overdue") badgeClass = "badge-error badge-soft";
         return (
           <span
-            className={`${badgeClass} badge badge-soft ring ring-current/50 text-xs badge-sm font-bold `}
+            className={`badge badge-sm font-semibold uppercase text-[10px] ${badgeClass}`}
           >
-            {value}
+            {status || "Draft"}
           </span>
         );
       },
     },
     {
-      key: "date",
-      label: "Date",
-      render: (value: Date) => {
-        const day = value.getDate();
-        const month = value.toLocaleString("en-US", { month: "short" });
-        const year = value.getFullYear();
-
-        // Function to get day suffix (st, nd, rd, th)
-        const getDaySuffix = (d: number) => {
-          if (d > 3 && d < 21) return "th";
-          switch (d % 10) {
-            case 1:
-              return "st";
-            case 2:
-              return "nd";
-            case 3:
-              return "rd";
-            default:
-              return "th";
-          }
-        };
-        return `${day}${getDaySuffix(day)} ${month} ${year}`;
+      key: "customer",
+      label: "Customer",
+      render: (_value: any, item: Invoice) => {
+        const name = item.contact
+          ? `${item.contact.firstName} ${item.contact.lastName}`
+          : "Standard Client";
+        return (
+          <div>
+            <div className="font-semibold text-base-content leading-tight">
+              {name}
+            </div>
+            {item.contact?.email && (
+              <div className="text-xs text-base-content/60">
+                {item.contact.email}
+              </div>
+            )}
+          </div>
+        );
       },
     },
     {
-      key: "customer",
-      label: "Customer",
-      render: (value: { name: string; avatar: string }) => (
-        <div className="flex items-center gap-2">
-          <div className="avatar">
-            <div className="mask mask-squircle w-8 h-8">
-              {" "}
-              {/* mask-squircle for circular avatars */}
-              <img
-                src={value.avatar}
-                alt={value.name}
-                className="object-cover"
-              />
-            </div>
-          </div>
-          <span>{value.name}</span>
-        </div>
+      key: "issuedDate",
+      label: "Issue Date",
+      render: (date: string) => (
+        <span className="text-xs text-base-content/70">
+          {date ? new Date(date).toLocaleDateString() : "—"}
+        </span>
+      ),
+    },
+    {
+      key: "dueDate",
+      label: "Due Date",
+      render: (date: string) => (
+        <span className="text-xs text-base-content/70">
+          {date ? new Date(date).toLocaleDateString() : "—"}
+        </span>
       ),
     },
     {
       key: "total",
-      label: "Total",
-      render: (value: number) => `${value.toFixed(2)} US$`, // Format as currency
-    },
-    {
-      key: "amountDue",
-      label: "Amount Due",
-      render: (value: number) => `${value.toFixed(2)} US$`, // Format as currency
+      label: "Total Amount",
+      render: (val: number, item: Invoice) => (
+        <span className="font-semibold text-base-content">
+          $
+          {(val || 0).toLocaleString(undefined, {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          })}{" "}
+          <span className="text-xs text-base-content/50 font-normal">
+            {item.currency || "USD"}
+          </span>
+        </span>
+      ),
     },
   ];
 
-  // Define actions for the PopUp component, matching the three dots in the image
-  const invoiceActions: Actions[] = [
+  const invoiceActions: Actions<Invoice>[] = [
     {
       key: "view",
       label: "View Details",
-      action: (item: any, nav) =>
-        nav({ to: `/tenant/accounts/invoices/${item.number}` }),
+      render: () => (
+        <span className="flex items-center gap-2">
+          <Eye className="size-4" /> View Details
+        </span>
+      ),
+      action: (item: Invoice) => {
+        navigate({ to: `/tenant/accounts/Invoices/${item.id}` });
+      },
     },
     {
-      key: "edit",
-      label: "Edit Invoice",
-      action: (item: any) => console.log("Edit invoice:", item.number),
+      key: "send",
+      label: "Send to Customer",
+      render: () => (
+        <span className="flex items-center gap-2">
+          <Send className="size-4" /> Send Invoice
+        </span>
+      ),
+      action: (item: Invoice) => handleSend(item),
     },
     {
-      key: "download",
-      label: "Download PDF",
-      action: (item: any) => console.log("Download invoice:", item.number),
+      key: "mark-paid",
+      label: "Mark as Paid",
+      render: () => (
+        <span className="flex items-center gap-2 text-success">
+          <CheckCircle className="size-4" /> Mark Paid
+        </span>
+      ),
+      action: (item: Invoice) => handleMarkPaid(item),
     },
     {
       key: "delete",
       label: "Delete",
-      action: (item: any) => console.log("Delete invoice:", item.number),
+      render: () => (
+        <span className="flex items-center gap-2 text-error">
+          <Trash2 className="size-4" /> Delete
+        </span>
+      ),
+      action: (item: Invoice) => handleDelete(item),
     },
   ];
 
@@ -198,30 +221,27 @@ function RouteComponent() {
     <div className="space-y-4">
       <PageHeader
         title="Invoices"
-        description="Manage your customer invoices and billing"
+        description="Manage your customer invoices, billing records, and incoming payments"
       >
-        {/*//@ts-ignore*/}
-        <Link to="/tenant/accounts/Invoices/add" className="btn btn-primary ">
-          <PlusCircleIcon /> Add Invoice
+        <Link to="/tenant/accounts/Invoices/add" className="btn btn-primary">
+          <PlusCircleIcon className="size-4 mr-1" /> Add Invoice
         </Link>
       </PageHeader>
-      <InvoicesStat />
-      <SimpleContainer
-        title="Invoices"
-        // actions={
-        //   <>
-        //     <ActionButton className="btn btn-sm btn-primary">
-        //       Add Invoice
-        //     </ActionButton>
-        //   </>
-        // }
-      >
-        <CustomTable
-          ring={false} // Match the subtle border in the image
-          data={fakeInvoices}
-          columns={invoiceColumns}
-          actions={invoiceActions} // Pass actions to enable the three-dot menu
-        />
+
+      <InvoicesStat invoices={invoices} />
+
+      <SimpleContainer title="Invoices Directory">
+        <ContainerRow searchProps={searchProps} />
+        <PageLoader query={query}>
+          <div className="bg-base-100">
+            <CustomTable
+              ring={false}
+              data={filteredInvoices}
+              columns={invoiceColumns}
+              actions={invoiceActions}
+            />
+          </div>
+        </PageLoader>
       </SimpleContainer>
     </div>
   );
