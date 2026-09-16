@@ -1,4 +1,5 @@
 import apiClient, { type ApiResponse } from "./simpleApi";
+import { useMutation } from "@tanstack/react-query";
 
 export interface UPLOAD_IMAGE_RESPONSE extends ApiResponse<{
   url: string;
@@ -17,4 +18,10 @@ export const uploadImage = async (
     },
   });
   return resp.data;
+};
+
+export const useUploadImage = () => {
+  return useMutation({
+    mutationFn: (image: File | Blob) => uploadImage(image),
+  });
 };

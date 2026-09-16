@@ -1,299 +1,363 @@
+import { useState, useRef } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import ContainerRow from "@/components/ContainerRow";
 import SimpleContainer from "@/components/SimpleContainer";
 import { useSearch } from "@/stores/data";
-import { PlusCircleIcon } from "lucide-react";
+import { PlusCircleIcon, Shield } from "lucide-react";
 import CustomTable from "@/components/tables/CustomTable";
-import DialogModal from "@/components/modals/DialogModal";
-import { useModal } from "@/helpers/modals";
-import SimpleInput from "@/components/inputs/SimpleInput";
-import ActionButton from "@/components/buttons/ActionButton";
-import { FormProvider, useForm } from "react-hook-form";
-import SimpleTextArea from "@/components/inputs/SimpleTextArea";
-import Modal from "@/components/modals/DialogModal";
-import { useState } from "react";
+import type { Actions } from "@/components/tables/pop-up";
+import Modal, { type ModalHandle } from "@/components/DialogModal";
 import PageHeader from "@/components/Headers/PageHeader";
+import PageLoader from "@/components/layout/PageLoader";
+import {
+  useRoles,
+  useCreateRole,
+  useUpdateRole,
+  useDeleteRole,
+  useAdminPermissions,
+  type Role,
+} from "@/api/adminApi";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/tenant/users/roles/")({
   component: RouteComponent,
 });
 
-const roles = [
-  {
-    id: 1,
-    name: "Superadmin",
-    description: "Full access to all system features and settings.",
-    usersCount: 1,
-    permissions: [
-      "manage_users",
-      "manage_roles",
-      "manage_settings",
-      "view_reports",
-    ],
-  },
-  {
-    id: 2,
-    name: "Admin",
-    description: "Manage users, content, and some system settings.",
-    usersCount: 5,
-    permissions: ["manage_users", "manage_content", "view_reports"],
-  },
-  {
-    id: 3,
-    name: "Staff",
-    description: "Access to specific operational tasks and data.",
-    usersCount: 20,
-    permissions: ["view_orders", "process_returns"],
-  },
-  {
-    id: 4,
-    name: "Editor",
-    description: "Create, edit, and publish content.",
-    usersCount: 12,
-    permissions: ["create_content", "edit_content", "publish_content"],
-  },
-  {
-    id: 5,
-    name: "Viewer",
-    description: "Read-only access to certain sections.",
-    usersCount: 50,
-    permissions: ["view_content", "view_products"],
-  },
-];
 function RouteComponent() {
-  const [selectedItem, setSeletedItem] = useState<
-    (typeof roles)[number] | null
-  >(null);
+  const query = useRoles();
+  const permissionsQuery = useAdminPermissions();
+  const createRole = useCreateRole();
+  const updateRole = useUpdateRole();
+  const deleteRole = useDeleteRole();
+
+  const searchProps = useSearch();
+  const roleModalRef = useRef<ModalHandle>(null);
+
+  const [editingRole, setEditingRole] = useState<Role | null>(null);
+  const [roleName, setRoleName] = useState("");
+  const [roleDescription, setRoleDescription] = useState("");
+  const [selectedPermissions, setSelectedPermissions] = useState<string[]>([]);
+
+  const handleOpenCreate = () => {
+    setEditingRole(null);
+    setRoleName("");
+    setRoleDescription("");
+    setSelectedPermissions([]);
+    roleModalRef.current?.open();
+  };
+
+  const handleOpenEdit = (role: Role) => {
+    setEditingRole(role);
+    setRoleName(role.name);
+    setRoleDescription(role.description || "");
+    setSelectedPermissions(role.permissions || []);
+    roleModalRef.current?.open();
+  };
+
+  const handleDelete = async (role: Role) => {
+    if (
+      !window.confirm(`Are you sure you want to delete role "${role.name}"?`)
+    ) {
+      return;
+    }
+    try {
+      await deleteRole.mutateAsync(role.id);
+      toast.success(`Role "${role.name}" deleted.`);
+    } catch (err: any) {
+      toast.error(err.response?.data?.message || "Failed to delete role.");
+    }
+  };
+
+  const handleTogglePermission = (key: string) => {
+    if (selectedPermissions.includes(key)) {
+      setSelectedPermissions(selectedPermissions.filter((k) => k !== key));
+    } else {
+      setSelectedPermissions([...selectedPermissions, key]);
+    }
+  };
+
+  const handleSelectAllPermissions = () => {
+    if (!permissionsQuery.data) return;
+    if (selectedPermissions.length === permissionsQuery.data.length) {
+      setSelectedPermissions([]);
+    } else {
+      setSelectedPermissions(permissionsQuery.data.map((p) => p.key));
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!roleName.trim()) {
+      toast.error("Role name is required");
+      return;
+    }
+
+    try {
+      if (editingRole) {
+        await updateRole.mutateAsync({
+          id: editingRole.id,
+          name: roleName,
+          description: roleDescription,
+          permissions: selectedPermissions,
+        });
+        toast.success(`Role "${roleName}" updated successfully.`);
+      } else {
+        await createRole.mutateAsync({
+          name: roleName,
+          description: roleDescription,
+          permissions: selectedPermissions,
+        });
+        toast.success(`Role "${roleName}" created successfully.`);
+      }
+      roleModalRef.current?.close();
+    } catch (err: any) {
+      toast.error(err.response?.data?.message || "Operation failed.");
+    }
+  };
+
   const columns = [
-    { key: "id", label: "ID" },
-    { key: "name", label: "Role Name" },
-    { key: "description", label: "Description" },
-    { key: "usersCount", label: "Number of Users" },
+    {
+      key: "name",
+      label: "Role Name",
+      render: (_value: any, item: Role) => (
+        <div className="flex items-center gap-3">
+          <div className="size-9 rounded-lg bg-primary/10 text-primary flex items-center justify-center font-bold">
+            <Shield className="size-4" />
+          </div>
+          <div>
+            <div className="font-semibold text-base-content leading-tight">
+              {item.name}
+            </div>
+            <div className="text-xs text-base-content/60 max-w-sm truncate">
+              {item.description || "No description provided"}
+            </div>
+          </div>
+        </div>
+      ),
+    },
+    {
+      key: "permissions",
+      label: "Permissions",
+      render: (permissions: string[]) => (
+        <div className="flex flex-wrap gap-1 max-w-md">
+          {permissions && permissions.length > 0 ? (
+            permissions.slice(0, 4).map((perm, i) => (
+              <span key={i} className="badge badge-xs badge-ghost font-mono">
+                {perm}
+              </span>
+            ))
+          ) : (
+            <span className="text-xs text-base-content/40">No permissions</span>
+          )}
+          {permissions && permissions.length > 4 && (
+            <span className="badge badge-xs badge-primary badge-soft">
+              +{permissions.length - 4} more
+            </span>
+          )}
+        </div>
+      ),
+    },
+    {
+      key: "createdAt",
+      label: "Created",
+      render: (value: string) => (
+        <span className="text-xs text-base-content/60">
+          {value ? new Date(value).toLocaleDateString() : "—"}
+        </span>
+      ),
+    },
   ];
 
-  const actions = [
+  const actions: Actions<Role>[] = [
     {
       key: "edit",
-      label: "Edit",
-      action: (item: any) => console.log("Edit", item),
-    },
-    {
-      key: "viewPermissions",
-      label: "View Permissions",
-      action: (item: any) => {
-        setSeletedItem(item);
-        modal.showModal();
-
-        // You might open a modal here to display permissions
-      },
-    },
-    {
-      key: "addPermissions",
-      label: "Add Permissions",
-      action: (_item: any) => {
-        addModal.showModal();
+      label: "Edit Role",
+      action: (item: Role) => {
+        handleOpenEdit(item);
       },
     },
     {
       key: "delete",
-      label: "Delete",
-      action: (item: any) => console.log("Delete", item),
+      label: "Delete Role",
+      render: () => <span className="text-error font-medium">Delete Role</span>,
+      action: (item: Role) => {
+        handleDelete(item);
+      },
     },
   ];
 
-  const {
-    ref: addRoleModalRef,
-    showModal: openAddRoleModal,
-    closeModal: closeAddRoleModal,
-  } = useModal();
-  const methods = useForm();
-
-  const onSubmit = (data: any) => {
-    console.log("Add Role:", data);
-    closeAddRoleModal();
-  };
-
-  const props = useSearch();
-  const modal = useModal();
-  const addModal = useModal();
-
   return (
-    <>
-      <PageHeader title="Roles" description="Manage Roles, access control">
-        {/*//@ts-ignore*/}
-        <button onClick={openAddRoleModal} className="btn btn-primary ">
-          <PlusCircleIcon /> Create Role
+    <div className="space-y-4 pb-12">
+      <PageHeader
+        title="Roles & Permissions"
+        description="Configure workspace roles, privileges, and team access levels."
+      >
+        <button onClick={handleOpenCreate} className="btn btn-primary btn-sm">
+          <PlusCircleIcon className="size-4" /> Add Role
         </button>
       </PageHeader>
-      <Modal title="Add Permissions" ref={addModal.ref}>
-        <div className="space-y-2">
-          <div className="form-control">
-            <label className="label cursor-pointer justify-start gap-2">
-              <input type="checkbox" className="checkbox checkbox-primary" />
-              <span className="label-text">Manage Users</span>
-            </label>
-          </div>
-          <div className="form-control">
-            <label className="label cursor-pointer justify-start gap-2">
-              <input type="checkbox" className="checkbox checkbox-primary" />
-              <span className="label-text">Manage Roles</span>
-            </label>
-          </div>
-          <div className="form-control">
-            <label className="label cursor-pointer justify-start gap-2">
-              <input type="checkbox" className="checkbox checkbox-primary" />
-              <span className="label-text">View Reports</span>
-            </label>
-          </div>
-          <div className="form-control">
-            <label className="label cursor-pointer justify-start gap-2">
-              <input type="checkbox" className="checkbox checkbox-primary" />
-              <span className="label-text">View Orders</span>
-            </label>
-          </div>
-          <div className="form-control">
-            <label className="label cursor-pointer justify-start gap-2">
-              <input type="checkbox" className="checkbox checkbox-primary" />
-              <span className="label-text">View Products</span>
-            </label>
-          </div>
-          <div className="form-control">
-            <label className="label cursor-pointer justify-start gap-2">
-              <input type="checkbox" className="checkbox checkbox-primary" />
-              <span className="label-text">Edit Content</span>
-            </label>
-          </div>
-          <div className="form-control">
-            <label className="label cursor-pointer justify-start gap-2">
-              <input type="checkbox" className="checkbox checkbox-primary" />
-              <span className="label-text">Publish Content</span>
-            </label>
-          </div>
-        </div>
-        <div className="modal-action">
-          <ActionButton
-            onClick={() => {
-              addModal.closeModal();
-              console.log("Permissions saved!");
-            }}
-          >
-            Save Permissions
-          </ActionButton>
-        </div>
-      </Modal>
-      <Modal
-        title={`Permissions for ${selectedItem?.name || "Role"}`}
-        ref={modal.ref}
-      >
-        <div className="menu">
-          {selectedItem?.permissions.length ? (
-            selectedItem.permissions.map((permission, index) => (
-              <li>
-                <a>
-                  <span className="size-2 bg-base-content/70 rounded-full"></span>
-                  <span key={index} className="capitalize">
-                    {permission.replace(/_/g, " ")}
-                  </span>
-                </a>
-              </li>
-            ))
-          ) : (
-            <p className="text-gray-500">
-              No permissions assigned to this role.
-            </p>
-          )}
-        </div>
-      </Modal>
+
       <SimpleContainer
-        title="Roles"
-        actions={
+        title={
           <>
-            {/*<button
-              className="btn btn-sm btn-primary"
-              onClick={openAddRoleModal}
-            >
-              <PlusCircleIcon /> Create Role
-            </button>*/}
+            Workspace Roles{" "}
+            {query.data && (
+              <span className="opacity-80 text-xs">({query.data.length})</span>
+            )}
           </>
         }
       >
-        {props.search}
-        <ContainerRow
-          searchProps={props}
-          showSearch={true}
-          //@ts-ignore
-          actions={
-            <>
-              <ExportOptions
-                position="left"
-                options={[
-                  {
-                    name: "export as pdf",
-                    action: () => console.log("yes"),
-                  },
-                ]}
-              />
-            </>
-          }
-        />
-        <CustomTable data={roles} columns={columns} actions={actions} />
-      </SimpleContainer>
-      <DialogModal ref={addRoleModalRef} title="Add New Role">
-        <FormProvider {...methods}>
-          <form onSubmit={methods.handleSubmit(onSubmit)} className="space-y-4">
-            <SimpleInput
-              label="Role Name"
-              placeholder="Enter role name"
-              {...methods.register("roleName", {
-                required: "Role name is required",
-              })}
-            />
-            <SimpleTextArea
-              label="Description"
-              placeholder="Enter role description"
-              {...methods.register("description")}
-            />
-            <div className="flex justify-end gap-2">
-              <ActionButton
-                type="button"
-                onClick={closeAddRoleModal}
-                className="btn-ghost"
-              >
-                Cancel
-              </ActionButton>
-              <ActionButton type="submit">Add Role</ActionButton>
-            </div>
-          </form>
-        </FormProvider>
-      </DialogModal>
-    </>
-  )
-}
+        <ContainerRow showSearch searchProps={searchProps} />
 
-interface ExportProps {
-  options?: [
-    {
-      name: string;
-      action: () => any;
-    },
-  ];
-  position?: "left" | "right";
-}
-const ExportOptions = (props: ExportProps) => {
-  return (
-    <div
-      className={`dropdown ${props?.position == "left" ? "dropdown-start" : "dropdown-end"}`}
-    >
-      <button className="btn btn-sm ">Export</button>
-      <ul className="dropdown-content menu bg-base-100 w-[152px] rounded-box shadow-xs">
-        {props.options?.map((option) => (
-          <li key={option.name}>
-            <a>
-              <button onClick={option.action}>{option.name}</button>
-            </a>
-          </li>
-        ))}
-      </ul>
+        <PageLoader
+          query={query}
+          emptyState={{
+            title: "No Roles Configured",
+            description:
+              "Create custom roles with fine-grained access control permissions.",
+            actionText: "Add Role",
+            onAction: handleOpenCreate,
+          }}
+        >
+          {(rolesList) => {
+            const filtered = rolesList.filter((r) => {
+              if (!searchProps.search) return true;
+              return (
+                r.name
+                  .toLowerCase()
+                  .includes(searchProps.search.toLowerCase()) ||
+                (r.description &&
+                  r.description
+                    .toLowerCase()
+                    .includes(searchProps.search.toLowerCase()))
+              );
+            });
+            return (
+              <CustomTable
+                ring={false}
+                data={filtered}
+                columns={columns}
+                actions={actions}
+              />
+            );
+          }}
+        </PageLoader>
+      </SimpleContainer>
+
+      {/* Create / Edit Role Modal */}
+      <Modal
+        ref={roleModalRef}
+        title={
+          editingRole
+            ? `Edit Role: ${editingRole.name}`
+            : "Create Workspace Role"
+        }
+      >
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label className="label">
+              <span className="label-text font-semibold">Role Name *</span>
+            </label>
+            <input
+              type="text"
+              required
+              value={roleName}
+              onChange={(e) => setRoleName(e.target.value)}
+              placeholder="e.g. Sales Representative, Store Manager"
+              className="input input-sm input-bordered w-full"
+            />
+          </div>
+
+          <div>
+            <label className="label">
+              <span className="label-text font-semibold">Description</span>
+            </label>
+            <textarea
+              value={roleDescription}
+              onChange={(e) => setRoleDescription(e.target.value)}
+              placeholder="Brief description of the role responsibilities"
+              className="textarea textarea-bordered textarea-sm w-full"
+              rows={2}
+            />
+          </div>
+
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <label className="label-text font-semibold">
+                Assigned Permissions ({selectedPermissions.length})
+              </label>
+              <button
+                type="button"
+                onClick={handleSelectAllPermissions}
+                className="btn btn-xs btn-ghost text-primary"
+              >
+                {permissionsQuery.data &&
+                selectedPermissions.length === permissionsQuery.data.length
+                  ? "Deselect All"
+                  : "Select All"}
+              </button>
+            </div>
+
+            <div className="border border-base-200 rounded-xl p-3 max-h-64 overflow-y-auto grid grid-cols-1 sm:grid-cols-2 gap-2 bg-base-200/30">
+              {permissionsQuery.data ? (
+                permissionsQuery.data.map((perm) => {
+                  const isChecked = selectedPermissions.includes(perm.key);
+                  return (
+                    <label
+                      key={perm.key}
+                      className={`flex items-start gap-2.5 p-2 rounded-lg cursor-pointer border transition-colors ${
+                        isChecked
+                          ? "bg-primary/5 border-primary/30"
+                          : "bg-base-100 border-base-200 hover:border-base-300"
+                      }`}
+                    >
+                      <input
+                        type="checkbox"
+                        checked={isChecked}
+                        onChange={() => handleTogglePermission(perm.key)}
+                        className="checkbox checkbox-primary checkbox-xs mt-0.5"
+                      />
+                      <div className="space-y-0.5">
+                        <span className="font-mono text-xs font-semibold block leading-tight">
+                          {perm.key}
+                        </span>
+                        <span className="text-[11px] text-base-content/60 block leading-tight">
+                          {perm.description}
+                        </span>
+                      </div>
+                    </label>
+                  );
+                })
+              ) : (
+                <div className="col-span-2 text-center py-4 text-xs text-base-content/50">
+                  Loading permissions...
+                </div>
+              )}
+            </div>
+          </div>
+
+          <div className="flex justify-end gap-2 pt-4 border-t border-base-200">
+            <button
+              type="button"
+              onClick={() => roleModalRef.current?.close()}
+              className="btn btn-sm btn-ghost"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              disabled={createRole.isPending || updateRole.isPending}
+              className="btn btn-sm btn-primary"
+            >
+              {createRole.isPending || updateRole.isPending
+                ? "Saving..."
+                : editingRole
+                  ? "Update Role"
+                  : "Create Role"}
+            </button>
+          </div>
+        </form>
+      </Modal>
     </div>
   );
-};
+}

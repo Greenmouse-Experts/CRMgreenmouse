@@ -382,7 +382,7 @@ export interface StaffMember {
   lastName: string;
   phoneNumber?: string;
   roleId?: string;
-  role?: { id: string; name: string };
+  role?: { id: string; name: string; description?: string; permissions?: string[] };
   status: "active" | "inactive" | string;
   profilePic?: string;
   createdAt?: string;
@@ -395,6 +395,17 @@ export interface Role {
   permissions: string[];
   createdAt?: string;
 }
+
+export const useStaff = (id: string) => {
+  return useQuery<StaffMember>({
+    queryKey: ["staff", id],
+    queryFn: async () => {
+      const { data } = await apiClient.get<StaffMember>(`/staffs/${id}`);
+      return data;
+    },
+    enabled: !!id,
+  });
+};
 
 export const useStaffs = () => {
   return useQuery<StaffMember[]>({

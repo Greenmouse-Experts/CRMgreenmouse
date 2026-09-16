@@ -61,6 +61,25 @@ Comprehensive tracking document for API integration, TanStack Router routes, and
 
 ---
 
+### 3. Tenant Workspace (`/tenant`)
+
+| Feature / Page          | Route                             | API Endpoints                                                                                                 |   Status    | Implementation Notes                                                                                                    |
+| :---------------------- | :-------------------------------- | :------------------------------------------------------------------------------------------------------------ | :---------: | :---------------------------------------------------------------------------------------------------------------------- |
+| **Tenant Dashboard**    | `/tenant`                         | `GET /v1/tenant/auth/me`<br>`GET /v1/invoices/stats`<br>`GET /v1/orders/stats`<br>`GET /v1/income`            | ✅ **DONE** | Wired with live TanStack Query hooks, active subscription badge, onboarding banner, real metrics.                       |
+| **Transactions Ledger** | `/tenant/transactions`            | `GET /v1/income` + `GET /v1/expenses`                                                                         | ✅ **DONE** | Zero mock data. Live financial ledger, inflow/outflow KPI cards, net cash position, details breakdown modal.            |
+| **Staff Members**       | `/tenant/users`                   | `GET /v1/staffs`<br>`POST /v1/staffs`<br>`GET /v1/staffs/:id`<br>`DELETE /v1/staffs/:id`                       | ✅ **DONE** | Live staff directory, dynamic stats (Total, Active, Inactive), quick invite modal, remove staff mutation.              |
+| **Add Staff Form**      | `/tenant/users/add`               | `POST /v1/staffs`<br>`GET /v1/roles`<br>`POST /v1/multimedia/upload`                                          | ✅ **DONE** | Full creation form with role selector, profile photo upload via Cloudinary, validation, redirect on success.            |
+| **Staff Details**       | `/tenant/users/details/$id`       | `GET /v1/staffs/:id`                                                                                          | ✅ **DONE** | Individual staff profile view, assigned role, privilege inspection, contact cards, and audit timestamps.                |
+| **Roles & Permissions** | `/tenant/users/roles`             | `GET /v1/roles`<br>`POST /v1/roles`<br>`PATCH /v1/roles/:id`<br>`DELETE /v1/roles/:id`                       | ✅ **DONE** | Custom role creation, dynamic permission assignment modal, live role directory with edit & delete actions.              |
+| **Products Catalog**    | `/tenant/products`                | `GET /v1/products`<br>`POST /v1/products`<br>`PATCH /v1/products/:id`<br>`PATCH /v1/products/:id/stock`       | ✅ **DONE** | Live inventory catalog, dynamic ProductSummary KPIs, stock adjust modal, quick add modal, edit modal, details modal.   |
+| **Add Product Form**    | `/tenant/products/add`            | `POST /v1/products`<br>`GET /v1/categories`<br>`POST /v1/multimedia/upload`                                   | ✅ **DONE** | Full add form with image upload, selling and cost prices, initial stock, category select, redirect on success.          |
+| **Product Categories**  | `/tenant/products/categories`     | `GET /v1/categories`<br>`POST /v1/categories`<br>`PATCH /v1/categories/:id`<br>`DELETE /v1/categories/:id`    | ✅ **DONE** | Category taxonomy management, scope assignment (product/service/general), create and edit modals, `pop-up` actions.     |
+| **Services Catalog**    | `/tenant/products/service`        | `GET /v1/services`<br>`POST /v1/services`<br>`PATCH /v1/services/:id`<br>`PATCH /v1/services/:id/toggle-active` | ✅ **DONE** | Services directory, live KPI cards (Total, Active, Average Rate), status toggle action, create & edit modals.           |
+| **Add Service Form**    | `/tenant/products/service/add`    | `POST /v1/services`<br>`GET /v1/categories`<br>`POST /v1/multimedia/upload`                                  | ✅ **DONE** | Full service creation form with deliverables description, rate, category picker, cover image upload, redirect on save. |
+
+
+---
+
 ### 3. Tenant Business Portal (`/tenant`)
 
 | Feature / Page              | Route                                    | API Endpoints                                                                                                                                                                                                                                                                                 |          Status           | Implementation Notes / Pending Actions                                                                                                                                                                                                                                                   |
