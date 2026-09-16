@@ -33,9 +33,7 @@ function RouteComponent() {
 
   const { mutate, isPending } = useMutation({
     mutationFn: (data: LoginProps) =>
-      axios
-        .post(new_url + "/v1/auth/admin/login", data)
-        .then((res) => res.data),
+      axios.post(new_url + "v1/auth/admin/login", data).then((res) => res.data),
     onSuccess: async (res) => {
       // res is { accessToken, refreshToken, user }
       set_user_value(res);
