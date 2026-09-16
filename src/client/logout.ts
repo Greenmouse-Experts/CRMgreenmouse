@@ -1,7 +1,7 @@
 import apiClient from "./api";
 
 const logout = async () => {
-  let resp = await apiClient.post("/tenant/auth/logout");
+  let resp = await apiClient.post("v1/tenant/auth/logout");
   return resp.data;
 };
 

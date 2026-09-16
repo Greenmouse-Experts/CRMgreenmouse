@@ -1,9 +1,15 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useMemo } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import ContainerRow from "@/components/ContainerRow";
 import SimpleContainer from "@/components/SimpleContainer";
 import { useSearch } from "@/stores/data";
-import { PlusCircleIcon, Shield } from "lucide-react";
+import {
+  PlusCircleIcon,
+  Shield,
+  Search,
+  CheckSquare,
+  Square,
+} from "lucide-react";
 import CustomTable from "@/components/tables/CustomTable";
 import type { Actions } from "@/components/tables/pop-up";
 import Modal, { type ModalHandle } from "@/components/DialogModal";
@@ -14,8 +20,9 @@ import {
   useCreateRole,
   useUpdateRole,
   useDeleteRole,
-  useAdminPermissions,
+  useRolePermissions,
   type Role,
+  type RolePermission,
 } from "@/api/adminApi";
 import { toast } from "sonner";
 
@@ -25,7 +32,7 @@ export const Route = createFileRoute("/tenant/users/roles/")({
 
 function RouteComponent() {
   const query = useRoles();
-  const permissionsQuery = useAdminPermissions();
+  const permissionsQuery = useRolePermissions();
   const createRole = useCreateRole();
   const updateRole = useUpdateRole();
   const deleteRole = useDeleteRole();
@@ -37,12 +44,14 @@ function RouteComponent() {
   const [roleName, setRoleName] = useState("");
   const [roleDescription, setRoleDescription] = useState("");
   const [selectedPermissions, setSelectedPermissions] = useState<string[]>([]);
+  const [permissionFilter, setPermissionFilter] = useState("");
 
   const handleOpenCreate = () => {
     setEditingRole(null);
     setRoleName("");
     setRoleDescription("");
     setSelectedPermissions([]);
+    setPermissionFilter("");
     roleModalRef.current?.open();
   };
 
@@ -51,6 +60,7 @@ function RouteComponent() {
     setRoleName(role.name);
     setRoleDescription(role.description || "");
     setSelectedPermissions(role.permissions || []);
+    setPermissionFilter("");
     roleModalRef.current?.open();
   };
 
@@ -82,6 +92,45 @@ function RouteComponent() {
       setSelectedPermissions([]);
     } else {
       setSelectedPermissions(permissionsQuery.data.map((p) => p.key));
+    }
+  };
+
+  // Group permissions by category/prefix
+  const groupedPermissions = useMemo(() => {
+    const permissions = permissionsQuery.data || [];
+    const filtered = permissions.filter((p) => {
+      if (!permissionFilter) return true;
+      const q = permissionFilter.toLowerCase();
+      return (
+        p.key.toLowerCase().includes(q) ||
+        p.description.toLowerCase().includes(q) ||
+        (p.name && p.name.toLowerCase().includes(q))
+      );
+    });
+
+    const groups: Record<string, RolePermission[]> = {};
+    for (const p of filtered) {
+      const category =
+        p.category || (p.key.includes(":") ? p.key.split(":")[0] : "general");
+      const normalizedCat =
+        category.charAt(0).toUpperCase() + category.slice(1);
+      if (!groups[normalizedCat]) groups[normalizedCat] = [];
+      groups[normalizedCat].push(p);
+    }
+    return groups;
+  }, [permissionsQuery.data, permissionFilter]);
+
+  const handleToggleCategory = (categoryKeys: string[]) => {
+    const allSelected = categoryKeys.every((k) =>
+      selectedPermissions.includes(k),
+    );
+    if (allSelected) {
+      setSelectedPermissions(
+        selectedPermissions.filter((k) => !categoryKeys.includes(k)),
+      );
+    } else {
+      const set = new Set([...selectedPermissions, ...categoryKeys]);
+      setSelectedPermissions(Array.from(set));
     }
   };
 
@@ -220,7 +269,8 @@ function RouteComponent() {
           }}
         >
           {(rolesList) => {
-            const filtered = rolesList.filter((r) => {
+            const list = Array.isArray(rolesList) ? rolesList : [];
+            const filtered = list.filter((r) => {
               if (!searchProps.search) return true;
               return (
                 r.name
@@ -289,7 +339,7 @@ function RouteComponent() {
               <button
                 type="button"
                 onClick={handleSelectAllPermissions}
-                className="btn btn-xs btn-ghost text-primary"
+                className="btn btn-xs btn-ghost text-primary font-medium"
               >
                 {permissionsQuery.data &&
                 selectedPermissions.length === permissionsQuery.data.length
@@ -298,40 +348,96 @@ function RouteComponent() {
               </button>
             </div>
 
-            <div className="border border-base-200 rounded-xl p-3 max-h-64 overflow-y-auto grid grid-cols-1 sm:grid-cols-2 gap-2 bg-base-200/30">
-              {permissionsQuery.data ? (
-                permissionsQuery.data.map((perm) => {
-                  const isChecked = selectedPermissions.includes(perm.key);
+            {/* Permissions Search & Filter */}
+            <div className="relative">
+              <Search className="absolute left-2.5 top-2.5 size-3.5 text-base-content/40" />
+              <input
+                type="text"
+                value={permissionFilter}
+                onChange={(e) => setPermissionFilter(e.target.value)}
+                placeholder="Filter permissions..."
+                className="input input-xs input-bordered w-full pl-8"
+              />
+            </div>
+
+            <div className="border border-base-200 rounded-xl p-3 max-h-72 overflow-y-auto space-y-3 bg-base-200/30">
+              {permissionsQuery.isLoading ? (
+                <div className="text-center py-6 text-xs text-base-content/50">
+                  Loading permissions from workspace...
+                </div>
+              ) : Object.keys(groupedPermissions).length === 0 ? (
+                <div className="text-center py-6 text-xs text-base-content/50">
+                  {permissionFilter
+                    ? "No matching permissions found."
+                    : "No permissions available."}
+                </div>
+              ) : (
+                Object.entries(groupedPermissions).map(([category, items]) => {
+                  const categoryKeys = items.map((i) => i.key);
+                  const allCatSelected = categoryKeys.every((k) =>
+                    selectedPermissions.includes(k),
+                  );
+
                   return (
-                    <label
-                      key={perm.key}
-                      className={`flex items-start gap-2.5 p-2 rounded-lg cursor-pointer border transition-colors ${
-                        isChecked
-                          ? "bg-primary/5 border-primary/30"
-                          : "bg-base-100 border-base-200 hover:border-base-300"
-                      }`}
-                    >
-                      <input
-                        type="checkbox"
-                        checked={isChecked}
-                        onChange={() => handleTogglePermission(perm.key)}
-                        className="checkbox checkbox-primary checkbox-xs mt-0.5"
-                      />
-                      <div className="space-y-0.5">
-                        <span className="font-mono text-xs font-semibold block leading-tight">
-                          {perm.key}
+                    <div key={category} className="space-y-1.5">
+                      <div className="flex items-center justify-between px-1">
+                        <span className="text-xs font-bold text-base-content/70 uppercase tracking-wider">
+                          {category}
                         </span>
-                        <span className="text-[11px] text-base-content/60 block leading-tight">
-                          {perm.description}
-                        </span>
+                        <button
+                          type="button"
+                          onClick={() => handleToggleCategory(categoryKeys)}
+                          className="text-[11px] text-primary hover:underline flex items-center gap-1"
+                        >
+                          {allCatSelected ? (
+                            <>
+                              <CheckSquare className="size-3" /> Deselect Module
+                            </>
+                          ) : (
+                            <>
+                              <Square className="size-3" /> Select Module
+                            </>
+                          )}
+                        </button>
                       </div>
-                    </label>
+
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                        {items.map((perm) => {
+                          const isChecked = selectedPermissions.includes(
+                            perm.key,
+                          );
+                          return (
+                            <label
+                              key={perm.key}
+                              className={`flex items-start gap-2.5 p-2 rounded-lg cursor-pointer border transition-colors ${
+                                isChecked
+                                  ? "bg-primary/5 border-primary/30"
+                                  : "bg-base-100 border-base-200 hover:border-base-300"
+                              }`}
+                            >
+                              <input
+                                type="checkbox"
+                                checked={isChecked}
+                                onChange={() =>
+                                  handleTogglePermission(perm.key)
+                                }
+                                className="checkbox checkbox-primary checkbox-xs mt-0.5"
+                              />
+                              <div className="space-y-0.5 min-w-0">
+                                <span className="font-mono text-xs font-semibold block leading-tight truncate">
+                                  {perm.key}
+                                </span>
+                                <span className="text-[11px] text-base-content/60 block leading-tight line-clamp-2">
+                                  {perm.description || perm.name || perm.key}
+                                </span>
+                              </div>
+                            </label>
+                          );
+                        })}
+                      </div>
+                    </div>
                   );
                 })
-              ) : (
-                <div className="col-span-2 text-center py-4 text-xs text-base-content/50">
-                  Loading permissions...
-                </div>
               )}
             </div>
           </div>

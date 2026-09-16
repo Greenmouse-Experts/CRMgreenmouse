@@ -19,11 +19,11 @@ export default function IncomeExpense() {
     <div className="w-full bg-base-100 ring shadow-sm ring-base-300 rounded-box">
       <div className="p-4 text-lg font-bold text-base-content/90 border-b border-base-200 flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-2">
-          <span>Income & Expense Overview</span>
+          <span className="text-sm">Income & Expense</span>
           <select
             value={year}
             onChange={(e) => setYear(Number(e.target.value))}
-            className="select select-bordered select-xs ml-2"
+            className="select select-bordered  ml-2"
           >
             <option value={2026}>2026</option>
             <option value={2025}>2025</option>
