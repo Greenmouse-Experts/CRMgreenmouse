@@ -58,7 +58,7 @@ apiClient.interceptors.response.use(
         console.error("Token refresh failed:", refreshError);
         clear_user();
         toast.info("Session expired. Please log in again.", { duration: 1500 });
-        window.location.href = "/login";
+        window.location.href = "/auth/login";
       }
     }
 
