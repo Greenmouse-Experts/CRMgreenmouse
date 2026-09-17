@@ -47,7 +47,8 @@ export const DEFAULT_ADMIN_SESSION: AuthUser = {
 
 const getInitialUser = (): AuthUser | null => {
   try {
-    const stored = typeof window !== "undefined" ? localStorage.getItem("user") : null;
+    const stored =
+      typeof window !== "undefined" ? localStorage.getItem("user") : null;
     if (stored) {
       const parsed = JSON.parse(stored);
       if (parsed?.accessToken) return parsed;
@@ -55,7 +56,7 @@ const getInitialUser = (): AuthUser | null => {
   } catch (e) {
     console.error("Error parsing stored user", e);
   }
-  return DEFAULT_ADMIN_SESSION;
+  return null;
 };
 
 export const user_atom = atomWithStorage<AuthUser | null>(
@@ -63,7 +64,8 @@ export const user_atom = atomWithStorage<AuthUser | null>(
   getInitialUser(),
 );
 
-const storedProfile = localStorage.getItem("profile");
+const storedProfile =
+  typeof window !== "undefined" ? localStorage.getItem("profile") : null;
 export const profile_atom = atomWithStorage<ProfileData | null>(
   "profile",
   storedProfile ? JSON.parse(storedProfile) : null,
@@ -93,6 +95,10 @@ export const clear_user = () => {
   const store = getDefaultStore();
   store.set(user_atom, null);
   store.set(profile_atom, null);
+  if (typeof window !== "undefined") {
+    localStorage.removeItem("user");
+    localStorage.removeItem("profile");
+  }
 };
 
 export const set_user_value = (user: AuthUser) => {
