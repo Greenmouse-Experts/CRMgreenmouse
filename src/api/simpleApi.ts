@@ -27,7 +27,7 @@ export interface ApiResponseV2<T = any> {
 
 const rawUrl =
   (import.meta.env.VITE_API_URL as string | undefined) ??
-  "https://crmgrenmouse-backend-api.onrender.com/";
+  "https://crmgrenmouse-backend-api.onrender.com/v1/";
 export const new_url = rawUrl.endsWith("/") ? rawUrl : `${rawUrl}/`;
 
 const apiClient = axios.create({

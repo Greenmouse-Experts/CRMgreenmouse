@@ -43,7 +43,7 @@ function RouteComponent() {
 
       try {
         const profileRes = await apiClient
-          .get("v1/tenant/auth/me")
+          .get("/tenant/auth/me")
           .then((r) => r.data);
         const profileData = profileRes.data ?? profileRes;
 
