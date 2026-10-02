@@ -82,7 +82,7 @@ function RouteComponent() {
             <span className="font-semibold text-base-content block">
               {val || `ORD-${item.id.slice(0, 8).toUpperCase()}`}
             </span>
-            <span className="text-xs text-base-content/50">
+            <span className="text-sm text-base-content/50">
               {item.items?.length || 0} line item(s)
             </span>
           </div>
@@ -98,7 +98,7 @@ function RouteComponent() {
           (contactsQuery.data || []).find((c: any) => c.id === item.contactId);
         return (
           <div>
-            <span className="font-medium text-base-content text-xs">
+            <span className="font-medium text-base-content text-sm">
               {contact
                 ? `${contact.firstName || ""} ${contact.lastName || ""}`.trim() ||
                   contact.email ||
@@ -106,7 +106,7 @@ function RouteComponent() {
                 : "Direct Customer"}
             </span>
             {contact?.email && (
-              <span className="text-xs text-base-content/50 block">
+              <span className="text-sm text-base-content/50 block">
                 {contact.email}
               </span>
             )}
@@ -139,7 +139,7 @@ function RouteComponent() {
         const isPaid = val?.toLowerCase() === "paid";
         return (
           <span
-            className={`badge badge-sm font-semibold capitalize ${
+            className={`badge badge-md font-semibold capitalize ${
               isPaid ? "badge-success text-white" : "badge-ghost"
             }`}
           >
@@ -160,7 +160,7 @@ function RouteComponent() {
 
         return (
           <span
-            className={`badge badge-sm font-semibold capitalize ${badgeClass}`}
+            className={`badge badge-md font-semibold capitalize ${badgeClass}`}
           >
             {status || "Pending"}
           </span>
@@ -204,7 +204,7 @@ function RouteComponent() {
               <div className="card bg-base-100 border border-base-200 p-4 shadow-sm">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-xs font-semibold text-base-content/60 uppercase">
+                    <p className="text-sm font-semibold text-base-content/60 uppercase">
                       Total Orders
                     </p>
                     <h3 className="text-2xl font-bold text-base-content mt-1">
@@ -220,7 +220,7 @@ function RouteComponent() {
               <div className="card bg-base-100 border border-base-200 p-4 shadow-sm">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-xs font-semibold text-base-content/60 uppercase">
+                    <p className="text-sm font-semibold text-base-content/60 uppercase">
                       Pending
                     </p>
                     <h3 className="text-2xl font-bold text-warning mt-1">
@@ -236,7 +236,7 @@ function RouteComponent() {
               <div className="card bg-base-100 border border-base-200 p-4 shadow-sm">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-xs font-semibold text-base-content/60 uppercase">
+                    <p className="text-sm font-semibold text-base-content/60 uppercase">
                       Processing
                     </p>
                     <h3 className="text-2xl font-bold text-info mt-1">
@@ -252,7 +252,7 @@ function RouteComponent() {
               <div className="card bg-base-100 border border-base-200 p-4 shadow-sm">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-xs font-semibold text-base-content/60 uppercase">
+                    <p className="text-sm font-semibold text-base-content/60 uppercase">
                       Completed
                     </p>
                     <h3 className="text-2xl font-bold text-success mt-1">
@@ -267,36 +267,40 @@ function RouteComponent() {
             </div>
 
             {/* Filter Tabs */}
-            <div className="flex flex-wrap gap-2">
-              {[
-                { label: "All Orders", key: "all" },
-                { label: "Pending", key: "pending" },
-                { label: "Processing", key: "processing" },
-                { label: "Completed", key: "completed" },
-                { label: "Cancelled", key: "cancelled" },
-              ].map((tab) => (
-                <button
-                  key={tab.key}
-                  onClick={() => setStatusFilter(tab.key)}
-                  className={`btn btn-xs rounded-full ${
-                    statusFilter === tab.key
-                      ? "btn-primary text-primary-content"
-                      : "btn-ghost text-base-content/70"
-                  }`}
-                >
-                  {tab.label}
-                </button>
-              ))}
-            </div>
-
             <SimpleContainer>
-              <ContainerRow {...searchProps}>
-                <CustomTable
-                  actions={actions}
-                  columns={columns}
-                  data={filteredOrders}
-                />
+              <ContainerRow
+                showSearch
+                searchProps={searchProps}
+                searchPlaceholder="Search orders..."
+              >
+                <div className="flex flex-wrap items-center gap-1.5">
+                  {[
+                    { label: "All Orders", key: "all" },
+                    { label: "Pending", key: "pending" },
+                    { label: "Processing", key: "processing" },
+                    { label: "Completed", key: "completed" },
+                    { label: "Cancelled", key: "cancelled" },
+                  ].map((tab) => (
+                    <button
+                      key={tab.key}
+                      onClick={() => setStatusFilter(tab.key)}
+                      className={`btn btn-sm rounded-full text-sm ${
+                        statusFilter === tab.key
+                          ? "btn-primary text-primary-content"
+                          : "btn-ghost text-base-content/70"
+                      }`}
+                    >
+                      {tab.label}
+                    </button>
+                  ))}
+                </div>
               </ContainerRow>
+
+              <CustomTable
+                actions={actions}
+                columns={columns}
+                data={filteredOrders}
+              />
             </SimpleContainer>
 
             {/* Order Details Modal */}
@@ -310,7 +314,7 @@ function RouteComponent() {
                         {selectedOrder.orderNumber ||
                           selectedOrder.id.slice(0, 8).toUpperCase()}
                       </h3>
-                      <p className="text-xs text-base-content/60">
+                      <p className="text-sm text-base-content/60">
                         {selectedOrder.createdAt
                           ? new Date(selectedOrder.createdAt).toLocaleString()
                           : ""}
@@ -331,7 +335,7 @@ function RouteComponent() {
 
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                     <div className="bg-base-200/50 p-3 rounded-lg">
-                      <span className="text-xs text-base-content/60 block">
+                      <span className="text-sm text-base-content/60 block">
                         Customer
                       </span>
                       <span className="text-sm font-semibold text-base-content">
@@ -341,7 +345,7 @@ function RouteComponent() {
                       </span>
                     </div>
                     <div className="bg-base-200/50 p-3 rounded-lg">
-                      <span className="text-xs text-base-content/60 block">
+                      <span className="text-sm text-base-content/60 block">
                         Payment Status
                       </span>
                       <span className="text-sm font-semibold capitalize text-base-content">
@@ -349,7 +353,7 @@ function RouteComponent() {
                       </span>
                     </div>
                     <div className="bg-base-200/50 p-3 rounded-lg">
-                      <span className="text-xs text-base-content/60 block">
+                      <span className="text-sm text-base-content/60 block">
                         Total Amount
                       </span>
                       <span className="text-base font-bold text-base-content">
@@ -371,7 +375,7 @@ function RouteComponent() {
 
                   {selectedOrder.items && selectedOrder.items.length > 0 && (
                     <div className="space-y-2">
-                      <h4 className="text-xs font-semibold text-base-content/70 uppercase">
+                      <h4 className="text-sm font-semibold text-base-content/70 uppercase">
                         Line Items ({selectedOrder.items.length})
                       </h4>
                       <div className="divide-y divide-base-200 rounded-lg border border-base-200 overflow-hidden text-sm">
@@ -385,7 +389,7 @@ function RouteComponent() {
                                 {it.product?.name ||
                                   `Product ID: ${it.productId}`}
                               </span>
-                              <span className="text-xs text-base-content/50">
+                              <span className="text-sm text-base-content/50">
                                 {it.qty} × {selectedOrder.currency || "₦"}
                                 {Number(it.unitPrice || 0).toLocaleString()}
                               </span>
@@ -405,7 +409,7 @@ function RouteComponent() {
 
                   {selectedOrder.notes && (
                     <div className="bg-base-200/30 p-3 rounded-lg text-sm text-base-content/70">
-                      <span className="font-semibold block text-xs mb-1">
+                      <span className="font-semibold block text-sm mb-1">
                         Order Notes:
                       </span>
                       {selectedOrder.notes}
