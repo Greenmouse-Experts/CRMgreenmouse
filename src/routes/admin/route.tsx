@@ -6,7 +6,6 @@ import {
   Settings,
   ShoppingCart,
   CreditCard,
-  HelpCircle,
   Shirt,
   Tag,
   CheckCircle,
@@ -180,13 +179,13 @@ const nav_links = [
     children: null,
   },
 
-  {
-    path: "/admin/support",
-    label: "Support",
-    icon: <HelpCircle size={ICON_SIZE} />,
-    type: "menu",
-    children: null,
-  },
+  // {
+  //   path: "/admin/support",
+  //   label: "Support",
+  //   icon: <HelpCircle size={ICON_SIZE} />,
+  //   type: "menu",
+  //   children: null,
+  // },
 
   {
     path: "/admin/settings",
