@@ -1,9 +1,9 @@
 import SummaryCard from "@/components/SummaryCard";
 import SummaryGrid from "@/components/SummaryGrid";
-import { useCompanies } from "@/api/crmApi";
+import { useAdminCrossCompanies } from "@/api/adminApi";
 
 export default function CompanySummary() {
-  const { data: companies = [] } = useCompanies();
+  const { data: companies = [] } = useAdminCrossCompanies();
 
   const total = companies.length;
 
@@ -14,11 +14,11 @@ export default function CompanySummary() {
     },
     {
       title: "With Website",
-      value: companies.filter((c) => !!c.website).length,
+      value: companies.filter((c: any) => !!c.website).length,
     },
     {
       title: "With Phone",
-      value: companies.filter((c) => !!c.workPhone).length,
+      value: companies.filter((c: any) => !!c.workPhone).length,
     },
   ];
 

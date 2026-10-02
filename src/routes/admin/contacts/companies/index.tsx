@@ -3,106 +3,53 @@ import { createFileRoute } from "@tanstack/react-router";
 import SimpleContainer from "@/components/SimpleContainer";
 import ContainerRow from "@/components/ContainerRow";
 import { useSearch } from "@/stores/data";
-import { PlusCircleIcon, Building2, Globe, Mail, Phone, MapPin } from "lucide-react";
+import { Building2, Globe, Mail, Phone, MapPin, RefreshCw } from "lucide-react";
 import CustomTable from "@/components/tables/CustomTable";
 import type { Actions } from "@/components/tables/pop-up";
 import Modal, { type ModalHandle } from "@/components/DialogModal";
 import CompanySummary from "./-components/CompanySummary";
 import PageHeader from "@/components/Headers/PageHeader";
 import PageLoader from "@/components/layout/PageLoader";
-import {
-  useCompanies,
-  useCreateCompany,
-  useDeleteCompany,
-  type Company,
-} from "@/api/crmApi";
-import { toast } from "sonner";
+import { useAdminCrossCompanies } from "@/api/adminApi";
+import type { Company } from "@/api/crmApi";
 
 export const Route = createFileRoute("/admin/contacts/companies/")({
   component: RouteComponent,
 });
 
 function RouteComponent() {
-  const query = useCompanies();
-  const createCompany = useCreateCompany();
-  const deleteCompany = useDeleteCompany();
   const searchProps = useSearch();
-
-  const addModalRef = useRef<ModalHandle>(null);
-  const detailsModalRef = useRef<ModalHandle>(null);
-
-  const [selectedCompany, setSelectedCompany] = useState<Company | null>(null);
-  const [form, setForm] = useState({
-    name: "",
-    industry: "",
-    workPhone: "",
-    email: "",
-    website: "",
-    addressLine1: "",
-    city: "",
-    state: "",
-    country: "",
+  const query = useAdminCrossCompanies({
+    search: searchProps.search || undefined,
   });
 
-  const handleOpenAdd = () => {
-    setForm({
-      name: "",
-      industry: "",
-      workPhone: "",
-      email: "",
-      website: "",
-      addressLine1: "",
-      city: "",
-      state: "",
-      country: "",
-    });
-    addModalRef.current?.open();
-  };
+  const detailsModalRef = useRef<ModalHandle>(null);
+  const [selectedCompany, setSelectedCompany] = useState<Company | null>(null);
 
-  const handleCreate = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!form.name) {
-      toast.error("Company name is required.");
-      return;
-    }
-
-    try {
-      await createCompany.mutateAsync(form);
-      toast.success(`Company "${form.name}" created successfully.`);
-      addModalRef.current?.close();
-    } catch (err: any) {
-      toast.error(err.response?.data?.message || "Failed to create company.");
-    }
-  };
-
-  const handleDelete = async (company: Company) => {
-    if (!window.confirm(`Are you sure you want to delete "${company.name}"?`)) {
-      return;
-    }
-
-    try {
-      await deleteCompany.mutateAsync(company.id);
-      toast.success("Company deleted.");
-    } catch (err: any) {
-      toast.error(err.response?.data?.message || "Failed to delete company.");
-    }
+  const handleOpenDetails = (company: Company) => {
+    setSelectedCompany(company);
+    detailsModalRef.current?.open();
   };
 
   const columns = [
     {
       key: "name",
-      label: "Company",
-      render: (_value: any, item: Company) => (
+      label: "Company Name",
+      render: (company: Company) => (
         <div className="flex items-center gap-3">
-          <div className="size-9 rounded-lg bg-primary/10 text-primary flex items-center justify-center font-bold">
-            <Building2 className="size-4" />
+          <div className="avatar placeholder">
+            <div className="bg-primary/10 text-primary rounded-lg w-10 h-10 flex items-center justify-center font-bold">
+              {company.name?.charAt(0)?.toUpperCase() || "C"}
+            </div>
           </div>
           <div>
-            <div className="font-semibold text-base-content leading-tight">
-              {item.name}
+            <div className="font-semibold text-base-content">
+              {company.name}
             </div>
-            {item.industry && (
-              <div className="text-xs text-base-content/60">{item.industry}</div>
+            {company.industry && (
+              <div className="text-xs text-base-content/60">
+                {company.industry}
+              </div>
             )}
           </div>
         </div>
@@ -110,28 +57,44 @@ function RouteComponent() {
     },
     {
       key: "contact",
-      label: "Contact",
-      render: (_value: any, item: Company) => (
-        <div className="text-xs space-y-0.5">
-          {item.email && <div className="text-base-content/80">{item.email}</div>}
-          {item.workPhone && <div className="text-base-content/60">{item.workPhone}</div>}
-          {!item.email && !item.workPhone && <span className="text-base-content/40">—</span>}
+      label: "Contact Info",
+      render: (company: Company) => (
+        <div className="space-y-0.5 text-xs text-base-content/70">
+          {company.email && (
+            <div className="flex items-center gap-1.5">
+              <Mail size={12} className="text-base-content/40" />
+              <span>{company.email}</span>
+            </div>
+          )}
+          {company.workPhone && (
+            <div className="flex items-center gap-1.5">
+              <Phone size={12} className="text-base-content/40" />
+              <span>{company.workPhone}</span>
+            </div>
+          )}
+          {!company.email && !company.workPhone && (
+            <span className="text-base-content/40">—</span>
+          )}
         </div>
       ),
     },
     {
       key: "website",
       label: "Website",
-      render: (value: string) =>
-        value ? (
+      render: (company: Company) =>
+        company.website ? (
           <a
-            href={value.startsWith("http") ? value : `https://${value}`}
+            href={
+              company.website.startsWith("http")
+                ? company.website
+                : `https://${company.website}`
+            }
             target="_blank"
-            rel="noreferrer"
-            className="text-xs text-primary hover:underline flex items-center gap-1"
+            rel="noopener noreferrer"
+            className="flex items-center gap-1.5 text-xs text-primary hover:underline"
           >
-            <Globe className="size-3" />
-            {value.replace(/^https?:\/\//, "")}
+            <Globe size={12} />
+            <span className="truncate max-w-[150px]">{company.website}</span>
           </a>
         ) : (
           <span className="text-xs text-base-content/40">—</span>
@@ -140,22 +103,19 @@ function RouteComponent() {
     {
       key: "location",
       label: "Location",
-      render: (_value: any, item: Company) => (
-        <span className="text-xs text-base-content/70">
-          {item.city && item.country
-            ? `${item.city}, ${item.country}`
-            : item.country || item.city || "—"}
-        </span>
-      ),
-    },
-    {
-      key: "createdAt",
-      label: "Added",
-      render: (value: string) => (
-        <span className="text-xs text-base-content/60">
-          {value ? new Date(value).toLocaleDateString() : "—"}
-        </span>
-      ),
+      render: (company: Company) => {
+        const parts = [company.city, company.state, company.country].filter(
+          Boolean,
+        );
+        return parts.length > 0 ? (
+          <div className="flex items-center gap-1.5 text-xs text-base-content/70">
+            <MapPin size={12} className="text-base-content/40 shrink-0" />
+            <span>{parts.join(", ")}</span>
+          </div>
+        ) : (
+          <span className="text-xs text-base-content/40">—</span>
+        );
+      },
     },
   ];
 
@@ -163,271 +123,121 @@ function RouteComponent() {
     {
       key: "view",
       label: "View Details",
-      action: (item: Company) => {
-        setSelectedCompany(item);
-        detailsModalRef.current?.open();
-      },
-    },
-    {
-      key: "delete",
-      label: "Delete Company",
-      render: () => <span className="text-error font-medium">Delete Company</span>,
-      action: (item: Company) => {
-        handleDelete(item);
-      },
+      action: (company) => handleOpenDetails(company),
     },
   ];
 
   return (
-    <div className="space-y-4 pb-12">
+    <div>
       <PageHeader
-        title="Companies"
-        description="Manage business accounts, organizations, and institutional clients."
+        title="Companies Directory"
+        description="Audit, monitor, and inspect corporate clients across all platform tenants"
       >
-        <button onClick={handleOpenAdd} className="btn btn-primary btn-sm">
-          <PlusCircleIcon className="size-4" /> Add Company
+        <button
+          onClick={() => query.refetch()}
+          className="btn btn-outline btn-sm gap-2"
+          disabled={query.isFetching}
+        >
+          <RefreshCw
+            size={15}
+            className={query.isFetching ? "animate-spin" : ""}
+          />
+          Refresh
         </button>
       </PageHeader>
 
-      <CompanySummary />
+      <PageLoader query={query}>
+        {() => (
+          <div className="space-y-6">
+            <CompanySummary />
 
-      <SimpleContainer
-        title={
-          <>
-            Company Directory{" "}
-            {query.data && (
-              <span className="opacity-80 text-xs">({query.data.length})</span>
-            )}
-          </>
-        }
-      >
-        <ContainerRow showSearch searchProps={searchProps} />
+            <SimpleContainer>
+              <ContainerRow {...searchProps}>
+                <CustomTable
+                  actions={actions}
+                  columns={columns}
+                  data={query.data || []}
+                />
+              </ContainerRow>
+            </SimpleContainer>
 
-        <PageLoader query={query}>
-          {(companies) => {
-            const filtered = companies.filter((c) => {
-              if (!searchProps.search) return true;
-              const term = searchProps.search.toLowerCase();
-              return (
-                c.name.toLowerCase().includes(term) ||
-                (c.email && c.email.toLowerCase().includes(term)) ||
-                (c.industry && c.industry.toLowerCase().includes(term))
-              );
-            });
+            {/* Details Modal */}
+            <Modal ref={detailsModalRef}>
+              {selectedCompany && (
+                <div className="p-6 space-y-6">
+                  <div className="flex items-center gap-3 border-b border-base-200 pb-4">
+                    <div className="bg-primary/10 text-primary p-3 rounded-xl">
+                      <Building2 size={24} />
+                    </div>
+                    <div>
+                      <h3 className="text-xl font-bold text-base-content">
+                        {selectedCompany.name}
+                      </h3>
+                      {selectedCompany.industry && (
+                        <p className="text-xs text-base-content/60">
+                          Industry: {selectedCompany.industry}
+                        </p>
+                      )}
+                    </div>
+                  </div>
 
-            return (
-              <CustomTable
-                ring={false}
-                data={filtered}
-                columns={columns}
-                actions={actions}
-              />
-            );
-          }}
-        </PageLoader>
-      </SimpleContainer>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="bg-base-200/50 p-3 rounded-lg">
+                      <span className="text-xs text-base-content/60 block">
+                        Email
+                      </span>
+                      <span className="text-sm font-semibold text-base-content break-all">
+                        {selectedCompany.email || "—"}
+                      </span>
+                    </div>
+                    <div className="bg-base-200/50 p-3 rounded-lg">
+                      <span className="text-xs text-base-content/60 block">
+                        Phone
+                      </span>
+                      <span className="text-sm font-semibold text-base-content">
+                        {selectedCompany.workPhone || "—"}
+                      </span>
+                    </div>
+                    <div className="bg-base-200/50 p-3 rounded-lg">
+                      <span className="text-xs text-base-content/60 block">
+                        Website
+                      </span>
+                      <span className="text-sm font-semibold text-base-content break-all">
+                        {selectedCompany.website || "—"}
+                      </span>
+                    </div>
+                    <div className="bg-base-200/50 p-3 rounded-lg">
+                      <span className="text-xs text-base-content/60 block">
+                        Location
+                      </span>
+                      <span className="text-sm font-semibold text-base-content">
+                        {[
+                          selectedCompany.addressLine1,
+                          selectedCompany.city,
+                          selectedCompany.state,
+                          selectedCompany.country,
+                        ]
+                          .filter(Boolean)
+                          .join(", ") || "—"}
+                      </span>
+                    </div>
+                  </div>
 
-      {/* Add Company Modal */}
-      <Modal ref={addModalRef} title="Add New Company">
-        <form onSubmit={handleCreate} className="space-y-4">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <div className="sm:col-span-2">
-              <label className="label">
-                <span className="label-text font-semibold">Company Name *</span>
-              </label>
-              <input
-                type="text"
-                required
-                value={form.name}
-                onChange={(e) => setForm({ ...form, name: e.target.value })}
-                placeholder="Acme Corporation"
-                className="input input-sm input-bordered w-full"
-              />
-            </div>
-
-            <div>
-              <label className="label">
-                <span className="label-text font-semibold">Industry</span>
-              </label>
-              <input
-                type="text"
-                value={form.industry}
-                onChange={(e) => setForm({ ...form, industry: e.target.value })}
-                placeholder="e.g. Technology, Retail"
-                className="input input-sm input-bordered w-full"
-              />
-            </div>
-
-            <div>
-              <label className="label">
-                <span className="label-text font-semibold">Work Phone</span>
-              </label>
-              <input
-                type="text"
-                value={form.workPhone}
-                onChange={(e) => setForm({ ...form, workPhone: e.target.value })}
-                placeholder="555-000-0000"
-                className="input input-sm input-bordered w-full"
-              />
-            </div>
-
-            <div>
-              <label className="label">
-                <span className="label-text font-semibold">Email</span>
-              </label>
-              <input
-                type="email"
-                value={form.email}
-                onChange={(e) => setForm({ ...form, email: e.target.value })}
-                placeholder="contact@company.com"
-                className="input input-sm input-bordered w-full"
-              />
-            </div>
-
-            <div>
-              <label className="label">
-                <span className="label-text font-semibold">Website</span>
-              </label>
-              <input
-                type="text"
-                value={form.website}
-                onChange={(e) => setForm({ ...form, website: e.target.value })}
-                placeholder="https://company.com"
-                className="input input-sm input-bordered w-full"
-              />
-            </div>
-
-            <div className="sm:col-span-2">
-              <label className="label">
-                <span className="label-text font-semibold">Address Line 1</span>
-              </label>
-              <input
-                type="text"
-                value={form.addressLine1}
-                onChange={(e) => setForm({ ...form, addressLine1: e.target.value })}
-                placeholder="123 Main Street"
-                className="input input-sm input-bordered w-full"
-              />
-            </div>
-
-            <div>
-              <label className="label">
-                <span className="label-text font-semibold">City</span>
-              </label>
-              <input
-                type="text"
-                value={form.city}
-                onChange={(e) => setForm({ ...form, city: e.target.value })}
-                placeholder="Metropolis"
-                className="input input-sm input-bordered w-full"
-              />
-            </div>
-
-            <div>
-              <label className="label">
-                <span className="label-text font-semibold">State / Country</span>
-              </label>
-              <input
-                type="text"
-                value={form.country}
-                onChange={(e) => setForm({ ...form, country: e.target.value })}
-                placeholder="United States"
-                className="input input-sm input-bordered w-full"
-              />
-            </div>
-          </div>
-
-          <div className="flex justify-end gap-2 pt-4 border-t border-base-200">
-            <button
-              type="button"
-              onClick={() => addModalRef.current?.close()}
-              className="btn btn-sm btn-ghost"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              disabled={createCompany.isPending}
-              className="btn btn-sm btn-primary"
-            >
-              {createCompany.isPending ? "Saving..." : "Create Company"}
-            </button>
-          </div>
-        </form>
-      </Modal>
-
-      {/* Details Modal */}
-      <Modal
-        ref={detailsModalRef}
-        title="Company Information"
-        actions={
-          <button
-            type="button"
-            onClick={() => detailsModalRef.current?.close()}
-            className="btn btn-sm btn-ghost"
-          >
-            Close
-          </button>
-        }
-      >
-        {selectedCompany && (
-          <div className="space-y-4">
-            <div className="p-4 rounded-xl bg-base-200/50 space-y-3">
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-semibold text-base-content/60">Company</span>
-                <span className="font-bold text-base-content">{selectedCompany.name}</span>
-              </div>
-              {selectedCompany.industry && (
-                <div className="flex items-center justify-between">
-                  <span className="text-sm font-semibold text-base-content/60">Industry</span>
-                  <span className="text-sm">{selectedCompany.industry}</span>
+                  <div className="modal-action">
+                    <button
+                      type="button"
+                      className="btn btn-ghost"
+                      onClick={() => detailsModalRef.current?.close()}
+                    >
+                      Close
+                    </button>
+                  </div>
                 </div>
               )}
-              {selectedCompany.email && (
-                <div className="flex items-center justify-between">
-                  <span className="text-sm font-semibold text-base-content/60">Email</span>
-                  <span className="text-sm flex items-center gap-1.5">
-                    <Mail className="size-3.5 text-base-content/60" /> {selectedCompany.email}
-                  </span>
-                </div>
-              )}
-              {selectedCompany.workPhone && (
-                <div className="flex items-center justify-between">
-                  <span className="text-sm font-semibold text-base-content/60">Phone</span>
-                  <span className="text-sm flex items-center gap-1.5">
-                    <Phone className="size-3.5 text-base-content/60" /> {selectedCompany.workPhone}
-                  </span>
-                </div>
-              )}
-              {selectedCompany.website && (
-                <div className="flex items-center justify-between">
-                  <span className="text-sm font-semibold text-base-content/60">Website</span>
-                  <a
-                    href={
-                      selectedCompany.website.startsWith("http")
-                        ? selectedCompany.website
-                        : `https://${selectedCompany.website}`
-                    }
-                    target="_blank"
-                    rel="noreferrer"
-                    className="text-sm text-primary hover:underline flex items-center gap-1"
-                  >
-                    <Globe className="size-3.5" /> {selectedCompany.website}
-                  </a>
-                </div>
-              )}
-              {selectedCompany.addressLine1 && (
-                <div className="flex items-center justify-between">
-                  <span className="text-sm font-semibold text-base-content/60">Address</span>
-                  <span className="text-sm flex items-center gap-1.5">
-                    <MapPin className="size-3.5 text-base-content/60" /> {selectedCompany.addressLine1}
-                  </span>
-                </div>
-              )}
-            </div>
+            </Modal>
           </div>
         )}
-      </Modal>
+      </PageLoader>
     </div>
   );
 }

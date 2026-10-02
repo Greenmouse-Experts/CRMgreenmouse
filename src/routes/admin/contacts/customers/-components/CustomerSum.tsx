@@ -1,9 +1,9 @@
 import SummaryCard from "@/components/SummaryCard";
 import SummaryGrid from "@/components/SummaryGrid";
-import { useCustomers } from "@/api/crmApi";
+import { useAdminCrossContacts } from "@/api/adminApi";
 
 export default function CustomerSummary() {
-  const { data: customers = [] } = useCustomers();
+  const { data: customers = [] } = useAdminCrossContacts();
 
   const total = customers.length;
 
@@ -14,16 +14,20 @@ export default function CustomerSummary() {
     },
     {
       title: "New This Month",
-      value: customers.filter((c) => {
+      value: customers.filter((c: any) => {
         if (!c.createdAt) return false;
         const d = new Date(c.createdAt);
         const now = new Date();
-        return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+        return (
+          d.getMonth() === now.getMonth() &&
+          d.getFullYear() === now.getFullYear()
+        );
       }).length,
     },
     {
       title: "With Phone Numbers",
-      value: customers.filter((c) => !!c.workPhone || !!c.cellPhone).length,
+      value: customers.filter((c: any) => !!c.workPhone || !!c.cellPhone)
+        .length,
     },
   ];
 
