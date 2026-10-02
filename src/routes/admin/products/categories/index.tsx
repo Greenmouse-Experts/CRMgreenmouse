@@ -1,14 +1,15 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useMemo } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import ContainerRow from "@/components/ContainerRow";
 import SimpleContainer from "@/components/SimpleContainer";
 import { useSearch } from "@/stores/data";
-import { PlusCircleIcon, Tag } from "lucide-react";
+import { PlusCircleIcon, Tag, Layers, Wrench, Package } from "lucide-react";
 import CustomTable from "@/components/tables/CustomTable";
 import type { Actions } from "@/components/tables/pop-up";
 import PageHeader from "@/components/Headers/PageHeader";
 import Modal, { type ModalHandle } from "@/components/DialogModal";
 import PageLoader from "@/components/layout/PageLoader";
+import ProductNav from "../-components/ProductNav";
 import {
   useCategories,
   useCreateCategory,
@@ -29,10 +30,14 @@ function RouteComponent() {
   const deleteCategory = useDeleteCategory();
   const searchProps = useSearch();
 
+  const [typeFilter, setTypeFilter] = useState<string>("all");
+
   const addModalRef = useRef<ModalHandle>(null);
   const editModalRef = useRef<ModalHandle>(null);
 
-  const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<Category | null>(
+    null,
+  );
   const [form, setForm] = useState({
     name: "",
     description: "",
@@ -89,7 +94,10 @@ function RouteComponent() {
   };
 
   const handleDelete = async (category: Category) => {
-    if (!confirm(`Are you sure you want to delete category "${category.name}"?`)) return;
+    if (
+      !confirm(`Are you sure you want to delete category "${category.name}"?`)
+    )
+      return;
     try {
       await deleteCategory.mutateAsync(category.id);
       toast.success("Category deleted successfully");
@@ -100,13 +108,31 @@ function RouteComponent() {
 
   const categoriesList = query.data || [];
   const searchTerm = searchProps.search?.toLowerCase() || "";
-  const filteredCategories = categoriesList.filter((c) => {
-    if (!searchTerm) return true;
-    return (
-      c.name?.toLowerCase().includes(searchTerm) ||
-      c.description?.toLowerCase().includes(searchTerm)
-    );
-  });
+
+  const filteredCategories = useMemo(() => {
+    return categoriesList.filter((c) => {
+      if (searchTerm) {
+        const matchesName = c.name?.toLowerCase().includes(searchTerm);
+        const matchesDesc = c.description?.toLowerCase().includes(searchTerm);
+        if (!matchesName && !matchesDesc) return false;
+      }
+
+      if (typeFilter !== "all") {
+        const catType = c.type?.toLowerCase() || "product";
+        if (catType !== typeFilter) return false;
+      }
+
+      return true;
+    });
+  }, [categoriesList, searchTerm, typeFilter]);
+
+  const totalCategories = categoriesList.length;
+  const productCategories = categoriesList.filter(
+    (c) => (c.type || "product") === "product",
+  ).length;
+  const serviceCategories = categoriesList.filter(
+    (c) => c.type === "service",
+  ).length;
 
   const columns = [
     {
@@ -119,7 +145,7 @@ function RouteComponent() {
           </div>
           <div>
             <div className="font-semibold text-base-content">{item.name}</div>
-            <div className="text-xs text-base-content/60">
+            <div className="text-xs text-base-content/60 line-clamp-1 max-w-[280px]">
               {item.description || "No description"}
             </div>
           </div>
@@ -129,11 +155,20 @@ function RouteComponent() {
     {
       key: "type",
       label: "Type",
-      render: (val: any) => (
-        <span className="badge badge-sm badge-outline capitalize">
-          {val || "product"}
-        </span>
-      ),
+      render: (val: any) => {
+        const isService = val === "service";
+        return (
+          <span
+            className={`badge badge-sm font-semibold capitalize ${
+              isService
+                ? "badge-secondary text-white"
+                : "badge-primary text-white"
+            }`}
+          >
+            {val || "product"}
+          </span>
+        );
+      },
     },
     {
       key: "createdAt",
@@ -165,23 +200,136 @@ function RouteComponent() {
         title="Product & Service Categories"
         description="Organize your catalog items by department, type, or service group"
       >
-        <button onClick={handleOpenAdd} className="btn btn-primary btn-sm">
+        <button
+          onClick={handleOpenAdd}
+          className="btn btn-primary btn-sm gap-1.5"
+        >
           <PlusCircleIcon className="size-4" /> Create Category
         </button>
       </PageHeader>
+
+      <ProductNav />
 
       <PageLoader
         query={query}
         showSuccessState={true}
         emptyState={{
           title: "No Categories Found",
-          description: "Organize your products and services by creating your first category.",
+          description:
+            "Get started by creating your first product or service category.",
           actionText: "Create Category",
           onAction: handleOpenAdd,
         }}
       >
-        <SimpleContainer title="Catalog Categories">
+        {/* Quick Summary Cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+          <div
+            onClick={() => setTypeFilter("all")}
+            className={`card bg-base-100/70 backdrop-blur-md border p-4 shadow-sm cursor-pointer transition-all ${
+              typeFilter === "all"
+                ? "border-primary ring-2 ring-primary/20 bg-primary/5"
+                : "border-base-200 hover:shadow-md"
+            }`}
+          >
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-xs font-semibold text-base-content/60 uppercase">
+                  Total Categories
+                </p>
+                <h3 className="text-2xl font-bold text-base-content mt-1">
+                  {totalCategories}
+                </h3>
+                <p className="text-xs text-base-content/50 mt-0.5">
+                  All item classifications
+                </p>
+              </div>
+              <div className="p-3 rounded-xl bg-primary/10 text-primary border border-primary/20">
+                <Layers className="size-6" />
+              </div>
+            </div>
+          </div>
+
+          <div
+            onClick={() =>
+              setTypeFilter(typeFilter === "product" ? "all" : "product")
+            }
+            className={`card bg-base-100/70 backdrop-blur-md border p-4 shadow-sm cursor-pointer transition-all ${
+              typeFilter === "product"
+                ? "border-primary ring-2 ring-primary/20 bg-primary/5"
+                : "border-base-200 hover:shadow-md"
+            }`}
+          >
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-xs font-semibold text-base-content/60 uppercase">
+                  Product Categories
+                </p>
+                <h3 className="text-2xl font-bold text-base-content mt-1">
+                  {productCategories}
+                </h3>
+                <p className="text-xs text-base-content/50 mt-0.5">
+                  Inventory groupings
+                </p>
+              </div>
+              <div className="p-3 rounded-xl bg-primary/10 text-primary border border-primary/20">
+                <Package className="size-6" />
+              </div>
+            </div>
+          </div>
+
+          <div
+            onClick={() =>
+              setTypeFilter(typeFilter === "service" ? "all" : "service")
+            }
+            className={`card bg-base-100/70 backdrop-blur-md border p-4 shadow-sm cursor-pointer transition-all ${
+              typeFilter === "service"
+                ? "border-secondary ring-2 ring-secondary/20 bg-secondary/5"
+                : "border-base-200 hover:shadow-md"
+            }`}
+          >
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-xs font-semibold text-base-content/60 uppercase">
+                  Service Categories
+                </p>
+                <h3 className="text-2xl font-bold text-base-content mt-1">
+                  {serviceCategories}
+                </h3>
+                <p className="text-xs text-base-content/50 mt-0.5">
+                  Service offerings & consulting
+                </p>
+              </div>
+              <div className="p-3 rounded-xl bg-secondary/10 text-secondary border border-secondary/20">
+                <Wrench className="size-6" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <SimpleContainer title="Categories Directory">
+          {/* Filter Bar */}
+          <div className="flex items-center gap-1.5 mb-4">
+            {[
+              { id: "all", label: "All Categories" },
+              { id: "product", label: "Products" },
+              { id: "service", label: "Services" },
+            ].map((btn) => (
+              <button
+                key={btn.id}
+                onClick={() => setTypeFilter(btn.id)}
+                className={`btn btn-xs rounded-lg transition-all ${
+                  typeFilter === btn.id
+                    ? "btn-neutral text-neutral-content shadow-sm"
+                    : "btn-ghost text-base-content/70"
+                }`}
+              >
+                {btn.label}
+              </button>
+            ))}
+          </div>
+
           <ContainerRow searchProps={searchProps} showSearch={true} />
+
           <CustomTable
             data={filteredCategories}
             columns={columns}
@@ -201,7 +349,7 @@ function RouteComponent() {
               type="text"
               required
               className="input input-bordered w-full mt-1"
-              placeholder="e.g. Office Supplies, Consulting Services"
+              placeholder="e.g. Office Furniture or IT Consulting"
               value={form.name}
               onChange={(e) => setForm({ ...form, name: e.target.value })}
             />
@@ -209,16 +357,15 @@ function RouteComponent() {
 
           <div>
             <label className="text-xs font-semibold text-base-content/70">
-              Category Scope / Type
+              Category Type
             </label>
             <select
               className="select select-bordered w-full mt-1"
               value={form.type}
               onChange={(e) => setForm({ ...form, type: e.target.value })}
             >
-              <option value="product">Physical Products</option>
-              <option value="service">Services & Consulting</option>
-              <option value="general">General (All)</option>
+              <option value="product">Product Category</option>
+              <option value="service">Service Category</option>
             </select>
           </div>
 
@@ -229,9 +376,11 @@ function RouteComponent() {
             <textarea
               className="textarea textarea-bordered w-full mt-1"
               rows={3}
-              placeholder="Optional category description..."
+              placeholder="Brief description of this category classification..."
               value={form.description}
-              onChange={(e) => setForm({ ...form, description: e.target.value })}
+              onChange={(e) =>
+                setForm({ ...form, description: e.target.value })
+              }
             />
           </div>
 
@@ -272,16 +421,15 @@ function RouteComponent() {
 
           <div>
             <label className="text-xs font-semibold text-base-content/70">
-              Category Scope / Type
+              Category Type
             </label>
             <select
               className="select select-bordered w-full mt-1"
               value={form.type}
               onChange={(e) => setForm({ ...form, type: e.target.value })}
             >
-              <option value="product">Physical Products</option>
-              <option value="service">Services & Consulting</option>
-              <option value="general">General (All)</option>
+              <option value="product">Product Category</option>
+              <option value="service">Service Category</option>
             </select>
           </div>
 
@@ -293,7 +441,9 @@ function RouteComponent() {
               className="textarea textarea-bordered w-full mt-1"
               rows={3}
               value={form.description}
-              onChange={(e) => setForm({ ...form, description: e.target.value })}
+              onChange={(e) =>
+                setForm({ ...form, description: e.target.value })
+              }
             />
           </div>
 

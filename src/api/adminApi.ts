@@ -1166,3 +1166,51 @@ export const useAdminCrossImportJob = (id?: string) => {
     enabled: !!id,
   });
 };
+
+export const useAdminCrossProducts = (params?: any) => {
+  return useQuery<any[]>({
+    queryKey: ["admin", "cross", "products", params],
+    queryFn: async () => {
+      const { data } = await apiClient.get<any>("/admins/products", { params });
+      if (Array.isArray(data)) return data;
+      if (Array.isArray(data?.data)) return data.data;
+      return [];
+    },
+  });
+};
+
+export const useAdminCrossProduct = (id?: string) => {
+  return useQuery<any>({
+    queryKey: ["admin", "cross", "products", id],
+    queryFn: async () => {
+      if (!id) throw new Error("Product ID required");
+      const { data } = await apiClient.get<any>(`/admins/products/${id}`);
+      return data?.data || data;
+    },
+    enabled: !!id,
+  });
+};
+
+export const useAdminCrossServices = (params?: any) => {
+  return useQuery<any[]>({
+    queryKey: ["admin", "cross", "services", params],
+    queryFn: async () => {
+      const { data } = await apiClient.get<any>("/admins/services", { params });
+      if (Array.isArray(data)) return data;
+      if (Array.isArray(data?.data)) return data.data;
+      return [];
+    },
+  });
+};
+
+export const useAdminCrossService = (id?: string) => {
+  return useQuery<any>({
+    queryKey: ["admin", "cross", "services", id],
+    queryFn: async () => {
+      if (!id) throw new Error("Service ID required");
+      const { data } = await apiClient.get<any>(`/admins/services/${id}`);
+      return data?.data || data;
+    },
+    enabled: !!id,
+  });
+};

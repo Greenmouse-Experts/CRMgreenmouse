@@ -1,3 +1,4 @@
+
 import SimpleTitle from "@/components/SimpleTitle";
 import { useSelectImage } from "@/helpers/images";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
@@ -9,16 +10,18 @@ import LocalSelect from "@/components/inputs/LocalSelect";
 import { useCreateProduct } from "@/api/catalogApi";
 import { useCategories } from "@/api/crmApi";
 import { toast } from "sonner";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Percent } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 
 interface ProductFormFields {
   name: string;
   price: number;
   cost?: number;
+  currency?: string;
   description: string;
   quantity: number;
   categoryId: string;
+  isActive?: boolean;
 }
 
 export const Route = createFileRoute("/admin/products/add/")({
@@ -30,8 +33,28 @@ function RouteComponent() {
   const createProduct = useCreateProduct();
   const { data: categories = [] } = useCategories();
   const { image, setImage, image_link } = useSelectImage();
-  const methods = useForm<ProductFormFields>();
-  const { handleSubmit } = methods;
+  const methods = useForm<ProductFormFields>({
+    defaultValues: {
+      currency: "NGN",
+      isActive: true,
+      quantity: 0,
+    },
+  });
+  const { handleSubmit, watch } = methods;
+
+  const watchedPrice = watch("price");
+  const watchedCost = watch("cost");
+  const calculatedMargin =
+    watchedPrice &&
+    watchedCost &&
+    Number(watchedPrice) > 0 &&
+    Number(watchedCost) > 0
+      ? (
+          ((Number(watchedPrice) - Number(watchedCost)) /
+            Number(watchedPrice)) *
+          100
+        ).toFixed(1)
+      : null;
 
   const onSubmit = async (data: ProductFormFields) => {
     try {
@@ -39,10 +62,12 @@ function RouteComponent() {
         name: data.name,
         price: Number(data.price),
         cost: data.cost ? Number(data.cost) : undefined,
+        currency: data.currency || "NGN",
         description: data.description,
-        stock: Number(data.quantity),
-        quantity: Number(data.quantity),
+        stock: Number(data.quantity || 0),
+        quantity: Number(data.quantity || 0),
         categoryId: data.categoryId || undefined,
+        isActive: data.isActive ?? true,
         type: "product",
         images: image_link ? [image_link] : [],
       });
@@ -59,7 +84,7 @@ function RouteComponent() {
         <Link to="/admin/products" className="btn btn-ghost btn-sm btn-circle">
           <ArrowLeft className="size-5" />
         </Link>
-        <SimpleTitle title={"Add Product"} />
+        <SimpleTitle title={"Add New Product"} />
       </div>
 
       <FormProvider {...methods}>
@@ -77,17 +102,14 @@ function RouteComponent() {
           <div className="flex flex-col gap-4">
             <SimpleInput
               label="Product Name *"
-              placeholder="Enter product name"
+              placeholder="e.g. Ergonomic Office Chair"
               {...methods.register("name", {
                 required: "Product name is required",
               })}
             />
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <LocalSelect
-                label="Category"
-                {...methods.register("categoryId")}
-              >
+              <LocalSelect label="Category" {...methods.register("categoryId")}>
                 <option value="">Select a category</option>
                 {categories.map((c) => (
                   <option key={c.id} value={c.id}>
@@ -97,7 +119,7 @@ function RouteComponent() {
               </LocalSelect>
 
               <SimpleInput
-                label="Stock Quantity *"
+                label="Initial Stock Quantity *"
                 type="number"
                 placeholder="0"
                 {...methods.register("quantity", {
@@ -108,9 +130,9 @@ function RouteComponent() {
               />
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <SimpleInput
-                label="Selling Price (₦) *"
+                label="Selling Price *"
                 type="number"
                 placeholder="0.00"
                 {...methods.register("price", {
@@ -120,23 +142,49 @@ function RouteComponent() {
                 })}
               />
               <SimpleInput
-                label="Cost Price (₦)"
+                label="Cost Price"
                 type="number"
                 placeholder="0.00"
                 {...methods.register("cost", {
                   valueAsNumber: true,
                 })}
               />
+              <LocalSelect label="Currency" {...methods.register("currency")}>
+                <option value="NGN">NGN (₦)</option>
+                <option value="USD">USD ($)</option>
+                <option value="EUR">EUR (€)</option>
+                <option value="GBP">GBP (£)</option>
+              </LocalSelect>
             </div>
+
+            {calculatedMargin !== null && (
+              <div className="flex items-center gap-2 p-3 bg-base-200/50 rounded-xl text-xs">
+                <Percent className="size-4 text-primary" />
+                <span className="text-base-content/70">
+                  Estimated Profit Margin:
+                </span>
+                <span
+                  className={`font-bold ${
+                    Number(calculatedMargin) >= 20
+                      ? "text-emerald-500"
+                      : Number(calculatedMargin) > 0
+                        ? "text-amber-500"
+                        : "text-rose-500"
+                  }`}
+                >
+                  {calculatedMargin}%
+                </span>
+              </div>
+            )}
 
             <SimpleTextArea
               label="Description"
-              placeholder="Enter product description"
+              placeholder="Enter product description, technical specifications, warranty, etc."
               {...methods.register("description")}
             />
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 pt-2 border-t border-base-200">
             <button
               type="submit"
               className="btn btn-primary"

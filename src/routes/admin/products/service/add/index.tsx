@@ -17,6 +17,7 @@ interface ServiceFormFields {
   price: number;
   description: string;
   categoryId: string;
+  isActive?: boolean;
 }
 
 export const Route = createFileRoute("/admin/products/service/add/")({
@@ -28,7 +29,11 @@ function RouteComponent() {
   const createService = useCreateService();
   const { data: categories = [] } = useCategories();
   const { image, setImage, image_link } = useSelectImage();
-  const methods = useForm<ServiceFormFields>();
+  const methods = useForm<ServiceFormFields>({
+    defaultValues: {
+      isActive: true,
+    },
+  });
   const { handleSubmit } = methods;
 
   const onSubmit = async (data: ServiceFormFields) => {
@@ -39,7 +44,7 @@ function RouteComponent() {
         description: data.description,
         categoryId: data.categoryId || undefined,
         image: image_link || undefined,
-        isActive: true,
+        isActive: data.isActive ?? true,
       });
       toast.success("Service created successfully");
       navigate({ to: "/admin/products/service" });
@@ -51,10 +56,13 @@ function RouteComponent() {
   return (
     <div className="space-y-4">
       <div className="flex items-center gap-4">
-        <Link to="/admin/products/service" className="btn btn-ghost btn-sm btn-circle">
+        <Link
+          to="/admin/products/service"
+          className="btn btn-ghost btn-sm btn-circle"
+        >
           <ArrowLeft className="size-5" />
         </Link>
-        <SimpleTitle title={"Add Service"} />
+        <SimpleTitle title={"Add New Service"} />
       </div>
 
       <FormProvider {...methods}>
@@ -66,13 +74,13 @@ function RouteComponent() {
             image={image}
             setImage={setImage}
             image_link={image_link}
-            title="Service Image"
+            title="Service Image or Banner"
           />
 
           <div className="flex flex-col gap-4">
             <SimpleInput
               label="Service Name *"
-              placeholder="Enter service offering name"
+              placeholder="e.g. Website Maintenance & Support"
               {...methods.register("name", {
                 required: "Service name is required",
               })}
@@ -90,10 +98,7 @@ function RouteComponent() {
                 })}
               />
 
-              <LocalSelect
-                label="Category"
-                {...methods.register("categoryId")}
-              >
+              <LocalSelect label="Category" {...methods.register("categoryId")}>
                 <option value="">Select a category</option>
                 {categories.map((c) => (
                   <option key={c.id} value={c.id}>
@@ -104,13 +109,13 @@ function RouteComponent() {
             </div>
 
             <SimpleTextArea
-              label="Description"
-              placeholder="Enter service details and offerings..."
+              label="Description & Scope of Work"
+              placeholder="Enter details on what is included, SLA guarantees, delivery timeline..."
               {...methods.register("description")}
             />
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 pt-2 border-t border-base-200">
             <button
               type="submit"
               className="btn btn-primary"

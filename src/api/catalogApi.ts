@@ -254,3 +254,54 @@ export const useToggleServiceActive = () => {
     },
   });
 };
+
+// ==================== PRODUCT IMPORT & EXPORT ====================
+
+export const useExportProducts = () => {
+  return useMutation({
+    mutationFn: async (params?: ProductQueryParams) => {
+      const response = await apiClient.get('/products/export', {
+        params,
+        responseType: 'blob',
+      });
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', 'products_export.csv');
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      return true;
+    },
+  });
+};
+
+export const useImportProducts = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (formData: FormData) => {
+      const { data } = await apiClient.post('/products/import', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['products'] });
+    },
+  });
+};
+
+export const useImportProductsAsync = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (formData: FormData) => {
+      const { data } = await apiClient.post('/products/import/async', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['products'] });
+    },
+  });
+};
