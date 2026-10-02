@@ -1,9 +1,9 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useMemo } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import SimpleContainer from "@/components/SimpleContainer";
 import ContainerRow from "@/components/ContainerRow";
 import { useSearch } from "@/stores/data";
-import { User, RefreshCw } from "lucide-react";
+import { User, RefreshCw, Building2 } from "lucide-react";
 import CustomTable from "@/components/tables/CustomTable";
 import type { Actions } from "@/components/tables/pop-up";
 import Modal, { type ModalHandle } from "@/components/DialogModal";
@@ -18,6 +18,7 @@ export const Route = createFileRoute("/admin/contacts/customers/")({
 });
 
 function RouteComponent() {
+  const [filter, setFilter] = useState<string>("all");
   const searchProps = useSearch();
   const query = useAdminCrossContacts({
     search: searchProps.search || undefined,
@@ -28,6 +29,25 @@ function RouteComponent() {
     null,
   );
 
+  const rawCustomers: Customer[] = (query.data || []) as Customer[];
+
+  const filteredCustomers = useMemo(() => {
+    return rawCustomers.filter((item) => {
+      const isBusiness =
+        item.type === "business" || !!item.companyName || !!item.companyId;
+      if (filter === "individual") {
+        return !isBusiness;
+      }
+      if (filter === "business") {
+        return isBusiness;
+      }
+      if (filter === "has_phone") {
+        return !!(item.workPhone || item.cellPhone || item.phone);
+      }
+      return true;
+    });
+  }, [rawCustomers, filter]);
+
   const handleOpenDetails = (customer: Customer) => {
     setSelectedCustomer(customer);
     detailsModalRef.current?.open();
@@ -37,46 +57,77 @@ function RouteComponent() {
     {
       key: "name",
       label: "Customer Name",
-      render: (_value: any, item: Customer) => (
-        <div className="flex items-center gap-3">
-          <div className="size-9 rounded-lg bg-primary/10 text-primary flex items-center justify-center font-bold">
-            <User className="size-4" />
-          </div>
-          <div>
-            <div className="font-semibold text-base-content leading-tight">
-              {item.firstName} {item.lastName}
+      render: (_value: any, item: Customer) => {
+        const initials =
+          `${item.firstName?.[0] || ""}${item.lastName?.[0] || ""}`.toUpperCase();
+        return (
+          <div className="flex items-center gap-3">
+            <div className="size-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center font-bold text-sm">
+              {initials || <User className="size-5" />}
             </div>
-            <div className="text-sm text-base-content/60">{item.email}</div>
+            <div>
+              <div className="font-semibold text-base-content text-sm leading-tight">
+                {item.firstName} {item.lastName}
+              </div>
+              <div className="text-sm text-base-content/60">{item.email}</div>
+            </div>
           </div>
-        </div>
-      ),
+        );
+      },
+    },
+    {
+      key: "type",
+      label: "Client Type",
+      render: (_value: any, item: Customer) => {
+        const isBusiness =
+          item.type === "business" || !!item.companyName || !!item.companyId;
+        return (
+          <span
+            className={`badge badge-md font-medium text-sm ${
+              isBusiness ? "badge-primary badge-outline" : "badge-ghost"
+            }`}
+          >
+            {isBusiness ? "Business" : "Individual"}
+          </span>
+        );
+      },
+    },
+    {
+      key: "company",
+      label: "Company / Account",
+      render: (_value: any, item: Customer) => {
+        const companyName = item.companyName || item.company?.name;
+        if (!companyName) {
+          return <span className="text-sm text-base-content/40">—</span>;
+        }
+        return (
+          <div className="flex items-center gap-1.5 text-sm font-medium text-base-content">
+            <Building2 className="size-3.5 text-base-content/50" />
+            <span>{companyName}</span>
+          </div>
+        );
+      },
     },
     {
       key: "workPhone",
       label: "Phone",
       render: (_value: any, item: Customer) => (
         <span className="text-sm text-base-content/70">
-          {item.workPhone || item.cellPhone || "—"}
+          {item.workPhone || item.cellPhone || item.phone || "—"}
         </span>
       ),
     },
     {
-      key: "city",
-      label: "City / State",
-      render: (_value: any, item: Customer) => (
-        <span className="text-sm text-base-content/70">
-          {[item.city, item.state].filter(Boolean).join(", ") || "—"}
-        </span>
-      ),
-    },
-    {
-      key: "country",
-      label: "Country",
-      render: (_value: any, item: Customer) => (
-        <span className="badge badge-ghost badge-md font-medium">
-          {item.country || "—"}
-        </span>
-      ),
+      key: "location",
+      label: "Location",
+      render: (_value: any, item: Customer) => {
+        const loc = [item.city, item.state, item.country]
+          .filter(Boolean)
+          .join(", ");
+        return (
+          <span className="text-sm text-base-content/70">{loc || "—"}</span>
+        );
+      },
     },
     {
       key: "createdAt",
@@ -101,7 +152,7 @@ function RouteComponent() {
     <div>
       <PageHeader
         title="Customers Directory"
-        description="Audit, monitor, and inspect individual client profiles across all platform tenants"
+        description="Audit, monitor, and inspect individual and business customer accounts across all platform tenants"
       >
         <button
           onClick={() => query.refetch()}
@@ -119,18 +170,49 @@ function RouteComponent() {
       <PageLoader query={query}>
         {() => (
           <div className="space-y-6">
-            <CustomerSummary />
+            <CustomerSummary customers={rawCustomers} />
 
-            <SimpleContainer>
+            <SimpleContainer
+              title={
+                <div className="flex items-center gap-2">
+                  <span>Customer Directory</span>
+                  <span className="badge badge-md badge-ghost">
+                    {filteredCustomers.length}
+                  </span>
+                </div>
+              }
+            >
               <ContainerRow
                 showSearch
                 searchProps={searchProps}
-                searchPlaceholder="Search customers by name or email..."
-              />
+                searchPlaceholder="Search customers by name, email, or company..."
+              >
+                <div className="flex flex-wrap items-center gap-1.5">
+                  {[
+                    { label: "All Contacts", key: "all" },
+                    { label: "Individual", key: "individual" },
+                    { label: "Business", key: "business" },
+                    { label: "With Phone", key: "has_phone" },
+                  ].map((tab) => (
+                    <button
+                      key={tab.key}
+                      onClick={() => setFilter(tab.key)}
+                      className={`btn btn-sm rounded-full text-sm ${
+                        filter === tab.key
+                          ? "btn-primary text-primary-content"
+                          : "btn-ghost text-base-content/70"
+                      }`}
+                    >
+                      {tab.label}
+                    </button>
+                  ))}
+                </div>
+              </ContainerRow>
+
               <CustomTable
                 actions={actions}
                 columns={columns}
-                data={query.data || []}
+                data={filteredCustomers}
               />
             </SimpleContainer>
 
@@ -138,18 +220,36 @@ function RouteComponent() {
             <Modal ref={detailsModalRef}>
               {selectedCustomer && (
                 <div className="p-6 space-y-6">
-                  <div className="flex items-center gap-3 border-b border-base-200 pb-4">
-                    <div className="bg-primary/10 text-primary p-3 rounded-xl">
-                      <User size={24} />
+                  <div className="flex items-center justify-between border-b border-base-200 pb-4">
+                    <div className="flex items-center gap-3">
+                      <div className="bg-primary/10 text-primary p-3 rounded-xl font-bold text-base">
+                        {`${selectedCustomer.firstName?.[0] || ""}${selectedCustomer.lastName?.[0] || ""}`.toUpperCase() || (
+                          <User size={24} />
+                        )}
+                      </div>
+                      <div>
+                        <h3 className="text-xl font-bold text-base-content">
+                          {selectedCustomer.firstName}{" "}
+                          {selectedCustomer.lastName}
+                        </h3>
+                        <p className="text-sm text-base-content/60">
+                          Customer ID: {selectedCustomer.id}
+                        </p>
+                      </div>
                     </div>
-                    <div>
-                      <h3 className="text-xl font-bold text-base-content">
-                        {selectedCustomer.firstName} {selectedCustomer.lastName}
-                      </h3>
-                      <p className="text-sm text-base-content/60">
-                        Customer ID: {selectedCustomer.id}
-                      </p>
-                    </div>
+                    <span
+                      className={`badge badge-md text-sm ${
+                        selectedCustomer.type === "business" ||
+                        selectedCustomer.companyName
+                          ? "badge-primary badge-outline"
+                          : "badge-ghost"
+                      }`}
+                    >
+                      {selectedCustomer.type === "business" ||
+                      selectedCustomer.companyName
+                        ? "Business Client"
+                        : "Individual Client"}
+                    </span>
                   </div>
 
                   <div className="grid grid-cols-2 gap-4">
@@ -168,6 +268,17 @@ function RouteComponent() {
                       <span className="text-sm font-semibold text-base-content">
                         {selectedCustomer.workPhone ||
                           selectedCustomer.cellPhone ||
+                          selectedCustomer.phone ||
+                          "—"}
+                      </span>
+                    </div>
+                    <div className="bg-base-200/50 p-3 rounded-lg">
+                      <span className="text-sm text-base-content/60 block">
+                        Company Name
+                      </span>
+                      <span className="text-sm font-semibold text-base-content">
+                        {selectedCustomer.companyName ||
+                          selectedCustomer.company?.name ||
                           "—"}
                       </span>
                     </div>
@@ -198,12 +309,21 @@ function RouteComponent() {
                           : "—"}
                       </span>
                     </div>
+                    <div className="bg-base-200/50 p-3 rounded-lg">
+                      <span className="text-sm text-base-content/60 block">
+                        Tenant Scope
+                      </span>
+                      <span className="text-sm font-mono text-base-content truncate block">
+                        {(selectedCustomer as any).tenantId ||
+                          "Global / System"}
+                      </span>
+                    </div>
                   </div>
 
                   <div className="modal-action">
                     <button
                       type="button"
-                      className="btn btn-ghost"
+                      className="btn btn-ghost text-sm"
                       onClick={() => detailsModalRef.current?.close()}
                     >
                       Close
