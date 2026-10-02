@@ -1,16 +1,10 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useMemo } from "react";
 import CustomTable from "@/components/tables/CustomTable";
 import type { Actions } from "@/components/tables/pop-up";
 import Modal, { type ModalHandle } from "@/components/DialogModal";
 import QueryCompLayout from "@/components/layout/QueryCompLayout";
-import {
-  useIncomeRecords,
-  useUpdateIncome,
-  useDeleteIncome,
-  useUpdateIncomeStatus,
-  type IncomeRecord,
-} from "@/api/financeApi";
-import { toast } from "sonner";
+import { useAdminCrossIncome } from "@/api/adminApi";
+import type { IncomeRecord } from "@/api/financeApi";
 import { TrendingUp } from "lucide-react";
 
 interface IncomeTableProps {
@@ -18,156 +12,98 @@ interface IncomeTableProps {
 }
 
 export default function IncomeTable({ searchTerm = "" }: IncomeTableProps) {
-  const query = useIncomeRecords();
-  const updateIncome = useUpdateIncome();
-  const deleteIncome = useDeleteIncome();
-  const updateStatus = useUpdateIncomeStatus();
-
-  const editModalRef = useRef<ModalHandle>(null);
+  const query = useAdminCrossIncome();
   const detailsModalRef = useRef<ModalHandle>(null);
-
-  const [selectedIncome, setSelectedIncome] = useState<IncomeRecord | null>(null);
-  const [form, setForm] = useState({
-    amount: 0,
-    type: "Salary",
-    source: "",
-    description: "",
-    status: "Pending",
-  });
-
-  const handleOpenEdit = (income: IncomeRecord) => {
-    setSelectedIncome(income);
-    setForm({
-      amount: Number(income.amount) || 0,
-      type: income.type || "Salary",
-      source: income.source || "",
-      description: income.description || "",
-      status: income.status || "Pending",
-    });
-    editModalRef.current?.open();
-  };
+  const [selectedIncome, setSelectedIncome] = useState<IncomeRecord | null>(
+    null,
+  );
 
   const handleOpenDetails = (income: IncomeRecord) => {
     setSelectedIncome(income);
     detailsModalRef.current?.open();
   };
 
-  const handleSaveEdit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!selectedIncome) return;
-    try {
-      await updateIncome.mutateAsync({
-        id: selectedIncome.id,
-        amount: Number(form.amount),
-        type: form.type,
-        source: form.source,
-        description: form.description,
-        status: form.status,
-      });
-      toast.success("Income record updated successfully");
-      editModalRef.current?.close();
-    } catch (err: any) {
-      toast.error(err?.response?.data?.message || "Failed to update income");
-    }
-  };
+  const rawList: IncomeRecord[] = (query.data || []) as IncomeRecord[];
 
-  const handleApprove = async (income: IncomeRecord) => {
-    try {
-      await updateStatus.mutateAsync({ id: income.id, status: "Approved" });
-      toast.success("Income marked as Approved");
-    } catch (err: any) {
-      toast.error("Failed to update status");
-    }
-  };
-
-  const handleDelete = async (income: IncomeRecord) => {
-    if (!confirm(`Are you sure you want to delete this income record for ₦${income.amount}?`)) return;
-    try {
-      await deleteIncome.mutateAsync(income.id);
-      toast.success("Income deleted successfully");
-    } catch (err: any) {
-      toast.error(err?.response?.data?.message || "Failed to delete income");
-    }
-  };
-
-  const incomeList = query.data || [];
-  const term = searchTerm.toLowerCase();
-  const filtered = incomeList.filter((item) => {
-    if (!term) return true;
-    return (
-      item.source?.toLowerCase().includes(term) ||
-      item.type?.toLowerCase().includes(term) ||
-      item.description?.toLowerCase().includes(term) ||
-      item.status?.toLowerCase().includes(term)
+  const filteredData = useMemo(() => {
+    if (!searchTerm) return rawList;
+    const term = searchTerm.toLowerCase();
+    return rawList.filter(
+      (item) =>
+        item.source?.toLowerCase().includes(term) ||
+        item.type?.toLowerCase().includes(term) ||
+        item.description?.toLowerCase().includes(term) ||
+        item.status?.toLowerCase().includes(term),
     );
-  });
+  }, [rawList, searchTerm]);
 
   const columns = [
     {
-      key: "date",
-      label: "Date",
-      render: (value: any, item: IncomeRecord) => {
-        const d = value || item.createdAt;
-        return (
-          <span className="text-xs text-base-content/80 font-medium">
-            {d ? new Date(d).toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" }) : "—"}
-          </span>
-        );
-      },
-    },
-    {
       key: "source",
-      label: "Source & Description",
-      render: (_: any, item: IncomeRecord) => (
-        <div className="flex items-center gap-2.5">
+      label: "Source / Client",
+      render: (source: string, item: IncomeRecord) => (
+        <div className="flex items-center gap-3">
           <div className="size-8 rounded-lg bg-success/10 flex items-center justify-center text-success">
             <TrendingUp className="size-4" />
           </div>
           <div>
-            <div className="font-semibold text-base-content">{item.source || "Direct Revenue"}</div>
-            <div className="text-xs text-base-content/50 line-clamp-1">{item.description || item.type}</div>
+            <span className="font-semibold text-base-content block">
+              {source || "General Revenue"}
+            </span>
+            {item.description && (
+              <span className="text-xs text-base-content/50 truncate max-w-xs block">
+                {item.description}
+              </span>
+            )}
           </div>
         </div>
       ),
     },
     {
       key: "type",
-      label: "Category",
-      render: (val: any) => (
-        <span className="badge badge-sm badge-outline font-medium">
-          {val || "General"}
+      label: "Revenue Stream",
+      render: (type: string) => (
+        <span className="badge badge-ghost badge-sm font-medium">
+          {type || "Service"}
         </span>
       ),
     },
     {
       key: "amount",
       label: "Amount",
-      render: (value: any) => (
-        <span className="font-bold text-success text-sm">
-          +₦{Number(value || 0).toLocaleString()}
+      render: (val: any) => (
+        <span className="font-bold text-success">
+          +₦{Number(val || 0).toLocaleString()}
         </span>
       ),
     },
     {
       key: "status",
       label: "Status",
-      render: (value: string) => {
-        const isApproved = value?.toLowerCase() === "approved" || value?.toLowerCase() === "received";
-        const isPending = value?.toLowerCase() === "pending";
+      render: (status: string) => {
+        const s = status?.toLowerCase();
+        let badgeClass = "badge-warning text-white";
+        if (s === "approved" || s === "paid")
+          badgeClass = "badge-success text-white";
+        else if (s === "rejected") badgeClass = "badge-error text-white";
+
         return (
           <span
-            className={`badge badge-sm font-semibold ${
-              isApproved
-                ? "badge-success text-white"
-                : isPending
-                ? "badge-warning text-white"
-                : "badge-error text-white"
-            }`}
+            className={`badge badge-sm font-semibold capitalize ${badgeClass}`}
           >
-            {value || "Pending"}
+            {status || "Pending"}
           </span>
         );
       },
+    },
+    {
+      key: "createdAt",
+      label: "Recorded Date",
+      render: (val: any) => (
+        <span className="text-xs text-base-content/60">
+          {val ? new Date(val).toLocaleDateString() : "—"}
+        </span>
+      ),
     },
   ];
 
@@ -177,193 +113,95 @@ export default function IncomeTable({ searchTerm = "" }: IncomeTableProps) {
       label: "View Details",
       action: (item) => handleOpenDetails(item),
     },
-    {
-      key: "approve",
-      label: "Approve Income",
-      action: (item) => handleApprove(item),
-    },
-    {
-      key: "edit",
-      label: "Edit Income",
-      action: (item) => handleOpenEdit(item),
-    },
-    {
-      key: "delete",
-      label: "Delete",
-      action: (item) => handleDelete(item),
-    },
   ];
 
   return (
-    <div className="space-y-4">
+    <div>
       <QueryCompLayout query={query}>
-        {filtered.length === 0 ? (
-          <div className="p-8 text-center text-base-content/60 bg-base-100 rounded-box border border-base-200">
-            No income records recorded yet.
-          </div>
-        ) : (
-          <CustomTable columns={columns} data={filtered} actions={actions} />
+        {() => (
+          <CustomTable
+            actions={actions}
+            columns={columns}
+            data={filteredData}
+          />
         )}
       </QueryCompLayout>
 
-      {/* Edit Income Modal */}
-      <Modal ref={editModalRef} title="Edit Income Record">
-        <form onSubmit={handleSaveEdit} className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="text-xs font-semibold text-base-content/70">
-                Amount (₦) *
-              </label>
-              <input
-                type="number"
-                required
-                min="0"
-                className="input input-bordered w-full mt-1"
-                value={form.amount}
-                onChange={(e) => setForm({ ...form, amount: Number(e.target.value) })}
-              />
-            </div>
-            <div>
-              <label className="text-xs font-semibold text-base-content/70">
-                Type / Category
-              </label>
-              <select
-                className="select select-bordered w-full mt-1"
-                value={form.type}
-                onChange={(e) => setForm({ ...form, type: e.target.value })}
-              >
-                <option value="Salary">Salary</option>
-                <option value="Sales">Sales</option>
-                <option value="Grant">Grant</option>
-                <option value="Commission">Commission</option>
-                <option value="Investment">Investment</option>
-                <option value="Bonus">Bonus</option>
-                <option value="Rental Income">Rental Income</option>
-                <option value="Other">Other</option>
-              </select>
-            </div>
-          </div>
-
-          <div>
-            <label className="text-xs font-semibold text-base-content/70">
-              Source *
-            </label>
-            <input
-              type="text"
-              required
-              className="input input-bordered w-full mt-1"
-              value={form.source}
-              onChange={(e) => setForm({ ...form, source: e.target.value })}
-            />
-          </div>
-
-          <div>
-            <label className="text-xs font-semibold text-base-content/70">
-              Status
-            </label>
-            <select
-              className="select select-bordered w-full mt-1"
-              value={form.status}
-              onChange={(e) => setForm({ ...form, status: e.target.value })}
-            >
-              <option value="Pending">Pending</option>
-              <option value="Approved">Approved</option>
-              <option value="Rejected">Rejected</option>
-            </select>
-          </div>
-
-          <div>
-            <label className="text-xs font-semibold text-base-content/70">
-              Description
-            </label>
-            <textarea
-              className="textarea textarea-bordered w-full mt-1"
-              rows={3}
-              value={form.description}
-              onChange={(e) => setForm({ ...form, description: e.target.value })}
-            />
-          </div>
-
-          <div className="modal-action">
-            <button
-              type="button"
-              className="btn btn-ghost"
-              onClick={() => editModalRef.current?.close()}
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              className="btn btn-primary"
-              disabled={updateIncome.isPending}
-            >
-              {updateIncome.isPending ? "Saving..." : "Save Changes"}
-            </button>
-          </div>
-        </form>
-      </Modal>
-
       {/* Details Modal */}
-      <Modal ref={detailsModalRef} title="Income Record Details">
+      <Modal ref={detailsModalRef}>
         {selectedIncome && (
-          <div className="space-y-4">
-            <div className="flex items-center gap-4 p-4 bg-base-200/50 rounded-xl">
-              <div className="size-14 rounded-xl bg-success/10 flex items-center justify-center text-success">
-                <TrendingUp className="size-7" />
-              </div>
+          <div className="p-6 space-y-6">
+            <div className="flex items-center justify-between border-b border-base-200 pb-4">
               <div>
-                <h4 className="text-lg font-bold text-base-content">
-                  {selectedIncome.source || "Income Record"}
-                </h4>
-                <div className="flex items-center gap-2 mt-1">
-                  <span className="badge badge-sm badge-outline">
-                    {selectedIncome.type}
-                  </span>
-                  <span
-                    className={`badge badge-sm ${
-                      selectedIncome.status === "Approved"
-                        ? "badge-success text-white"
-                        : "badge-warning text-white"
-                    }`}
-                  >
-                    {selectedIncome.status}
-                  </span>
-                </div>
+                <h3 className="text-lg font-bold text-base-content">
+                  Income #{selectedIncome.id.slice(0, 8).toUpperCase()}
+                </h3>
+                <p className="text-xs text-base-content/60">
+                  {selectedIncome.createdAt
+                    ? new Date(selectedIncome.createdAt).toLocaleString()
+                    : ""}
+                </p>
               </div>
+              <span
+                className={`badge badge-md font-semibold capitalize ${
+                  selectedIncome.status === "approved" ||
+                  selectedIncome.status === "paid"
+                    ? "badge-success text-white"
+                    : "badge-warning text-white"
+                }`}
+              >
+                {selectedIncome.status || "Pending"}
+              </span>
             </div>
 
-            <div className="grid grid-cols-2 gap-4 text-sm">
-              <div className="p-3 bg-base-200/30 rounded-lg">
-                <span className="text-xs text-base-content/60 block">Amount</span>
-                <span className="font-bold text-success text-lg">
-                  ₦{Number(selectedIncome.amount || 0).toLocaleString()}
+            <div className="grid grid-cols-2 gap-4">
+              <div className="bg-base-200/50 p-3 rounded-lg">
+                <span className="text-xs text-base-content/60 block">
+                  Amount
+                </span>
+                <span className="text-xl font-bold text-success">
+                  +₦{Number(selectedIncome.amount || 0).toLocaleString()}
                 </span>
               </div>
-              <div className="p-3 bg-base-200/30 rounded-lg">
-                <span className="text-xs text-base-content/60 block">Date</span>
-                <span className="font-semibold text-base-content">
-                  {selectedIncome.date || selectedIncome.createdAt
-                    ? new Date(selectedIncome.date || selectedIncome.createdAt!).toLocaleDateString()
-                    : "—"}
+              <div className="bg-base-200/50 p-3 rounded-lg">
+                <span className="text-xs text-base-content/60 block">
+                  Stream Type
+                </span>
+                <span className="text-sm font-semibold text-base-content">
+                  {selectedIncome.type || "Service"}
+                </span>
+              </div>
+              <div className="bg-base-200/50 p-3 rounded-lg">
+                <span className="text-xs text-base-content/60 block">
+                  Source / Payee
+                </span>
+                <span className="text-sm font-semibold text-base-content">
+                  {selectedIncome.source || "General Client"}
+                </span>
+              </div>
+              <div className="bg-base-200/50 p-3 rounded-lg">
+                <span className="text-xs text-base-content/60 block">
+                  Tenant Scope
+                </span>
+                <span className="text-xs font-mono text-base-content truncate block">
+                  {(selectedIncome as any).tenantId || "Platform Tenant"}
                 </span>
               </div>
             </div>
 
             {selectedIncome.description && (
-              <div>
-                <span className="text-xs font-semibold text-base-content/70 block mb-1">
-                  Description
+              <div className="bg-base-200/30 p-3 rounded-lg text-sm text-base-content/70">
+                <span className="font-semibold block text-xs mb-1">
+                  Description:
                 </span>
-                <p className="text-sm text-base-content/80 p-3 bg-base-200/30 rounded-lg">
-                  {selectedIncome.description}
-                </p>
+                {selectedIncome.description}
               </div>
             )}
 
             <div className="modal-action">
               <button
                 type="button"
-                className="btn btn-primary"
+                className="btn btn-ghost"
                 onClick={() => detailsModalRef.current?.close()}
               >
                 Close

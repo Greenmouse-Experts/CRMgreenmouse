@@ -1,5 +1,5 @@
-import { useState, useRef } from "react";
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { useState, useRef, useMemo } from "react";
+import { createFileRoute } from "@tanstack/react-router";
 import InvoicesStat from "./-components/InvocesStat";
 import SimpleContainer from "@/components/SimpleContainer";
 import CustomTable from "@/components/tables/CustomTable";
@@ -9,28 +9,22 @@ import Modal, { type ModalHandle } from "@/components/DialogModal";
 import PageLoader from "@/components/layout/PageLoader";
 import ContainerRow from "@/components/ContainerRow";
 import { useSearch } from "@/stores/data";
-import {
-  useInvoices,
-  useInvoiceStats,
-  useDeleteInvoice,
-  useMarkInvoicePaid,
-  useSendInvoice,
-  type Invoice,
-} from "@/api/financeApi";
-import { PlusCircleIcon, FileText } from "lucide-react";
-import { toast } from "sonner";
+import { useAdminCrossInvoices, useAdminInvoiceStats } from "@/api/adminApi";
+import type { Invoice } from "@/api/financeApi";
+import { FileText, RefreshCw } from "lucide-react";
 
 export const Route = createFileRoute("/admin/accounts/Invoices/")({
   component: RouteComponent,
 });
 
 function RouteComponent() {
-  const query = useInvoices();
-  const statsQuery = useInvoiceStats();
-  const deleteInvoice = useDeleteInvoice();
-  const markPaid = useMarkInvoicePaid();
-  const sendInvoice = useSendInvoice();
+  const [statusFilter, setStatusFilter] = useState<string>("all");
   const searchProps = useSearch();
+
+  const query = useAdminCrossInvoices({
+    search: searchProps.search || undefined,
+  });
+  const statsQuery = useAdminInvoiceStats();
 
   const detailsModalRef = useRef<ModalHandle>(null);
   const [selectedInvoice, setSelectedInvoice] = useState<Invoice | null>(null);
@@ -40,49 +34,19 @@ function RouteComponent() {
     detailsModalRef.current?.open();
   };
 
-  const handleMarkPaid = async (invoice: Invoice) => {
-    try {
-      await markPaid.mutateAsync(invoice.id);
-      toast.success(`Invoice marked as paid`);
-    } catch (err: any) {
-      toast.error(err?.response?.data?.message || "Failed to mark invoice as paid");
-    }
-  };
+  const invoicesList: Invoice[] = (query.data || []) as Invoice[];
 
-  const handleSendInvoice = async (invoice: Invoice) => {
-    try {
-      await sendInvoice.mutateAsync(invoice.id);
-      toast.success(`Invoice marked as sent to customer`);
-    } catch (err: any) {
-      toast.error(err?.response?.data?.message || "Failed to mark invoice as sent");
-    }
-  };
-
-  const handleDelete = async (invoice: Invoice) => {
-    const num = invoice.invoiceNumber || invoice.id.slice(0, 8);
-    if (!confirm(`Are you sure you want to delete invoice #${num}?`)) return;
-    try {
-      await deleteInvoice.mutateAsync(invoice.id);
-      toast.success("Invoice deleted successfully");
-    } catch (err: any) {
-      toast.error(err?.response?.data?.message || "Failed to delete invoice");
-    }
-  };
-
-  const invoicesList = query.data || [];
-  const searchTerm = searchProps.search?.toLowerCase() || "";
-  const filteredInvoices = invoicesList.filter((inv) => {
-    if (!searchTerm) return true;
-    const clientName = inv.contact
-      ? `${inv.contact.firstName} ${inv.contact.lastName}`
-      : "";
-    return (
-      inv.invoiceNumber?.toLowerCase().includes(searchTerm) ||
-      clientName.toLowerCase().includes(searchTerm) ||
-      inv.status?.toLowerCase().includes(searchTerm) ||
-      inv.billingAddress?.toLowerCase().includes(searchTerm)
-    );
-  });
+  const filteredInvoices = useMemo(() => {
+    return invoicesList.filter((inv) => {
+      if (
+        statusFilter !== "all" &&
+        inv.status?.toLowerCase() !== statusFilter
+      ) {
+        return false;
+      }
+      return true;
+    });
+  }, [invoicesList, statusFilter]);
 
   const columns = [
     {
@@ -112,7 +76,9 @@ function RouteComponent() {
           <div className="font-medium text-base-content">
             {val ? `${val.firstName} ${val.lastName}` : "Direct Client"}
           </div>
-          <div className="text-xs text-base-content/50">{val?.email || item.billingAddress || "—"}</div>
+          <div className="text-xs text-base-content/50">
+            {val?.email || item.billingAddress || "—"}
+          </div>
         </div>
       ),
     },
@@ -125,7 +91,8 @@ function RouteComponent() {
             Issued: {val ? new Date(val).toLocaleDateString() : "—"}
           </div>
           <div className="text-base-content/50">
-            Due: {item.dueDate ? new Date(item.dueDate).toLocaleDateString() : "—"}
+            Due:{" "}
+            {item.dueDate ? new Date(item.dueDate).toLocaleDateString() : "—"}
           </div>
         </div>
       ),
@@ -138,11 +105,12 @@ function RouteComponent() {
           val ??
           item.items?.reduce(
             (s, it) => s + (Number(it.unitPrice) || 0) * (Number(it.qty) || 1),
-            0
+            0,
           );
         return (
           <span className="font-bold text-base-content">
-            {item.currency || "₦"}{Number(computed || 0).toLocaleString()}
+            {item.currency || "₦"}
+            {Number(computed || 0).toLocaleString()}
           </span>
         );
       },
@@ -154,12 +122,15 @@ function RouteComponent() {
         const s = status?.toLowerCase();
         let badgeClass = "badge-ghost";
         if (s === "paid") badgeClass = "badge-success text-white";
-        else if (s === "sent" || s === "pending") badgeClass = "badge-info text-white";
-        else if (s === "overdue") badgeClass = "badge-error text-white";
-        else if (s === "draft") badgeClass = "badge-warning text-white";
+        else if (s === "pending" || s === "sent")
+          badgeClass = "badge-warning text-white";
+        else if (s === "overdue" || s === "cancelled")
+          badgeClass = "badge-error text-white";
 
         return (
-          <span className={`badge badge-sm font-semibold capitalize ${badgeClass}`}>
+          <span
+            className={`badge badge-sm font-semibold capitalize ${badgeClass}`}
+          >
             {status || "Draft"}
           </span>
         );
@@ -173,176 +144,209 @@ function RouteComponent() {
       label: "View Details",
       action: (item) => handleOpenDetails(item),
     },
-    {
-      key: "send",
-      label: "Mark as Sent",
-      action: (item) => handleSendInvoice(item),
-    },
-    {
-      key: "paid",
-      label: "Mark as Paid",
-      action: (item) => handleMarkPaid(item),
-    },
-    {
-      key: "delete",
-      label: "Delete",
-      action: (item) => handleDelete(item),
-    },
   ];
 
   return (
     <div className="space-y-6">
       <PageHeader
-        title="Invoices Management"
-        description="Track client billing, invoices issuance, and payment settlements"
+        title="Invoices Audit"
+        description="Audit billing, receivables, and payment status across all platform tenants"
       >
-        <Link to="/admin/accounts/Invoices/add" className="btn btn-primary btn-sm">
-          <PlusCircleIcon className="size-4" /> Create Invoice
-        </Link>
+        <button
+          onClick={() => query.refetch()}
+          className="btn btn-outline btn-sm gap-2"
+          disabled={query.isFetching}
+        >
+          <RefreshCw
+            size={15}
+            className={query.isFetching ? "animate-spin" : ""}
+          />
+          Refresh
+        </button>
       </PageHeader>
 
-      <PageLoader
-        query={query}
-        showSuccessState={true}
-        emptyState={{
-          title: "No Invoices Found",
-          description: "Get started by creating your first client invoice.",
-          actionText: "Create Invoice",
-          onAction: () => {},
-        }}
-      >
-        <InvoicesStat
-          invoices={invoicesList}
-          statsData={statsQuery.data}
-        />
+      <PageLoader query={query}>
+        {() => (
+          <div className="space-y-6">
+            <InvoicesStat invoices={invoicesList} statsData={statsQuery.data} />
 
-        <SimpleContainer title="Invoices Directory">
-          <ContainerRow searchProps={searchProps} showSearch={true} />
-          <CustomTable
-            data={filteredInvoices}
-            columns={columns}
-            actions={actions}
-          />
-        </SimpleContainer>
-      </PageLoader>
-
-      {/* View Details Modal */}
-      <Modal ref={detailsModalRef} title="Invoice Summary & Breakdown">
-        {selectedInvoice && (
-          <div className="space-y-5">
-            <div className="flex items-center justify-between p-4 bg-base-200/50 rounded-xl">
-              <div>
-                <span className="text-xs text-base-content/60 font-semibold uppercase">
-                  Invoice Number
-                </span>
-                <h3 className="text-xl font-bold text-base-content">
-                  {selectedInvoice.invoiceNumber ||
-                    `INV-${selectedInvoice.id.slice(0, 8).toUpperCase()}`}
-                </h3>
-              </div>
-              <span className="badge badge-lg capitalize font-semibold">
-                {selectedInvoice.status || "Draft"}
-              </span>
+            {/* Filter Tabs */}
+            <div className="flex flex-wrap gap-2">
+              {[
+                { label: "All Invoices", key: "all" },
+                { label: "Paid", key: "paid" },
+                { label: "Pending", key: "pending" },
+                { label: "Overdue", key: "overdue" },
+                { label: "Cancelled", key: "cancelled" },
+              ].map((tab) => (
+                <button
+                  key={tab.key}
+                  onClick={() => setStatusFilter(tab.key)}
+                  className={`btn btn-xs rounded-full ${
+                    statusFilter === tab.key
+                      ? "btn-primary text-primary-content"
+                      : "btn-ghost text-base-content/70"
+                  }`}
+                >
+                  {tab.label}
+                </button>
+              ))}
             </div>
 
-            <div className="grid grid-cols-2 gap-4 text-xs">
-              <div className="p-3 bg-base-200/30 rounded-lg">
-                <span className="text-base-content/60 block">Billed To:</span>
-                <span className="font-semibold text-base-content text-sm block mt-0.5">
-                  {selectedInvoice.contact
-                    ? `${selectedInvoice.contact.firstName} ${selectedInvoice.contact.lastName}`
-                    : "Direct Client"}
-                </span>
-                <span className="text-base-content/50">
-                  {selectedInvoice.contact?.email || selectedInvoice.billingAddress || "—"}
-                </span>
-              </div>
-              <div className="p-3 bg-base-200/30 rounded-lg">
-                <span className="text-base-content/60 block">Payment Dates:</span>
-                <span className="text-base-content block mt-0.5">
-                  Issued:{" "}
-                  {selectedInvoice.issuedDate
-                    ? new Date(selectedInvoice.issuedDate).toLocaleDateString()
-                    : "—"}
-                </span>
-                <span className="text-base-content block">
-                  Due:{" "}
-                  {selectedInvoice.dueDate
-                    ? new Date(selectedInvoice.dueDate).toLocaleDateString()
-                    : "—"}
-                </span>
-              </div>
-            </div>
+            <SimpleContainer>
+              <ContainerRow {...searchProps}>
+                <CustomTable
+                  actions={actions}
+                  columns={columns}
+                  data={filteredInvoices}
+                />
+              </ContainerRow>
+            </SimpleContainer>
 
-            {/* Line Items */}
-            <div>
-              <span className="text-xs font-semibold text-base-content/70 block mb-2">
-                Line Items
-              </span>
-              <div className="border border-base-200 rounded-lg overflow-hidden">
-                <table className="table table-xs w-full">
-                  <thead className="bg-base-200/50">
-                    <tr>
-                      <th>Description</th>
-                      <th className="text-center">Qty</th>
-                      <th className="text-right">Rate</th>
-                      <th className="text-right">Amount</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {selectedInvoice.items?.map((it, idx) => (
-                      <tr key={idx}>
-                        <td className="font-medium">{it.description}</td>
-                        <td className="text-center">{it.qty}</td>
-                        <td className="text-right">
-                          ₦{Number(it.unitPrice).toLocaleString()}
-                        </td>
-                        <td className="text-right font-semibold">
-                          ₦{(it.qty * it.unitPrice).toLocaleString()}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-
-            <div className="flex justify-end pt-2">
-              <div className="text-right space-y-1 text-sm">
-                <div className="text-base-content/70">
-                  Tax: ₦{Number(selectedInvoice.tax || 0).toLocaleString()}
-                </div>
-                {selectedInvoice.discount ? (
-                  <div className="text-base-content/70">
-                    Discount: -₦{Number(selectedInvoice.discount).toLocaleString()}
+            {/* Invoice Details Modal */}
+            <Modal ref={detailsModalRef}>
+              {selectedInvoice && (
+                <div className="p-6 space-y-6">
+                  <div className="flex items-center justify-between border-b border-base-200 pb-4">
+                    <div>
+                      <h3 className="text-lg font-bold text-base-content">
+                        Invoice #
+                        {selectedInvoice.invoiceNumber ||
+                          selectedInvoice.id.slice(0, 8).toUpperCase()}
+                      </h3>
+                      <p className="text-xs text-base-content/60">
+                        {selectedInvoice.issuedDate
+                          ? new Date(
+                              selectedInvoice.issuedDate,
+                            ).toLocaleDateString()
+                          : ""}
+                      </p>
+                    </div>
+                    <span
+                      className={`badge badge-md font-semibold capitalize ${
+                        selectedInvoice.status === "paid"
+                          ? "badge-success text-white"
+                          : selectedInvoice.status === "pending"
+                            ? "badge-warning text-white"
+                            : "badge-ghost"
+                      }`}
+                    >
+                      {selectedInvoice.status || "Draft"}
+                    </span>
                   </div>
-                ) : null}
-                <div className="text-lg font-bold text-primary">
-                  Total: ₦
-                  {Number(
-                    selectedInvoice.total ||
-                      selectedInvoice.items?.reduce(
-                        (s, it) => s + it.qty * it.unitPrice,
-                        0
-                      ) ||
-                      0
-                  ).toLocaleString()}
-                </div>
-              </div>
-            </div>
 
-            <div className="modal-action">
-              <button
-                type="button"
-                className="btn btn-primary"
-                onClick={() => detailsModalRef.current?.close()}
-              >
-                Close
-              </button>
-            </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="bg-base-200/50 p-3 rounded-lg">
+                      <span className="text-xs text-base-content/60 block">
+                        Customer
+                      </span>
+                      <span className="text-sm font-semibold text-base-content">
+                        {selectedInvoice.contact
+                          ? `${selectedInvoice.contact.firstName} ${selectedInvoice.contact.lastName}`
+                          : "Direct Client"}
+                      </span>
+                    </div>
+                    <div className="bg-base-200/50 p-3 rounded-lg">
+                      <span className="text-xs text-base-content/60 block">
+                        Total Amount
+                      </span>
+                      <span className="text-base font-bold text-base-content">
+                        {selectedInvoice.currency || "₦"}
+                        {Number(
+                          selectedInvoice.total ??
+                            selectedInvoice.items?.reduce(
+                              (s, it) =>
+                                s +
+                                (Number(it.unitPrice) || 0) *
+                                  (Number(it.qty) || 1),
+                              0,
+                            ) ??
+                            0,
+                        ).toLocaleString()}
+                      </span>
+                    </div>
+                    <div className="bg-base-200/50 p-3 rounded-lg">
+                      <span className="text-xs text-base-content/60 block">
+                        Tenant Scope
+                      </span>
+                      <span className="text-xs font-mono text-base-content truncate block">
+                        {(selectedInvoice as any).tenantId || "Platform Tenant"}
+                      </span>
+                    </div>
+                    <div className="bg-base-200/50 p-3 rounded-lg">
+                      <span className="text-xs text-base-content/60 block">
+                        Due Date
+                      </span>
+                      <span className="text-sm font-semibold text-base-content">
+                        {selectedInvoice.dueDate
+                          ? new Date(
+                              selectedInvoice.dueDate,
+                            ).toLocaleDateString()
+                          : "—"}
+                      </span>
+                    </div>
+                  </div>
+
+                  {selectedInvoice.items &&
+                    selectedInvoice.items.length > 0 && (
+                      <div className="space-y-2">
+                        <h4 className="text-xs font-semibold text-base-content/70 uppercase">
+                          Line Items ({selectedInvoice.items.length})
+                        </h4>
+                        <div className="divide-y divide-base-200 rounded-lg border border-base-200 overflow-hidden text-sm">
+                          {selectedInvoice.items.map((it: any, idx: number) => (
+                            <div
+                              key={idx}
+                              className="p-3 flex items-center justify-between bg-base-100"
+                            >
+                              <div>
+                                <span className="font-medium text-base-content block">
+                                  {it.product?.name ||
+                                    it.description ||
+                                    `Item #${idx + 1}`}
+                                </span>
+                                <span className="text-xs text-base-content/50">
+                                  {it.qty} × {selectedInvoice.currency || "₦"}
+                                  {Number(it.unitPrice || 0).toLocaleString()}
+                                </span>
+                              </div>
+                              <span className="font-semibold text-base-content">
+                                {selectedInvoice.currency || "₦"}
+                                {(
+                                  (Number(it.qty) || 1) *
+                                  (Number(it.unitPrice) || 0)
+                                ).toLocaleString()}
+                              </span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                  {(selectedInvoice as any).notes && (
+                    <div className="bg-base-200/30 p-3 rounded-lg text-sm text-base-content/70">
+                      <span className="font-semibold block text-xs mb-1">
+                        Invoice Notes:
+                      </span>
+                      {(selectedInvoice as any).notes}
+                    </div>
+                  )}
+
+                  <div className="modal-action">
+                    <button
+                      type="button"
+                      className="btn btn-ghost"
+                      onClick={() => detailsModalRef.current?.close()}
+                    >
+                      Close
+                    </button>
+                  </div>
+                </div>
+              )}
+            </Modal>
           </div>
         )}
-      </Modal>
+      </PageLoader>
     </div>
   );
 }

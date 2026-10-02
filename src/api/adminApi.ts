@@ -863,6 +863,30 @@ export const useAdminQuoteStats = () => {
   });
 };
 
+export const useAdminCrossQuotes = (params?: any) => {
+  return useQuery<any[]>({
+    queryKey: ["admin", "cross", "quotes", params],
+    queryFn: async () => {
+      const { data } = await apiClient.get<any>("/admins/quotes", { params });
+      if (Array.isArray(data)) return data;
+      if (Array.isArray(data?.data)) return data.data;
+      return [];
+    },
+  });
+};
+
+export const useAdminCrossQuote = (id?: string) => {
+  return useQuery<any>({
+    queryKey: ["admin", "cross", "quotes", id],
+    queryFn: async () => {
+      if (!id) throw new Error("Quote ID required");
+      const { data } = await apiClient.get<any>(`/admins/quotes/${id}`);
+      return data?.data || data;
+    },
+    enabled: !!id,
+  });
+};
+
 export const useAdminDealsKanban = (pipelineId?: string) => {
   return useQuery<any>({
     queryKey: ["admin", "deals", "kanban", pipelineId],
