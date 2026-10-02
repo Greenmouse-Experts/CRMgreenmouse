@@ -43,7 +43,7 @@ export const useDashboardStats = () => {
   return useQuery<DashboardStats>({
     queryKey: ["dashboard", "stats"],
     queryFn: async () => {
-      const { data } = await apiClient.get<DashboardStats>("/dashboard/stats");
+      const { data } = await apiClient.get<DashboardStats>("/admins/dashboard/stats");
       return data;
     },
   });
@@ -54,7 +54,7 @@ export const useDashboardBalance = () => {
     queryKey: ["dashboard", "balance"],
     queryFn: async () => {
       const { data } =
-        await apiClient.get<DashboardBalance>("/dashboard/balance");
+        await apiClient.get<DashboardBalance>("/admins/dashboard/balance");
       return data;
     },
   });
@@ -67,7 +67,7 @@ export const useDashboardIncomeExpense = (
     queryKey: ["dashboard", "income-expense", year],
     queryFn: async () => {
       const { data } = await apiClient.get<DashboardIncomeExpense>(
-        `/dashboard/income-expense?year=${year}`,
+        `/admins/dashboard/income-expense?year=${year}`,
       );
       return data;
     },
@@ -79,7 +79,7 @@ export const useDashboardProfit = (year: number = new Date().getFullYear()) => {
     queryKey: ["dashboard", "profit", year],
     queryFn: async () => {
       const { data } = await apiClient.get<DashboardProfit>(
-        `/dashboard/profit?year=${year}`,
+        `/admins/dashboard/profit?year=${year}`,
       );
       return data;
     },
@@ -91,7 +91,7 @@ export const useDashboardUserAnalytics = () => {
     queryKey: ["dashboard", "user-analytics"],
     queryFn: async () => {
       const { data } = await apiClient.get<DashboardUserAnalytics>(
-        "/dashboard/user-analytics",
+        "/admins/dashboard/user-analytics",
       );
       return data;
     },
@@ -144,8 +144,8 @@ export const useAdminTenants = (params?: TenantFilterParams) => {
       }
       const queryString = queryParams.toString();
       const url = queryString
-        ? `/admin/tenants?${queryString}`
-        : "/admin/tenants";
+        ? `/admins/tenants?${queryString}`
+        : "/admins/tenants";
       const { data } = await apiClient.get<Tenant[]>(url);
       return data;
     },
@@ -156,7 +156,7 @@ export const useAdminTenantStats = () => {
   return useQuery<TenantStats>({
     queryKey: ["admin", "tenants", "stats"],
     queryFn: async () => {
-      const { data } = await apiClient.get<TenantStats>("/admin/tenants/stats");
+      const { data } = await apiClient.get<TenantStats>("/admins/tenants/stats");
       return data;
     },
   });
@@ -167,7 +167,7 @@ export const useAdminTenant = (id?: string) => {
     queryKey: ["admin", "tenants", id],
     queryFn: async () => {
       if (!id) throw new Error("Tenant ID required");
-      const { data } = await apiClient.get<Tenant>(`/admin/tenants/${id}`);
+      const { data } = await apiClient.get<Tenant>(`/admins/tenants/${id}`);
       return data;
     },
     enabled: !!id,
@@ -178,7 +178,7 @@ export const useToggleTenantStatus = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (id: string) => {
-      const { data } = await apiClient.patch(`/admin/tenants/${id}/status`);
+      const { data } = await apiClient.patch(`/admins/tenants/${id}/status`);
       return data;
     },
     onSuccess: () => {
@@ -200,7 +200,7 @@ export const useAssignTenantSubscription = () => {
       billingCycle: "monthly" | "yearly";
     }) => {
       const { data } = await apiClient.patch(
-        `/admin/tenants/${id}/subscription`,
+        `/admins/tenants/${id}/subscription`,
         {
           subscriptionPlanId,
           billingCycle,
@@ -264,8 +264,8 @@ export const useAdminSubscriptions = (params?: {
         queryParams.set("isActive", String(params.isActive));
       const queryString = queryParams.toString();
       const url = queryString
-        ? `/admin/subscriptions?${queryString}`
-        : "/admin/subscriptions";
+        ? `/admins/subscriptions?${queryString}`
+        : "/admins/subscriptions";
       const { data } = await apiClient.get<SubscriptionPlansResponse>(url);
       return data;
     },
@@ -277,7 +277,7 @@ export const useCreateSubscriptionPlan = () => {
   return useMutation({
     mutationFn: async (plan: Partial<SubscriptionPlan>) => {
       const { data } = await apiClient.post<SubscriptionPlan>(
-        "/admin/subscriptions",
+        "/admins/subscriptions",
         plan,
       );
       return data;
@@ -296,7 +296,7 @@ export const useUpdateSubscriptionPlan = () => {
       ...plan
     }: Partial<SubscriptionPlan> & { id: string }) => {
       const { data } = await apiClient.patch<SubscriptionPlan>(
-        `/admin/subscriptions/${id}`,
+        `/admins/subscriptions/${id}`,
         plan,
       );
       return data;
@@ -311,7 +311,7 @@ export const useDeleteSubscriptionPlan = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (id: string) => {
-      const { data } = await apiClient.delete(`/admin/subscriptions/${id}`);
+      const { data } = await apiClient.delete(`/admins/subscriptions/${id}`);
       return data;
     },
     onSuccess: () => {
@@ -343,7 +343,7 @@ export const useAdminProfile = () => {
   return useQuery<AdminProfile>({
     queryKey: ["admin", "profile"],
     queryFn: async () => {
-      const { data } = await apiClient.get<AdminProfile>("/admin/profile");
+      const { data } = await apiClient.get<AdminProfile>("/admins/profile");
       return data;
     },
   });
@@ -354,7 +354,7 @@ export const useUpdateAdminProfile = () => {
   return useMutation({
     mutationFn: async (profile: Partial<AdminProfile>) => {
       const { data } = await apiClient.patch<AdminProfile>(
-        "/admin/profile",
+        "/admins/profile",
         profile,
       );
       return data;
@@ -372,7 +372,7 @@ export const useChangeAdminPassword = () => {
       newPassword: string;
       confirmNewPassword: string;
     }) => {
-      const { data } = await apiClient.patch("/admin/change-password", payload);
+      const { data } = await apiClient.patch("/admins/change-password", payload);
       return data;
     },
   });
@@ -406,7 +406,7 @@ export const useAdminPermissions = () => {
           };
         });
       } catch {
-        const { data } = await apiClient.get<any>("/admin/permissions");
+        const { data } = await apiClient.get<any>("/admins/permissions");
         const list = Array.isArray(data)
           ? data
           : Array.isArray(data?.data)
@@ -457,7 +457,7 @@ export const useStaff = (id: string) => {
   return useQuery<StaffMember>({
     queryKey: ["staff", id],
     queryFn: async () => {
-      const { data } = await apiClient.get<any>(`/staffs/${id}`);
+      const { data } = await apiClient.get<any>(`/admins/staff/${id}`);
       return data?.data || data;
     },
     enabled: !!id,
@@ -468,7 +468,7 @@ export const useStaffs = () => {
   return useQuery<StaffMember[]>({
     queryKey: ["staffs"],
     queryFn: async () => {
-      const { data } = await apiClient.get<any>("/staffs");
+      const { data } = await apiClient.get<any>("/admins/staff");
       if (Array.isArray(data)) return data;
       if (Array.isArray(data?.data)) return data.data;
       if (Array.isArray(data?.staffs)) return data.staffs;
@@ -481,7 +481,7 @@ export const useRole = (id: string) => {
   return useQuery<Role>({
     queryKey: ["role", id],
     queryFn: async () => {
-      const { data } = await apiClient.get<any>(`/roles/${id}`);
+      const { data } = await apiClient.get<any>(`/admins/roles/${id}`);
       return data?.data || data;
     },
     enabled: !!id,
@@ -492,7 +492,7 @@ export const useRoles = () => {
   return useQuery<Role[]>({
     queryKey: ["roles"],
     queryFn: async () => {
-      const { data } = await apiClient.get<any>("/roles");
+      const { data } = await apiClient.get<any>("/admins/roles");
       if (Array.isArray(data)) return data;
       if (Array.isArray(data?.data)) return data.data;
       if (Array.isArray(data?.roles)) return data.roles;
@@ -505,7 +505,7 @@ export const useRolePermissions = () => {
   return useQuery<RolePermission[]>({
     queryKey: ["roles", "permissions"],
     queryFn: async () => {
-      const { data } = await apiClient.get<any>("/roles/permissions");
+      const { data } = await apiClient.get<any>("/admins/permissions");
       const list = Array.isArray(data)
         ? data
         : Array.isArray(data?.data)
@@ -546,11 +546,11 @@ export const useCreateRole = () => {
       description?: string;
       permissions: string[];
     }) => {
-      const { data } = await apiClient.post<any>("/roles", role);
+      const { data } = await apiClient.post<any>("/admins/roles", role);
       const created = data?.data || data;
       if (created?.id && role.permissions && role.permissions.length > 0) {
         try {
-          await apiClient.patch(`/roles/${created.id}/permissions`, {
+          await apiClient.patch(`/admins/roles/${created.id}/permissions`, {
             permissions: role.permissions,
           });
         } catch {
@@ -579,14 +579,14 @@ export const useUpdateRole = () => {
       description?: string;
       permissions?: string[];
     }) => {
-      const { data } = await apiClient.patch<any>(`/roles/${id}`, {
+      const { data } = await apiClient.patch<any>(`/admins/roles/${id}`, {
         ...(name ? { name } : {}),
         ...(description !== undefined ? { description } : {}),
         ...(permissions ? { permissions } : {}),
       });
       if (permissions) {
         try {
-          await apiClient.patch(`/roles/${id}/permissions`, { permissions });
+          await apiClient.patch(`/admins/roles/${id}/permissions`, { permissions });
         } catch {
           // ignore if already handled
         }
@@ -609,7 +609,7 @@ export const useAssignRolePermissions = () => {
       id: string;
       permissions: string[];
     }) => {
-      const { data } = await apiClient.patch<any>(`/roles/${id}/permissions`, {
+      const { data } = await apiClient.patch<any>(`/admins/roles/${id}/permissions`, {
         permissions,
       });
       return data?.data || data;
@@ -624,7 +624,7 @@ export const useDeleteRole = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (id: string) => {
-      const { data } = await apiClient.delete(`/roles/${id}`);
+      const { data } = await apiClient.delete(`/admins/roles/${id}`);
       return data?.data || data;
     },
     onSuccess: () => {
@@ -644,7 +644,7 @@ export const useCreateStaff = () => {
       roleId?: string;
       profilePic?: string;
     }) => {
-      const { data } = await apiClient.post<any>("/staffs", staff);
+      const { data } = await apiClient.post<any>("/admins/staff", staff);
       return data?.data || data;
     },
     onSuccess: () => {
@@ -660,7 +660,7 @@ export const useUpdateStaff = () => {
       id,
       ...staff
     }: Partial<StaffMember> & { id: string }) => {
-      const { data } = await apiClient.patch<any>(`/staffs/${id}`, staff);
+      const { data } = await apiClient.patch<any>(`/admins/staff/${id}`, staff);
       return data?.data || data;
     },
     onSuccess: () => {
@@ -673,7 +673,7 @@ export const useDeleteStaff = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (id: string) => {
-      const { data } = await apiClient.delete(`/staffs/${id}`);
+      const { data } = await apiClient.delete(`/admins/staff/${id}`);
       return data?.data || data;
     },
     onSuccess: () => {
@@ -1210,6 +1210,30 @@ export const useAdminCrossService = (id?: string) => {
       if (!id) throw new Error("Service ID required");
       const { data } = await apiClient.get<any>(`/admins/services/${id}`);
       return data?.data || data;
+    },
+    enabled: !!id,
+  });
+};
+
+
+export const useAdminCrossCategories = () => {
+  return useQuery<any[]>({
+    queryKey: ["admins", "categories"],
+    queryFn: async () => {
+      const { data } = await apiClient.get<any>("/admins/categories");
+      if (Array.isArray(data)) return data;
+      if (Array.isArray(data?.data)) return data.data;
+      return [];
+    },
+  });
+};
+
+export const useAdminCrossCategory = (id: string) => {
+  return useQuery<any>({
+    queryKey: ["admins", "categories", id],
+    queryFn: async () => {
+      const { data } = await apiClient.get<any>(`/admins/categories/${id}`);
+      return data?.data ?? data;
     },
     enabled: !!id,
   });

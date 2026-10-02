@@ -1,16 +1,14 @@
 import SimpleTitle from "@/components/SimpleTitle";
 import { useSelectImage } from "@/helpers/images";
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import SelectImage from "@/components/images/SelectImage";
 import SimpleInput from "@/components/inputs/SimpleInput";
 import { useForm, FormProvider } from "react-hook-form";
 import SimpleTextArea from "@/components/inputs/SimpleTextArea";
 import LocalSelect from "@/components/inputs/LocalSelect";
-import { useCreateService } from "@/api/catalogApi";
-import { useCategories } from "@/api/crmApi";
+import { useAdminCrossCategories } from "@/api/adminApi";
 import { toast } from "sonner";
-import { ArrowLeft } from "lucide-react";
-import { Link } from "@tanstack/react-router";
+import { ArrowLeft, Info } from "lucide-react";
 
 interface ServiceFormFields {
   name: string;
@@ -26,8 +24,7 @@ export const Route = createFileRoute("/admin/products/service/add/")({
 
 function RouteComponent() {
   const navigate = useNavigate();
-  const createService = useCreateService();
-  const { data: categories = [] } = useCategories();
+  const { data: categories = [] } = useAdminCrossCategories();
   const { image, setImage, image_link } = useSelectImage();
   const methods = useForm<ServiceFormFields>({
     defaultValues: {
@@ -36,71 +33,52 @@ function RouteComponent() {
   });
   const { handleSubmit } = methods;
 
-  const onSubmit = async (data: ServiceFormFields) => {
-    try {
-      await createService.mutateAsync({
-        name: data.name,
-        price: Number(data.price),
-        description: data.description,
-        categoryId: data.categoryId || undefined,
-        image: image_link || undefined,
-        isActive: data.isActive ?? true,
-      });
-      toast.success("Service created successfully");
-      navigate({ to: "/admin/products/service" });
-    } catch (err: any) {
-      toast.error(err?.response?.data?.message || "Failed to create service");
-    }
+  const onSubmit = async () => {
+    toast.info(
+      "Services catalog authoring is tenant-managed. As an administrator, you have platform oversight across all tenant catalogs.",
+    );
+    navigate({ to: "/admin/products/service" });
   };
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6 max-w-4xl mx-auto pb-12">
       <div className="flex items-center gap-4">
         <Link
           to="/admin/products/service"
           className="btn btn-ghost btn-sm btn-circle"
+          aria-label="Back to services"
         >
-          <ArrowLeft className="size-5" />
+          <ArrowLeft size={18} />
         </Link>
-        <SimpleTitle title={"Add New Service"} />
+        <SimpleTitle title="Add New Service" />
+      </div>
+
+      <div className="alert alert-info shadow-sm text-sm">
+        <Info size={18} className="shrink-0" />
+        <span>
+          Services are scoped to individual tenant accounts. Authoring is
+          managed within each tenant's portal, while platform administrators
+          oversee cross-tenant catalogs.
+        </span>
       </div>
 
       <FormProvider {...methods}>
-        <form
-          onSubmit={handleSubmit(onSubmit)}
-          className="flex flex-col gap-6 p-6 bg-base-100/70 backdrop-blur-md border border-base-200 shadow-sm rounded-box max-w-3xl"
-        >
-          <SelectImage
-            image={image}
-            setImage={setImage}
-            image_link={image_link}
-            title="Service Image or Banner"
-          />
-
-          <div className="flex flex-col gap-4">
-            <SimpleInput
-              label="Service Name *"
-              placeholder="e.g. Website Maintenance & Support"
-              {...methods.register("name", {
-                required: "Service name is required",
-              })}
-            />
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+          <div className="bg-base-100 rounded-box border border-base-200 p-6 space-y-6 shadow-sm">
+            <h3 className="font-semibold text-base-content border-b border-base-200 pb-3">
+              Service Details
+            </h3>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <SimpleInput
-                label="Price / Rate (₦) *"
-                type="number"
-                placeholder="0.00"
-                {...methods.register("price", {
-                  required: "Price is required",
-                  valueAsNumber: true,
-                  min: { value: 0.01, message: "Price must be greater than 0" },
-                })}
+                name="name"
+                label="Service Name"
+                placeholder="e.g. Website Maintenance & SEO"
+                required
               />
-
-              <LocalSelect label="Category" {...methods.register("categoryId")}>
-                <option value="">Select a category</option>
-                {categories.map((c) => (
+              <LocalSelect name="categoryId" label="Category">
+                <option value="">Select category</option>
+                {(categories as any[]).map((c) => (
                   <option key={c.id} value={c.id}>
                     {c.name}
                   </option>
@@ -108,24 +86,40 @@ function RouteComponent() {
               </LocalSelect>
             </div>
 
+            <SimpleInput
+              name="price"
+              label="Standard Rate (₦)"
+              type="number"
+              placeholder="0.00"
+              required
+            />
+
             <SimpleTextArea
+              name="description"
               label="Description & Scope of Work"
-              placeholder="Enter details on what is included, SLA guarantees, delivery timeline..."
-              {...methods.register("description")}
+              placeholder="Detail what is included in this service, deliverables, and turnaround time..."
+              rows={3}
             />
           </div>
 
-          <div className="flex items-center gap-3 pt-2 border-t border-base-200">
-            <button
-              type="submit"
-              className="btn btn-primary"
-              disabled={createService.isPending}
-            >
-              {createService.isPending ? "Adding..." : "Add Service"}
-            </button>
+          <div className="bg-base-100 rounded-box border border-base-200 p-6 space-y-4 shadow-sm">
+            <h3 className="font-semibold text-base-content border-b border-base-200 pb-3">
+              Cover Image / Badge
+            </h3>
+            <SelectImage
+              image={image}
+              image_link={image_link}
+              setImage={setImage}
+            />
+          </div>
+
+          <div className="flex items-center justify-end gap-3">
             <Link to="/admin/products/service" className="btn btn-ghost">
-              Cancel
+              Back to Services
             </Link>
+            <button type="submit" className="btn btn-primary">
+              Save Service
+            </button>
           </div>
         </form>
       </FormProvider>

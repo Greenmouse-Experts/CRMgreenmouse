@@ -43,6 +43,14 @@ apiClient.interceptors.request.use((config) => {
   if (user?.accessToken) {
     config.headers.Authorization = `Bearer ${user.accessToken}`;
   }
+  // Standardize /admin/* to /admins/* so all admin endpoints route cleanly to the backend
+  if (config.url) {
+    if (config.url.startsWith("/admin/") && !config.url.startsWith("/admin/login")) {
+      config.url = config.url.replace(/^\/admin\//, "/admins/");
+    } else if (config.url.startsWith("admin/") && !config.url.startsWith("admin/login")) {
+      config.url = config.url.replace(/^admin\//, "admins/");
+    }
+  }
   return config;
 });
 

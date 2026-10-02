@@ -3,468 +3,321 @@ import { createFileRoute } from "@tanstack/react-router";
 import ContainerRow from "@/components/ContainerRow";
 import SimpleContainer from "@/components/SimpleContainer";
 import { useSearch } from "@/stores/data";
-import { PlusCircleIcon, Tag, Layers, Wrench, Package } from "lucide-react";
+import { Tag, Layers, Wrench, Package, RefreshCw } from "lucide-react";
 import CustomTable from "@/components/tables/CustomTable";
 import type { Actions } from "@/components/tables/pop-up";
 import PageHeader from "@/components/Headers/PageHeader";
 import Modal, { type ModalHandle } from "@/components/DialogModal";
 import PageLoader from "@/components/layout/PageLoader";
 import ProductNav from "../-components/ProductNav";
-import {
-  useCategories,
-  useCreateCategory,
-  useUpdateCategory,
-  useDeleteCategory,
-  type Category,
-} from "@/api/crmApi";
-import { toast } from "sonner";
+import { useAdminCrossCategories } from "@/api/adminApi";
 
 export const Route = createFileRoute("/admin/products/categories/")({
   component: RouteComponent,
 });
 
 function RouteComponent() {
-  const query = useCategories();
-  const createCategory = useCreateCategory();
-  const updateCategory = useUpdateCategory();
-  const deleteCategory = useDeleteCategory();
+  const query = useAdminCrossCategories();
   const searchProps = useSearch();
 
   const [typeFilter, setTypeFilter] = useState<string>("all");
+  const detailsModalRef = useRef<ModalHandle>(null);
+  const [selectedCategory, setSelectedCategory] = useState<any | null>(null);
 
-  const addModalRef = useRef<ModalHandle>(null);
-  const editModalRef = useRef<ModalHandle>(null);
+  const rawCategories = useMemo(() => {
+    return Array.isArray(query.data) ? query.data : [];
+  }, [query.data]);
 
-  const [selectedCategory, setSelectedCategory] = useState<Category | null>(
-    null,
-  );
-  const [form, setForm] = useState({
-    name: "",
-    description: "",
-    type: "product",
-  });
+  // Statistics
+  const stats = useMemo(() => {
+    const total = rawCategories.length;
+    const products = rawCategories.filter(
+      (c: any) => (c.type || "product").toLowerCase() === "product",
+    ).length;
+    const services = rawCategories.filter(
+      (c: any) => (c.type || "").toLowerCase() === "service",
+    ).length;
+    return { total, products, services };
+  }, [rawCategories]);
 
-  const handleOpenAdd = () => {
-    setForm({
-      name: "",
-      description: "",
-      type: "product",
-    });
-    addModalRef.current?.open();
-  };
-
-  const handleOpenEdit = (category: Category) => {
-    setSelectedCategory(category);
-    setForm({
-      name: category.name || "",
-      description: category.description || "",
-      type: category.type || "product",
-    });
-    editModalRef.current?.open();
-  };
-
-  const handleSaveAdd = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!form.name.trim()) {
-      toast.error("Category name is required");
-      return;
-    }
-    try {
-      await createCategory.mutateAsync(form);
-      toast.success("Category created successfully");
-      addModalRef.current?.close();
-    } catch (err: any) {
-      toast.error(err?.response?.data?.message || "Failed to create category");
-    }
-  };
-
-  const handleSaveEdit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!selectedCategory) return;
-    try {
-      await updateCategory.mutateAsync({
-        id: selectedCategory.id,
-        ...form,
-      });
-      toast.success("Category updated successfully");
-      editModalRef.current?.close();
-    } catch (err: any) {
-      toast.error(err?.response?.data?.message || "Failed to update category");
-    }
-  };
-
-  const handleDelete = async (category: Category) => {
-    if (
-      !confirm(`Are you sure you want to delete category "${category.name}"?`)
-    )
-      return;
-    try {
-      await deleteCategory.mutateAsync(category.id);
-      toast.success("Category deleted successfully");
-    } catch (err: any) {
-      toast.error(err?.response?.data?.message || "Failed to delete category");
-    }
-  };
-
-  const categoriesList = query.data || [];
-  const searchTerm = searchProps.search?.toLowerCase() || "";
-
+  // Filtered categories
   const filteredCategories = useMemo(() => {
-    return categoriesList.filter((c) => {
-      if (searchTerm) {
-        const matchesName = c.name?.toLowerCase().includes(searchTerm);
-        const matchesDesc = c.description?.toLowerCase().includes(searchTerm);
-        if (!matchesName && !matchesDesc) return false;
+    return rawCategories.filter((c: any) => {
+      if (typeFilter === "product") {
+        return (c.type || "product").toLowerCase() === "product";
       }
-
-      if (typeFilter !== "all") {
-        const catType = c.type?.toLowerCase() || "product";
-        if (catType !== typeFilter) return false;
+      if (typeFilter === "service") {
+        return (c.type || "").toLowerCase() === "service";
       }
-
       return true;
     });
-  }, [categoriesList, searchTerm, typeFilter]);
+  }, [rawCategories, typeFilter]);
 
-  const totalCategories = categoriesList.length;
-  const productCategories = categoriesList.filter(
-    (c) => (c.type || "product") === "product",
-  ).length;
-  const serviceCategories = categoriesList.filter(
-    (c) => c.type === "service",
-  ).length;
+  const handleOpenDetails = (category: any) => {
+    setSelectedCategory(category);
+    detailsModalRef.current?.open();
+  };
 
-  const columns = [
+  const actions: Actions<any>[] = [
     {
-      key: "name",
-      label: "Category Name",
-      render: (_: any, item: Category) => (
-        <div className="flex items-center gap-3">
-          <div className="size-9 rounded-lg bg-primary/10 flex items-center justify-center text-primary font-bold">
-            <Tag className="size-4" />
-          </div>
-          <div>
-            <div className="font-semibold text-base-content">{item.name}</div>
-            <div className="text-xs text-base-content/60 line-clamp-1 max-w-[280px]">
-              {item.description || "No description"}
-            </div>
-          </div>
-        </div>
-      ),
-    },
-    {
-      key: "type",
-      label: "Type",
-      render: (val: any) => {
-        const isService = val === "service";
-        return (
-          <span
-            className={`badge badge-sm font-semibold capitalize ${
-              isService
-                ? "badge-secondary text-white"
-                : "badge-primary text-white"
-            }`}
-          >
-            {val || "product"}
-          </span>
-        );
-      },
-    },
-    {
-      key: "createdAt",
-      label: "Created",
-      render: (val: any) => (
-        <span className="text-xs text-base-content/70">
-          {val ? new Date(val).toLocaleDateString() : "—"}
-        </span>
-      ),
-    },
-  ];
-
-  const actions: Actions<Category>[] = [
-    {
-      key: "edit",
-      label: "Edit Category",
-      action: (item) => handleOpenEdit(item),
-    },
-    {
-      key: "delete",
-      label: "Delete",
-      action: (item) => handleDelete(item),
+      key: "view_details",
+      label: "View Details",
+      action: (cat) => handleOpenDetails(cat),
     },
   ];
 
   return (
-    <>
+    <div>
       <PageHeader
-        title="Product & Service Categories"
-        description="Organize your catalog items by department, type, or service group"
+        title="Category Directory"
+        description="Monitor, audit, and organize catalog classifications across all tenant catalogs"
       >
-        <button
-          onClick={handleOpenAdd}
-          className="btn btn-primary btn-sm gap-1.5"
-        >
-          <PlusCircleIcon className="size-4" /> Create Category
-        </button>
+        <div className="flex flex-wrap items-center gap-2">
+          <button
+            onClick={() => query.refetch()}
+            className="btn btn-outline btn-sm gap-2"
+            disabled={query.isFetching}
+          >
+            <RefreshCw
+              size={15}
+              className={query.isFetching ? "animate-spin" : ""}
+            />
+            Refresh
+          </button>
+        </div>
       </PageHeader>
 
       <ProductNav />
 
-      <PageLoader
-        query={query}
-        showSuccessState={true}
-        emptyState={{
-          title: "No Categories Found",
-          description:
-            "Get started by creating your first product or service category.",
-          actionText: "Create Category",
-          onAction: handleOpenAdd,
-        }}
-      >
-        {/* Quick Summary Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-          <div
-            onClick={() => setTypeFilter("all")}
-            className={`card bg-base-100/70 backdrop-blur-md border p-4 shadow-sm cursor-pointer transition-all ${
-              typeFilter === "all"
-                ? "border-primary ring-2 ring-primary/20 bg-primary/5"
-                : "border-base-200 hover:shadow-md"
-            }`}
-          >
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-xs font-semibold text-base-content/60 uppercase">
-                  Total Categories
-                </p>
-                <h3 className="text-2xl font-bold text-base-content mt-1">
-                  {totalCategories}
-                </h3>
-                <p className="text-xs text-base-content/50 mt-0.5">
-                  All item classifications
-                </p>
+      <PageLoader query={query}>
+        {() => (
+          <div className="space-y-6">
+            {/* KPI Cards */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div className="bg-base-100 rounded-box border border-base-200 p-4 shadow-sm">
+                <div className="flex items-center gap-3">
+                  <div className="bg-primary/10 text-primary p-2.5 rounded-lg">
+                    <Layers size={20} />
+                  </div>
+                  <div>
+                    <div className="text-2xl font-bold text-base-content">
+                      {stats.total}
+                    </div>
+                    <div className="text-xs text-base-content/60">
+                      Total Categories
+                    </div>
+                  </div>
+                </div>
               </div>
-              <div className="p-3 rounded-xl bg-primary/10 text-primary border border-primary/20">
-                <Layers className="size-6" />
+
+              <div className="bg-base-100 rounded-box border border-base-200 p-4 shadow-sm">
+                <div className="flex items-center gap-3">
+                  <div className="bg-info/10 text-info p-2.5 rounded-lg">
+                    <Package size={20} />
+                  </div>
+                  <div>
+                    <div className="text-2xl font-bold text-info">
+                      {stats.products}
+                    </div>
+                    <div className="text-xs text-base-content/60">
+                      Product Categories
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-base-100 rounded-box border border-base-200 p-4 shadow-sm">
+                <div className="flex items-center gap-3">
+                  <div className="bg-secondary/10 text-secondary p-2.5 rounded-lg">
+                    <Wrench size={20} />
+                  </div>
+                  <div>
+                    <div className="text-2xl font-bold text-secondary">
+                      {stats.services}
+                    </div>
+                    <div className="text-xs text-base-content/60">
+                      Service Categories
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
 
-          <div
-            onClick={() =>
-              setTypeFilter(typeFilter === "product" ? "all" : "product")
-            }
-            className={`card bg-base-100/70 backdrop-blur-md border p-4 shadow-sm cursor-pointer transition-all ${
-              typeFilter === "product"
-                ? "border-primary ring-2 ring-primary/20 bg-primary/5"
-                : "border-base-200 hover:shadow-md"
-            }`}
-          >
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-xs font-semibold text-base-content/60 uppercase">
-                  Product Categories
-                </p>
-                <h3 className="text-2xl font-bold text-base-content mt-1">
-                  {productCategories}
-                </h3>
-                <p className="text-xs text-base-content/50 mt-0.5">
-                  Inventory groupings
-                </p>
+            <SimpleContainer>
+              <div className="p-4 border-b border-base-200 flex flex-wrap items-center justify-between gap-4">
+                {/* Type Filter Pills */}
+                <div className="flex flex-wrap items-center gap-1.5">
+                  {[
+                    { label: "All Categories", key: "all" },
+                    { label: "Products", key: "product" },
+                    { label: "Services", key: "service" },
+                  ].map((tab) => (
+                    <button
+                      key={tab.key}
+                      onClick={() => setTypeFilter(tab.key)}
+                      className={`btn btn-xs rounded-full ${
+                        typeFilter === tab.key
+                          ? "btn-primary text-primary-content"
+                          : "btn-ghost text-base-content/70"
+                      }`}
+                    >
+                      {tab.label}
+                    </button>
+                  ))}
+                </div>
               </div>
-              <div className="p-3 rounded-xl bg-primary/10 text-primary border border-primary/20">
-                <Package className="size-6" />
-              </div>
-            </div>
+
+              <ContainerRow {...searchProps}>
+                <CustomTable
+                  actions={actions}
+                  columns={[
+                    {
+                      label: "Category Name",
+                      key: "name",
+                      render: (c: any) => (
+                        <div className="flex items-center gap-3">
+                          <div className="avatar placeholder">
+                            <div className="bg-base-200 text-base-content/70 rounded-lg w-9 h-9 flex items-center justify-center">
+                              <Tag size={16} />
+                            </div>
+                          </div>
+                          <div>
+                            <div className="font-semibold text-base-content">
+                              {c.name}
+                            </div>
+                            {c.description && (
+                              <div className="text-xs text-base-content/60 truncate max-w-sm">
+                                {c.description}
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      ),
+                    },
+                    {
+                      label: "Type",
+                      key: "type",
+                      render: (c: any) => {
+                        const isService =
+                          (c.type || "").toLowerCase() === "service";
+                        return (
+                          <span
+                            className={`badge badge-sm font-medium ${
+                              isService
+                                ? "badge-secondary badge-outline"
+                                : "badge-info badge-outline"
+                            }`}
+                          >
+                            {isService ? "Service" : "Product"}
+                          </span>
+                        );
+                      },
+                    },
+                    {
+                      label: "Tenant ID",
+                      key: "tenantId",
+                      render: (c: any) => (
+                        <span className="text-xs font-mono text-base-content/60 truncate max-w-[140px] block">
+                          {c.tenantId || "Global / System"}
+                        </span>
+                      ),
+                    },
+                    {
+                      label: "Created",
+                      key: "createdAt",
+                      render: (c: any) => (
+                        <span className="text-xs text-base-content/60">
+                          {c.createdAt
+                            ? new Date(c.createdAt).toLocaleDateString()
+                            : "—"}
+                        </span>
+                      ),
+                    },
+                  ]}
+                  data={filteredCategories}
+                />
+              </ContainerRow>
+            </SimpleContainer>
+
+            {/* Details Modal */}
+            <Modal ref={detailsModalRef}>
+              {selectedCategory && (
+                <div className="p-6 space-y-6">
+                  <div className="flex items-start justify-between border-b border-base-200 pb-4">
+                    <div className="flex items-center gap-3">
+                      <div className="bg-primary/10 text-primary p-3 rounded-xl">
+                        <Tag size={24} />
+                      </div>
+                      <div>
+                        <h3 className="text-xl font-bold text-base-content">
+                          {selectedCategory.name}
+                        </h3>
+                        <p className="text-xs text-base-content/60 font-mono">
+                          ID: {selectedCategory.id}
+                        </p>
+                      </div>
+                    </div>
+                    <span
+                      className={`badge badge-md ${
+                        (selectedCategory.type || "").toLowerCase() ===
+                        "service"
+                          ? "badge-secondary"
+                          : "badge-info"
+                      }`}
+                    >
+                      {selectedCategory.type || "Product"}
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="bg-base-200/50 p-3 rounded-lg">
+                      <span className="text-xs text-base-content/60 block">
+                        Tenant Scope
+                      </span>
+                      <span className="text-xs font-mono text-base-content font-semibold break-all">
+                        {selectedCategory.tenantId || "Platform / Global"}
+                      </span>
+                    </div>
+                    <div className="bg-base-200/50 p-3 rounded-lg">
+                      <span className="text-xs text-base-content/60 block">
+                        Created Date
+                      </span>
+                      <span className="text-sm font-semibold text-base-content">
+                        {selectedCategory.createdAt
+                          ? new Date(
+                              selectedCategory.createdAt,
+                            ).toLocaleString()
+                          : "N/A"}
+                      </span>
+                    </div>
+                  </div>
+
+                  {selectedCategory.description && (
+                    <div className="bg-base-200/30 p-4 rounded-lg">
+                      <span className="text-xs font-semibold text-base-content/70 block mb-1">
+                        Description
+                      </span>
+                      <p className="text-sm text-base-content/80 whitespace-pre-wrap">
+                        {selectedCategory.description}
+                      </p>
+                    </div>
+                  )}
+
+                  <div className="modal-action">
+                    <button
+                      type="button"
+                      className="btn btn-ghost"
+                      onClick={() => detailsModalRef.current?.close()}
+                    >
+                      Close
+                    </button>
+                  </div>
+                </div>
+              )}
+            </Modal>
           </div>
-
-          <div
-            onClick={() =>
-              setTypeFilter(typeFilter === "service" ? "all" : "service")
-            }
-            className={`card bg-base-100/70 backdrop-blur-md border p-4 shadow-sm cursor-pointer transition-all ${
-              typeFilter === "service"
-                ? "border-secondary ring-2 ring-secondary/20 bg-secondary/5"
-                : "border-base-200 hover:shadow-md"
-            }`}
-          >
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-xs font-semibold text-base-content/60 uppercase">
-                  Service Categories
-                </p>
-                <h3 className="text-2xl font-bold text-base-content mt-1">
-                  {serviceCategories}
-                </h3>
-                <p className="text-xs text-base-content/50 mt-0.5">
-                  Service offerings & consulting
-                </p>
-              </div>
-              <div className="p-3 rounded-xl bg-secondary/10 text-secondary border border-secondary/20">
-                <Wrench className="size-6" />
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <SimpleContainer title="Categories Directory">
-          {/* Filter Bar */}
-          <div className="flex items-center gap-1.5 mb-4">
-            {[
-              { id: "all", label: "All Categories" },
-              { id: "product", label: "Products" },
-              { id: "service", label: "Services" },
-            ].map((btn) => (
-              <button
-                key={btn.id}
-                onClick={() => setTypeFilter(btn.id)}
-                className={`btn btn-xs rounded-lg transition-all ${
-                  typeFilter === btn.id
-                    ? "btn-neutral text-neutral-content shadow-sm"
-                    : "btn-ghost text-base-content/70"
-                }`}
-              >
-                {btn.label}
-              </button>
-            ))}
-          </div>
-
-          <ContainerRow searchProps={searchProps} showSearch={true} />
-
-          <CustomTable
-            data={filteredCategories}
-            columns={columns}
-            actions={actions}
-          />
-        </SimpleContainer>
+        )}
       </PageLoader>
-
-      {/* Add Category Modal */}
-      <Modal ref={addModalRef} title="Create Category">
-        <form onSubmit={handleSaveAdd} className="space-y-4">
-          <div>
-            <label className="text-xs font-semibold text-base-content/70">
-              Category Name *
-            </label>
-            <input
-              type="text"
-              required
-              className="input input-bordered w-full mt-1"
-              placeholder="e.g. Office Furniture or IT Consulting"
-              value={form.name}
-              onChange={(e) => setForm({ ...form, name: e.target.value })}
-            />
-          </div>
-
-          <div>
-            <label className="text-xs font-semibold text-base-content/70">
-              Category Type
-            </label>
-            <select
-              className="select select-bordered w-full mt-1"
-              value={form.type}
-              onChange={(e) => setForm({ ...form, type: e.target.value })}
-            >
-              <option value="product">Product Category</option>
-              <option value="service">Service Category</option>
-            </select>
-          </div>
-
-          <div>
-            <label className="text-xs font-semibold text-base-content/70">
-              Description
-            </label>
-            <textarea
-              className="textarea textarea-bordered w-full mt-1"
-              rows={3}
-              placeholder="Brief description of this category classification..."
-              value={form.description}
-              onChange={(e) =>
-                setForm({ ...form, description: e.target.value })
-              }
-            />
-          </div>
-
-          <div className="modal-action">
-            <button
-              type="button"
-              className="btn btn-ghost"
-              onClick={() => addModalRef.current?.close()}
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              className="btn btn-primary"
-              disabled={createCategory.isPending}
-            >
-              {createCategory.isPending ? "Creating..." : "Create Category"}
-            </button>
-          </div>
-        </form>
-      </Modal>
-
-      {/* Edit Category Modal */}
-      <Modal ref={editModalRef} title="Edit Category">
-        <form onSubmit={handleSaveEdit} className="space-y-4">
-          <div>
-            <label className="text-xs font-semibold text-base-content/70">
-              Category Name *
-            </label>
-            <input
-              type="text"
-              required
-              className="input input-bordered w-full mt-1"
-              value={form.name}
-              onChange={(e) => setForm({ ...form, name: e.target.value })}
-            />
-          </div>
-
-          <div>
-            <label className="text-xs font-semibold text-base-content/70">
-              Category Type
-            </label>
-            <select
-              className="select select-bordered w-full mt-1"
-              value={form.type}
-              onChange={(e) => setForm({ ...form, type: e.target.value })}
-            >
-              <option value="product">Product Category</option>
-              <option value="service">Service Category</option>
-            </select>
-          </div>
-
-          <div>
-            <label className="text-xs font-semibold text-base-content/70">
-              Description
-            </label>
-            <textarea
-              className="textarea textarea-bordered w-full mt-1"
-              rows={3}
-              value={form.description}
-              onChange={(e) =>
-                setForm({ ...form, description: e.target.value })
-              }
-            />
-          </div>
-
-          <div className="modal-action">
-            <button
-              type="button"
-              className="btn btn-ghost"
-              onClick={() => editModalRef.current?.close()}
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              className="btn btn-primary"
-              disabled={updateCategory.isPending}
-            >
-              {updateCategory.isPending ? "Saving..." : "Save Changes"}
-            </button>
-          </div>
-        </form>
-      </Modal>
-    </>
+    </div>
   );
 }

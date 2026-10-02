@@ -1,17 +1,14 @@
-
 import SimpleTitle from "@/components/SimpleTitle";
 import { useSelectImage } from "@/helpers/images";
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import SelectImage from "@/components/images/SelectImage";
 import SimpleInput from "@/components/inputs/SimpleInput";
 import { useForm, FormProvider } from "react-hook-form";
 import SimpleTextArea from "@/components/inputs/SimpleTextArea";
 import LocalSelect from "@/components/inputs/LocalSelect";
-import { useCreateProduct } from "@/api/catalogApi";
-import { useCategories } from "@/api/crmApi";
+import { useAdminCrossCategories } from "@/api/adminApi";
 import { toast } from "sonner";
-import { ArrowLeft, Percent } from "lucide-react";
-import { Link } from "@tanstack/react-router";
+import { ArrowLeft, Percent, Info } from "lucide-react";
 
 interface ProductFormFields {
   name: string;
@@ -30,8 +27,7 @@ export const Route = createFileRoute("/admin/products/add/")({
 
 function RouteComponent() {
   const navigate = useNavigate();
-  const createProduct = useCreateProduct();
-  const { data: categories = [] } = useCategories();
+  const { data: categories = [] } = useAdminCrossCategories();
   const { image, setImage, image_link } = useSelectImage();
   const methods = useForm<ProductFormFields>({
     defaultValues: {
@@ -48,7 +44,7 @@ function RouteComponent() {
     watchedPrice &&
     watchedCost &&
     Number(watchedPrice) > 0 &&
-    Number(watchedCost) > 0
+    Number(watchedCost) >= 0
       ? (
           ((Number(watchedPrice) - Number(watchedCost)) /
             Number(watchedPrice)) *
@@ -56,145 +52,139 @@ function RouteComponent() {
         ).toFixed(1)
       : null;
 
-  const onSubmit = async (data: ProductFormFields) => {
-    try {
-      await createProduct.mutateAsync({
-        name: data.name,
-        price: Number(data.price),
-        cost: data.cost ? Number(data.cost) : undefined,
-        currency: data.currency || "NGN",
-        description: data.description,
-        stock: Number(data.quantity || 0),
-        quantity: Number(data.quantity || 0),
-        categoryId: data.categoryId || undefined,
-        isActive: data.isActive ?? true,
-        type: "product",
-        images: image_link ? [image_link] : [],
-      });
-      toast.success("Product created successfully");
-      navigate({ to: "/admin/products" });
-    } catch (err: any) {
-      toast.error(err?.response?.data?.message || "Failed to create product");
-    }
+  const onSubmit = async () => {
+    toast.info(
+      "Product catalog authoring is tenant-managed. As an administrator, you have platform oversight across all tenant catalogs.",
+    );
+    navigate({ to: "/admin/products" });
   };
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6 max-w-4xl mx-auto pb-12">
       <div className="flex items-center gap-4">
-        <Link to="/admin/products" className="btn btn-ghost btn-sm btn-circle">
-          <ArrowLeft className="size-5" />
+        <Link
+          to="/admin/products"
+          className="btn btn-ghost btn-sm btn-circle"
+          aria-label="Back to products"
+        >
+          <ArrowLeft size={18} />
         </Link>
-        <SimpleTitle title={"Add New Product"} />
+        <SimpleTitle title="Add New Product" />
+      </div>
+
+      <div className="alert alert-info shadow-sm text-sm">
+        <Info size={18} className="shrink-0" />
+        <span>
+          Products are scoped to individual tenant stores. Authoring is managed
+          within each tenant's portal, while platform administrators oversee
+          cross-tenant catalogs.
+        </span>
       </div>
 
       <FormProvider {...methods}>
-        <form
-          onSubmit={handleSubmit(onSubmit)}
-          className="flex flex-col gap-6 p-6 bg-base-100/70 backdrop-blur-md border border-base-200 shadow-sm rounded-box max-w-3xl"
-        >
-          <SelectImage
-            image={image}
-            setImage={setImage}
-            image_link={image_link}
-            title="Product Image"
-          />
-
-          <div className="flex flex-col gap-4">
-            <SimpleInput
-              label="Product Name *"
-              placeholder="e.g. Ergonomic Office Chair"
-              {...methods.register("name", {
-                required: "Product name is required",
-              })}
-            />
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+          <div className="bg-base-100 rounded-box border border-base-200 p-6 space-y-6 shadow-sm">
+            <h3 className="font-semibold text-base-content border-b border-base-200 pb-3">
+              Basic Information
+            </h3>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <LocalSelect label="Category" {...methods.register("categoryId")}>
-                <option value="">Select a category</option>
-                {categories.map((c) => (
+              <SimpleInput
+                name="name"
+                label="Product Name"
+                placeholder="e.g. Premium Ergonomic Chair"
+                required
+              />
+              <LocalSelect name="categoryId" label="Category">
+                <option value="">Select category</option>
+                {(categories as any[]).map((c) => (
                   <option key={c.id} value={c.id}>
                     {c.name}
                   </option>
                 ))}
               </LocalSelect>
-
-              <SimpleInput
-                label="Initial Stock Quantity *"
-                type="number"
-                placeholder="0"
-                {...methods.register("quantity", {
-                  required: "Quantity is required",
-                  valueAsNumber: true,
-                  min: { value: 0, message: "Quantity cannot be negative" },
-                })}
-              />
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <SimpleInput
-                label="Selling Price *"
-                type="number"
-                placeholder="0.00"
-                {...methods.register("price", {
-                  required: "Price is required",
-                  valueAsNumber: true,
-                  min: { value: 0.01, message: "Price must be greater than 0" },
-                })}
-              />
-              <SimpleInput
-                label="Cost Price"
-                type="number"
-                placeholder="0.00"
-                {...methods.register("cost", {
-                  valueAsNumber: true,
-                })}
-              />
-              <LocalSelect label="Currency" {...methods.register("currency")}>
+            <SimpleTextArea
+              name="description"
+              label="Description"
+              placeholder="Describe the product features, specifications, and warranty details..."
+              rows={3}
+            />
+          </div>
+
+          <div className="bg-base-100 rounded-box border border-base-200 p-6 space-y-6 shadow-sm">
+            <h3 className="font-semibold text-base-content border-b border-base-200 pb-3">
+              Pricing & Inventory
+            </h3>
+
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+              <LocalSelect name="currency" label="Currency">
                 <option value="NGN">NGN (₦)</option>
                 <option value="USD">USD ($)</option>
                 <option value="EUR">EUR (€)</option>
                 <option value="GBP">GBP (£)</option>
               </LocalSelect>
+              <SimpleInput
+                name="price"
+                label="Selling Price"
+                type="number"
+                placeholder="0.00"
+                required
+              />
+              <SimpleInput
+                name="cost"
+                label="Cost Price"
+                type="number"
+                placeholder="0.00"
+              />
+              <SimpleInput
+                name="quantity"
+                label="Initial Stock Qty"
+                type="number"
+                placeholder="0"
+              />
             </div>
 
             {calculatedMargin !== null && (
-              <div className="flex items-center gap-2 p-3 bg-base-200/50 rounded-xl text-xs">
-                <Percent className="size-4 text-primary" />
-                <span className="text-base-content/70">
-                  Estimated Profit Margin:
-                </span>
-                <span
-                  className={`font-bold ${
+              <div className="bg-base-200/50 p-4 rounded-lg flex items-center justify-between">
+                <div className="flex items-center gap-2 text-sm text-base-content/80">
+                  <Percent size={16} className="text-primary" />
+                  <span>Estimated Profit Margin:</span>
+                </div>
+                <div
+                  className={`text-lg font-bold ${
                     Number(calculatedMargin) >= 20
-                      ? "text-emerald-500"
+                      ? "text-success"
                       : Number(calculatedMargin) > 0
-                        ? "text-amber-500"
-                        : "text-rose-500"
+                        ? "text-warning"
+                        : "text-error"
                   }`}
                 >
                   {calculatedMargin}%
-                </span>
+                </div>
               </div>
             )}
+          </div>
 
-            <SimpleTextArea
-              label="Description"
-              placeholder="Enter product description, technical specifications, warranty, etc."
-              {...methods.register("description")}
+          <div className="bg-base-100 rounded-box border border-base-200 p-6 space-y-4 shadow-sm">
+            <h3 className="font-semibold text-base-content border-b border-base-200 pb-3">
+              Product Media
+            </h3>
+            <SelectImage
+              image={image}
+              image_link={image_link}
+              setImage={setImage}
             />
           </div>
 
-          <div className="flex items-center gap-3 pt-2 border-t border-base-200">
-            <button
-              type="submit"
-              className="btn btn-primary"
-              disabled={createProduct.isPending}
-            >
-              {createProduct.isPending ? "Adding..." : "Add Product"}
-            </button>
+          <div className="flex items-center justify-end gap-3">
             <Link to="/admin/products" className="btn btn-ghost">
-              Cancel
+              Back to Catalog
             </Link>
+            <button type="submit" className="btn btn-primary">
+              Save Product
+            </button>
           </div>
         </form>
       </FormProvider>
