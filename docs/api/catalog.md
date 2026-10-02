@@ -293,7 +293,7 @@ Inventory items, physical products, recurring/one-off services, item categories,
 
 ### List products (filter by category, type, stock status)
 
-`GET /v1/products?search=string&categoryId=string&isActive=true&type=service`
+`GET /v1/products?search=string&categoryId=string&isActive=false&type=product`
 
 **Query Parameters**
 
@@ -301,8 +301,8 @@ Inventory items, physical products, recurring/one-off services, item categories,
 | :--- | :--- | :--- |
 | `search` | `string` | Filter / pagination param |
 | `categoryId` | `string` | Filter / pagination param |
-| `isActive` | `true` | Filter / pagination param |
-| `type` | `service` | Filter / pagination param |
+| `isActive` | `false` | Filter / pagination param |
+| `type` | `product` | Filter / pagination param |
 
 **Responses**
 
@@ -462,7 +462,7 @@ Inventory items, physical products, recurring/one-off services, item categories,
 
 ### Get all services
 
-`GET /v1/services?search=string&categoryId=string&isActive=true`
+`GET /v1/services?search=string&categoryId=string&isActive=false`
 
 **Query Parameters**
 
@@ -470,7 +470,7 @@ Inventory items, physical products, recurring/one-off services, item categories,
 | :--- | :--- | :--- |
 | `search` | `string` | Search by service name |
 | `categoryId` | `string` | Filter / pagination param |
-| `isActive` | `true` | Filter / pagination param |
+| `isActive` | `false` | Filter / pagination param |
 
 **Responses**
 

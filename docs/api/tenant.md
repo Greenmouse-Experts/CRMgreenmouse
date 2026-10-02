@@ -156,8 +156,8 @@ Business owner account registration, email OTP verification, password recovery, 
 
 ```json
 {
-  "accessToken": "...",
-  "refreshToken": "...",
+  "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
   "user": {
     "id": "664f1b2c9d3e4a5b6c7d8e9f",
     "email": "john@acmecorp.com",
@@ -182,8 +182,8 @@ Business owner account registration, email OTP verification, password recovery, 
 
 ```json
 {
-  "accessToken": "...",
-  "refreshToken": "..."
+  "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
 }
 ```
 
@@ -291,14 +291,14 @@ Business owner account registration, email OTP verification, password recovery, 
 
 ### Get recent login activities (paginated)
 
-`GET /v1/tenant/login-activity?page=4134.33236742454&limit=4134.33236742454`
+`GET /v1/tenant/login-activity?page=5705.605456861728&limit=5705.605456861728`
 
 **Query Parameters**
 
 | Parameter | Type / Example | Description |
 | :--- | :--- | :--- |
-| `page` | `4134.33236742454` | Filter / pagination param |
-| `limit` | `4134.33236742454` | Filter / pagination param |
+| `page` | `5705.605456861728` | Filter / pagination param |
+| `limit` | `5705.605456861728` | Filter / pagination param |
 
 **Responses**
 
@@ -360,10 +360,10 @@ Business owner account registration, email OTP verification, password recovery, 
 
 ```json
 {
-  "industry": "Transportation",
-  "teamSize": "201-500",
+  "industry": "Manufacturing",
+  "teamSize": "51-200",
   "logo": "https://res.cloudinary.com/...",
-  "theme": "dark",
+  "theme": "light",
   "companyAddress": "15 Marina Road, Lagos",
   "companyCity": "Lagos",
   "companyCountry": "Nigeria",

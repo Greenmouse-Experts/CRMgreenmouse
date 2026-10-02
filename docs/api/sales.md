@@ -24,6 +24,7 @@ Lead capture and qualification, visual Kanban deal pipelines, stage reordering, 
 | `GET` | [`/v1/pipelines`](#list-all-pipelines) | List all pipelines |
 | `GET` | [`/v1/quotes/stats`](#get-quote-statistics-by-status) | Get quote statistics by status |
 | `PATCH` | [`/v1/quotes/:id/status`](#update-quote-status) | Update quote status |
+| `POST` | [`/v1/quotes/:id/convert`](#convert-a-quote-to-an-invoice-or-an-order) | Convert a quote to an invoice or an order |
 | `GET` | [`/v1/quotes/:id`](#get-a-quote-by-id) | Get a quote by ID |
 | `PATCH` | [`/v1/quotes/:id`](#update-a-quote) | Update a quote |
 | `DELETE` | [`/v1/quotes/:id`](#delete-a-quote) | Delete a quote |
@@ -76,7 +77,7 @@ Lead capture and qualification, visual Kanban deal pipelines, stage reordering, 
 
 ```json
 {
-  "status": "delivered"
+  "status": "shipped"
 }
 ```
 
@@ -117,6 +118,7 @@ Lead capture and qualification, visual Kanban deal pipelines, stage reordering, 
 ```json
 {
   "contactId": "664f1b2c-9d3e-4a5b-8c7d-8e9f0a1b2c3d",
+  "quoteId": "664f1b2c-9d3e-4a5b-8c7d-8e9f0a1b2c3d",
   "items": [
     {
       "productId": "664f1b2c-9d3e-4a5b-8c7d-8e9f0a1b2c3d",
@@ -182,6 +184,7 @@ Lead capture and qualification, visual Kanban deal pipelines, stage reordering, 
     }
   ],
   "contactId": "664f1b2c-9d3e-4a5b-8c7d-8e9f0a1b2c3d",
+  "quoteId": "664f1b2c-9d3e-4a5b-8c7d-8e9f0a1b2c3d",
   "discount": 500,
   "tax": 750,
   "currency": "NGN",
@@ -200,14 +203,14 @@ Lead capture and qualification, visual Kanban deal pipelines, stage reordering, 
 
 ### List all orders
 
-`GET /v1/orders?search=string&status=processing`
+`GET /v1/orders?search=string&status=cancelled`
 
 **Query Parameters**
 
 | Parameter | Type / Example | Description |
 | :--- | :--- | :--- |
 | `search` | `string` | Filter / pagination param |
-| `status` | `processing` | Filter / pagination param |
+| `status` | `cancelled` | Filter / pagination param |
 
 **Responses**
 
@@ -428,6 +431,42 @@ Lead capture and qualification, visual Kanban deal pipelines, stage reordering, 
 
 ---
 
+### Convert a quote to an invoice or an order
+
+`POST /v1/quotes/:id/convert`
+
+**Path Parameters**
+
+| Parameter | Description |
+| :--- | :--- |
+| `id` | Resource identifier |
+
+**Request Body** (`application/json`)
+
+```json
+{
+  "target": "invoice",
+  "contactId": "664f1b2c-9d3e-4a5b-8c7d-8e9f0a1b2c3d",
+  "currency": "NGN",
+  "discount": 0,
+  "tax": 0,
+  "issuedDate": "2026-09-23",
+  "dueDate": "2026-10-23",
+  "notes": "Deliver before end of month.",
+  "assignedTo": "664f1b2c-9d3e-4a5b-8c7d-8e9f0a1b2c3d",
+  "items": [
+    "string",
+    "string"
+  ]
+}
+```
+
+**Responses**
+
+#### `201 Created`
+
+---
+
 ### Get a quote by ID
 
 `GET /v1/quotes/:id`
@@ -608,8 +647,8 @@ Lead capture and qualification, visual Kanban deal pipelines, stage reordering, 
   "email": "john@acme.com",
   "phone": "+2348012345678",
   "companyName": "Acme Corp",
-  "source": "social_media",
-  "status": "unqualified",
+  "source": "other",
+  "status": "contacted",
   "score": 75,
   "notes": "Updated notes",
   "assignedTo": "uuid-of-staff"
@@ -699,14 +738,14 @@ Lead capture and qualification, visual Kanban deal pipelines, stage reordering, 
 
 ### List all leads
 
-`GET /v1/leads?status=converted&source=website&assignedTo=string&search=string`
+`GET /v1/leads?status=qualified&source=referral&assignedTo=string&search=string`
 
 **Query Parameters**
 
 | Parameter | Type / Example | Description |
 | :--- | :--- | :--- |
-| `status` | `converted` | Filter / pagination param |
-| `source` | `website` | Filter / pagination param |
+| `status` | `qualified` | Filter / pagination param |
+| `source` | `referral` | Filter / pagination param |
 | `assignedTo` | `string` | Filter / pagination param |
 | `search` | `string` | Filter / pagination param |
 
@@ -822,7 +861,7 @@ Lead capture and qualification, visual Kanban deal pipelines, stage reordering, 
   "value": 75000,
   "currency": "NGN",
   "expectedCloseDate": "2026-12-31",
-  "status": "won",
+  "status": "lost",
   "notes": "Updated notes",
   "assignedTo": "uuid-of-staff",
   "stageId": "uuid-of-stage",
@@ -882,7 +921,7 @@ Lead capture and qualification, visual Kanban deal pipelines, stage reordering, 
 
 ### List all deals
 
-`GET /v1/deals?pipelineId=string&stageId=string&status=open&assignedTo=string`
+`GET /v1/deals?pipelineId=string&stageId=string&status=on_hold&assignedTo=string`
 
 **Query Parameters**
 
@@ -890,7 +929,7 @@ Lead capture and qualification, visual Kanban deal pipelines, stage reordering, 
 | :--- | :--- | :--- |
 | `pipelineId` | `string` | Filter / pagination param |
 | `stageId` | `string` | Filter / pagination param |
-| `status` | `open` | Filter / pagination param |
+| `status` | `on_hold` | Filter / pagination param |
 | `assignedTo` | `string` | Filter / pagination param |
 
 **Responses**

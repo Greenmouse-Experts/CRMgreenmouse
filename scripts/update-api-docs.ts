@@ -210,6 +210,14 @@ const docsConfig: Record<
       return trail[1] === "companies" || trail[1] === "contacts";
     },
   },
+  "tasks.md": {
+    title: "Tasks, Follow-ups & Activity Management API",
+    description:
+      "Task creation, calendar scheduling, status updates, resource assignment, filtering, and activity tracking for CRM workflows.",
+    predicate: (trail) => {
+      return trail[1] === "tasks";
+    },
+  },
   "catalog.md": {
     title: "Product Catalog, Services & Categories API",
     description:
@@ -223,14 +231,15 @@ const docsConfig: Record<
     },
   },
   "finance.md": {
-    title: "Finance, Billing, Income, Expenses & Invoices API",
+    title: "Finance, Billing, Income, Expenses, Invoices & Receipts API",
     description:
-      "Revenue tracking, operating expense entries, status updates, invoice generation, custom HTML/PDF rendering, white-label branding, and payment reconciliation.",
+      "Revenue tracking, operating expense entries, status updates, invoice and receipt generation, custom HTML/PDF rendering, white-label branding, and payment reconciliation.",
     predicate: (trail) => {
       return (
         trail[1] === "income" ||
         trail[1] === "expenses" ||
-        trail[1] === "invoices"
+        trail[1] === "invoices" ||
+        trail[1] === "receipts"
       );
     },
   },

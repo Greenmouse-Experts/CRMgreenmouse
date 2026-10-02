@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import apiClient from "./simpleApi";
 
 export interface TenantProfile {
@@ -64,6 +64,51 @@ export const useTenantOnboarding = () => {
     queryKey: ["tenant", "onboarding"],
     queryFn: async () => {
       const { data } = await apiClient.get<any>("/tenant/onboarding");
+      return data?.data ?? data;
+    },
+  });
+};
+
+export const useSaveTenantOnboarding = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (stepData: Partial<TenantOnboardingData>) => {
+      const { data } = await apiClient.patch<any>(
+        "/tenant/onboarding",
+        stepData,
+      );
+      return data?.data ?? data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["tenant", "onboarding"] });
+      queryClient.invalidateQueries({ queryKey: ["tenant", "me"] });
+    },
+  });
+};
+
+export const useCompleteTenantOnboarding = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async () => {
+      const { data } = await apiClient.post<any>("/tenant/onboarding/complete");
+      return data?.data ?? data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["tenant"] });
+    },
+  });
+};
+
+export const useTenantChangeEmail = () => {
+  return useMutation({
+    mutationFn: async (payload: {
+      email: string;
+      currentPassword?: string;
+    }) => {
+      const { data } = await apiClient.patch<any>(
+        "/tenant/auth/change-email",
+        payload,
+      );
       return data?.data ?? data;
     },
   });

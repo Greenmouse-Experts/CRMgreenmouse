@@ -33,7 +33,7 @@ Customer support tickets, agent ticket assignment, priority escalation, lifecycl
 
 ```json
 {
-  "status": "waiting"
+  "status": "closed"
 }
 ```
 
@@ -182,15 +182,15 @@ Customer support tickets, agent ticket assignment, priority escalation, lifecycl
 
 ### List all tickets (filter by status, priority, assigned staff)
 
-`GET /v1/tickets?priority=high&assignedTo=string&status=in_progress`
+`GET /v1/tickets?priority=medium&assignedTo=string&status=closed`
 
 **Query Parameters**
 
 | Parameter | Type / Example | Description |
 | :--- | :--- | :--- |
-| `priority` | `high` | Filter / pagination param |
+| `priority` | `medium` | Filter / pagination param |
 | `assignedTo` | `string` | Filter by staff ID |
-| `status` | `in_progress` | Filter / pagination param |
+| `status` | `closed` | Filter / pagination param |
 
 **Responses**
 

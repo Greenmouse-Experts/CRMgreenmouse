@@ -1,7 +1,8 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import apiClient from "./simpleApi";
 
-// ==================== INCOME ====================\n
+// ==================== INCOME ====================
+
 export interface IncomeRecord {
   id: string;
   amount: number;
@@ -92,7 +93,8 @@ export const useUpdateIncomeStatus = () => {
   });
 };
 
-// ==================== EXPENSES ====================\n
+// ==================== EXPENSES ====================
+
 export interface ExpenseRecord {
   id: string;
   amount: number;
@@ -183,7 +185,8 @@ export const useUpdateExpenseStatus = () => {
   });
 };
 
-// ==================== INVOICES ====================\n
+// ==================== INVOICES ====================
+
 export interface InvoiceItem {
   description: string;
   qty: number;
@@ -198,6 +201,7 @@ export interface Invoice {
   paidAt?: string;
   items: InvoiceItem[];
   orderId?: string;
+  quoteId?: string;
   contactId?: string;
   contact?: {
     id: string;
@@ -213,6 +217,8 @@ export interface Invoice {
   pdfUrl?: string;
   total?: number;
   amountDue?: number;
+  paidAmount?: number;
+  balance?: number;
   createdAt?: string;
   updatedAt?: string;
 }
@@ -266,13 +272,71 @@ export const useInvoiceStats = () => {
   return useQuery<InvoiceStatsData>({
     queryKey: ["invoices", "stats"],
     queryFn: async () => {
-      try {
-        const { data } = await apiClient.get<any>("/invoices/stats");
-        return data?.data || data || {};
-      } catch {
-        return {};
-      }
+      const { data } = await apiClient.get<any>("/invoices/stats");
+      return data?.data || data;
     },
+  });
+};
+
+export interface InvoiceBrandingConfig {
+  logo?: string;
+  companyName?: string;
+  companyAddress?: string;
+  primaryColor?: string;
+  accentColor?: string;
+  notes?: string;
+  terms?: string;
+}
+
+export const useInvoiceBranding = () => {
+  return useQuery<InvoiceBrandingConfig>({
+    queryKey: ["invoices", "branding"],
+    queryFn: async () => {
+      const { data } = await apiClient.get<any>("/invoices/branding");
+      return data?.data || data;
+    },
+  });
+};
+
+export const useUpdateInvoiceBranding = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (branding: InvoiceBrandingConfig) => {
+      const { data } = await apiClient.patch<any>(
+        "/invoices/branding",
+        branding,
+      );
+      return data?.data || data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["invoices", "branding"] });
+    },
+  });
+};
+
+export const useInvoiceHtml = (id?: string) => {
+  return useQuery<string>({
+    queryKey: ["invoices", id, "html"],
+    queryFn: async () => {
+      if (!id) throw new Error("Invoice ID required");
+      const { data } = await apiClient.get<string>(`/invoices/${id}/html`);
+      return data;
+    },
+    enabled: !!id,
+  });
+};
+
+export const useInvoicePdf = (id?: string) => {
+  return useQuery<Blob>({
+    queryKey: ["invoices", id, "pdf"],
+    queryFn: async () => {
+      if (!id) throw new Error("Invoice ID required");
+      const { data } = await apiClient.get<Blob>(`/invoices/${id}/pdf`, {
+        responseType: "blob",
+      });
+      return data;
+    },
+    enabled: !!id,
   });
 };
 
@@ -372,7 +436,165 @@ export const useCancelInvoice = () => {
   });
 };
 
-// ==================== TRANSACTIONS ====================\n
+// ==================== PAYMENTS & RECEIPTS ====================
+
+export interface InvoicePaymentPayload {
+  amount: number;
+  method: string;
+  reference?: string;
+  paidAt?: string;
+  notes?: string;
+  sendEmail?: boolean;
+}
+
+export interface PaymentLedgerEntry {
+  id: string;
+  invoiceId: string;
+  receiptId?: string;
+  receiptNumber?: string;
+  amount: number;
+  method: string;
+  reference?: string;
+  paidAt: string;
+  notes?: string;
+  createdAt?: string;
+}
+
+export interface Receipt {
+  id: string;
+  receiptNumber: string;
+  invoiceId: string;
+  invoice?: Invoice;
+  paymentId?: string;
+  payment?: PaymentLedgerEntry;
+  amount: number;
+  currency?: string;
+  status: "issued" | "void" | string;
+  issuedAt?: string;
+  voidReason?: string;
+  voidedAt?: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export const useInvoicePayments = (invoiceId?: string) => {
+  return useQuery<PaymentLedgerEntry[]>({
+    queryKey: ["invoices", invoiceId, "payments"],
+    queryFn: async () => {
+      if (!invoiceId) throw new Error("Invoice ID required");
+      const { data } = await apiClient.get<any>(`/invoices/${invoiceId}/payments`);
+      if (Array.isArray(data)) return data;
+      if (Array.isArray(data?.data)) return data.data;
+      if (Array.isArray(data?.payments)) return data.payments;
+      return [];
+    },
+    enabled: !!invoiceId,
+  });
+};
+
+export const useInvoiceReceipts = (invoiceId?: string) => {
+  return useQuery<Receipt[]>({
+    queryKey: ["invoices", invoiceId, "receipts"],
+    queryFn: async () => {
+      if (!invoiceId) throw new Error("Invoice ID required");
+      const { data } = await apiClient.get<any>(`/invoices/${invoiceId}/receipts`);
+      if (Array.isArray(data)) return data;
+      if (Array.isArray(data?.data)) return data.data;
+      if (Array.isArray(data?.receipts)) return data.receipts;
+      return [];
+    },
+    enabled: !!invoiceId,
+  });
+};
+
+export const useRecordInvoicePayment = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({
+      invoiceId,
+      ...payload
+    }: InvoicePaymentPayload & { invoiceId: string }) => {
+      const { data } = await apiClient.post<any>(`/invoices/${invoiceId}/payments`, payload);
+      return data?.data || data;
+    },
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ["invoices"] });
+      queryClient.invalidateQueries({ queryKey: ["invoices", variables.invoiceId] });
+      queryClient.invalidateQueries({ queryKey: ["invoices", variables.invoiceId, "payments"] });
+      queryClient.invalidateQueries({ queryKey: ["invoices", variables.invoiceId, "receipts"] });
+      queryClient.invalidateQueries({ queryKey: ["receipts"] });
+    },
+  });
+};
+
+export const useReceipt = (id?: string) => {
+  return useQuery<Receipt>({
+    queryKey: ["receipts", id],
+    queryFn: async () => {
+      if (!id) throw new Error("Receipt ID required");
+      const { data } = await apiClient.get<any>(`/receipts/${id}`);
+      return data?.data || data;
+    },
+    enabled: !!id,
+  });
+};
+
+export const useReceiptHtml = (id?: string) => {
+  return useQuery<string>({
+    queryKey: ["receipts", id, "html"],
+    queryFn: async () => {
+      if (!id) throw new Error("Receipt ID required");
+      const { data } = await apiClient.get<string>(`/receipts/${id}/html`);
+      return data;
+    },
+    enabled: !!id,
+  });
+};
+
+export const useReceiptPdf = (id?: string) => {
+  return useQuery<Blob>({
+    queryKey: ["receipts", id, "pdf"],
+    queryFn: async () => {
+      if (!id) throw new Error("Receipt ID required");
+      const { data } = await apiClient.get<Blob>(`/receipts/${id}/pdf`, {
+        responseType: "blob",
+      });
+      return data;
+    },
+    enabled: !!id,
+  });
+};
+
+export const useVoidReceipt = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ id, reason }: { id: string; reason?: string }) => {
+      const { data } = await apiClient.post<any>(`/receipts/${id}/void`, { reason });
+      return data?.data || data;
+    },
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ["receipts"] });
+      queryClient.invalidateQueries({ queryKey: ["receipts", variables.id] });
+      queryClient.invalidateQueries({ queryKey: ["invoices"] });
+    },
+  });
+};
+
+export const useResendReceipt = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (id: string) => {
+      const { data } = await apiClient.post<any>(`/receipts/${id}/resend`);
+      return data?.data || data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["receipts"] });
+    },
+  });
+};
+
+// ==================== TRANSACTIONS ====================
+
 export interface Transaction {
   id: string;
   date: string;

@@ -20,6 +20,19 @@ export interface QuoteQueryParams {
   status?: string;
 }
 
+export interface ConvertQuotePayload {
+  target: "invoice" | "order" | string;
+  contactId?: string;
+  currency?: string;
+  discount?: number;
+  tax?: number;
+  issuedDate?: string;
+  dueDate?: string;
+  notes?: string;
+  assignedTo?: string;
+  items?: any[];
+}
+
 export const useQuotes = (params?: QuoteQueryParams) => {
   return useQuery<Quote[]>({
     queryKey: ["quotes", params],
@@ -103,11 +116,34 @@ export const useUpdateQuoteStatus = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async ({ id, status }: { id: string; status: string }) => {
-      const { data } = await apiClient.patch(`/quotes/${id}/status`, { status });
+      const { data } = await apiClient.patch(`/quotes/${id}/status`, {
+        status,
+      });
       return data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["quotes"] });
+    },
+  });
+};
+
+export const useConvertQuote = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({
+      id,
+      ...payload
+    }: ConvertQuotePayload & { id: string }) => {
+      const { data } = await apiClient.post<any>(
+        `/quotes/${id}/convert`,
+        payload,
+      );
+      return data?.data || data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["quotes"] });
+      queryClient.invalidateQueries({ queryKey: ["orders"] });
+      queryClient.invalidateQueries({ queryKey: ["invoices"] });
     },
   });
 };
@@ -128,6 +164,7 @@ export interface Order {
   id: string;
   orderNumber?: string;
   items: OrderItem[];
+  quoteId?: string;
   contactId?: string;
   contact?: {
     id: string;
@@ -236,7 +273,9 @@ export const useUpdateOrderStatus = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async ({ id, status }: { id: string; status: string }) => {
-      const { data } = await apiClient.patch(`/orders/${id}/status`, { status });
+      const { data } = await apiClient.patch(`/orders/${id}/status`, {
+        status,
+      });
       return data;
     },
     onSuccess: () => {

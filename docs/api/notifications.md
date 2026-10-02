@@ -53,7 +53,7 @@ Tenant notification bell alerts, unread counts, mark-read actions, and bulk ackn
 
 ### List notifications for the current tenant
 
-`GET /v1/notifications?page=1&limit=20&unreadOnly=true`
+`GET /v1/notifications?page=1&limit=20&unreadOnly=false`
 
 **Query Parameters**
 
@@ -61,7 +61,7 @@ Tenant notification bell alerts, unread counts, mark-read actions, and bulk ackn
 | :--- | :--- | :--- |
 | `page` | `1` | Filter / pagination param |
 | `limit` | `20` | Filter / pagination param |
-| `unreadOnly` | `true` | Filter to unread only |
+| `unreadOnly` | `false` | Filter to unread only |
 
 **Responses**
 

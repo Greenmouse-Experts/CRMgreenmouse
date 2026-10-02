@@ -9,12 +9,13 @@ Auto-generated from the Postman API collection for Greenmouse CRM platform backe
 | **System & Platform Authentication API** | [`authentication.md`](./authentication.md) | 7 | System root greetings, health checks, and platform authentication for Super Admins and Staff members. |
 | **Tenant Authentication, Onboarding & Security API** | [`tenant.md`](./tenant.md) | 15 | Business owner account registration, email OTP verification, password recovery, session tokens, multi-step onboarding wizard, and audit login activity. |
 | **Subscription Plans, Billing & Paystack Integration API** | [`subscriptions.md`](./subscriptions.md) | 10 | Public plan catalog, tenant subscription tier management (upgrade, downgrade, cancel, payment verification), and automated Paystack webhooks. |
-| **Super Admin Platform Management API** | [`admin.md`](./admin.md) | 63 | Super admin initial setup, administrator profile, RBAC permission dictionary, cross-tenant management, tenant status toggle, subscription plan authoring, and platform oversight. |
+| **Super Admin Platform Management API** | [`admin.md`](./admin.md) | 94 | Super admin initial setup, administrator profile, RBAC permission dictionary, cross-tenant management, tenant status toggle, subscription plan authoring, and platform oversight. |
 | **Staff Members & RBAC Roles API** | [`staff-and-roles.md`](./staff-and-roles.md) | 12 | Tenant staff invitations, team directory, custom role creation, granular permission assignment, and privilege escalation management. |
 | **CRM Contacts & Companies API** | [`crm.md`](./crm.md) | 17 | Customer contacts and company accounts directory, interaction notes, streaming CSV export, and bulk synchronous/asynchronous CSV imports. |
+| **Tasks, Follow-ups & Activity Management API** | [`tasks.md`](./tasks.md) | 7 | Task creation, calendar scheduling, status updates, resource assignment, filtering, and activity tracking for CRM workflows. |
 | **Product Catalog, Services & Categories API** | [`catalog.md`](./catalog.md) | 23 | Inventory items, physical products, recurring/one-off services, item categories, stock level adjustments, CSV bulk exports, and streaming async imports. |
-| **Finance, Billing, Income, Expenses & Invoices API** | [`finance.md`](./finance.md) | 25 | Revenue tracking, operating expense entries, status updates, invoice generation, custom HTML/PDF rendering, white-label branding, and payment reconciliation. |
-| **Sales Pipeline, Leads, Deals, Quotes & Orders API** | [`sales.md`](./sales.md) | 41 | Lead capture and qualification, visual Kanban deal pipelines, stage reordering, quote generation, sales order fulfillment, and status tracking. |
+| **Finance, Billing, Income, Expenses, Invoices & Receipts API** | [`finance.md`](./finance.md) | 33 | Revenue tracking, operating expense entries, status updates, invoice and receipt generation, custom HTML/PDF rendering, white-label branding, and payment reconciliation. |
+| **Sales Pipeline, Leads, Deals, Quotes & Orders API** | [`sales.md`](./sales.md) | 42 | Lead capture and qualification, visual Kanban deal pipelines, stage reordering, quote generation, sales order fulfillment, and status tracking. |
 | **Tenant Dashboard & Real-Time Analytics API** | [`dashboard.md`](./dashboard.md) | 5 | Key performance indicator metrics, cash balance summaries, monthly income vs. expense cash flows, profit breakdown, and user analytics. |
 | **Sales & Pipeline Analytics Reports API** | [`reports.md`](./reports.md) | 6 | Advanced analytics including pipeline funnel progression, win/loss conversion rates, average deal sizing, sales cycle velocity, revenue trends, and stage dwell durations. |
 | **Support Tickets & Helpdesk Threading API** | [`support.md`](./support.md) | 8 | Customer support tickets, agent ticket assignment, priority escalation, lifecycle status updates, and chronological reply threads. |
@@ -25,7 +26,7 @@ Auto-generated from the Postman API collection for Greenmouse CRM platform backe
 
 ---
 
-## Complete Endpoints Master Index (244 total endpoints)
+## Complete Endpoints Master Index (291 total endpoints)
 
 | Method | Path | Action / Endpoint Name | Module Documentation |
 | :--- | :--- | :--- | :--- |
@@ -61,15 +62,13 @@ Auto-generated from the Postman API collection for Greenmouse CRM platform backe
 | `POST` | `/v1/tenant/subscription/cancel` | Cancel subscription (data preserved, access ends at period close) | [`subscriptions.md`](./subscriptions.md#cancel-subscription-data-preserved-access-ends-at-period-close-) |
 | `POST` | `/v1/tenant/subscription/verify` | Verify a subscription payment by Paystack reference (fallback if webhook fails) | [`subscriptions.md`](./subscriptions.md#verify-a-subscription-payment-by-paystack-reference-fallback-if-webhook-fails-) |
 | `POST` | `/v1/webhook/paystack` | Paystack webhook endpoint | [`subscriptions.md`](./subscriptions.md#paystack-webhook-endpoint) |
-| `POST` | `/v1/admins/setup` | Create the super admin account (one-time setup) | [`admin.md`](./admin.md#create-the-super-admin-account-one-time-setup-) |
-| `GET` | `/v1/admins/profile` | Get admin profile | [`admin.md`](./admin.md#get-admin-profile) |
-| `PATCH` | `/v1/admins/profile` | Update admin profile | [`admin.md`](./admin.md#update-admin-profile) |
-| `PATCH` | `/v1/admins/change-password` | Change admin account password | [`admin.md`](./admin.md#change-admin-account-password) |
-| `GET` | `/v1/admins/permissions` | Get all available permissions with descriptions — use when building roles | [`admin.md`](./admin.md#get-all-available-permissions-with-descriptions-use-when-building-roles) |
 | `GET` | `/v1/admins/staff/:id` | Get a staff member by ID (cross-tenant) | [`admin.md`](./admin.md#get-a-staff-member-by-id-cross-tenant-) |
 | `GET` | `/v1/admins/staff` | List all staff across all tenants | [`admin.md`](./admin.md#list-all-staff-across-all-tenants) |
+| `PATCH` | `/v1/admins/roles/:id/permissions` | Update permissions on an admin role (super-only) | [`admin.md`](./admin.md#update-permissions-on-an-admin-role-super-only-) |
 | `GET` | `/v1/admins/roles/:id` | Get a role by ID (cross-tenant) | [`admin.md`](./admin.md#get-a-role-by-id-cross-tenant-) |
-| `GET` | `/v1/admins/roles` | List all roles across all tenants | [`admin.md`](./admin.md#list-all-roles-across-all-tenants) |
+| `DELETE` | `/v1/admins/roles/:id` | Delete an admin role (super-only) | [`admin.md`](./admin.md#delete-an-admin-role-super-only-) |
+| `GET` | `/v1/admins/roles` | List all admin roles (super-only) | [`admin.md`](./admin.md#list-all-admin-roles-super-only-) |
+| `POST` | `/v1/admins/roles` | Create a new admin role (super-only) | [`admin.md`](./admin.md#create-a-new-admin-role-super-only-) |
 | `GET` | `/v1/admins/companies/:id` | Get a company by ID (cross-tenant) | [`admin.md`](./admin.md#get-a-company-by-id-cross-tenant-) |
 | `GET` | `/v1/admins/companies` | List all companies across all tenants | [`admin.md`](./admin.md#list-all-companies-across-all-tenants) |
 | `GET` | `/v1/admins/import/jobs/:id` | Get an import job by ID (cross-tenant) | [`admin.md`](./admin.md#get-an-import-job-by-id-cross-tenant-) |
@@ -80,6 +79,8 @@ Auto-generated from the Postman API collection for Greenmouse CRM platform backe
 | `DELETE` | `/v1/admins/subscriptions/:id` | Delete a subscription plan | [`admin.md`](./admin.md#delete-a-subscription-plan) |
 | `POST` | `/v1/admins/subscriptions` | Create a new subscription plan | [`admin.md`](./admin.md#create-a-new-subscription-plan) |
 | `GET` | `/v1/admins/subscriptions` | List all subscription plans (admin view, includes inactive) with pagination | [`admin.md`](./admin.md#list-all-subscription-plans-admin-view-includes-inactive-with-pagination) |
+| `GET` | `/v1/admins/notifications/unread-count` | Get unread notification count for a tenant | [`admin.md`](./admin.md#get-unread-notification-count-for-a-tenant) |
+| `GET` | `/v1/admins/notifications` | List notifications for a tenant (cross-tenant) | [`admin.md`](./admin.md#list-notifications-for-a-tenant-cross-tenant-) |
 | `GET` | `/v1/admins/contacts/:id` | Get a contact by ID (cross-tenant) | [`admin.md`](./admin.md#get-a-contact-by-id-cross-tenant-) |
 | `GET` | `/v1/admins/contacts` | List all contacts across all tenants | [`admin.md`](./admin.md#list-all-contacts-across-all-tenants) |
 | `GET` | `/v1/admins/categories/:id` | Get a category by ID (cross-tenant) | [`admin.md`](./admin.md#get-a-category-by-id-cross-tenant-) |
@@ -88,8 +89,18 @@ Auto-generated from the Postman API collection for Greenmouse CRM platform backe
 | `GET` | `/v1/admins/income` | List all income records across all tenants | [`admin.md`](./admin.md#list-all-income-records-across-all-tenants) |
 | `GET` | `/v1/admins/expenses/:id` | Get an expense record by ID (cross-tenant) | [`admin.md`](./admin.md#get-an-expense-record-by-id-cross-tenant-) |
 | `GET` | `/v1/admins/expenses` | List all expense records across all tenants | [`admin.md`](./admin.md#list-all-expense-records-across-all-tenants) |
+| `GET` | `/v1/admins/invoices/stats` | Aggregate invoice stats across all tenants | [`admin.md`](./admin.md#aggregate-invoice-stats-across-all-tenants) |
+| `GET` | `/v1/admins/invoices/branding` | Get invoice branding config (cross-tenant) | [`admin.md`](./admin.md#get-invoice-branding-config-cross-tenant-) |
+| `GET` | `/v1/admins/invoices/:id/html` | Render invoice as HTML (cross-tenant) | [`admin.md`](./admin.md#render-invoice-as-html-cross-tenant-) |
+| `GET` | `/v1/admins/invoices/:id/pdf` | Render invoice as PDF (cross-tenant) | [`admin.md`](./admin.md#render-invoice-as-pdf-cross-tenant-) |
+| `GET` | `/v1/admins/invoices/:id/receipts` | List all receipts for an invoice (cross-tenant) | [`admin.md`](./admin.md#list-all-receipts-for-an-invoice-cross-tenant-) |
+| `GET` | `/v1/admins/invoices/:id/payments` | List payment ledger for an invoice (cross-tenant) | [`admin.md`](./admin.md#list-payment-ledger-for-an-invoice-cross-tenant-) |
 | `GET` | `/v1/admins/invoices/:id` | Get an invoice by ID (cross-tenant) | [`admin.md`](./admin.md#get-an-invoice-by-id-cross-tenant-) |
 | `GET` | `/v1/admins/invoices` | List all invoices across all tenants | [`admin.md`](./admin.md#list-all-invoices-across-all-tenants) |
+| `GET` | `/v1/admins/receipts/:id/html` | Render receipt as HTML (cross-tenant) | [`admin.md`](./admin.md#render-receipt-as-html-cross-tenant-) |
+| `GET` | `/v1/admins/receipts/:id/pdf` | Render receipt as PDF (cross-tenant) | [`admin.md`](./admin.md#render-receipt-as-pdf-cross-tenant-) |
+| `GET` | `/v1/admins/receipts/:id` | Get a receipt by ID (cross-tenant) | [`admin.md`](./admin.md#get-a-receipt-by-id-cross-tenant-) |
+| `GET` | `/v1/admins/orders/stats` | Aggregate order stats across all tenants | [`admin.md`](./admin.md#aggregate-order-stats-across-all-tenants) |
 | `GET` | `/v1/admins/orders/:id` | Get an order by ID (cross-tenant) | [`admin.md`](./admin.md#get-an-order-by-id-cross-tenant-) |
 | `GET` | `/v1/admins/orders` | List all orders across all tenants | [`admin.md`](./admin.md#list-all-orders-across-all-tenants) |
 | `GET` | `/v1/admins/products/:id` | Get a product by ID (cross-tenant) | [`admin.md`](./admin.md#get-a-product-by-id-cross-tenant-) |
@@ -104,17 +115,28 @@ Auto-generated from the Postman API collection for Greenmouse CRM platform backe
 | `GET` | `/v1/admins/pipelines/:id` | Get a pipeline by ID (cross-tenant) | [`admin.md`](./admin.md#get-a-pipeline-by-id-cross-tenant-) |
 | `GET` | `/v1/admins/pipelines` | List all pipelines across all tenants | [`admin.md`](./admin.md#list-all-pipelines-across-all-tenants) |
 | `GET` | `/v1/admins/tenants/stats` | Tenant statistics (total, active, suspended, trial) | [`admin.md`](./admin.md#tenant-statistics-total-active-suspended-trial-) |
+| `GET` | `/v1/admins/tenants/:id/history` | Get tenant subscription change history | [`admin.md`](./admin.md#get-tenant-subscription-change-history) |
+| `GET` | `/v1/admins/tenants/:id/login-activity` | Get tenant login activity | [`admin.md`](./admin.md#get-tenant-login-activity) |
+| `GET` | `/v1/admins/tenants/:id/onboarding` | Get tenant onboarding status | [`admin.md`](./admin.md#get-tenant-onboarding-status) |
+| `GET` | `/v1/admins/tenants/:id/reminders` | Get tenant reminder preferences | [`admin.md`](./admin.md#get-tenant-reminder-preferences) |
 | `PATCH` | `/v1/admins/tenants/:id/status` | Activate or suspend a tenant | [`admin.md`](./admin.md#activate-or-suspend-a-tenant) |
 | `PATCH` | `/v1/admins/tenants/:id/subscription` | Assign or upgrade a tenant subscription plan | [`admin.md`](./admin.md#assign-or-upgrade-a-tenant-subscription-plan) |
 | `POST` | `/v1/admins/tenants/:id/verify-payment` | Verify a subscription payment by Paystack reference for a tenant (fallback if webhook fails) | [`admin.md`](./admin.md#verify-a-subscription-payment-by-paystack-reference-for-a-tenant-fallback-if-webhook-fails-) |
 | `GET` | `/v1/admins/tenants/:id` | Get a single tenant | [`admin.md`](./admin.md#get-a-single-tenant) |
 | `GET` | `/v1/admins/tenants` | List all tenants | [`admin.md`](./admin.md#list-all-tenants) |
+| `GET` | `/v1/admins/overview/revenue-trend` | Monthly contracted MRR movement: added vs lost (cached 10 min; not collected cash) | [`admin.md`](./admin.md#monthly-contracted-mrr-movement-added-vs-lost-cached-10-min-not-collected-cash-) |
+| `GET` | `/v1/admins/overview/plan-distribution` | Tenants per subscription plan (cached 5 min) | [`admin.md`](./admin.md#tenants-per-subscription-plan-cached-5-min-) |
+| `GET` | `/v1/admins/overview/trial-funnel` | Trial started/converted/expired + conversion rate (cached 5 min) | [`admin.md`](./admin.md#trial-started-converted-expired-conversion-rate-cached-5-min-) |
+| `GET` | `/v1/admins/overview/engagement` | Tenant login activity, dormant tenants, onboarding progress (cached 5 min) | [`admin.md`](./admin.md#tenant-login-activity-dormant-tenants-onboarding-progress-cached-5-min-) |
+| `GET` | `/v1/admins/overview` | Platform summary: MRR estimate, tenant counts, trials expiring, churn (cached 5 min) | [`admin.md`](./admin.md#platform-summary-mrr-estimate-tenant-counts-trials-expiring-churn-cached-5-min-) |
 | `GET` | `/v1/admins/tickets/:id` | Get a ticket by ID (cross-tenant) | [`admin.md`](./admin.md#get-a-ticket-by-id-cross-tenant-) |
 | `GET` | `/v1/admins/tickets` | List all tickets across all tenants | [`admin.md`](./admin.md#list-all-tickets-across-all-tenants) |
+| `GET` | `/v1/admins/quotes/stats` | Aggregate quote stats across all tenants | [`admin.md`](./admin.md#aggregate-quote-stats-across-all-tenants) |
 | `GET` | `/v1/admins/quotes/:id` | Get a quote by ID (cross-tenant) | [`admin.md`](./admin.md#get-a-quote-by-id-cross-tenant-) |
 | `GET` | `/v1/admins/quotes` | List all quotes across all tenants | [`admin.md`](./admin.md#list-all-quotes-across-all-tenants) |
 | `GET` | `/v1/admins/leads/:id` | Get a lead by ID (cross-tenant) | [`admin.md`](./admin.md#get-a-lead-by-id-cross-tenant-) |
 | `GET` | `/v1/admins/leads` | List all leads across all tenants | [`admin.md`](./admin.md#list-all-leads-across-all-tenants) |
+| `GET` | `/v1/admins/deals/kanban` | Kanban view for a pipeline (cross-tenant) | [`admin.md`](./admin.md#kanban-view-for-a-pipeline-cross-tenant-) |
 | `GET` | `/v1/admins/deals/:id/stage-history` | Get deal stage history | [`admin.md`](./admin.md#get-deal-stage-history) |
 | `GET` | `/v1/admins/deals/:id` | Get a deal by ID (cross-tenant) | [`admin.md`](./admin.md#get-a-deal-by-id-cross-tenant-) |
 | `GET` | `/v1/admins/deals` | List all deals across all tenants | [`admin.md`](./admin.md#list-all-deals-across-all-tenants) |
@@ -124,6 +146,16 @@ Auto-generated from the Postman API collection for Greenmouse CRM platform backe
 | `GET` | `/v1/admins/reports/cycle-time` | Average cycle time for a specific tenant | [`admin.md`](./admin.md#average-cycle-time-for-a-specific-tenant) |
 | `GET` | `/v1/admins/reports/revenue-trend` | Revenue trend for a specific tenant | [`admin.md`](./admin.md#revenue-trend-for-a-specific-tenant) |
 | `GET` | `/v1/admins/reports/stage-dwell` | Average time per pipeline stage for a specific tenant | [`admin.md`](./admin.md#average-time-per-pipeline-stage-for-a-specific-tenant) |
+| `POST` | `/v1/admins/setup` | Create the first super admin account (one-time only) | [`admin.md`](./admin.md#create-the-first-super-admin-account-one-time-only-) |
+| `GET` | `/v1/admins/profile` | Get own admin profile | [`admin.md`](./admin.md#get-own-admin-profile) |
+| `PATCH` | `/v1/admins/profile` | Update own admin profile | [`admin.md`](./admin.md#update-own-admin-profile) |
+| `PATCH` | `/v1/admins/change-password` | Change own admin password | [`admin.md`](./admin.md#change-own-admin-password) |
+| `GET` | `/v1/admins/permissions` | List all available admin permissions | [`admin.md`](./admin.md#list-all-available-admin-permissions) |
+| `GET` | `/v1/admins/:id` | Get admin detail by ID (super-only) | [`admin.md`](./admin.md#get-admin-detail-by-id-super-only-) |
+| `PATCH` | `/v1/admins/:id` | Update admin account — role, status, profile (super-only) | [`admin.md`](./admin.md#update-admin-account-role-status-profile-super-only-) |
+| `DELETE` | `/v1/admins/:id` | Delete an admin account (super-only) | [`admin.md`](./admin.md#delete-an-admin-account-super-only-) |
+| `GET` | `/v1/admins` | List all admin accounts (super-only) | [`admin.md`](./admin.md#list-all-admin-accounts-super-only-) |
+| `POST` | `/v1/admins` | Create a new admin account (super-only) | [`admin.md`](./admin.md#create-a-new-admin-account-super-only-) |
 | `GET` | `/v1/staffs/:id` | Get a staff member by ID | [`staff-and-roles.md`](./staff-and-roles.md#get-a-staff-member-by-id) |
 | `PATCH` | `/v1/staffs/:id` | Update a staff member | [`staff-and-roles.md`](./staff-and-roles.md#update-a-staff-member) |
 | `DELETE` | `/v1/staffs/:id` | Delete a staff member | [`staff-and-roles.md`](./staff-and-roles.md#delete-a-staff-member) |
@@ -153,6 +185,13 @@ Auto-generated from the Postman API collection for Greenmouse CRM platform backe
 | `POST` | `/v1/contacts/import` | Bulk import contacts from CSV (sync, ≤2MB / 1000 rows, all-or-nothing) | [`crm.md`](./crm.md#bulk-import-contacts-from-csv-sync-2mb-1000-rows-all-or-nothing-) |
 | `POST` | `/v1/contacts` | Create a new contact | [`crm.md`](./crm.md#create-a-new-contact) |
 | `GET` | `/v1/contacts` | List all contacts | [`crm.md`](./crm.md#list-all-contacts) |
+| `GET` | `/v1/tasks/calendar` | Calendar view of tasks in a date range | [`tasks.md`](./tasks.md#calendar-view-of-tasks-in-a-date-range) |
+| `PATCH` | `/v1/tasks/:id/status` | Change task status | [`tasks.md`](./tasks.md#change-task-status) |
+| `GET` | `/v1/tasks/:id` | Get a task by ID | [`tasks.md`](./tasks.md#get-a-task-by-id) |
+| `PATCH` | `/v1/tasks/:id` | Update a task | [`tasks.md`](./tasks.md#update-a-task) |
+| `DELETE` | `/v1/tasks/:id` | Delete a task | [`tasks.md`](./tasks.md#delete-a-task) |
+| `POST` | `/v1/tasks` | Create a task, follow-up or activity | [`tasks.md`](./tasks.md#create-a-task-follow-up-or-activity) |
+| `GET` | `/v1/tasks` | List tasks (filter by status, type, dates) | [`tasks.md`](./tasks.md#list-tasks-filter-by-status-type-dates-) |
 | `GET` | `/v1/categories/:id` | Get a category by ID | [`catalog.md`](./catalog.md#get-a-category-by-id) |
 | `PATCH` | `/v1/categories/:id` | Update a category | [`catalog.md`](./catalog.md#update-a-category) |
 | `DELETE` | `/v1/categories/:id` | Delete a category | [`catalog.md`](./catalog.md#delete-a-category) |
@@ -196,11 +235,19 @@ Auto-generated from the Postman API collection for Greenmouse CRM platform backe
 | `PATCH` | `/v1/invoices/:id/send` | Mark invoice as sent | [`finance.md`](./finance.md#mark-invoice-as-sent) |
 | `PATCH` | `/v1/invoices/:id/mark-paid` | Mark invoice as paid (records paidAt timestamp) | [`finance.md`](./finance.md#mark-invoice-as-paid-records-paidat-timestamp-) |
 | `PATCH` | `/v1/invoices/:id/status` | Update invoice status | [`finance.md`](./finance.md#update-invoice-status) |
+| `POST` | `/v1/invoices/:id/payments` | Record a payment (full or partial) and auto-issue a receipt (RCP-YYYY-XXXXXX) | [`finance.md`](./finance.md#record-a-payment-full-or-partial-and-auto-issue-a-receipt-rcp-yyyy-xxxxxx-) |
+| `GET` | `/v1/invoices/:id/payments` | List payment ledger entries for an invoice | [`finance.md`](./finance.md#list-payment-ledger-entries-for-an-invoice) |
+| `GET` | `/v1/invoices/:id/receipts` | List all receipts for an invoice | [`finance.md`](./finance.md#list-all-receipts-for-an-invoice) |
 | `GET` | `/v1/invoices/:id` | Get an invoice by ID | [`finance.md`](./finance.md#get-an-invoice-by-id) |
 | `PATCH` | `/v1/invoices/:id` | Update a draft invoice | [`finance.md`](./finance.md#update-a-draft-invoice) |
 | `DELETE` | `/v1/invoices/:id` | Delete an invoice | [`finance.md`](./finance.md#delete-an-invoice) |
 | `POST` | `/v1/invoices` | Create a new invoice (invoice number auto-generated) | [`finance.md`](./finance.md#create-a-new-invoice-invoice-number-auto-generated-) |
 | `GET` | `/v1/invoices` | List all invoices | [`finance.md`](./finance.md#list-all-invoices) |
+| `GET` | `/v1/receipts/:id/html` | Render receipt as HTML (branded when entitled) | [`finance.md`](./finance.md#render-receipt-as-html-branded-when-entitled-) |
+| `GET` | `/v1/receipts/:id/pdf` | Download receipt as PDF | [`finance.md`](./finance.md#download-receipt-as-pdf) |
+| `POST` | `/v1/receipts/:id/void` | Void a receipt (reverses ledger entry, recalcs invoice balance) | [`finance.md`](./finance.md#void-a-receipt-reverses-ledger-entry-recalcs-invoice-balance-) |
+| `POST` | `/v1/receipts/:id/resend` | Re-send an issued receipt email to the client (HTML + PDF attachment) | [`finance.md`](./finance.md#re-send-an-issued-receipt-email-to-the-client-html-pdf-attachment-) |
+| `GET` | `/v1/receipts/:id` | Get a receipt by ID (with payment) | [`finance.md`](./finance.md#get-a-receipt-by-id-with-payment-) |
 | `GET` | `/v1/orders/stats` | Get order statistics by status | [`sales.md`](./sales.md#get-order-statistics-by-status) |
 | `PATCH` | `/v1/orders/:id/status` | Update order status | [`sales.md`](./sales.md#update-order-status) |
 | `GET` | `/v1/orders/:id` | Get an order by ID with full item details | [`sales.md`](./sales.md#get-an-order-by-id-with-full-item-details) |
@@ -219,6 +266,7 @@ Auto-generated from the Postman API collection for Greenmouse CRM platform backe
 | `GET` | `/v1/pipelines` | List all pipelines | [`sales.md`](./sales.md#list-all-pipelines) |
 | `GET` | `/v1/quotes/stats` | Get quote statistics by status | [`sales.md`](./sales.md#get-quote-statistics-by-status) |
 | `PATCH` | `/v1/quotes/:id/status` | Update quote status | [`sales.md`](./sales.md#update-quote-status) |
+| `POST` | `/v1/quotes/:id/convert` | Convert a quote to an invoice or an order | [`sales.md`](./sales.md#convert-a-quote-to-an-invoice-or-an-order) |
 | `GET` | `/v1/quotes/:id` | Get a quote by ID | [`sales.md`](./sales.md#get-a-quote-by-id) |
 | `PATCH` | `/v1/quotes/:id` | Update a quote | [`sales.md`](./sales.md#update-a-quote) |
 | `DELETE` | `/v1/quotes/:id` | Delete a quote | [`sales.md`](./sales.md#delete-a-quote) |

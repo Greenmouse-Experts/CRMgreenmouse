@@ -6,15 +6,13 @@ Super admin initial setup, administrator profile, RBAC permission dictionary, cr
 
 | Method | Endpoint | Description |
 | :--- | :--- | :--- |
-| `POST` | [`/v1/admins/setup`](#create-the-super-admin-account-one-time-setup-) | Create the super admin account (one-time setup) |
-| `GET` | [`/v1/admins/profile`](#get-admin-profile) | Get admin profile |
-| `PATCH` | [`/v1/admins/profile`](#update-admin-profile) | Update admin profile |
-| `PATCH` | [`/v1/admins/change-password`](#change-admin-account-password) | Change admin account password |
-| `GET` | [`/v1/admins/permissions`](#get-all-available-permissions-with-descriptions-use-when-building-roles) | Get all available permissions with descriptions — use when building roles |
 | `GET` | [`/v1/admins/staff/:id`](#get-a-staff-member-by-id-cross-tenant-) | Get a staff member by ID (cross-tenant) |
 | `GET` | [`/v1/admins/staff`](#list-all-staff-across-all-tenants) | List all staff across all tenants |
+| `PATCH` | [`/v1/admins/roles/:id/permissions`](#update-permissions-on-an-admin-role-super-only-) | Update permissions on an admin role (super-only) |
 | `GET` | [`/v1/admins/roles/:id`](#get-a-role-by-id-cross-tenant-) | Get a role by ID (cross-tenant) |
-| `GET` | [`/v1/admins/roles`](#list-all-roles-across-all-tenants) | List all roles across all tenants |
+| `DELETE` | [`/v1/admins/roles/:id`](#delete-an-admin-role-super-only-) | Delete an admin role (super-only) |
+| `GET` | [`/v1/admins/roles`](#list-all-admin-roles-super-only-) | List all admin roles (super-only) |
+| `POST` | [`/v1/admins/roles`](#create-a-new-admin-role-super-only-) | Create a new admin role (super-only) |
 | `GET` | [`/v1/admins/companies/:id`](#get-a-company-by-id-cross-tenant-) | Get a company by ID (cross-tenant) |
 | `GET` | [`/v1/admins/companies`](#list-all-companies-across-all-tenants) | List all companies across all tenants |
 | `GET` | [`/v1/admins/import/jobs/:id`](#get-an-import-job-by-id-cross-tenant-) | Get an import job by ID (cross-tenant) |
@@ -25,6 +23,8 @@ Super admin initial setup, administrator profile, RBAC permission dictionary, cr
 | `DELETE` | [`/v1/admins/subscriptions/:id`](#delete-a-subscription-plan) | Delete a subscription plan |
 | `POST` | [`/v1/admins/subscriptions`](#create-a-new-subscription-plan) | Create a new subscription plan |
 | `GET` | [`/v1/admins/subscriptions`](#list-all-subscription-plans-admin-view-includes-inactive-with-pagination) | List all subscription plans (admin view, includes inactive) with pagination |
+| `GET` | [`/v1/admins/notifications/unread-count`](#get-unread-notification-count-for-a-tenant) | Get unread notification count for a tenant |
+| `GET` | [`/v1/admins/notifications`](#list-notifications-for-a-tenant-cross-tenant-) | List notifications for a tenant (cross-tenant) |
 | `GET` | [`/v1/admins/contacts/:id`](#get-a-contact-by-id-cross-tenant-) | Get a contact by ID (cross-tenant) |
 | `GET` | [`/v1/admins/contacts`](#list-all-contacts-across-all-tenants) | List all contacts across all tenants |
 | `GET` | [`/v1/admins/categories/:id`](#get-a-category-by-id-cross-tenant-) | Get a category by ID (cross-tenant) |
@@ -33,8 +33,18 @@ Super admin initial setup, administrator profile, RBAC permission dictionary, cr
 | `GET` | [`/v1/admins/income`](#list-all-income-records-across-all-tenants) | List all income records across all tenants |
 | `GET` | [`/v1/admins/expenses/:id`](#get-an-expense-record-by-id-cross-tenant-) | Get an expense record by ID (cross-tenant) |
 | `GET` | [`/v1/admins/expenses`](#list-all-expense-records-across-all-tenants) | List all expense records across all tenants |
+| `GET` | [`/v1/admins/invoices/stats`](#aggregate-invoice-stats-across-all-tenants) | Aggregate invoice stats across all tenants |
+| `GET` | [`/v1/admins/invoices/branding`](#get-invoice-branding-config-cross-tenant-) | Get invoice branding config (cross-tenant) |
+| `GET` | [`/v1/admins/invoices/:id/html`](#render-invoice-as-html-cross-tenant-) | Render invoice as HTML (cross-tenant) |
+| `GET` | [`/v1/admins/invoices/:id/pdf`](#render-invoice-as-pdf-cross-tenant-) | Render invoice as PDF (cross-tenant) |
+| `GET` | [`/v1/admins/invoices/:id/receipts`](#list-all-receipts-for-an-invoice-cross-tenant-) | List all receipts for an invoice (cross-tenant) |
+| `GET` | [`/v1/admins/invoices/:id/payments`](#list-payment-ledger-for-an-invoice-cross-tenant-) | List payment ledger for an invoice (cross-tenant) |
 | `GET` | [`/v1/admins/invoices/:id`](#get-an-invoice-by-id-cross-tenant-) | Get an invoice by ID (cross-tenant) |
 | `GET` | [`/v1/admins/invoices`](#list-all-invoices-across-all-tenants) | List all invoices across all tenants |
+| `GET` | [`/v1/admins/receipts/:id/html`](#render-receipt-as-html-cross-tenant-) | Render receipt as HTML (cross-tenant) |
+| `GET` | [`/v1/admins/receipts/:id/pdf`](#render-receipt-as-pdf-cross-tenant-) | Render receipt as PDF (cross-tenant) |
+| `GET` | [`/v1/admins/receipts/:id`](#get-a-receipt-by-id-cross-tenant-) | Get a receipt by ID (cross-tenant) |
+| `GET` | [`/v1/admins/orders/stats`](#aggregate-order-stats-across-all-tenants) | Aggregate order stats across all tenants |
 | `GET` | [`/v1/admins/orders/:id`](#get-an-order-by-id-cross-tenant-) | Get an order by ID (cross-tenant) |
 | `GET` | [`/v1/admins/orders`](#list-all-orders-across-all-tenants) | List all orders across all tenants |
 | `GET` | [`/v1/admins/products/:id`](#get-a-product-by-id-cross-tenant-) | Get a product by ID (cross-tenant) |
@@ -49,17 +59,28 @@ Super admin initial setup, administrator profile, RBAC permission dictionary, cr
 | `GET` | [`/v1/admins/pipelines/:id`](#get-a-pipeline-by-id-cross-tenant-) | Get a pipeline by ID (cross-tenant) |
 | `GET` | [`/v1/admins/pipelines`](#list-all-pipelines-across-all-tenants) | List all pipelines across all tenants |
 | `GET` | [`/v1/admins/tenants/stats`](#tenant-statistics-total-active-suspended-trial-) | Tenant statistics (total, active, suspended, trial) |
+| `GET` | [`/v1/admins/tenants/:id/history`](#get-tenant-subscription-change-history) | Get tenant subscription change history |
+| `GET` | [`/v1/admins/tenants/:id/login-activity`](#get-tenant-login-activity) | Get tenant login activity |
+| `GET` | [`/v1/admins/tenants/:id/onboarding`](#get-tenant-onboarding-status) | Get tenant onboarding status |
+| `GET` | [`/v1/admins/tenants/:id/reminders`](#get-tenant-reminder-preferences) | Get tenant reminder preferences |
 | `PATCH` | [`/v1/admins/tenants/:id/status`](#activate-or-suspend-a-tenant) | Activate or suspend a tenant |
 | `PATCH` | [`/v1/admins/tenants/:id/subscription`](#assign-or-upgrade-a-tenant-subscription-plan) | Assign or upgrade a tenant subscription plan |
 | `POST` | [`/v1/admins/tenants/:id/verify-payment`](#verify-a-subscription-payment-by-paystack-reference-for-a-tenant-fallback-if-webhook-fails-) | Verify a subscription payment by Paystack reference for a tenant (fallback if webhook fails) |
 | `GET` | [`/v1/admins/tenants/:id`](#get-a-single-tenant) | Get a single tenant |
 | `GET` | [`/v1/admins/tenants`](#list-all-tenants) | List all tenants |
+| `GET` | [`/v1/admins/overview/revenue-trend`](#monthly-contracted-mrr-movement-added-vs-lost-cached-10-min-not-collected-cash-) | Monthly contracted MRR movement: added vs lost (cached 10 min; not collected cash) |
+| `GET` | [`/v1/admins/overview/plan-distribution`](#tenants-per-subscription-plan-cached-5-min-) | Tenants per subscription plan (cached 5 min) |
+| `GET` | [`/v1/admins/overview/trial-funnel`](#trial-started-converted-expired-conversion-rate-cached-5-min-) | Trial started/converted/expired + conversion rate (cached 5 min) |
+| `GET` | [`/v1/admins/overview/engagement`](#tenant-login-activity-dormant-tenants-onboarding-progress-cached-5-min-) | Tenant login activity, dormant tenants, onboarding progress (cached 5 min) |
+| `GET` | [`/v1/admins/overview`](#platform-summary-mrr-estimate-tenant-counts-trials-expiring-churn-cached-5-min-) | Platform summary: MRR estimate, tenant counts, trials expiring, churn (cached 5 min) |
 | `GET` | [`/v1/admins/tickets/:id`](#get-a-ticket-by-id-cross-tenant-) | Get a ticket by ID (cross-tenant) |
 | `GET` | [`/v1/admins/tickets`](#list-all-tickets-across-all-tenants) | List all tickets across all tenants |
+| `GET` | [`/v1/admins/quotes/stats`](#aggregate-quote-stats-across-all-tenants) | Aggregate quote stats across all tenants |
 | `GET` | [`/v1/admins/quotes/:id`](#get-a-quote-by-id-cross-tenant-) | Get a quote by ID (cross-tenant) |
 | `GET` | [`/v1/admins/quotes`](#list-all-quotes-across-all-tenants) | List all quotes across all tenants |
 | `GET` | [`/v1/admins/leads/:id`](#get-a-lead-by-id-cross-tenant-) | Get a lead by ID (cross-tenant) |
 | `GET` | [`/v1/admins/leads`](#list-all-leads-across-all-tenants) | List all leads across all tenants |
+| `GET` | [`/v1/admins/deals/kanban`](#kanban-view-for-a-pipeline-cross-tenant-) | Kanban view for a pipeline (cross-tenant) |
 | `GET` | [`/v1/admins/deals/:id/stage-history`](#get-deal-stage-history) | Get deal stage history |
 | `GET` | [`/v1/admins/deals/:id`](#get-a-deal-by-id-cross-tenant-) | Get a deal by ID (cross-tenant) |
 | `GET` | [`/v1/admins/deals`](#list-all-deals-across-all-tenants) | List all deals across all tenants |
@@ -69,99 +90,20 @@ Super admin initial setup, administrator profile, RBAC permission dictionary, cr
 | `GET` | [`/v1/admins/reports/cycle-time`](#average-cycle-time-for-a-specific-tenant) | Average cycle time for a specific tenant |
 | `GET` | [`/v1/admins/reports/revenue-trend`](#revenue-trend-for-a-specific-tenant) | Revenue trend for a specific tenant |
 | `GET` | [`/v1/admins/reports/stage-dwell`](#average-time-per-pipeline-stage-for-a-specific-tenant) | Average time per pipeline stage for a specific tenant |
+| `POST` | [`/v1/admins/setup`](#create-the-first-super-admin-account-one-time-only-) | Create the first super admin account (one-time only) |
+| `GET` | [`/v1/admins/profile`](#get-own-admin-profile) | Get own admin profile |
+| `PATCH` | [`/v1/admins/profile`](#update-own-admin-profile) | Update own admin profile |
+| `PATCH` | [`/v1/admins/change-password`](#change-own-admin-password) | Change own admin password |
+| `GET` | [`/v1/admins/permissions`](#list-all-available-admin-permissions) | List all available admin permissions |
+| `GET` | [`/v1/admins/:id`](#get-admin-detail-by-id-super-only-) | Get admin detail by ID (super-only) |
+| `PATCH` | [`/v1/admins/:id`](#update-admin-account-role-status-profile-super-only-) | Update admin account — role, status, profile (super-only) |
+| `DELETE` | [`/v1/admins/:id`](#delete-an-admin-account-super-only-) | Delete an admin account (super-only) |
+| `GET` | [`/v1/admins`](#list-all-admin-accounts-super-only-) | List all admin accounts (super-only) |
+| `POST` | [`/v1/admins`](#create-a-new-admin-account-super-only-) | Create a new admin account (super-only) |
 
 ---
 
 ## Endpoints
-
-### Create the super admin account (one-time setup)
-
-`POST /v1/admins/setup`
-
-**Request Body** (`application/json`)
-
-```json
-{
-  "email": "admin@greenmouse.com",
-  "password": "StrongPass123",
-  "firstName": "John",
-  "lastName": "Doe",
-  "phoneNumber": "+2348012345678"
-}
-```
-
-**Responses**
-
-#### `201 Created`
-
----
-
-### Get admin profile
-
-`GET /v1/admins/profile`
-
-**Responses**
-
-#### `200 OK`
-
----
-
-### Update admin profile
-
-`PATCH /v1/admins/profile`
-
-**Request Body** (`application/json`)
-
-```json
-{
-  "firstName": "John",
-  "lastName": "Doe",
-  "email": "admin@greenmouse.com",
-  "phoneNumber": "+2348012345678",
-  "bio": "Super Admin / Team Manager",
-  "profilePic": "https://res.cloudinary.com/...",
-  "country": "Nigeria",
-  "cityState": "Lagos, Ikeja",
-  "postalCode": "100001",
-  "taxId": "AS45645756"
-}
-```
-
-**Responses**
-
-#### `200 OK`
-
----
-
-### Change admin account password
-
-`PATCH /v1/admins/change-password`
-
-**Request Body** (`application/json`)
-
-```json
-{
-  "currentPassword": "OldPass123",
-  "newPassword": "NewPass456",
-  "confirmNewPassword": "NewPass456"
-}
-```
-
-**Responses**
-
-#### `200 OK`
-
----
-
-### Get all available permissions with descriptions — use when building roles
-
-`GET /v1/admins/permissions`
-
-**Responses**
-
-#### `200 OK`
-
----
 
 ### Get a staff member by ID (cross-tenant)
 
@@ -189,6 +131,34 @@ Super admin initial setup, administrator profile, RBAC permission dictionary, cr
 
 ---
 
+### Update permissions on an admin role (super-only)
+
+`PATCH /v1/admins/roles/:id/permissions`
+
+**Path Parameters**
+
+| Parameter | Description |
+| :--- | :--- |
+| `id` | Resource identifier |
+
+**Request Body** (`application/json`)
+
+```json
+{
+  "permissions": [
+    "platform:read",
+    "tenants:view",
+    "tenants:suspend"
+  ]
+}
+```
+
+**Responses**
+
+#### `200 OK`
+
+---
+
 ### Get a role by ID (cross-tenant)
 
 `GET /v1/admins/roles/:id`
@@ -205,13 +175,52 @@ Super admin initial setup, administrator profile, RBAC permission dictionary, cr
 
 ---
 
-### List all roles across all tenants
+### Delete an admin role (super-only)
+
+`DELETE /v1/admins/roles/:id`
+
+**Path Parameters**
+
+| Parameter | Description |
+| :--- | :--- |
+| `id` | Resource identifier |
+
+**Responses**
+
+#### `200 OK`
+
+---
+
+### List all admin roles (super-only)
 
 `GET /v1/admins/roles`
 
 **Responses**
 
 #### `200 OK`
+
+---
+
+### Create a new admin role (super-only)
+
+`POST /v1/admins/roles`
+
+**Request Body** (`application/json`)
+
+```json
+{
+  "name": "support",
+  "permissions": [
+    "platform:read",
+    "tenants:view"
+  ],
+  "description": "Read-only support access"
+}
+```
+
+**Responses**
+
+#### `201 Created`
 
 ---
 
@@ -445,6 +454,41 @@ Super admin initial setup, administrator profile, RBAC permission dictionary, cr
 
 ---
 
+### Get unread notification count for a tenant
+
+`GET /v1/admins/notifications/unread-count?tenantId=string`
+
+**Query Parameters**
+
+| Parameter | Type / Example | Description |
+| :--- | :--- | :--- |
+| `tenantId` | `string` | Filter / pagination param |
+
+**Responses**
+
+#### `200 OK`
+
+---
+
+### List notifications for a tenant (cross-tenant)
+
+`GET /v1/admins/notifications?tenantId=string&page=5705.605456861728&limit=5705.605456861728&unreadOnly=false`
+
+**Query Parameters**
+
+| Parameter | Type / Example | Description |
+| :--- | :--- | :--- |
+| `tenantId` | `string` | Filter / pagination param |
+| `page` | `5705.605456861728` | Filter / pagination param |
+| `limit` | `5705.605456861728` | Filter / pagination param |
+| `unreadOnly` | `false` | Filter / pagination param |
+
+**Responses**
+
+#### `200 OK`
+
+---
+
 ### Get a contact by ID (cross-tenant)
 
 `GET /v1/admins/contacts/:id`
@@ -549,6 +593,96 @@ Super admin initial setup, administrator profile, RBAC permission dictionary, cr
 
 ---
 
+### Aggregate invoice stats across all tenants
+
+`GET /v1/admins/invoices/stats`
+
+**Responses**
+
+#### `200 OK`
+
+---
+
+### Get invoice branding config (cross-tenant)
+
+`GET /v1/admins/invoices/branding?tenantId=string`
+
+**Query Parameters**
+
+| Parameter | Type / Example | Description |
+| :--- | :--- | :--- |
+| `tenantId` | `string` | Filter / pagination param |
+
+**Responses**
+
+#### `200 OK`
+
+---
+
+### Render invoice as HTML (cross-tenant)
+
+`GET /v1/admins/invoices/:id/html`
+
+**Path Parameters**
+
+| Parameter | Description |
+| :--- | :--- |
+| `id` | Resource identifier |
+
+**Responses**
+
+#### `200 OK`
+
+---
+
+### Render invoice as PDF (cross-tenant)
+
+`GET /v1/admins/invoices/:id/pdf`
+
+**Path Parameters**
+
+| Parameter | Description |
+| :--- | :--- |
+| `id` | Resource identifier |
+
+**Responses**
+
+#### `200 OK`
+
+---
+
+### List all receipts for an invoice (cross-tenant)
+
+`GET /v1/admins/invoices/:id/receipts`
+
+**Path Parameters**
+
+| Parameter | Description |
+| :--- | :--- |
+| `id` | Resource identifier |
+
+**Responses**
+
+#### `200 OK`
+
+---
+
+### List payment ledger for an invoice (cross-tenant)
+
+`GET /v1/admins/invoices/:id/payments`
+
+**Path Parameters**
+
+| Parameter | Description |
+| :--- | :--- |
+| `id` | Resource identifier |
+
+**Responses**
+
+#### `200 OK`
+
+---
+
 ### Get an invoice by ID (cross-tenant)
 
 `GET /v1/admins/invoices/:id`
@@ -574,6 +708,64 @@ Super admin initial setup, administrator profile, RBAC permission dictionary, cr
 | Parameter | Type / Example | Description |
 | :--- | :--- | :--- |
 | `status` | `string` | Filter / pagination param |
+
+**Responses**
+
+#### `200 OK`
+
+---
+
+### Render receipt as HTML (cross-tenant)
+
+`GET /v1/admins/receipts/:id/html`
+
+**Path Parameters**
+
+| Parameter | Description |
+| :--- | :--- |
+| `id` | Resource identifier |
+
+**Responses**
+
+#### `200 OK`
+
+---
+
+### Render receipt as PDF (cross-tenant)
+
+`GET /v1/admins/receipts/:id/pdf`
+
+**Path Parameters**
+
+| Parameter | Description |
+| :--- | :--- |
+| `id` | Resource identifier |
+
+**Responses**
+
+#### `200 OK`
+
+---
+
+### Get a receipt by ID (cross-tenant)
+
+`GET /v1/admins/receipts/:id`
+
+**Path Parameters**
+
+| Parameter | Description |
+| :--- | :--- |
+| `id` | Resource identifier |
+
+**Responses**
+
+#### `200 OK`
+
+---
+
+### Aggregate order stats across all tenants
+
+`GET /v1/admins/orders/stats`
 
 **Responses**
 
@@ -795,6 +987,84 @@ Super admin initial setup, administrator profile, RBAC permission dictionary, cr
 
 ---
 
+### Get tenant subscription change history
+
+`GET /v1/admins/tenants/:id/history?page=5705.605456861728&limit=5705.605456861728`
+
+**Path Parameters**
+
+| Parameter | Description |
+| :--- | :--- |
+| `id` | Resource identifier |
+
+**Query Parameters**
+
+| Parameter | Type / Example | Description |
+| :--- | :--- | :--- |
+| `page` | `5705.605456861728` | Filter / pagination param |
+| `limit` | `5705.605456861728` | Filter / pagination param |
+
+**Responses**
+
+#### `200 OK`
+
+---
+
+### Get tenant login activity
+
+`GET /v1/admins/tenants/:id/login-activity?page=5705.605456861728&limit=5705.605456861728`
+
+**Path Parameters**
+
+| Parameter | Description |
+| :--- | :--- |
+| `id` | Resource identifier |
+
+**Query Parameters**
+
+| Parameter | Type / Example | Description |
+| :--- | :--- | :--- |
+| `page` | `5705.605456861728` | Filter / pagination param |
+| `limit` | `5705.605456861728` | Filter / pagination param |
+
+**Responses**
+
+#### `200 OK`
+
+---
+
+### Get tenant onboarding status
+
+`GET /v1/admins/tenants/:id/onboarding`
+
+**Path Parameters**
+
+| Parameter | Description |
+| :--- | :--- |
+| `id` | Resource identifier |
+
+**Responses**
+
+#### `200 OK`
+
+---
+
+### Get tenant reminder preferences
+
+`GET /v1/admins/tenants/:id/reminders`
+
+**Path Parameters**
+
+| Parameter | Description |
+| :--- | :--- |
+| `id` | Resource identifier |
+
+**Responses**
+
+#### `200 OK`
+
+---
+
 ### Activate or suspend a tenant
 
 `PATCH /v1/admins/tenants/:id/status`
@@ -878,7 +1148,7 @@ Super admin initial setup, administrator profile, RBAC permission dictionary, cr
 
 ### List all tenants
 
-`GET /v1/admins/tenants?search=string&subscriptionStatus=string&status=cancelled`
+`GET /v1/admins/tenants?search=string&subscriptionStatus=string&status=active`
 
 **Query Parameters**
 
@@ -886,7 +1156,69 @@ Super admin initial setup, administrator profile, RBAC permission dictionary, cr
 | :--- | :--- | :--- |
 | `search` | `string` | Filter / pagination param |
 | `subscriptionStatus` | `string` | Filter / pagination param |
-| `status` | `cancelled` | Filter / pagination param |
+| `status` | `active` | Filter / pagination param |
+
+**Responses**
+
+#### `200 OK`
+
+---
+
+### Monthly contracted MRR movement: added vs lost (cached 10 min; not collected cash)
+
+`GET /v1/admins/overview/revenue-trend?months=5705.605456861728`
+
+**Query Parameters**
+
+| Parameter | Type / Example | Description |
+| :--- | :--- | :--- |
+| `months` | `5705.605456861728` | Filter / pagination param |
+
+**Responses**
+
+#### `200 OK`
+
+---
+
+### Tenants per subscription plan (cached 5 min)
+
+`GET /v1/admins/overview/plan-distribution`
+
+**Responses**
+
+#### `200 OK`
+
+---
+
+### Trial started/converted/expired + conversion rate (cached 5 min)
+
+`GET /v1/admins/overview/trial-funnel?days=5705.605456861728`
+
+**Query Parameters**
+
+| Parameter | Type / Example | Description |
+| :--- | :--- | :--- |
+| `days` | `5705.605456861728` | Filter / pagination param |
+
+**Responses**
+
+#### `200 OK`
+
+---
+
+### Tenant login activity, dormant tenants, onboarding progress (cached 5 min)
+
+`GET /v1/admins/overview/engagement`
+
+**Responses**
+
+#### `200 OK`
+
+---
+
+### Platform summary: MRR estimate, tenant counts, trials expiring, churn (cached 5 min)
+
+`GET /v1/admins/overview`
 
 **Responses**
 
@@ -913,6 +1245,16 @@ Super admin initial setup, administrator profile, RBAC permission dictionary, cr
 ### List all tickets across all tenants
 
 `GET /v1/admins/tickets`
+
+**Responses**
+
+#### `200 OK`
+
+---
+
+### Aggregate quote stats across all tenants
+
+`GET /v1/admins/quotes/stats`
 
 **Responses**
 
@@ -979,6 +1321,23 @@ Super admin initial setup, administrator profile, RBAC permission dictionary, cr
 | `search` | `string` | Filter / pagination param |
 | `status` | `string` | Filter / pagination param |
 | `source` | `string` | Filter / pagination param |
+
+**Responses**
+
+#### `200 OK`
+
+---
+
+### Kanban view for a pipeline (cross-tenant)
+
+`GET /v1/admins/deals/kanban?pipelineId=string&tenantId=string`
+
+**Query Parameters**
+
+| Parameter | Type / Example | Description |
+| :--- | :--- | :--- |
+| `pipelineId` | `string` | Filter / pagination param |
+| `tenantId` | `string` | Filter / pagination param |
 
 **Responses**
 
@@ -1129,6 +1488,188 @@ Super admin initial setup, administrator profile, RBAC permission dictionary, cr
 **Responses**
 
 #### `200 OK`
+
+---
+
+### Create the first super admin account (one-time only)
+
+`POST /v1/admins/setup`
+
+**Request Body** (`application/json`)
+
+```json
+{
+  "email": "admin@greenmouse.com",
+  "password": "StrongPass123",
+  "firstName": "John",
+  "lastName": "Doe",
+  "phoneNumber": "+2348012345678"
+}
+```
+
+**Responses**
+
+#### `201 Created`
+
+---
+
+### Get own admin profile
+
+`GET /v1/admins/profile`
+
+**Responses**
+
+#### `200 OK`
+
+---
+
+### Update own admin profile
+
+`PATCH /v1/admins/profile`
+
+**Request Body** (`application/json`)
+
+```json
+{
+  "firstName": "John",
+  "lastName": "Doe",
+  "email": "admin@greenmouse.com",
+  "phoneNumber": "+2348012345678",
+  "bio": "Super Admin / Team Manager",
+  "profilePic": "https://res.cloudinary.com/...",
+  "country": "Nigeria",
+  "cityState": "Lagos, Ikeja",
+  "postalCode": "100001",
+  "taxId": "AS45645756"
+}
+```
+
+**Responses**
+
+#### `200 OK`
+
+---
+
+### Change own admin password
+
+`PATCH /v1/admins/change-password`
+
+**Request Body** (`application/json`)
+
+```json
+{
+  "currentPassword": "OldPass123",
+  "newPassword": "NewPass456",
+  "confirmNewPassword": "NewPass456"
+}
+```
+
+**Responses**
+
+#### `200 OK`
+
+---
+
+### List all available admin permissions
+
+`GET /v1/admins/permissions`
+
+**Responses**
+
+#### `200 OK`
+
+---
+
+### Get admin detail by ID (super-only)
+
+`GET /v1/admins/:id`
+
+**Path Parameters**
+
+| Parameter | Description |
+| :--- | :--- |
+| `id` | Resource identifier |
+
+**Responses**
+
+#### `200 OK`
+
+---
+
+### Update admin account — role, status, profile (super-only)
+
+`PATCH /v1/admins/:id`
+
+**Path Parameters**
+
+| Parameter | Description |
+| :--- | :--- |
+| `id` | Resource identifier |
+
+**Request Body** (`application/json`)
+
+```json
+{
+  "roleId": "string",
+  "isActive": true,
+  "firstName": "string",
+  "lastName": "string",
+  "phoneNumber": "string"
+}
+```
+
+**Responses**
+
+#### `200 OK`
+
+---
+
+### Delete an admin account (super-only)
+
+`DELETE /v1/admins/:id`
+
+**Path Parameters**
+
+| Parameter | Description |
+| :--- | :--- |
+| `id` | Resource identifier |
+
+**Responses**
+
+#### `200 OK`
+
+---
+
+### List all admin accounts (super-only)
+
+`GET /v1/admins`
+
+**Responses**
+
+#### `200 OK`
+
+---
+
+### Create a new admin account (super-only)
+
+`POST /v1/admins`
+
+**Request Body** (`application/json`)
+
+```json
+{
+  "email": "admin@example.com",
+  "password": "Password@2022",
+  "firstName": "John",
+  "lastName": "Doe",
+  "phoneNumber": "+2340000000000",
+  "roleId": "string"
+}
+```
+
+**Responses**
+
+#### `201 Created`
 
 ---
 
