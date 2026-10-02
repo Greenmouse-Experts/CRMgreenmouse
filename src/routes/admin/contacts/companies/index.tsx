@@ -47,7 +47,7 @@ function RouteComponent() {
               {company.name}
             </div>
             {company.industry && (
-              <div className="text-xs text-base-content/60">
+              <div className="text-sm text-base-content/60">
                 {company.industry}
               </div>
             )}
@@ -59,7 +59,7 @@ function RouteComponent() {
       key: "contact",
       label: "Contact Info",
       render: (company: Company) => (
-        <div className="space-y-0.5 text-xs text-base-content/70">
+        <div className="space-y-0.5 text-sm text-base-content/70">
           {company.email && (
             <div className="flex items-center gap-1.5">
               <Mail size={12} className="text-base-content/40" />
@@ -91,13 +91,13 @@ function RouteComponent() {
             }
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-1.5 text-xs text-primary hover:underline"
+            className="flex items-center gap-1.5 text-sm text-primary hover:underline"
           >
             <Globe size={12} />
             <span className="truncate max-w-[150px]">{company.website}</span>
           </a>
         ) : (
-          <span className="text-xs text-base-content/40">—</span>
+          <span className="text-sm text-base-content/40">—</span>
         ),
     },
     {
@@ -108,12 +108,12 @@ function RouteComponent() {
           Boolean,
         );
         return parts.length > 0 ? (
-          <div className="flex items-center gap-1.5 text-xs text-base-content/70">
+          <div className="flex items-center gap-1.5 text-sm text-base-content/70">
             <MapPin size={12} className="text-base-content/40 shrink-0" />
             <span>{parts.join(", ")}</span>
           </div>
         ) : (
-          <span className="text-xs text-base-content/40">—</span>
+          <span className="text-sm text-base-content/40">—</span>
         );
       },
     },
@@ -152,13 +152,16 @@ function RouteComponent() {
             <CompanySummary />
 
             <SimpleContainer>
-              <ContainerRow {...searchProps}>
-                <CustomTable
-                  actions={actions}
-                  columns={columns}
-                  data={query.data || []}
-                />
-              </ContainerRow>
+              <ContainerRow
+                showSearch
+                searchProps={searchProps}
+                searchPlaceholder="Search companies by name..."
+              />
+              <CustomTable
+                actions={actions}
+                columns={columns}
+                data={query.data || []}
+              />
             </SimpleContainer>
 
             {/* Details Modal */}
@@ -174,7 +177,7 @@ function RouteComponent() {
                         {selectedCompany.name}
                       </h3>
                       {selectedCompany.industry && (
-                        <p className="text-xs text-base-content/60">
+                        <p className="text-sm text-base-content/60">
                           Industry: {selectedCompany.industry}
                         </p>
                       )}
@@ -183,7 +186,7 @@ function RouteComponent() {
 
                   <div className="grid grid-cols-2 gap-4">
                     <div className="bg-base-200/50 p-3 rounded-lg">
-                      <span className="text-xs text-base-content/60 block">
+                      <span className="text-sm text-base-content/60 block">
                         Email
                       </span>
                       <span className="text-sm font-semibold text-base-content break-all">
@@ -191,7 +194,7 @@ function RouteComponent() {
                       </span>
                     </div>
                     <div className="bg-base-200/50 p-3 rounded-lg">
-                      <span className="text-xs text-base-content/60 block">
+                      <span className="text-sm text-base-content/60 block">
                         Phone
                       </span>
                       <span className="text-sm font-semibold text-base-content">
@@ -199,7 +202,7 @@ function RouteComponent() {
                       </span>
                     </div>
                     <div className="bg-base-200/50 p-3 rounded-lg">
-                      <span className="text-xs text-base-content/60 block">
+                      <span className="text-sm text-base-content/60 block">
                         Website
                       </span>
                       <span className="text-sm font-semibold text-base-content break-all">
@@ -207,7 +210,7 @@ function RouteComponent() {
                       </span>
                     </div>
                     <div className="bg-base-200/50 p-3 rounded-lg">
-                      <span className="text-xs text-base-content/60 block">
+                      <span className="text-sm text-base-content/60 block">
                         Location
                       </span>
                       <span className="text-sm font-semibold text-base-content">

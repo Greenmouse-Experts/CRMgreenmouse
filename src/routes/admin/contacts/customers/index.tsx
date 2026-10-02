@@ -46,7 +46,7 @@ function RouteComponent() {
             <div className="font-semibold text-base-content leading-tight">
               {item.firstName} {item.lastName}
             </div>
-            <div className="text-xs text-base-content/60">{item.email}</div>
+            <div className="text-sm text-base-content/60">{item.email}</div>
           </div>
         </div>
       ),
@@ -55,7 +55,7 @@ function RouteComponent() {
       key: "workPhone",
       label: "Phone",
       render: (_value: any, item: Customer) => (
-        <span className="text-xs text-base-content/70">
+        <span className="text-sm text-base-content/70">
           {item.workPhone || item.cellPhone || "—"}
         </span>
       ),
@@ -64,7 +64,7 @@ function RouteComponent() {
       key: "city",
       label: "City / State",
       render: (_value: any, item: Customer) => (
-        <span className="text-xs text-base-content/70">
+        <span className="text-sm text-base-content/70">
           {[item.city, item.state].filter(Boolean).join(", ") || "—"}
         </span>
       ),
@@ -73,7 +73,7 @@ function RouteComponent() {
       key: "country",
       label: "Country",
       render: (_value: any, item: Customer) => (
-        <span className="badge badge-ghost badge-sm font-medium">
+        <span className="badge badge-ghost badge-md font-medium">
           {item.country || "—"}
         </span>
       ),
@@ -82,7 +82,7 @@ function RouteComponent() {
       key: "createdAt",
       label: "Date Added",
       render: (_value: any, item: Customer) => (
-        <span className="text-xs text-base-content/60">
+        <span className="text-sm text-base-content/60">
           {item.createdAt ? new Date(item.createdAt).toLocaleDateString() : "—"}
         </span>
       ),
@@ -122,13 +122,16 @@ function RouteComponent() {
             <CustomerSummary />
 
             <SimpleContainer>
-              <ContainerRow {...searchProps}>
-                <CustomTable
-                  actions={actions}
-                  columns={columns}
-                  data={query.data || []}
-                />
-              </ContainerRow>
+              <ContainerRow
+                showSearch
+                searchProps={searchProps}
+                searchPlaceholder="Search customers by name or email..."
+              />
+              <CustomTable
+                actions={actions}
+                columns={columns}
+                data={query.data || []}
+              />
             </SimpleContainer>
 
             {/* Customer Details Modal */}
@@ -143,7 +146,7 @@ function RouteComponent() {
                       <h3 className="text-xl font-bold text-base-content">
                         {selectedCustomer.firstName} {selectedCustomer.lastName}
                       </h3>
-                      <p className="text-xs text-base-content/60">
+                      <p className="text-sm text-base-content/60">
                         Customer ID: {selectedCustomer.id}
                       </p>
                     </div>
@@ -151,7 +154,7 @@ function RouteComponent() {
 
                   <div className="grid grid-cols-2 gap-4">
                     <div className="bg-base-200/50 p-3 rounded-lg">
-                      <span className="text-xs text-base-content/60 block">
+                      <span className="text-sm text-base-content/60 block">
                         Email Address
                       </span>
                       <span className="text-sm font-semibold text-base-content break-all">
@@ -159,7 +162,7 @@ function RouteComponent() {
                       </span>
                     </div>
                     <div className="bg-base-200/50 p-3 rounded-lg">
-                      <span className="text-xs text-base-content/60 block">
+                      <span className="text-sm text-base-content/60 block">
                         Phone
                       </span>
                       <span className="text-sm font-semibold text-base-content">
@@ -169,7 +172,7 @@ function RouteComponent() {
                       </span>
                     </div>
                     <div className="bg-base-200/50 p-3 rounded-lg">
-                      <span className="text-xs text-base-content/60 block">
+                      <span className="text-sm text-base-content/60 block">
                         Location
                       </span>
                       <span className="text-sm font-semibold text-base-content">
@@ -184,7 +187,7 @@ function RouteComponent() {
                       </span>
                     </div>
                     <div className="bg-base-200/50 p-3 rounded-lg">
-                      <span className="text-xs text-base-content/60 block">
+                      <span className="text-sm text-base-content/60 block">
                         Created At
                       </span>
                       <span className="text-sm font-semibold text-base-content">
