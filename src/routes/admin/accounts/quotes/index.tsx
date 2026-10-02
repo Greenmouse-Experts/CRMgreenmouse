@@ -8,6 +8,7 @@ import { useSearch } from "@/stores/data";
 import type { Actions } from "@/components/tables/pop-up";
 import Modal, { type ModalHandle } from "@/components/DialogModal";
 import PageLoader from "@/components/layout/PageLoader";
+import StatCard from "@/components/StatCard";
 import { useAdminCrossQuotes, useAdminQuoteStats } from "@/api/adminApi";
 import type { Quote } from "@/api/salesApi";
 import {
@@ -164,69 +165,30 @@ function RouteComponent() {
           <div className="space-y-6">
             {/* KPI Cards */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-              <div className="card bg-base-100 border border-base-200 p-4 shadow-sm">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-semibold text-base-content/60 uppercase">
-                      Total Quotes
-                    </p>
-                    <h3 className="text-2xl font-bold text-base-content mt-1">
-                      {totalQuotes}
-                    </h3>
-                  </div>
-                  <div className="p-3 rounded-xl bg-primary/10 text-primary border border-primary/20">
-                    <FileText className="size-5" />
-                  </div>
-                </div>
-              </div>
-
-              <div className="card bg-base-100 border border-base-200 p-4 shadow-sm">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-semibold text-base-content/60 uppercase">
-                      Pending
-                    </p>
-                    <h3 className="text-2xl font-bold text-warning mt-1">
-                      {pendingQuotes}
-                    </h3>
-                  </div>
-                  <div className="p-3 rounded-xl bg-warning/10 text-warning border border-warning/20">
-                    <Clock className="size-5" />
-                  </div>
-                </div>
-              </div>
-
-              <div className="card bg-base-100 border border-base-200 p-4 shadow-sm">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-semibold text-base-content/60 uppercase">
-                      Accepted
-                    </p>
-                    <h3 className="text-2xl font-bold text-success mt-1">
-                      {acceptedQuotes}
-                    </h3>
-                  </div>
-                  <div className="p-3 rounded-xl bg-success/10 text-success border border-success/20">
-                    <CheckCircle2 className="size-5" />
-                  </div>
-                </div>
-              </div>
-
-              <div className="card bg-base-100 border border-base-200 p-4 shadow-sm">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-semibold text-base-content/60 uppercase">
-                      Rejected
-                    </p>
-                    <h3 className="text-2xl font-bold text-error mt-1">
-                      {rejectedQuotes}
-                    </h3>
-                  </div>
-                  <div className="p-3 rounded-xl bg-error/10 text-error border border-error/20">
-                    <DollarSign className="size-5" />
-                  </div>
-                </div>
-              </div>
+              <StatCard
+                title="Total Quotes"
+                value={totalQuotes}
+                icon={<FileText className="size-6" />}
+                variant="primary"
+              />
+              <StatCard
+                title="Pending"
+                value={pendingQuotes}
+                icon={<Clock className="size-6" />}
+                variant="warning"
+              />
+              <StatCard
+                title="Accepted"
+                value={acceptedQuotes}
+                icon={<CheckCircle2 className="size-6" />}
+                variant="success"
+              />
+              <StatCard
+                title="Rejected"
+                value={rejectedQuotes}
+                icon={<DollarSign className="size-6" />}
+                variant="error"
+              />
             </div>
 
             <SimpleContainer>
