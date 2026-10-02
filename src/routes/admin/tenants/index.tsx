@@ -16,14 +16,10 @@ import PageLoader from "@/components/layout/PageLoader";
 import QueryCompLayout from "@/components/layout/QueryCompLayout";
 import Modal, { type ModalHandle } from "@/components/DialogModal";
 import SearchBar from "@/components/Searchbar";
+import SummaryCard from "@/components/SummaryCard";
+import SummaryGrid from "@/components/SummaryGrid";
 import { toast } from "sonner";
-import {
-  Building2,
-  CheckCircle,
-  ShieldAlert,
-  UserCheck,
-  RotateCw,
-} from "lucide-react";
+import { Building2 } from "lucide-react";
 
 export const Route = createFileRoute("/admin/tenants/")({
   component: RouteComponent,
@@ -229,53 +225,22 @@ function RouteComponent() {
 
       {/* Tenant Stats Row */}
       <QueryCompLayout query={statsQuery}>
-        {(stats) => (
-          <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
-            <div className="stat bg-base-100 rounded-xl border border-base-200 p-4">
-              <div className="stat-figure text-primary">
-                <Building2 className="size-6" />
-              </div>
-              <div className="stat-title text-sm">Total Tenants</div>
-              <div className="stat-value text-2xl font-black">{stats.total}</div>
-            </div>
-            <div className="stat bg-base-100 rounded-xl border border-base-200 p-4">
-              <div className="stat-figure text-success">
-                <CheckCircle className="size-6" />
-              </div>
-              <div className="stat-title text-sm">Active</div>
-              <div className="stat-value text-2xl font-black text-success">
-                {stats.active}
-              </div>
-            </div>
-            <div className="stat bg-base-100 rounded-xl border border-base-200 p-4">
-              <div className="stat-figure text-warning">
-                <RotateCw className="size-6" />
-              </div>
-              <div className="stat-title text-sm">On Trial</div>
-              <div className="stat-value text-2xl font-black text-warning">
-                {stats.trial}
-              </div>
-            </div>
-            <div className="stat bg-base-100 rounded-xl border border-base-200 p-4">
-              <div className="stat-figure text-error">
-                <ShieldAlert className="size-6" />
-              </div>
-              <div className="stat-title text-sm">Suspended</div>
-              <div className="stat-value text-2xl font-black text-error">
-                {stats.suspended}
-              </div>
-            </div>
-            <div className="stat bg-base-100 rounded-xl border border-base-200 p-4">
-              <div className="stat-figure text-info">
-                <UserCheck className="size-6" />
-              </div>
-              <div className="stat-title text-sm">Verified</div>
-              <div className="stat-value text-2xl font-black text-info">
-                {stats.verified}
-              </div>
-            </div>
-          </div>
-        )}
+        {(stats) => {
+          const summary = [
+            { title: "Total Tenants", value: stats.total },
+            { title: "Active", value: stats.active },
+            { title: "On Trial", value: stats.trial },
+            { title: "Suspended", value: stats.suspended },
+            { title: "Verified", value: stats.verified },
+          ];
+          return (
+            <SummaryGrid>
+              {summary.map((item, index) => (
+                <SummaryCard key={index} item={item} />
+              ))}
+            </SummaryGrid>
+          );
+        }}
       </QueryCompLayout>
 
       {/* Filters & Table */}
