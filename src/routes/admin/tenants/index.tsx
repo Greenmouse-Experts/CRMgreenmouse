@@ -111,7 +111,7 @@ function RouteComponent() {
             <div className="font-bold text-base-content leading-tight">
               {item.companyName || "Unnamed Business"}
             </div>
-            <div className="text-xs text-base-content/60">{item.email}</div>
+            <div className="text-sm text-base-content/60">{item.email}</div>
           </div>
         </div>
       ),
@@ -120,7 +120,7 @@ function RouteComponent() {
       key: "phoneNumber",
       label: "Contact",
       render: (value: string) => (
-        <span className="text-xs text-base-content/70">{value || "—"}</span>
+        <span className="text-sm text-base-content/70">{value || "—"}</span>
       ),
     },
     {
@@ -132,7 +132,7 @@ function RouteComponent() {
         return (
           <div className="flex flex-col gap-0.5">
             <span
-              className={`badge badge-sm font-semibold w-fit ${
+              className={`badge badge-md font-semibold w-fit ${
                 isActive
                   ? "badge-success badge-soft"
                   : isTrial
@@ -156,7 +156,7 @@ function RouteComponent() {
       label: "Account Status",
       render: (value: string) => (
         <span
-          className={`badge badge-sm font-medium ${
+          className={`badge badge-md font-medium ${
             value === "active"
               ? "badge-success text-success-content"
               : "badge-error text-error-content"
@@ -183,7 +183,7 @@ function RouteComponent() {
       key: "createdAt",
       label: "Registered",
       render: (value: string) => (
-        <span className="text-xs text-base-content/60">
+        <span className="text-sm text-base-content/60">
           {value ? new Date(value).toLocaleDateString() : "—"}
         </span>
       ),
@@ -235,14 +235,14 @@ function RouteComponent() {
               <div className="stat-figure text-primary">
                 <Building2 className="size-6" />
               </div>
-              <div className="stat-title text-xs">Total Tenants</div>
+              <div className="stat-title text-sm">Total Tenants</div>
               <div className="stat-value text-2xl font-black">{stats.total}</div>
             </div>
             <div className="stat bg-base-100 rounded-xl border border-base-200 p-4">
               <div className="stat-figure text-success">
                 <CheckCircle className="size-6" />
               </div>
-              <div className="stat-title text-xs">Active</div>
+              <div className="stat-title text-sm">Active</div>
               <div className="stat-value text-2xl font-black text-success">
                 {stats.active}
               </div>
@@ -251,7 +251,7 @@ function RouteComponent() {
               <div className="stat-figure text-warning">
                 <RotateCw className="size-6" />
               </div>
-              <div className="stat-title text-xs">On Trial</div>
+              <div className="stat-title text-sm">On Trial</div>
               <div className="stat-value text-2xl font-black text-warning">
                 {stats.trial}
               </div>
@@ -260,7 +260,7 @@ function RouteComponent() {
               <div className="stat-figure text-error">
                 <ShieldAlert className="size-6" />
               </div>
-              <div className="stat-title text-xs">Suspended</div>
+              <div className="stat-title text-sm">Suspended</div>
               <div className="stat-value text-2xl font-black text-error">
                 {stats.suspended}
               </div>
@@ -269,7 +269,7 @@ function RouteComponent() {
               <div className="stat-figure text-info">
                 <UserCheck className="size-6" />
               </div>
-              <div className="stat-title text-xs">Verified</div>
+              <div className="stat-title text-sm">Verified</div>
               <div className="stat-value text-2xl font-black text-info">
                 {stats.verified}
               </div>
@@ -284,7 +284,7 @@ function RouteComponent() {
           <div className="flex items-center gap-2">
             <span>Registered Businesses</span>
             {tenantsQuery.data && (
-              <span className="badge badge-sm badge-ghost">
+              <span className="badge badge-md badge-ghost">
                 {tenantsQuery.data.length}
               </span>
             )}
@@ -370,7 +370,7 @@ function RouteComponent() {
               <div className="flex items-center justify-between">
                 <span className="text-sm font-semibold text-base-content/60">Account Status</span>
                 <span
-                  className={`badge badge-sm ${
+                  className={`badge badge-md ${
                     selectedTenant.status === "active" ? "badge-success" : "badge-error"
                   }`}
                 >
@@ -379,7 +379,7 @@ function RouteComponent() {
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-sm font-semibold text-base-content/60">Subscription</span>
-                <span className="badge badge-sm badge-warning">{selectedTenant.subscriptionStatus}</span>
+                <span className="badge badge-md badge-warning">{selectedTenant.subscriptionStatus}</span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-sm font-semibold text-base-content/60">Email Verified</span>
@@ -391,7 +391,7 @@ function RouteComponent() {
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-sm font-semibold text-base-content/60">Tenant ID</span>
-                <span className="text-xs font-mono bg-base-100 px-2 py-0.5 rounded border border-base-300">
+                <span className="text-sm font-mono bg-base-100 px-2 py-0.5 rounded border border-base-300">
                   {selectedTenant.id}
                 </span>
               </div>

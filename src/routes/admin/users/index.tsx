@@ -120,7 +120,7 @@ function RouteComponent() {
       key: "role",
       label: "Role",
       render: (_value: any, item: StaffMember) => (
-        <span className="badge badge-sm badge-ghost">
+        <span className="badge badge-md badge-ghost">
           {item.role?.name || "Staff"}
         </span>
       ),
@@ -136,7 +136,7 @@ function RouteComponent() {
       label: "Status",
       render: (value: string) => (
         <span
-          className={`badge badge-sm ${
+          className={`badge badge-md ${
             value === "active" ? "badge-success text-success-content" : "badge-ghost"
           }`}
         >
@@ -181,7 +181,7 @@ function RouteComponent() {
           <>
             Staff Directory{" "}
             {query.data && (
-              <span className="opacity-80 text-xs">({query.data.length})</span>
+              <span className="opacity-80 text-sm">({query.data.length})</span>
             )}
           </>
         }

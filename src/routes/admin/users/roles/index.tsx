@@ -126,7 +126,7 @@ function RouteComponent() {
             <div className="font-semibold text-base-content leading-tight">
               {item.name}
             </div>
-            <div className="text-xs text-base-content/60 max-w-sm truncate">
+            <div className="text-sm text-base-content/60 max-w-sm truncate">
               {item.description || "No description provided"}
             </div>
           </div>
@@ -145,7 +145,7 @@ function RouteComponent() {
               </span>
             ))
           ) : (
-            <span className="text-xs text-base-content/40">No permissions</span>
+            <span className="text-sm text-base-content/40">No permissions</span>
           )}
           {permissions && permissions.length > 4 && (
             <span className="badge badge-xs badge-primary badge-soft">
@@ -159,7 +159,7 @@ function RouteComponent() {
       key: "createdAt",
       label: "Created",
       render: (value: string) => (
-        <span className="text-xs text-base-content/60">
+        <span className="text-sm text-base-content/60">
           {value ? new Date(value).toLocaleDateString() : "—"}
         </span>
       ),
@@ -200,7 +200,7 @@ function RouteComponent() {
           <>
             System Roles{" "}
             {query.data && (
-              <span className="opacity-80 text-xs">({query.data.length})</span>
+              <span className="opacity-80 text-sm">({query.data.length})</span>
             )}
           </>
         }
@@ -301,7 +301,7 @@ function RouteComponent() {
                         className="checkbox checkbox-primary checkbox-xs mt-0.5"
                       />
                       <div className="space-y-0.5">
-                        <span className="font-mono text-xs font-semibold block leading-tight">
+                        <span className="font-mono text-sm font-semibold block leading-tight">
                           {perm.key}
                         </span>
                         <span className="text-[11px] text-base-content/60 block leading-tight">
@@ -312,7 +312,7 @@ function RouteComponent() {
                   );
                 })
               ) : (
-                <div className="col-span-2 text-center py-4 text-xs text-base-content/50">
+                <div className="col-span-2 text-center py-4 text-sm text-base-content/50">
                   Loading permissions...
                 </div>
               )}

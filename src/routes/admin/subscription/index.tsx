@@ -151,7 +151,7 @@ function RouteComponent() {
             <div className="font-bold text-base-content leading-tight">
               {item.name}
             </div>
-            <div className="text-xs text-base-content/60 max-w-xs truncate">
+            <div className="text-sm text-base-content/60 max-w-xs truncate">
               {item.description || "No description provided"}
             </div>
           </div>
@@ -164,14 +164,14 @@ function RouteComponent() {
       render: (_value: any, item: SubscriptionPlan) => (
         <div>
           {item.isCustomPrice ? (
-            <span className="badge badge-info badge-soft badge-sm">Custom Price</span>
+            <span className="badge badge-info badge-soft badge-md">Custom Price</span>
           ) : (
             <div className="text-sm">
               <span className="font-bold text-base-content">
                 ${Number(item.priceMonthly).toLocaleString()}
               </span>
-              <span className="text-xs text-base-content/50">/mo</span>
-              <div className="text-xs text-base-content/60">
+              <span className="text-sm text-base-content/50">/mo</span>
+              <div className="text-sm text-base-content/60">
                 ${Number(item.priceYearly).toLocaleString()}/yr
               </div>
             </div>
@@ -183,7 +183,7 @@ function RouteComponent() {
       key: "limits",
       label: "Resource Limits",
       render: (_value: any, item: SubscriptionPlan) => (
-        <div className="text-xs space-y-0.5 text-base-content/70">
+        <div className="text-sm space-y-0.5 text-base-content/70">
           <div>
             Staff: <strong>{item.maxStaff === -1 ? "Unlimited" : item.maxStaff}</strong>
           </div>
@@ -208,7 +208,7 @@ function RouteComponent() {
               </span>
             ))
           ) : (
-            <span className="text-xs text-base-content/40">Standard</span>
+            <span className="text-sm text-base-content/40">Standard</span>
           )}
         </div>
       ),
@@ -218,7 +218,7 @@ function RouteComponent() {
       label: "Status",
       render: (value: boolean) => (
         <span
-          className={`badge badge-sm ${
+          className={`badge badge-md ${
             value ? "badge-success text-success-content" : "badge-ghost"
           }`}
         >
