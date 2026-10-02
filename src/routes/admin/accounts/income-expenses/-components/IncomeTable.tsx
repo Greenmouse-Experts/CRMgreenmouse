@@ -51,7 +51,7 @@ export default function IncomeTable({ searchTerm = "" }: IncomeTableProps) {
               {source || "General Revenue"}
             </span>
             {item.description && (
-              <span className="text-xs text-base-content/50 truncate max-w-xs block">
+              <span className="text-sm text-base-content/50 truncate max-w-xs block">
                 {item.description}
               </span>
             )}
@@ -63,7 +63,7 @@ export default function IncomeTable({ searchTerm = "" }: IncomeTableProps) {
       key: "type",
       label: "Revenue Stream",
       render: (type: string) => (
-        <span className="badge badge-ghost badge-sm font-medium">
+        <span className="badge badge-ghost badge-md font-medium">
           {type || "Service"}
         </span>
       ),
@@ -89,7 +89,7 @@ export default function IncomeTable({ searchTerm = "" }: IncomeTableProps) {
 
         return (
           <span
-            className={`badge badge-sm font-semibold capitalize ${badgeClass}`}
+            className={`badge badge-md font-semibold capitalize ${badgeClass}`}
           >
             {status || "Pending"}
           </span>
@@ -100,7 +100,7 @@ export default function IncomeTable({ searchTerm = "" }: IncomeTableProps) {
       key: "createdAt",
       label: "Recorded Date",
       render: (val: any) => (
-        <span className="text-xs text-base-content/60">
+        <span className="text-sm text-base-content/60">
           {val ? new Date(val).toLocaleDateString() : "—"}
         </span>
       ),
@@ -136,7 +136,7 @@ export default function IncomeTable({ searchTerm = "" }: IncomeTableProps) {
                 <h3 className="text-lg font-bold text-base-content">
                   Income #{selectedIncome.id.slice(0, 8).toUpperCase()}
                 </h3>
-                <p className="text-xs text-base-content/60">
+                <p className="text-sm text-base-content/60">
                   {selectedIncome.createdAt
                     ? new Date(selectedIncome.createdAt).toLocaleString()
                     : ""}
@@ -156,7 +156,7 @@ export default function IncomeTable({ searchTerm = "" }: IncomeTableProps) {
 
             <div className="grid grid-cols-2 gap-4">
               <div className="bg-base-200/50 p-3 rounded-lg">
-                <span className="text-xs text-base-content/60 block">
+                <span className="text-sm text-base-content/60 block">
                   Amount
                 </span>
                 <span className="text-xl font-bold text-success">
@@ -164,7 +164,7 @@ export default function IncomeTable({ searchTerm = "" }: IncomeTableProps) {
                 </span>
               </div>
               <div className="bg-base-200/50 p-3 rounded-lg">
-                <span className="text-xs text-base-content/60 block">
+                <span className="text-sm text-base-content/60 block">
                   Stream Type
                 </span>
                 <span className="text-sm font-semibold text-base-content">
@@ -172,7 +172,7 @@ export default function IncomeTable({ searchTerm = "" }: IncomeTableProps) {
                 </span>
               </div>
               <div className="bg-base-200/50 p-3 rounded-lg">
-                <span className="text-xs text-base-content/60 block">
+                <span className="text-sm text-base-content/60 block">
                   Source / Payee
                 </span>
                 <span className="text-sm font-semibold text-base-content">
@@ -180,10 +180,10 @@ export default function IncomeTable({ searchTerm = "" }: IncomeTableProps) {
                 </span>
               </div>
               <div className="bg-base-200/50 p-3 rounded-lg">
-                <span className="text-xs text-base-content/60 block">
+                <span className="text-sm text-base-content/60 block">
                   Tenant Scope
                 </span>
-                <span className="text-xs font-mono text-base-content truncate block">
+                <span className="text-sm font-mono text-base-content truncate block">
                   {(selectedIncome as any).tenantId || "Platform Tenant"}
                 </span>
               </div>
@@ -191,7 +191,7 @@ export default function IncomeTable({ searchTerm = "" }: IncomeTableProps) {
 
             {selectedIncome.description && (
               <div className="bg-base-200/30 p-3 rounded-lg text-sm text-base-content/70">
-                <span className="font-semibold block text-xs mb-1">
+                <span className="font-semibold block text-sm mb-1">
                   Description:
                 </span>
                 {selectedIncome.description}

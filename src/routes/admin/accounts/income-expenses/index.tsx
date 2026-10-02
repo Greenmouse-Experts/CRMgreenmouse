@@ -60,17 +60,21 @@ function RouteComponent() {
             />
 
             <div className="bg-base-100 rounded-box border border-base-200 shadow-sm p-4 space-y-4">
-              <div className="flex flex-wrap items-center justify-between gap-4 border-b border-base-200 pb-3">
-                <CustomTabs tabs={tabs} tabProps={tab} />
-              </div>
-
-              <ContainerRow {...searchProps}>
-                {tab.tab.name === "Income" ? (
-                  <IncomeTable searchTerm={searchProps.search || ""} />
-                ) : (
-                  <ExpenseTable searchTerm={searchProps.search || ""} />
-                )}
+              <ContainerRow
+                showSearch
+                searchProps={searchProps}
+                searchPlaceholder={`Search ${tab.tab.name.toLowerCase()} entries...`}
+              >
+                <div className="flex items-center">
+                  <CustomTabs tabs={tabs} tabProps={tab} />
+                </div>
               </ContainerRow>
+
+              {tab.tab.name === "Income" ? (
+                <IncomeTable searchTerm={searchProps.search || ""} />
+              ) : (
+                <ExpenseTable searchTerm={searchProps.search || ""} />
+              )}
             </div>
           </div>
         )}

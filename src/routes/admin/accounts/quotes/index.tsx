@@ -74,7 +74,7 @@ function RouteComponent() {
             <span className="font-semibold text-base-content block">
               {val || `QUO-${item.id.slice(0, 8).toUpperCase()}`}
             </span>
-            <span className="text-xs text-base-content/50">
+            <span className="text-sm text-base-content/50">
               {item.createdAt
                 ? new Date(item.createdAt).toLocaleDateString()
                 : "—"}
@@ -94,7 +94,7 @@ function RouteComponent() {
               : "General Client"}
           </span>
           {item.contact?.email && (
-            <span className="text-xs text-base-content/50 block">
+            <span className="text-sm text-base-content/50 block">
               {item.contact.email}
             </span>
           )}
@@ -123,7 +123,7 @@ function RouteComponent() {
 
         return (
           <span
-            className={`badge badge-sm font-semibold capitalize ${badgeClass}`}
+            className={`badge badge-md font-semibold capitalize ${badgeClass}`}
           >
             {status || "Pending"}
           </span>
@@ -167,7 +167,7 @@ function RouteComponent() {
               <div className="card bg-base-100 border border-base-200 p-4 shadow-sm">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-xs font-semibold text-base-content/60 uppercase">
+                    <p className="text-sm font-semibold text-base-content/60 uppercase">
                       Total Quotes
                     </p>
                     <h3 className="text-2xl font-bold text-base-content mt-1">
@@ -183,7 +183,7 @@ function RouteComponent() {
               <div className="card bg-base-100 border border-base-200 p-4 shadow-sm">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-xs font-semibold text-base-content/60 uppercase">
+                    <p className="text-sm font-semibold text-base-content/60 uppercase">
                       Pending
                     </p>
                     <h3 className="text-2xl font-bold text-warning mt-1">
@@ -199,7 +199,7 @@ function RouteComponent() {
               <div className="card bg-base-100 border border-base-200 p-4 shadow-sm">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-xs font-semibold text-base-content/60 uppercase">
+                    <p className="text-sm font-semibold text-base-content/60 uppercase">
                       Accepted
                     </p>
                     <h3 className="text-2xl font-bold text-success mt-1">
@@ -215,7 +215,7 @@ function RouteComponent() {
               <div className="card bg-base-100 border border-base-200 p-4 shadow-sm">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-xs font-semibold text-base-content/60 uppercase">
+                    <p className="text-sm font-semibold text-base-content/60 uppercase">
                       Rejected
                     </p>
                     <h3 className="text-2xl font-bold text-error mt-1">
@@ -229,37 +229,40 @@ function RouteComponent() {
               </div>
             </div>
 
-            {/* Filter Tabs */}
-            <div className="flex flex-wrap gap-2">
-              {[
-                { label: "All Quotes", key: "all" },
-                { label: "Pending", key: "pending" },
-                { label: "Accepted", key: "accepted" },
-                { label: "Rejected", key: "rejected" },
-                { label: "Expired", key: "expired" },
-              ].map((tab) => (
-                <button
-                  key={tab.key}
-                  onClick={() => setStatusFilter(tab.key)}
-                  className={`btn btn-xs rounded-full ${
-                    statusFilter === tab.key
-                      ? "btn-primary text-primary-content"
-                      : "btn-ghost text-base-content/70"
-                  }`}
-                >
-                  {tab.label}
-                </button>
-              ))}
-            </div>
-
             <SimpleContainer>
-              <ContainerRow {...searchProps}>
-                <CustomTable
-                  actions={actions}
-                  columns={columns}
-                  data={filteredQuotes}
-                />
+              <ContainerRow
+                showSearch
+                searchProps={searchProps}
+                searchPlaceholder="Search quotes..."
+              >
+                <div className="flex flex-wrap items-center gap-1.5">
+                  {[
+                    { label: "All Quotes", key: "all" },
+                    { label: "Pending", key: "pending" },
+                    { label: "Accepted", key: "accepted" },
+                    { label: "Rejected", key: "rejected" },
+                    { label: "Expired", key: "expired" },
+                  ].map((tab) => (
+                    <button
+                      key={tab.key}
+                      onClick={() => setStatusFilter(tab.key)}
+                      className={`btn btn-sm rounded-full text-sm ${
+                        statusFilter === tab.key
+                          ? "btn-primary text-primary-content"
+                          : "btn-ghost text-base-content/70"
+                      }`}
+                    >
+                      {tab.label}
+                    </button>
+                  ))}
+                </div>
               </ContainerRow>
+
+              <CustomTable
+                actions={actions}
+                columns={columns}
+                data={filteredQuotes}
+              />
             </SimpleContainer>
 
             {/* Details Modal */}
@@ -271,7 +274,7 @@ function RouteComponent() {
                       <h3 className="text-lg font-bold text-base-content">
                         Quote #{selectedQuote.id.slice(0, 8).toUpperCase()}
                       </h3>
-                      <p className="text-xs text-base-content/60">
+                      <p className="text-sm text-base-content/60">
                         {selectedQuote.createdAt
                           ? new Date(selectedQuote.createdAt).toLocaleString()
                           : ""}
@@ -292,7 +295,7 @@ function RouteComponent() {
 
                   <div className="grid grid-cols-2 gap-4">
                     <div className="bg-base-200/50 p-3 rounded-lg">
-                      <span className="text-xs text-base-content/60 block">
+                      <span className="text-sm text-base-content/60 block">
                         Client
                       </span>
                       <span className="text-sm font-semibold text-base-content">
@@ -302,7 +305,7 @@ function RouteComponent() {
                       </span>
                     </div>
                     <div className="bg-base-200/50 p-3 rounded-lg">
-                      <span className="text-xs text-base-content/60 block">
+                      <span className="text-sm text-base-content/60 block">
                         Quote Value
                       </span>
                       <span className="text-base font-bold text-base-content">
@@ -315,15 +318,15 @@ function RouteComponent() {
                       </span>
                     </div>
                     <div className="bg-base-200/50 p-3 rounded-lg">
-                      <span className="text-xs text-base-content/60 block">
+                      <span className="text-sm text-base-content/60 block">
                         Tenant Scope
                       </span>
-                      <span className="text-xs font-mono text-base-content truncate block">
+                      <span className="text-sm font-mono text-base-content truncate block">
                         {(selectedQuote as any).tenantId || "Platform Tenant"}
                       </span>
                     </div>
                     <div className="bg-base-200/50 p-3 rounded-lg">
-                      <span className="text-xs text-base-content/60 block">
+                      <span className="text-sm text-base-content/60 block">
                         Valid Until
                       </span>
                       <span className="text-sm font-semibold text-base-content">
@@ -336,7 +339,7 @@ function RouteComponent() {
 
                   {selectedQuote.description && (
                     <div className="bg-base-200/30 p-3 rounded-lg text-sm text-base-content/70">
-                      <span className="font-semibold block text-xs mb-1">
+                      <span className="font-semibold block text-sm mb-1">
                         Proposal Notes:
                       </span>
                       {selectedQuote.description}

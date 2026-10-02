@@ -61,7 +61,7 @@ function RouteComponent() {
             <span className="font-semibold text-base-content block">
               {val || `INV-${item.id.slice(0, 8).toUpperCase()}`}
             </span>
-            <span className="text-xs text-base-content/50">
+            <span className="text-sm text-base-content/50">
               {item.items?.length || 0} line items
             </span>
           </div>
@@ -76,7 +76,7 @@ function RouteComponent() {
           <div className="font-medium text-base-content">
             {val ? `${val.firstName} ${val.lastName}` : "Direct Client"}
           </div>
-          <div className="text-xs text-base-content/50">
+          <div className="text-sm text-base-content/50">
             {val?.email || item.billingAddress || "—"}
           </div>
         </div>
@@ -86,7 +86,7 @@ function RouteComponent() {
       key: "issuedDate",
       label: "Dates",
       render: (val: any, item: Invoice) => (
-        <div className="text-xs space-y-0.5">
+        <div className="text-sm space-y-0.5">
           <div className="text-base-content/80">
             Issued: {val ? new Date(val).toLocaleDateString() : "—"}
           </div>
@@ -129,7 +129,7 @@ function RouteComponent() {
 
         return (
           <span
-            className={`badge badge-sm font-semibold capitalize ${badgeClass}`}
+            className={`badge badge-md font-semibold capitalize ${badgeClass}`}
           >
             {status || "Draft"}
           </span>
@@ -170,37 +170,40 @@ function RouteComponent() {
           <div className="space-y-6">
             <InvoicesStat invoices={invoicesList} statsData={statsQuery.data} />
 
-            {/* Filter Tabs */}
-            <div className="flex flex-wrap gap-2">
-              {[
-                { label: "All Invoices", key: "all" },
-                { label: "Paid", key: "paid" },
-                { label: "Pending", key: "pending" },
-                { label: "Overdue", key: "overdue" },
-                { label: "Cancelled", key: "cancelled" },
-              ].map((tab) => (
-                <button
-                  key={tab.key}
-                  onClick={() => setStatusFilter(tab.key)}
-                  className={`btn btn-xs rounded-full ${
-                    statusFilter === tab.key
-                      ? "btn-primary text-primary-content"
-                      : "btn-ghost text-base-content/70"
-                  }`}
-                >
-                  {tab.label}
-                </button>
-              ))}
-            </div>
-
             <SimpleContainer>
-              <ContainerRow {...searchProps}>
-                <CustomTable
-                  actions={actions}
-                  columns={columns}
-                  data={filteredInvoices}
-                />
+              <ContainerRow
+                showSearch
+                searchProps={searchProps}
+                searchPlaceholder="Search invoices by number or customer..."
+              >
+                <div className="flex flex-wrap items-center gap-1.5">
+                  {[
+                    { label: "All Invoices", key: "all" },
+                    { label: "Paid", key: "paid" },
+                    { label: "Pending", key: "pending" },
+                    { label: "Overdue", key: "overdue" },
+                    { label: "Cancelled", key: "cancelled" },
+                  ].map((tab) => (
+                    <button
+                      key={tab.key}
+                      onClick={() => setStatusFilter(tab.key)}
+                      className={`btn btn-sm rounded-full text-sm ${
+                        statusFilter === tab.key
+                          ? "btn-primary text-primary-content"
+                          : "btn-ghost text-base-content/70"
+                      }`}
+                    >
+                      {tab.label}
+                    </button>
+                  ))}
+                </div>
               </ContainerRow>
+
+              <CustomTable
+                actions={actions}
+                columns={columns}
+                data={filteredInvoices}
+              />
             </SimpleContainer>
 
             {/* Invoice Details Modal */}
@@ -214,7 +217,7 @@ function RouteComponent() {
                         {selectedInvoice.invoiceNumber ||
                           selectedInvoice.id.slice(0, 8).toUpperCase()}
                       </h3>
-                      <p className="text-xs text-base-content/60">
+                      <p className="text-sm text-base-content/60">
                         {selectedInvoice.issuedDate
                           ? new Date(
                               selectedInvoice.issuedDate,
@@ -237,7 +240,7 @@ function RouteComponent() {
 
                   <div className="grid grid-cols-2 gap-4">
                     <div className="bg-base-200/50 p-3 rounded-lg">
-                      <span className="text-xs text-base-content/60 block">
+                      <span className="text-sm text-base-content/60 block">
                         Customer
                       </span>
                       <span className="text-sm font-semibold text-base-content">
@@ -247,7 +250,7 @@ function RouteComponent() {
                       </span>
                     </div>
                     <div className="bg-base-200/50 p-3 rounded-lg">
-                      <span className="text-xs text-base-content/60 block">
+                      <span className="text-sm text-base-content/60 block">
                         Total Amount
                       </span>
                       <span className="text-base font-bold text-base-content">
@@ -266,15 +269,15 @@ function RouteComponent() {
                       </span>
                     </div>
                     <div className="bg-base-200/50 p-3 rounded-lg">
-                      <span className="text-xs text-base-content/60 block">
+                      <span className="text-sm text-base-content/60 block">
                         Tenant Scope
                       </span>
-                      <span className="text-xs font-mono text-base-content truncate block">
+                      <span className="text-sm font-mono text-base-content truncate block">
                         {(selectedInvoice as any).tenantId || "Platform Tenant"}
                       </span>
                     </div>
                     <div className="bg-base-200/50 p-3 rounded-lg">
-                      <span className="text-xs text-base-content/60 block">
+                      <span className="text-sm text-base-content/60 block">
                         Due Date
                       </span>
                       <span className="text-sm font-semibold text-base-content">
@@ -290,7 +293,7 @@ function RouteComponent() {
                   {selectedInvoice.items &&
                     selectedInvoice.items.length > 0 && (
                       <div className="space-y-2">
-                        <h4 className="text-xs font-semibold text-base-content/70 uppercase">
+                        <h4 className="text-sm font-semibold text-base-content/70 uppercase">
                           Line Items ({selectedInvoice.items.length})
                         </h4>
                         <div className="divide-y divide-base-200 rounded-lg border border-base-200 overflow-hidden text-sm">
@@ -305,7 +308,7 @@ function RouteComponent() {
                                     it.description ||
                                     `Item #${idx + 1}`}
                                 </span>
-                                <span className="text-xs text-base-content/50">
+                                <span className="text-sm text-base-content/50">
                                   {it.qty} × {selectedInvoice.currency || "₦"}
                                   {Number(it.unitPrice || 0).toLocaleString()}
                                 </span>
@@ -325,7 +328,7 @@ function RouteComponent() {
 
                   {(selectedInvoice as any).notes && (
                     <div className="bg-base-200/30 p-3 rounded-lg text-sm text-base-content/70">
-                      <span className="font-semibold block text-xs mb-1">
+                      <span className="font-semibold block text-sm mb-1">
                         Invoice Notes:
                       </span>
                       {(selectedInvoice as any).notes}
