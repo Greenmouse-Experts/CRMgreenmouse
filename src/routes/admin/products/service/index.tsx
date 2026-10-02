@@ -1,28 +1,30 @@
 import { useState, useRef, useMemo } from "react";
 import { createFileRoute } from "@tanstack/react-router";
-import PageHeader from "@/components/Headers/PageHeader";
 import SimpleContainer from "@/components/SimpleContainer";
 import ContainerRow from "@/components/ContainerRow";
 import { useSearch } from "@/stores/data";
-import { Wrench, CheckCircle2, XCircle, RefreshCw } from "lucide-react";
+import { RefreshCw, Wrench } from "lucide-react";
 import CustomTable from "@/components/tables/CustomTable";
 import type { Actions } from "@/components/tables/pop-up";
 import Modal, { type ModalHandle } from "@/components/DialogModal";
+import PageHeader from "@/components/Headers/PageHeader";
 import PageLoader from "@/components/layout/PageLoader";
 import ProductNav from "../-components/ProductNav";
-import type { ServiceItem } from "@/api/catalogApi";
-import { useAdminCrossServices, useAdminCrossCategories } from "@/api/adminApi";
+import type { Product } from "@/api/catalogApi";
+import { useAdminCrossProducts, useAdminCrossCategories } from "@/api/adminApi";
 
 export const Route = createFileRoute("/admin/products/service/")({
   component: RouteComponent,
 });
+
+type ServiceItem = Product;
 
 function RouteComponent() {
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [categoryFilter, setCategoryFilter] = useState<string>("");
 
   const searchProps = useSearch();
-  const servicesQuery = useAdminCrossServices({
+  const productsQuery = useAdminCrossProducts({
     search: searchProps.search || undefined,
   });
   const categoriesQuery = useAdminCrossCategories();
@@ -32,15 +34,11 @@ function RouteComponent() {
     null,
   );
 
-  const rawServices: ServiceItem[] = (servicesQuery.data ||
-    []) as ServiceItem[];
+  const rawServices: ServiceItem[] = useMemo(() => {
+    const list = (productsQuery.data || []) as Product[];
+    return list.filter((p: any) => p.type === "service" || p.isService);
+  }, [productsQuery.data]);
 
-  const handleOpenDetails = (service: ServiceItem) => {
-    setSelectedService(service);
-    detailsModalRef.current?.open();
-  };
-
-  // Metrics
   const stats = useMemo(() => {
     const total = rawServices.length;
     const active = rawServices.filter((s) => s.isActive !== false).length;
@@ -55,7 +53,6 @@ function RouteComponent() {
     return { total, active, inactive, avgPrice };
   }, [rawServices]);
 
-  // Filtered services
   const filteredServices = useMemo(() => {
     return rawServices.filter((service) => {
       if (categoryFilter && service.categoryId !== categoryFilter) {
@@ -71,6 +68,11 @@ function RouteComponent() {
     });
   }, [rawServices, statusFilter, categoryFilter]);
 
+  const handleOpenDetails = (service: ServiceItem) => {
+    setSelectedService(service);
+    detailsModalRef.current?.open();
+  };
+
   const actions: Actions<ServiceItem>[] = [
     {
       key: "view_details",
@@ -83,17 +85,17 @@ function RouteComponent() {
     <div>
       <PageHeader
         title="Services Catalog"
-        description="Monitor, audit, and inspect professional and recurring services across all tenants"
+        description="Monitor and inspect billable professional services across all platform tenants"
       >
         <div className="flex flex-wrap items-center gap-2">
           <button
-            onClick={() => servicesQuery.refetch()}
+            onClick={() => productsQuery.refetch()}
             className="btn btn-outline btn-sm gap-2"
-            disabled={servicesQuery.isFetching}
+            disabled={productsQuery.isFetching}
           >
             <RefreshCw
               size={15}
-              className={servicesQuery.isFetching ? "animate-spin" : ""}
+              className={productsQuery.isFetching ? "animate-spin" : ""}
             />
             Refresh
           </button>
@@ -102,11 +104,11 @@ function RouteComponent() {
 
       <ProductNav />
 
-      <PageLoader query={servicesQuery}>
+      <PageLoader query={productsQuery}>
         {() => (
           <div className="space-y-6">
-            {/* KPI Summary Cards */}
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            {/* KPI Summary Grid */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               <div className="bg-base-100 rounded-box border border-base-200 p-4 shadow-sm">
                 <div className="flex items-center gap-3">
                   <div className="bg-primary/10 text-primary p-2.5 rounded-lg">
@@ -116,7 +118,7 @@ function RouteComponent() {
                     <div className="text-2xl font-bold text-base-content">
                       {stats.total}
                     </div>
-                    <div className="text-xs text-base-content/60">
+                    <div className="text-sm text-base-content/60">
                       Total Services
                     </div>
                   </div>
@@ -126,15 +128,13 @@ function RouteComponent() {
               <div className="bg-base-100 rounded-box border border-base-200 p-4 shadow-sm">
                 <div className="flex items-center gap-3">
                   <div className="bg-success/10 text-success p-2.5 rounded-lg">
-                    <CheckCircle2 size={20} />
+                    <span className="font-bold text-sm">✓</span>
                   </div>
                   <div>
-                    <div className="text-2xl font-bold text-success">
+                    <div className="text-2xl font-bold text-base-content">
                       {stats.active}
                     </div>
-                    <div className="text-xs text-base-content/60">
-                      Active Offerings
-                    </div>
+                    <div className="text-sm text-base-content/60">Active</div>
                   </div>
                 </div>
               </div>
@@ -142,13 +142,13 @@ function RouteComponent() {
               <div className="bg-base-100 rounded-box border border-base-200 p-4 shadow-sm">
                 <div className="flex items-center gap-3">
                   <div className="bg-base-200 text-base-content/60 p-2.5 rounded-lg">
-                    <XCircle size={20} />
+                    <span className="font-bold text-sm">—</span>
                   </div>
                   <div>
-                    <div className="text-2xl font-bold text-base-content/70">
+                    <div className="text-2xl font-bold text-base-content">
                       {stats.inactive}
                     </div>
-                    <div className="text-xs text-base-content/60">Inactive</div>
+                    <div className="text-sm text-base-content/60">Inactive</div>
                   </div>
                 </div>
               </div>
@@ -162,7 +162,7 @@ function RouteComponent() {
                     <div className="text-2xl font-bold text-base-content">
                       ₦ {stats.avgPrice.toLocaleString()}
                     </div>
-                    <div className="text-xs text-base-content/60">
+                    <div className="text-sm text-base-content/60">
                       Average Rate
                     </div>
                   </div>
@@ -171,7 +171,11 @@ function RouteComponent() {
             </div>
 
             <SimpleContainer>
-              <div className="p-4 border-b border-base-200 flex flex-wrap items-center justify-between gap-4">
+              <ContainerRow
+                showSearch
+                searchProps={searchProps}
+                searchPlaceholder="Search services..."
+              >
                 {/* Filter Pills */}
                 <div className="flex flex-wrap items-center gap-1.5">
                   {[
@@ -182,7 +186,7 @@ function RouteComponent() {
                     <button
                       key={tab.key}
                       onClick={() => setStatusFilter(tab.key)}
-                      className={`btn btn-xs rounded-full ${
+                      className={`btn btn-sm rounded-full text-sm ${
                         statusFilter === tab.key
                           ? "btn-primary text-primary-content"
                           : "btn-ghost text-base-content/70"
@@ -198,7 +202,7 @@ function RouteComponent() {
                   <select
                     value={categoryFilter}
                     onChange={(e) => setCategoryFilter(e.target.value)}
-                    className="select select-bordered select-xs"
+                    className="select select-bordered select-sm text-sm"
                   >
                     <option value="">All Categories</option>
                     {(categoriesQuery.data || []).map((cat: any) => (
@@ -208,77 +212,75 @@ function RouteComponent() {
                     ))}
                   </select>
                 </div>
-              </div>
-
-              <ContainerRow {...searchProps}>
-                <CustomTable
-                  actions={actions}
-                  columns={[
-                    {
-                      label: "Service Name",
-                      key: "name",
-                      render: (service: ServiceItem) => (
-                        <div className="flex items-center gap-3">
-                          <div className="avatar placeholder">
-                            <div className="bg-secondary/10 text-secondary rounded-lg w-9 h-9 flex items-center justify-center">
-                              <Wrench size={18} />
-                            </div>
-                          </div>
-                          <div>
-                            <div className="font-semibold text-base-content">
-                              {service.name}
-                            </div>
-                            {service.description && (
-                              <div className="text-xs text-base-content/60 truncate max-w-xs">
-                                {service.description}
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                      ),
-                    },
-                    {
-                      label: "Category",
-                      key: "categoryId",
-                      render: (service: ServiceItem) => {
-                        const cat = (categoriesQuery.data || []).find(
-                          (c: any) => c.id === service.categoryId,
-                        );
-                        return (
-                          <span className="badge badge-ghost badge-sm">
-                            {cat?.name || service.category?.name || "General"}
-                          </span>
-                        );
-                      },
-                    },
-                    {
-                      label: "Service Rate / Price",
-                      key: "price",
-                      render: (service: ServiceItem) => (
-                        <div className="font-semibold text-base-content">
-                          ₦ {Number(service.price).toLocaleString()}
-                        </div>
-                      ),
-                    },
-                    {
-                      label: "Status",
-                      key: "isActive",
-                      render: (service: ServiceItem) => (
-                        <span
-                          className={`badge badge-sm ${
-                            service.isActive !== false
-                              ? "badge-success badge-outline"
-                              : "badge-ghost"
-                          }`}
-                        >
-                          {service.isActive !== false ? "Active" : "Inactive"}
-                        </span>
-                      ),
-                    },
-                  ]}
-                  data={filteredServices}
-                />
               </ContainerRow>
+
+              <CustomTable
+                actions={actions}
+                columns={[
+                  {
+                    label: "Service Name",
+                    key: "name",
+                    render: (service: ServiceItem) => (
+                      <div className="flex items-center gap-3">
+                        <div className="avatar placeholder">
+                          <div className="bg-secondary/10 text-secondary rounded-lg w-10 h-10 flex items-center justify-center">
+                            <Wrench size={20} />
+                          </div>
+                        </div>
+                        <div>
+                          <div className="font-semibold text-base-content text-sm">
+                            {service.name}
+                          </div>
+                          {service.description && (
+                            <div className="text-sm text-base-content/60 truncate max-w-xs">
+                              {service.description}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    ),
+                  },
+                  {
+                    label: "Category",
+                    key: "categoryId",
+                    render: (service: ServiceItem) => {
+                      const cat = (categoriesQuery.data || []).find(
+                        (c: any) => c.id === service.categoryId,
+                      );
+                      return (
+                        <span className="badge badge-ghost badge-md font-medium text-sm">
+                          {cat?.name || service.category?.name || "General"}
+                        </span>
+                      );
+                    },
+                  },
+                  {
+                    label: "Service Rate / Price",
+                    key: "price",
+                    render: (service: ServiceItem) => (
+                      <div className="font-semibold text-base-content text-sm">
+                        ₦ {Number(service.price).toLocaleString()}
+                      </div>
+                    ),
+                  },
+                  {
+                    label: "Status",
+                    key: "isActive",
+                    render: (service: ServiceItem) => (
+                      <span
+                        className={`badge badge-md text-sm ${
+                          service.isActive !== false
+                            ? "badge-success badge-outline"
+                            : "badge-ghost"
+                        }`}
+                      >
+                        {service.isActive !== false ? "Active" : "Inactive"}
+                      </span>
+                    ),
+                  },
+                ]}
+                data={filteredServices}
+              />
             </SimpleContainer>
 
             {/* Service Details Modal */}
@@ -294,7 +296,7 @@ function RouteComponent() {
                         <h3 className="text-xl font-bold text-base-content">
                           {selectedService.name}
                         </h3>
-                        <p className="text-xs text-base-content/60">
+                        <p className="text-sm text-base-content/60">
                           Service ID: {selectedService.id}
                         </p>
                       </div>
@@ -313,32 +315,30 @@ function RouteComponent() {
                   </div>
 
                   <div className="grid grid-cols-2 gap-4">
-                    <div className="bg-base-200/50 p-4 rounded-lg">
-                      <span className="text-xs text-base-content/60 block">
-                        Rate / Price
+                    <div className="bg-base-200/50 p-3 rounded-lg">
+                      <span className="text-sm text-base-content/60 block">
+                        Billing Rate
                       </span>
                       <span className="text-xl font-bold text-base-content">
                         ₦ {Number(selectedService.price).toLocaleString()}
                       </span>
                     </div>
-                    <div className="bg-base-200/50 p-4 rounded-lg">
-                      <span className="text-xs text-base-content/60 block">
+                    <div className="bg-base-200/50 p-3 rounded-lg">
+                      <span className="text-sm text-base-content/60 block">
                         Category
                       </span>
                       <span className="text-base font-semibold text-base-content">
                         {(categoriesQuery.data || []).find(
                           (c: any) => c.id === selectedService.categoryId,
-                        )?.name ||
-                          selectedService.category?.name ||
-                          "General"}
+                        )?.name || "General"}
                       </span>
                     </div>
                   </div>
 
                   {selectedService.description && (
                     <div className="bg-base-200/30 p-4 rounded-lg">
-                      <span className="text-xs font-semibold text-base-content/70 block mb-1">
-                        Description
+                      <span className="text-sm font-semibold text-base-content/70 block mb-1">
+                        Service Scope / Description
                       </span>
                       <p className="text-sm text-base-content/80 whitespace-pre-wrap">
                         {selectedService.description}

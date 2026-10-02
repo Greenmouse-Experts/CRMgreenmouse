@@ -105,7 +105,11 @@ function RouteComponent() {
             />
 
             <SimpleContainer>
-              <div className="p-4 border-b border-base-200 flex flex-wrap items-center justify-between gap-4">
+              <ContainerRow
+                showSearch
+                searchProps={searchProps}
+                searchPlaceholder="Search products by name..."
+              >
                 {/* Stock filter pills */}
                 <div className="flex flex-wrap items-center gap-1.5">
                   {[
@@ -118,7 +122,7 @@ function RouteComponent() {
                     <button
                       key={tab.key}
                       onClick={() => setStockFilter(tab.key)}
-                      className={`btn btn-xs rounded-full ${
+                      className={`btn btn-sm rounded-full text-sm ${
                         stockFilter === tab.key
                           ? "btn-primary text-primary-content"
                           : "btn-ghost text-base-content/70"
@@ -134,7 +138,7 @@ function RouteComponent() {
                   <select
                     value={categoryFilter}
                     onChange={(e) => setCategoryFilter(e.target.value)}
-                    className="select select-bordered select-xs"
+                    className="select select-bordered select-sm text-sm"
                   >
                     <option value="">All Categories</option>
                     {(categoriesQuery.data || []).map((cat: any) => (
@@ -144,149 +148,147 @@ function RouteComponent() {
                     ))}
                   </select>
                 </div>
-              </div>
+              </ContainerRow>
 
-              <ContainerRow {...searchProps}>
-                <CustomTable
-                  actions={actions}
-                  columns={[
-                    {
-                      label: "Product Name",
-                      key: "name",
-                      render: (product: Product) => (
-                        <div className="flex items-center gap-3">
-                          <div className="avatar placeholder">
-                            <div className="bg-primary/10 text-primary rounded-lg w-9 h-9 flex items-center justify-center">
-                              {product.images && product.images[0] ? (
-                                <img
-                                  src={product.images[0]}
-                                  alt={product.name}
-                                  className="w-full h-full object-cover rounded-lg"
-                                />
-                              ) : (
-                                <Package size={18} />
-                              )}
-                            </div>
-                          </div>
-                          <div>
-                            <div className="font-semibold text-base-content">
-                              {product.name}
-                            </div>
-                            {product.description && (
-                              <div className="text-xs text-base-content/60 truncate max-w-xs">
-                                {product.description}
-                              </div>
+              <CustomTable
+                actions={actions}
+                columns={[
+                  {
+                    label: "Product Name",
+                    key: "name",
+                    render: (product: Product) => (
+                      <div className="flex items-center gap-3">
+                        <div className="avatar placeholder">
+                          <div className="bg-primary/10 text-primary rounded-lg w-10 h-10 flex items-center justify-center">
+                            {product.images && product.images[0] ? (
+                              <img
+                                src={product.images[0]}
+                                alt={product.name}
+                                className="w-full h-full object-cover rounded-lg"
+                              />
+                            ) : (
+                              <Package size={20} />
                             )}
                           </div>
                         </div>
-                      ),
-                    },
-                    {
-                      label: "Category",
-                      key: "categoryId",
-                      render: (product: Product) => {
-                        const cat = (categoriesQuery.data || []).find(
-                          (c: any) => c.id === product.categoryId,
-                        );
-                        return (
-                          <span className="badge badge-ghost badge-sm font-medium">
-                            {cat?.name || product.category?.name || "General"}
-                          </span>
-                        );
-                      },
-                    },
-                    {
-                      label: "Selling Price",
-                      key: "price",
-                      render: (product: Product) => {
-                        const cur = product.currency || "NGN";
-                        return (
-                          <div className="font-semibold text-base-content">
-                            {cur} {Number(product.price).toLocaleString()}
+                        <div>
+                          <div className="font-semibold text-base-content text-sm">
+                            {product.name}
                           </div>
-                        );
-                      },
-                    },
-                    {
-                      label: "Cost & Margin",
-                      key: "cost",
-                      render: (product: Product) => {
-                        const cost = Number(product.cost) || 0;
-                        const price = Number(product.price) || 0;
-                        if (!cost) {
-                          return (
-                            <span className="text-xs text-base-content/50">
-                              —
-                            </span>
-                          );
-                        }
-                        const cur = product.currency || "NGN";
-                        const margin =
-                          price > 0
-                            ? (((price - cost) / price) * 100).toFixed(1)
-                            : 0;
-                        return (
-                          <div className="text-xs">
-                            <span className="text-base-content/70">
-                              {cur} {cost.toLocaleString()}
-                            </span>
-                            <span
-                              className={`ml-1.5 font-semibold ${
-                                Number(margin) >= 20
-                                  ? "text-success"
-                                  : Number(margin) > 0
-                                    ? "text-warning"
-                                    : "text-error"
-                              }`}
-                            >
-                              ({margin}%)
-                            </span>
-                          </div>
-                        );
-                      },
-                    },
-                    {
-                      label: "Stock Level",
-                      key: "stock",
-                      render: (product: Product) => {
-                        const qty = product.stock ?? product.quantity ?? 0;
-                        let badgeClass = "badge-success text-success-content";
-                        let label = `${qty} in stock`;
-                        if (qty === 0) {
-                          badgeClass = "badge-error text-error-content";
-                          label = "Out of stock";
-                        } else if (qty <= 5) {
-                          badgeClass = "badge-warning text-warning-content";
-                          label = `Low: ${qty}`;
-                        }
-                        return (
-                          <span
-                            className={`badge badge-sm font-medium ${badgeClass}`}
-                          >
-                            {label}
-                          </span>
-                        );
-                      },
-                    },
-                    {
-                      label: "Status",
-                      key: "isActive",
-                      render: (product: Product) => (
-                        <span
-                          className={`badge badge-sm ${
-                            product.isActive !== false
-                              ? "badge-success badge-outline"
-                              : "badge-ghost"
-                          }`}
-                        >
-                          {product.isActive !== false ? "Active" : "Inactive"}
+                          {product.description && (
+                            <div className="text-sm text-base-content/60 truncate max-w-xs">
+                              {product.description}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    ),
+                  },
+                  {
+                    label: "Category",
+                    key: "categoryId",
+                    render: (product: Product) => {
+                      const cat = (categoriesQuery.data || []).find(
+                        (c: any) => c.id === product.categoryId,
+                      );
+                      return (
+                        <span className="badge badge-ghost badge-md font-medium text-sm">
+                          {cat?.name || product.category?.name || "General"}
                         </span>
-                      ),
+                      );
                     },
-                  ]}
-                  data={filteredProducts}
-                />
-              </ContainerRow>
+                  },
+                  {
+                    label: "Selling Price",
+                    key: "price",
+                    render: (product: Product) => {
+                      const cur = product.currency || "NGN";
+                      return (
+                        <div className="font-semibold text-base-content text-sm">
+                          {cur} {Number(product.price).toLocaleString()}
+                        </div>
+                      );
+                    },
+                  },
+                  {
+                    label: "Cost & Margin",
+                    key: "cost",
+                    render: (product: Product) => {
+                      const cost = Number(product.cost) || 0;
+                      const price = Number(product.price) || 0;
+                      if (!cost) {
+                        return (
+                          <span className="text-sm text-base-content/50">
+                            —
+                          </span>
+                        );
+                      }
+                      const cur = product.currency || "NGN";
+                      const margin =
+                        price > 0
+                          ? (((price - cost) / price) * 100).toFixed(1)
+                          : 0;
+                      return (
+                        <div className="text-sm">
+                          <span className="text-base-content/70">
+                            {cur} {cost.toLocaleString()}
+                          </span>
+                          <span
+                            className={`ml-1.5 font-semibold ${
+                              Number(margin) >= 20
+                                ? "text-success"
+                                : Number(margin) > 0
+                                  ? "text-warning"
+                                  : "text-error"
+                            }`}
+                          >
+                            ({margin}%)
+                          </span>
+                        </div>
+                      );
+                    },
+                  },
+                  {
+                    label: "Stock Level",
+                    key: "stock",
+                    render: (product: Product) => {
+                      const qty = product.stock ?? product.quantity ?? 0;
+                      let badgeClass = "badge-success text-success-content";
+                      let label = `${qty} in stock`;
+                      if (qty === 0) {
+                        badgeClass = "badge-error text-error-content";
+                        label = "Out of stock";
+                      } else if (qty <= 5) {
+                        badgeClass = "badge-warning text-warning-content";
+                        label = `Low: ${qty}`;
+                      }
+                      return (
+                        <span
+                          className={`badge badge-md font-medium text-sm ${badgeClass}`}
+                        >
+                          {label}
+                        </span>
+                      );
+                    },
+                  },
+                  {
+                    label: "Status",
+                    key: "isActive",
+                    render: (product: Product) => (
+                      <span
+                        className={`badge badge-md text-sm ${
+                          product.isActive !== false
+                            ? "badge-success badge-outline"
+                            : "badge-ghost"
+                        }`}
+                      >
+                        {product.isActive !== false ? "Active" : "Inactive"}
+                      </span>
+                    ),
+                  },
+                ]}
+                data={filteredProducts}
+              />
             </SimpleContainer>
 
             {/* Product Details Modal */}
@@ -302,7 +304,7 @@ function RouteComponent() {
                         <h3 className="text-xl font-bold text-base-content">
                           {selectedProduct.name}
                         </h3>
-                        <p className="text-xs text-base-content/60">
+                        <p className="text-sm text-base-content/60">
                           Product ID: {selectedProduct.id}
                         </p>
                       </div>
@@ -322,7 +324,7 @@ function RouteComponent() {
 
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                     <div className="bg-base-200/50 p-3 rounded-lg">
-                      <span className="text-xs text-base-content/60 block">
+                      <span className="text-sm text-base-content/60 block">
                         Selling Price
                       </span>
                       <span className="text-base font-bold text-base-content">
@@ -331,7 +333,7 @@ function RouteComponent() {
                       </span>
                     </div>
                     <div className="bg-base-200/50 p-3 rounded-lg">
-                      <span className="text-xs text-base-content/60 block">
+                      <span className="text-sm text-base-content/60 block">
                         Cost Price
                       </span>
                       <span className="text-base font-bold text-base-content">
@@ -340,7 +342,7 @@ function RouteComponent() {
                       </span>
                     </div>
                     <div className="bg-base-200/50 p-3 rounded-lg">
-                      <span className="text-xs text-base-content/60 block">
+                      <span className="text-sm text-base-content/60 block">
                         Profit Margin
                       </span>
                       <span className="text-base font-bold text-success">
@@ -355,7 +357,7 @@ function RouteComponent() {
                       </span>
                     </div>
                     <div className="bg-base-200/50 p-3 rounded-lg">
-                      <span className="text-xs text-base-content/60 block">
+                      <span className="text-sm text-base-content/60 block">
                         Stock Count
                       </span>
                       <span className="text-base font-bold text-base-content">
@@ -366,7 +368,7 @@ function RouteComponent() {
 
                   {selectedProduct.description && (
                     <div className="bg-base-200/30 p-4 rounded-lg">
-                      <span className="text-xs font-semibold text-base-content/70 block mb-1">
+                      <span className="text-sm font-semibold text-base-content/70 block mb-1">
                         Description
                       </span>
                       <p className="text-sm text-base-content/80 whitespace-pre-wrap">

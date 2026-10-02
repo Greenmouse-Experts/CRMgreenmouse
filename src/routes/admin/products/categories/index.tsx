@@ -1,13 +1,13 @@
 import { useState, useRef, useMemo } from "react";
 import { createFileRoute } from "@tanstack/react-router";
-import ContainerRow from "@/components/ContainerRow";
 import SimpleContainer from "@/components/SimpleContainer";
+import ContainerRow from "@/components/ContainerRow";
 import { useSearch } from "@/stores/data";
-import { Tag, Layers, Wrench, Package, RefreshCw } from "lucide-react";
+import { RefreshCw, Tag, Package, Wrench } from "lucide-react";
 import CustomTable from "@/components/tables/CustomTable";
 import type { Actions } from "@/components/tables/pop-up";
-import PageHeader from "@/components/Headers/PageHeader";
 import Modal, { type ModalHandle } from "@/components/DialogModal";
+import PageHeader from "@/components/Headers/PageHeader";
 import PageLoader from "@/components/layout/PageLoader";
 import ProductNav from "../-components/ProductNav";
 import { useAdminCrossCategories } from "@/api/adminApi";
@@ -17,41 +17,44 @@ export const Route = createFileRoute("/admin/products/categories/")({
 });
 
 function RouteComponent() {
-  const query = useAdminCrossCategories();
-  const searchProps = useSearch();
-
   const [typeFilter, setTypeFilter] = useState<string>("all");
+
+  const searchProps = useSearch();
+  const categoriesQuery = useAdminCrossCategories();
+
   const detailsModalRef = useRef<ModalHandle>(null);
   const [selectedCategory, setSelectedCategory] = useState<any | null>(null);
 
-  const rawCategories = useMemo(() => {
-    return Array.isArray(query.data) ? query.data : [];
-  }, [query.data]);
+  const rawCategories = (categoriesQuery.data || []) as any[];
 
-  // Statistics
   const stats = useMemo(() => {
     const total = rawCategories.length;
     const products = rawCategories.filter(
-      (c: any) => (c.type || "product").toLowerCase() === "product",
+      (c) => (c.type || "").toLowerCase() !== "service",
     ).length;
     const services = rawCategories.filter(
-      (c: any) => (c.type || "").toLowerCase() === "service",
+      (c) => (c.type || "").toLowerCase() === "service",
     ).length;
     return { total, products, services };
   }, [rawCategories]);
 
-  // Filtered categories
   const filteredCategories = useMemo(() => {
-    return rawCategories.filter((c: any) => {
+    return rawCategories.filter((c) => {
+      if (searchProps.search) {
+        const query = searchProps.search.toLowerCase();
+        const matchesName = c.name?.toLowerCase().includes(query);
+        const matchesDesc = c.description?.toLowerCase().includes(query);
+        if (!matchesName && !matchesDesc) return false;
+      }
       if (typeFilter === "product") {
-        return (c.type || "product").toLowerCase() === "product";
+        return (c.type || "").toLowerCase() !== "service";
       }
       if (typeFilter === "service") {
         return (c.type || "").toLowerCase() === "service";
       }
       return true;
     });
-  }, [rawCategories, typeFilter]);
+  }, [rawCategories, typeFilter, searchProps.search]);
 
   const handleOpenDetails = (category: any) => {
     setSelectedCategory(category);
@@ -69,18 +72,18 @@ function RouteComponent() {
   return (
     <div>
       <PageHeader
-        title="Category Directory"
-        description="Monitor, audit, and organize catalog classifications across all tenant catalogs"
+        title="Categories Catalog"
+        description="Monitor, audit, and organize item classifications across all platform tenants"
       >
         <div className="flex flex-wrap items-center gap-2">
           <button
-            onClick={() => query.refetch()}
+            onClick={() => categoriesQuery.refetch()}
             className="btn btn-outline btn-sm gap-2"
-            disabled={query.isFetching}
+            disabled={categoriesQuery.isFetching}
           >
             <RefreshCw
               size={15}
-              className={query.isFetching ? "animate-spin" : ""}
+              className={categoriesQuery.isFetching ? "animate-spin" : ""}
             />
             Refresh
           </button>
@@ -89,21 +92,21 @@ function RouteComponent() {
 
       <ProductNav />
 
-      <PageLoader query={query}>
+      <PageLoader query={categoriesQuery}>
         {() => (
           <div className="space-y-6">
-            {/* KPI Cards */}
+            {/* KPI Summary Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div className="bg-base-100 rounded-box border border-base-200 p-4 shadow-sm">
                 <div className="flex items-center gap-3">
                   <div className="bg-primary/10 text-primary p-2.5 rounded-lg">
-                    <Layers size={20} />
+                    <Tag size={20} />
                   </div>
                   <div>
                     <div className="text-2xl font-bold text-base-content">
                       {stats.total}
                     </div>
-                    <div className="text-xs text-base-content/60">
+                    <div className="text-sm text-base-content/60">
                       Total Categories
                     </div>
                   </div>
@@ -119,7 +122,7 @@ function RouteComponent() {
                     <div className="text-2xl font-bold text-info">
                       {stats.products}
                     </div>
-                    <div className="text-xs text-base-content/60">
+                    <div className="text-sm text-base-content/60">
                       Product Categories
                     </div>
                   </div>
@@ -135,7 +138,7 @@ function RouteComponent() {
                     <div className="text-2xl font-bold text-secondary">
                       {stats.services}
                     </div>
-                    <div className="text-xs text-base-content/60">
+                    <div className="text-sm text-base-content/60">
                       Service Categories
                     </div>
                   </div>
@@ -144,7 +147,11 @@ function RouteComponent() {
             </div>
 
             <SimpleContainer>
-              <div className="p-4 border-b border-base-200 flex flex-wrap items-center justify-between gap-4">
+              <ContainerRow
+                showSearch
+                searchProps={searchProps}
+                searchPlaceholder="Search categories..."
+              >
                 {/* Type Filter Pills */}
                 <div className="flex flex-wrap items-center gap-1.5">
                   {[
@@ -155,7 +162,7 @@ function RouteComponent() {
                     <button
                       key={tab.key}
                       onClick={() => setTypeFilter(tab.key)}
-                      className={`btn btn-xs rounded-full ${
+                      className={`btn btn-sm rounded-full text-sm ${
                         typeFilter === tab.key
                           ? "btn-primary text-primary-content"
                           : "btn-ghost text-base-content/70"
@@ -165,81 +172,79 @@ function RouteComponent() {
                     </button>
                   ))}
                 </div>
-              </div>
+              </ContainerRow>
 
-              <ContainerRow {...searchProps}>
-                <CustomTable
-                  actions={actions}
-                  columns={[
-                    {
-                      label: "Category Name",
-                      key: "name",
-                      render: (c: any) => (
-                        <div className="flex items-center gap-3">
-                          <div className="avatar placeholder">
-                            <div className="bg-base-200 text-base-content/70 rounded-lg w-9 h-9 flex items-center justify-center">
-                              <Tag size={16} />
-                            </div>
-                          </div>
-                          <div>
-                            <div className="font-semibold text-base-content">
-                              {c.name}
-                            </div>
-                            {c.description && (
-                              <div className="text-xs text-base-content/60 truncate max-w-sm">
-                                {c.description}
-                              </div>
-                            )}
+              <CustomTable
+                actions={actions}
+                columns={[
+                  {
+                    label: "Category Name",
+                    key: "name",
+                    render: (c: any) => (
+                      <div className="flex items-center gap-3">
+                        <div className="avatar placeholder">
+                          <div className="bg-base-200 text-base-content/70 rounded-lg w-10 h-10 flex items-center justify-center">
+                            <Tag size={18} />
                           </div>
                         </div>
-                      ),
-                    },
-                    {
-                      label: "Type",
-                      key: "type",
-                      render: (c: any) => {
-                        const isService =
-                          (c.type || "").toLowerCase() === "service";
-                        return (
-                          <span
-                            className={`badge badge-sm font-medium ${
-                              isService
-                                ? "badge-secondary badge-outline"
-                                : "badge-info badge-outline"
-                            }`}
-                          >
-                            {isService ? "Service" : "Product"}
-                          </span>
-                        );
-                      },
-                    },
-                    {
-                      label: "Tenant ID",
-                      key: "tenantId",
-                      render: (c: any) => (
-                        <span className="text-xs font-mono text-base-content/60 truncate max-w-[140px] block">
-                          {c.tenantId || "Global / System"}
+                        <div>
+                          <div className="font-semibold text-base-content text-sm">
+                            {c.name}
+                          </div>
+                          {c.description && (
+                            <div className="text-sm text-base-content/60 truncate max-w-sm">
+                              {c.description}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    ),
+                  },
+                  {
+                    label: "Type",
+                    key: "type",
+                    render: (c: any) => {
+                      const isService =
+                        (c.type || "").toLowerCase() === "service";
+                      return (
+                        <span
+                          className={`badge badge-md font-medium text-sm ${
+                            isService
+                              ? "badge-secondary badge-outline"
+                              : "badge-info badge-outline"
+                          }`}
+                        >
+                          {isService ? "Service" : "Product"}
                         </span>
-                      ),
+                      );
                     },
-                    {
-                      label: "Created",
-                      key: "createdAt",
-                      render: (c: any) => (
-                        <span className="text-xs text-base-content/60">
-                          {c.createdAt
-                            ? new Date(c.createdAt).toLocaleDateString()
-                            : "—"}
-                        </span>
-                      ),
-                    },
-                  ]}
-                  data={filteredCategories}
-                />
-              </ContainerRow>
+                  },
+                  {
+                    label: "Tenant ID",
+                    key: "tenantId",
+                    render: (c: any) => (
+                      <span className="text-sm font-mono text-base-content/60 truncate max-w-[140px] block">
+                        {c.tenantId || "Global / System"}
+                      </span>
+                    ),
+                  },
+                  {
+                    label: "Created Date",
+                    key: "createdAt",
+                    render: (c: any) => (
+                      <span className="text-sm text-base-content/60">
+                        {c.createdAt
+                          ? new Date(c.createdAt).toLocaleDateString()
+                          : "—"}
+                      </span>
+                    ),
+                  },
+                ]}
+                data={filteredCategories}
+              />
             </SimpleContainer>
 
-            {/* Details Modal */}
+            {/* Category Details Modal */}
             <Modal ref={detailsModalRef}>
               {selectedCategory && (
                 <div className="p-6 space-y-6">
@@ -252,49 +257,49 @@ function RouteComponent() {
                         <h3 className="text-xl font-bold text-base-content">
                           {selectedCategory.name}
                         </h3>
-                        <p className="text-xs text-base-content/60 font-mono">
-                          ID: {selectedCategory.id}
+                        <p className="text-sm text-base-content/60">
+                          Category ID: {selectedCategory.id}
                         </p>
                       </div>
                     </div>
                     <span
-                      className={`badge badge-md ${
+                      className={`badge badge-md text-sm ${
                         (selectedCategory.type || "").toLowerCase() ===
                         "service"
                           ? "badge-secondary"
                           : "badge-info"
                       }`}
                     >
-                      {selectedCategory.type || "Product"}
+                      {(selectedCategory.type || "Product").toUpperCase()}
                     </span>
                   </div>
 
                   <div className="grid grid-cols-2 gap-4">
                     <div className="bg-base-200/50 p-3 rounded-lg">
-                      <span className="text-xs text-base-content/60 block">
+                      <span className="text-sm text-base-content/60 block">
                         Tenant Scope
                       </span>
-                      <span className="text-xs font-mono text-base-content font-semibold break-all">
-                        {selectedCategory.tenantId || "Platform / Global"}
+                      <span className="text-sm font-mono text-base-content break-all">
+                        {selectedCategory.tenantId || "Global / System"}
                       </span>
                     </div>
                     <div className="bg-base-200/50 p-3 rounded-lg">
-                      <span className="text-xs text-base-content/60 block">
-                        Created Date
+                      <span className="text-sm text-base-content/60 block">
+                        Created At
                       </span>
                       <span className="text-sm font-semibold text-base-content">
                         {selectedCategory.createdAt
                           ? new Date(
                               selectedCategory.createdAt,
                             ).toLocaleString()
-                          : "N/A"}
+                          : "—"}
                       </span>
                     </div>
                   </div>
 
                   {selectedCategory.description && (
                     <div className="bg-base-200/30 p-4 rounded-lg">
-                      <span className="text-xs font-semibold text-base-content/70 block mb-1">
+                      <span className="text-sm font-semibold text-base-content/70 block mb-1">
                         Description
                       </span>
                       <p className="text-sm text-base-content/80 whitespace-pre-wrap">
