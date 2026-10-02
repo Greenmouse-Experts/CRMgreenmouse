@@ -1,36 +1,81 @@
-export default function UserInfo() {
+import { useStaff } from "@/api/adminApi";
+
+interface UserInfoProps {
+  id?: string;
+}
+
+export default function UserInfo({ id }: UserInfoProps) {
+  const query = useStaff(id || "");
+  const staff = query.data;
+
+  const fullName = staff
+    ? `${staff.firstName || ""} ${staff.lastName || ""}`.trim() || staff.email
+    : "Staff Member";
+
   return (
-    <div className="flex flex-col sm:flex-row items-center sm:items-start px-8 py-8 bg-white shadow-lg rounded-xl gap-8">
-      <figure className="w-36 h-36 rounded-full overflow-hidden shrink-0 ring-4 ring-blue-500 ring-offset-2">
-        <img
-          src="https://github.com/shadcn.png" // Replace with the actual path to the image
-          alt="Amber Leary"
-          className="object-cover w-full h-full"
-        />
+    <div className="flex flex-col sm:flex-row items-center sm:items-start px-8 py-8 bg-base-100 shadow-md rounded-xl gap-8 border border-base-200">
+      <figure className="w-32 h-32 rounded-full overflow-hidden shrink-0 ring-4 ring-primary ring-offset-2 bg-primary/10 flex items-center justify-center">
+        {staff?.profilePic ? (
+          <img
+            src={staff.profilePic}
+            alt={fullName}
+            className="object-cover w-full h-full"
+          />
+        ) : (
+          <span className="text-4xl font-bold text-primary">
+            {fullName.charAt(0).toUpperCase()}
+          </span>
+        )}
       </figure>
-      <div className="card-body p-0 text-center sm:text-left">
-        <h2 className="card-title text-3xl font-extrabold text-gray-900 mb-2">
-          Amber Leary
+
+      <div className="card-body p-0 text-center sm:text-left flex-1">
+        <h2 className="card-title text-2xl font-bold text-base-content mb-1">
+          {fullName}
         </h2>
-        <p className="text-lg text-blue-600 mb-6">Engineer</p>
-        <div className="space-y-3 text-base">
+        <p className="text-sm font-semibold text-primary mb-4">
+          {staff?.role?.name || "Administrator"}
+        </p>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
           <div className="flex items-center">
-            <div className="font-medium text-gray-500 w-36 shrink-0">
-              Date of Birth
-            </div>
-            <div className="text-gray-800">06/16/1988</div>
+            <span className="font-medium text-base-content/60 w-32 shrink-0">
+              Email
+            </span>
+            <span className="text-base-content font-medium break-all">
+              {staff?.email || "—"}
+            </span>
           </div>
           <div className="flex items-center">
-            <div className="font-medium text-gray-500 w-36 shrink-0">
-              Work Phone
-            </div>
-            <div className="text-gray-800">555-221-1011</div>
+            <span className="font-medium text-base-content/60 w-32 shrink-0">
+              Phone
+            </span>
+            <span className="text-base-content font-medium">
+              {staff?.phoneNumber || "—"}
+            </span>
           </div>
           <div className="flex items-center">
-            <div className="font-medium text-gray-500 w-36 shrink-0">Email</div>
-            <div className="text-blue-500 hover:underline cursor-pointer break-all">
-              clear@emailprovider.com
-            </div>
+            <span className="font-medium text-base-content/60 w-32 shrink-0">
+              Status
+            </span>
+            <span
+              className={`badge badge-sm font-semibold capitalize ${
+                staff?.status === "active"
+                  ? "badge-success text-white"
+                  : "badge-ghost"
+              }`}
+            >
+              {staff?.status || "active"}
+            </span>
+          </div>
+          <div className="flex items-center">
+            <span className="font-medium text-base-content/60 w-32 shrink-0">
+              Member Since
+            </span>
+            <span className="text-base-content font-medium">
+              {staff?.createdAt
+                ? new Date(staff.createdAt).toLocaleDateString()
+                : "—"}
+            </span>
           </div>
         </div>
       </div>
