@@ -15,10 +15,10 @@ import type { Actions } from "@/components/tables/pop-up";
 import PageLoader from "@/components/layout/PageLoader";
 import QueryCompLayout from "@/components/layout/QueryCompLayout";
 import Modal, { type ModalHandle } from "@/components/DialogModal";
+import SearchBar from "@/components/Searchbar";
 import { toast } from "sonner";
 import {
   Building2,
-  Search,
   CheckCircle,
   ShieldAlert,
   UserCheck,
@@ -291,17 +291,13 @@ function RouteComponent() {
           </div>
         }
       >
-        <div className="p-4 border-b border-base-200 flex flex-wrap items-center gap-3">
-          <div className="relative flex-1 min-w-[240px]">
-            <Search className="size-4 absolute left-3 top-1/2 -translate-y-1/2 text-base-content/40" />
-            <input
-              type="text"
-              placeholder="Search by company or email..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="input input-sm input-bordered w-full pl-9"
-            />
-          </div>
+        <div className="p-4 border-b border-base-200 flex flex-wrap items-center justify-between gap-3">
+          <SearchBar
+            value={searchTerm}
+            onChange={setSearchTerm}
+            placeholder="Search by company or email..."
+            className="flex-1 min-w-[240px]"
+          />
 
           <div className="flex items-center gap-2">
             <select
