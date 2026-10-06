@@ -21,11 +21,8 @@ import {
   HardHat,
   Scale,
   Users,
-
   Sun,
   Moon,
-  Briefcase,
-  Sparkles,
 } from "lucide-react";
 import {
   useOnboardingStore,
@@ -219,7 +216,12 @@ const HEAR_ABOUT_US = [
   "Other",
 ];
 
-const THEMES = [
+const THEMES: Array<{
+  id: "light" | "dark";
+  label: string;
+  description: string;
+  icon: typeof Sun;
+}> = [
   {
     id: "light",
     label: "Light",
@@ -231,18 +233,6 @@ const THEMES = [
     label: "Dark",
     description: "Easy on the eyes in low light",
     icon: Moon,
-  },
-  {
-    id: "corporate",
-    label: "Corporate",
-    description: "Professional executive palette",
-    icon: Briefcase,
-  },
-  {
-    id: "emerald",
-    label: "Emerald",
-    description: "Fresh and vibrant green accents",
-    icon: Sparkles,
   },
 ];
 
@@ -265,7 +255,7 @@ function OnboardingWizard() {
         industry: onboardingData.industry || undefined,
         teamSize: onboardingData.teamSize || undefined,
         logo: onboardingData.logo || null,
-        theme: onboardingData.theme || "light",
+        theme: onboardingData.theme === "dark" ? "dark" : "light",
         companyAddress: onboardingData.companyAddress || undefined,
         companyCity: onboardingData.companyCity || undefined,
         companyCountry: onboardingData.companyCountry || "Nigeria",
@@ -307,6 +297,7 @@ function OnboardingWizard() {
     const updated: OnboardingFormData = {
       ...formData,
       ...payload,
+      theme: payload.theme === "dark" ? "dark" : payload.theme === "light" ? "light" : formData.theme,
       teamSize: payload.teamSize || formData.teamSize || "1-20",
     };
     updateFormData(updated);
@@ -315,7 +306,7 @@ function OnboardingWizard() {
       ...(updated.industry ? { industry: updated.industry } : {}),
       ...(updated.teamSize ? { teamSize: updated.teamSize } : {}),
       ...(updated.logo !== undefined ? { logo: updated.logo } : {}),
-      ...(updated.theme ? { theme: updated.theme } : {}),
+      theme: updated.theme === "dark" ? "dark" : "light",
       ...(updated.companyAddress
         ? { companyAddress: updated.companyAddress }
         : {}),
@@ -561,8 +552,7 @@ function IndustryStep({
               }`}
             >
               <span
-                className={`flex items-center justify-center w-10 h-10 rounded-full bg-white/70 shrink-0 ${ind.iconColor}`}
-              >
+                className={`flex items-center justify-center w-10 h-10 rounded-full bg-white/70 shrink-0 ${ind.iconColor}`}>
                 <Icon size={20} />
               </span>
               {ind.label}
@@ -588,7 +578,8 @@ function LocationStep({
       companyAddress: (fd.get("companyAddress") as string).trim(),
       companyState: (fd.get("companyState") as string).trim(),
       companyCity: (fd.get("companyCity") as string).trim(),
-      companyCountry: (fd.get("companyCountry") as string).trim() || "Nigeria",
+      companyCountry:
+        (fd.get("companyCountry") as string).trim() || "Nigeria",
     });
   };
 
@@ -907,7 +898,9 @@ function ThemeStep({
   advance,
   prevStep,
 }: Pick<StepProps, "formData" | "advance" | "prevStep">) {
-  const [selectedTheme, setSelectedTheme] = useState(formData.theme || "light");
+  const [selectedTheme, setSelectedTheme] = useState<"light" | "dark">(
+    formData.theme === "dark" ? "dark" : "light",
+  );
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -923,11 +916,11 @@ function ThemeStep({
           theme
         </h2>
         <p className="text-sm text-base-content/60">
-          Select the interface theme that best suits your team.
+          Select between light and dark interface mode for your team.
         </p>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {THEMES.map((theme) => {
           const Icon = theme.icon;
           const isSelected = selectedTheme === theme.id;
@@ -936,26 +929,26 @@ function ThemeStep({
               key={theme.id}
               type="button"
               onClick={() => setSelectedTheme(theme.id)}
-              className={`p-4 rounded-2xl border-2 text-left transition-all hover:scale-[1.01] flex items-start gap-3.5 ${
+              className={`p-5 rounded-2xl border-2 text-left transition-all hover:scale-[1.01] flex items-start gap-4 ${
                 isSelected
                   ? "border-primary bg-primary/5 ring-2 ring-primary ring-offset-1"
                   : "border-base-200 bg-base-100 hover:border-base-300"
               }`}
             >
               <div
-                className={`p-2.5 rounded-xl shrink-0 ${
+                className={`p-3 rounded-xl shrink-0 ${
                   isSelected
                     ? "bg-primary text-primary-content"
                     : "bg-base-200 text-base-content/70"
                 }`}
               >
-                <Icon size={20} />
+                <Icon size={24} />
               </div>
-              <div className="space-y-0.5">
-                <div className="font-bold text-sm text-base-content">
+              <div className="space-y-1">
+                <div className="font-bold text-base text-base-content">
                   {theme.label}
                 </div>
-                <div className="text-xs text-base-content/60">
+                <div className="text-xs text-base-content/60 leading-relaxed">
                   {theme.description}
                 </div>
               </div>

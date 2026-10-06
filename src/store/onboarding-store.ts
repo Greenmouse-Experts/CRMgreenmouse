@@ -5,7 +5,7 @@ export interface OnboardingFormData {
   industry: string;
   teamSize: string;
   logo: string | null;
-  theme: string;
+  theme: "light" | "dark";
   companyAddress: string;
   companyCity: string;
   companyCountry: string;
@@ -54,6 +54,12 @@ export const useOnboardingStore = create<OnboardingState>()(
           formData: {
             ...state.formData,
             ...data,
+            theme:
+              data.theme === "dark"
+                ? "dark"
+                : data.theme === "light"
+                  ? "light"
+                  : state.formData.theme,
             teamSize: data.teamSize || state.formData.teamSize || "1-20",
           },
         })),
@@ -71,6 +77,7 @@ export const useOnboardingStore = create<OnboardingState>()(
         formData: {
           ...currentState.formData,
           ...(persistedState?.formData ?? {}),
+          theme: persistedState?.formData?.theme === "dark" ? "dark" : "light",
           teamSize: persistedState?.formData?.teamSize || "1-20",
         },
       }),
