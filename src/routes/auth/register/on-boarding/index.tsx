@@ -21,6 +21,11 @@ import {
   HardHat,
   Scale,
   Users,
+
+  Sun,
+  Moon,
+  Briefcase,
+  Sparkles,
 } from "lucide-react";
 import {
   useOnboardingStore,
@@ -35,7 +40,7 @@ export const Route = createFileRoute("/auth/register/on-boarding/")({
   component: OnboardingWizard,
 });
 
-const TOTAL_STEPS = 9;
+const TOTAL_STEPS = 8;
 
 enum Industry {
   TECHNOLOGY = "Technology",
@@ -214,6 +219,33 @@ const HEAR_ABOUT_US = [
   "Other",
 ];
 
+const THEMES = [
+  {
+    id: "light",
+    label: "Light",
+    description: "Crisp and clear workspace default",
+    icon: Sun,
+  },
+  {
+    id: "dark",
+    label: "Dark",
+    description: "Easy on the eyes in low light",
+    icon: Moon,
+  },
+  {
+    id: "corporate",
+    label: "Corporate",
+    description: "Professional executive palette",
+    icon: Briefcase,
+  },
+  {
+    id: "emerald",
+    label: "Emerald",
+    description: "Fresh and vibrant green accents",
+    icon: Sparkles,
+  },
+];
+
 function OnboardingWizard() {
   const nav = useNavigate();
   const { step, formData, nextStep, prevStep, updateFormData, setStep } =
@@ -223,22 +255,35 @@ function OnboardingWizard() {
     queryKey: ["onboarding-status"],
     queryFn: () =>
       apiClient
-        .get("/tenant/onboarding/")
+        .get("/tenant/onboarding")
         .then((res) => res.data?.data ?? res.data),
   });
 
   useEffect(() => {
     if (onboardingData) {
       updateFormData({
-        ...onboardingData,
-        teamSize: onboardingData.teamSize || "1-20",
+        industry: onboardingData.industry || undefined,
+        teamSize: onboardingData.teamSize || undefined,
+        logo: onboardingData.logo || null,
+        theme: onboardingData.theme || "light",
+        companyAddress: onboardingData.companyAddress || undefined,
+        companyCity: onboardingData.companyCity || undefined,
+        companyCountry: onboardingData.companyCountry || "Nigeria",
+        companyWebsite: onboardingData.companyWebsite || undefined,
+        companyState: onboardingData.companyState || undefined,
+        businessType: onboardingData.businessType || undefined,
+        isCacRegistered:
+          onboardingData.isCacRegistered !== undefined
+            ? Boolean(onboardingData.isCacRegistered)
+            : false,
+        hearAboutUs: onboardingData.hearAboutUs || undefined,
       });
     }
   }, [onboardingData, updateFormData]);
 
   const patchMutation = useMutation({
-    mutationFn: (payload: Partial<typeof formData>) =>
-      apiClient.patch("/tenant/onboarding/", payload).then((r) => r.data),
+    mutationFn: (payload: Partial<OnboardingFormData>) =>
+      apiClient.patch("/tenant/onboarding", payload).then((r) => r.data),
     onError: (err: any) => {
       toast.error(err?.response?.data?.message ?? "Failed to save progress");
     },
@@ -258,15 +303,36 @@ function OnboardingWizard() {
     },
   });
 
-  const advance = async (payload: Partial<typeof formData>) => {
-    const updated = {
+  const advance = async (payload: Partial<OnboardingFormData>) => {
+    const updated: OnboardingFormData = {
       ...formData,
       ...payload,
       teamSize: payload.teamSize || formData.teamSize || "1-20",
     };
     updateFormData(updated);
 
-    const { _id, isOnboarded, ...patchPayload } = updated as any;
+    const patchPayload: Partial<OnboardingFormData> = {
+      ...(updated.industry ? { industry: updated.industry } : {}),
+      ...(updated.teamSize ? { teamSize: updated.teamSize } : {}),
+      ...(updated.logo !== undefined ? { logo: updated.logo } : {}),
+      ...(updated.theme ? { theme: updated.theme } : {}),
+      ...(updated.companyAddress
+        ? { companyAddress: updated.companyAddress }
+        : {}),
+      ...(updated.companyCity ? { companyCity: updated.companyCity } : {}),
+      ...(updated.companyCountry
+        ? { companyCountry: updated.companyCountry }
+        : {}),
+      ...(updated.companyWebsite
+        ? { companyWebsite: updated.companyWebsite }
+        : {}),
+      ...(updated.companyState ? { companyState: updated.companyState } : {}),
+      ...(updated.businessType ? { businessType: updated.businessType } : {}),
+      ...(updated.isCacRegistered !== undefined
+        ? { isCacRegistered: Boolean(updated.isCacRegistered) }
+        : {}),
+      ...(updated.hearAboutUs ? { hearAboutUs: updated.hearAboutUs } : {}),
+    };
 
     if (step === TOTAL_STEPS) {
       try {
@@ -276,7 +342,7 @@ function OnboardingWizard() {
         // Handled in patchMutation.onError
       }
     } else {
-      // Update/patch on every other step (steps 2, 4, 6, 8) to avoid overwhelming the backend
+      // Autosave periodically
       if (step % 2 === 0) {
         patchMutation.mutate(patchPayload);
       }
@@ -289,7 +355,7 @@ function OnboardingWizard() {
   return (
     <div className="space-y-6 animate-in fade-in duration-300">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight">Kinovia</h1>
+        <h1 className="text-2xl font-bold tracking-tight">CRM</h1>
       </div>
 
       {/* Progress bar */}
@@ -328,7 +394,7 @@ function OnboardingWizard() {
 interface StepProps {
   step: number;
   formData: OnboardingFormData;
-  advance: (payload: any) => void;
+  advance: (payload: Partial<OnboardingFormData>) => void;
   prevStep: () => void;
   isPending: boolean;
 }
@@ -345,17 +411,13 @@ function StepContent({
       return <IndustryStep formData={formData} advance={advance} />;
     case 2:
       return (
-        <EmailStep formData={formData} advance={advance} prevStep={prevStep} />
-      );
-    case 3:
-      return (
         <LocationStep
           formData={formData}
           advance={advance}
           prevStep={prevStep}
         />
       );
-    case 4:
+    case 3:
       return (
         <TeamSizeStep
           formData={formData}
@@ -363,7 +425,7 @@ function StepContent({
           prevStep={prevStep}
         />
       );
-    case 5:
+    case 4:
       return (
         <CompanyWebsiteStep
           formData={formData}
@@ -371,9 +433,9 @@ function StepContent({
           prevStep={prevStep}
         />
       );
-    case 6:
+    case 5:
       return <LogoUploadStep advance={advance} prevStep={prevStep} />;
-    case 7:
+    case 6:
       return (
         <BusinessTypeStep
           formData={formData}
@@ -381,17 +443,13 @@ function StepContent({
           prevStep={prevStep}
         />
       );
+    case 7:
+      return (
+        <ThemeStep formData={formData} advance={advance} prevStep={prevStep} />
+      );
     case 8:
       return (
         <HearAboutUsStep
-          formData={formData}
-          advance={advance}
-          prevStep={prevStep}
-        />
-      );
-    case 9:
-      return (
-        <CreateAccountStep
           formData={formData}
           advance={advance}
           prevStep={prevStep}
@@ -484,7 +542,7 @@ function IndustryStep({
           describes your business?
         </h2>
         <p className="text-sm text-base-content/60">
-          This helps us customize your experience
+          This helps us customize your workspace experience
         </p>
       </div>
 
@@ -516,55 +574,7 @@ function IndustryStep({
   );
 }
 
-/* ─────────────────────── Step 2: Email ─────────────────────── */
-
-function EmailStep({
-  formData,
-  advance,
-  prevStep,
-}: Pick<StepProps, "formData" | "advance" | "prevStep">) {
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const fd = new FormData(e.currentTarget);
-    const email = (fd.get("email") as string).trim();
-    if (!email) return;
-    advance({ email });
-  };
-
-  return (
-    <form onSubmit={handleSubmit} className="space-y-6">
-      <div className="space-y-1">
-        <h2 className="text-2xl font-bold leading-snug">
-          What is your company
-          <br />
-          email?
-        </h2>
-        <p className="text-sm text-base-content/60">
-          We'll use this email for account notifications, billing, and workspace
-          communication.
-        </p>
-      </div>
-
-      <div className="space-y-1">
-        <input
-          name="email"
-          type="email"
-          defaultValue={formData.email}
-          placeholder="Enter your Email"
-          required
-          className="input input-bordered w-full"
-        />
-        <p className="text-xs text-primary italic">
-          Ensure this email is valid.
-        </p>
-      </div>
-
-      <NavRow onBack={prevStep} />
-    </form>
-  );
-}
-
-/* ─────────────────────── Step 3: Location ─────────────────────── */
+/* ─────────────────────── Step 2: Location & Address ─────────────────────── */
 
 function LocationStep({
   formData,
@@ -575,8 +585,10 @@ function LocationStep({
     e.preventDefault();
     const fd = new FormData(e.currentTarget);
     advance({
-      companyState: fd.get("companyState") as string,
-      companyCity: fd.get("companyCity") as string,
+      companyAddress: (fd.get("companyAddress") as string).trim(),
+      companyState: (fd.get("companyState") as string).trim(),
+      companyCity: (fd.get("companyCity") as string).trim(),
+      companyCountry: (fd.get("companyCountry") as string).trim() || "Nigeria",
     });
   };
 
@@ -589,36 +601,75 @@ function LocationStep({
           located?
         </h2>
         <p className="text-sm text-base-content/60">
-          We'll use this to tailor your workspace experience and localization
-          settings.
+          Enter your company address and location details.
         </p>
       </div>
 
-      <div className="flex gap-3">
-        <select
-          name="companyState"
-          defaultValue={formData.companyState}
-          required
-          className="select select-bordered flex-1"
-        >
-          <option value="" disabled>
-            Select State
-          </option>
-          {NIGERIAN_STATES.map((s) => (
-            <option key={s} value={s}>
-              {s}
-            </option>
-          ))}
-        </select>
+      <div className="space-y-4">
+        <div className="space-y-1.5">
+          <label className="text-sm font-semibold fieldset-label">
+            Street Address *
+          </label>
+          <input
+            name="companyAddress"
+            type="text"
+            defaultValue={formData.companyAddress}
+            placeholder="e.g. 15 Marina Road"
+            required
+            className="input input-bordered w-full"
+          />
+        </div>
 
-        <input
-          name="companyCity"
-          type="text"
-          defaultValue={formData.companyCity}
-          placeholder="Enter Area"
-          required
-          className="input input-bordered flex-1"
-        />
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div className="space-y-1.5">
+            <label className="text-sm font-semibold fieldset-label">
+              State *
+            </label>
+            <select
+              name="companyState"
+              defaultValue={formData.companyState}
+              required
+              className="select select-bordered w-full"
+            >
+              <option value="" disabled>
+                Select State
+              </option>
+              {NIGERIAN_STATES.map((s) => (
+                <option key={s} value={s}>
+                  {s}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="space-y-1.5">
+            <label className="text-sm font-semibold fieldset-label">
+              City / Town *
+            </label>
+            <input
+              name="companyCity"
+              type="text"
+              defaultValue={formData.companyCity}
+              placeholder="e.g. Lagos"
+              required
+              className="input input-bordered w-full"
+            />
+          </div>
+        </div>
+
+        <div className="space-y-1.5">
+          <label className="text-sm font-semibold fieldset-label">
+            Country *
+          </label>
+          <input
+            name="companyCountry"
+            type="text"
+            defaultValue={formData.companyCountry || "Nigeria"}
+            placeholder="Nigeria"
+            required
+            className="input input-bordered w-full"
+          />
+        </div>
       </div>
 
       <NavRow onBack={prevStep} />
@@ -626,7 +677,7 @@ function LocationStep({
   );
 }
 
-/* ─────────────────────── Step 4: Team Size ─────────────────────── */
+/* ─────────────────────── Step 3: Team Size ─────────────────────── */
 
 function TeamSizeStep({
   formData,
@@ -650,12 +701,12 @@ function TeamSizeStep({
     <form onSubmit={handleSubmit} className="space-y-6">
       <div className="space-y-1">
         <h2 className="text-2xl font-bold leading-snug">
-          What is your customer
+          What is your staff /
           <br />
-          size?
+          team size?
         </h2>
         <p className="text-sm text-base-content/60">
-          Choose the staff strength that best matches your business operations.
+          Choose the team strength that best matches your business operations.
         </p>
       </div>
 
@@ -680,7 +731,7 @@ function TeamSizeStep({
   );
 }
 
-/* ─────────────────────── Step 5: Website ─────────────────────── */
+/* ─────────────────────── Step 4: Company Website ─────────────────────── */
 
 function CompanyWebsiteStep({
   formData,
@@ -691,8 +742,7 @@ function CompanyWebsiteStep({
     e.preventDefault();
     const fd = new FormData(e.currentTarget);
     advance({
-      companyWebsite: fd.get("companyWebsite") as string,
-      companyCountry: fd.get("companyCountry") as string,
+      companyWebsite: (fd.get("companyWebsite") as string).trim(),
     });
   };
 
@@ -703,7 +753,7 @@ function CompanyWebsiteStep({
           Your online presence
         </h2>
         <p className="text-sm text-base-content/60">
-          Help your customers and team find you easily.
+          Enter your company website URL (if available).
         </p>
       </div>
 
@@ -719,20 +769,9 @@ function CompanyWebsiteStep({
             placeholder="https://yourcompany.com"
             className="input input-bordered w-full"
           />
-        </div>
-
-        <div className="space-y-1.5">
-          <label className="text-sm font-semibold fieldset-label">
-            Country
-          </label>
-          <input
-            name="companyCountry"
-            type="text"
-            defaultValue={formData.companyCountry}
-            placeholder="Nigeria"
-            required
-            className="input input-bordered w-full"
-          />
+          <p className="text-xs text-base-content/50">
+            Optional: Leave blank if your company does not have a website yet.
+          </p>
         </div>
       </div>
 
@@ -741,7 +780,7 @@ function CompanyWebsiteStep({
   );
 }
 
-/* ─────────────────────── Step 6: Logo Upload ─────────────────────── */
+/* ─────────────────────── Step 5: Logo Upload ─────────────────────── */
 
 function LogoUploadStep({
   advance,
@@ -757,16 +796,16 @@ function LogoUploadStep({
       setIsUploading(true);
       try {
         const response = await uploadImage(selectImageProps.image);
-        // Using response.payload?.url or response.url based on common patterns
-        const logoUrl = (response as any).payload?.url || (response as any).url;
+        const logoUrl =
+          (response as any).payload?.url || (response as any).url || null;
         advance({ logo: logoUrl });
-      } catch (error) {
+      } catch {
         toast.error("Failed to upload logo. Please try again.");
       } finally {
         setIsUploading(false);
       }
     } else {
-      advance({}); // No change
+      advance({}); // Keep current logo or continue
     }
   };
 
@@ -792,7 +831,7 @@ function LogoUploadStep({
   );
 }
 
-/* ─────────────────────── Step 7: Business Type ─────────────────────── */
+/* ─────────────────────── Step 6: Business Type ─────────────────────── */
 
 function BusinessTypeStep({
   formData,
@@ -824,7 +863,7 @@ function BusinessTypeStep({
       <div className="space-y-4">
         <div className="space-y-1.5">
           <label className="text-sm font-semibold fieldset-label">
-            Business Type
+            Business Type *
           </label>
           <select
             name="businessType"
@@ -843,7 +882,7 @@ function BusinessTypeStep({
           </select>
         </div>
 
-        <label className="flex items-center gap-3 cursor-pointer">
+        <label className="flex items-center gap-3 cursor-pointer pt-2">
           <input
             type="checkbox"
             name="isCacRegistered"
@@ -861,13 +900,83 @@ function BusinessTypeStep({
   );
 }
 
-/* ─────────────────────── Step 8: Hear About us ─────────────────────── */
+/* ─────────────────────── Step 7: Workspace Theme ─────────────────────── */
+
+function ThemeStep({
+  formData,
+  advance,
+  prevStep,
+}: Pick<StepProps, "formData" | "advance" | "prevStep">) {
+  const [selectedTheme, setSelectedTheme] = useState(formData.theme || "light");
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    advance({ theme: selectedTheme });
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-6">
+      <div className="space-y-1">
+        <h2 className="text-2xl font-bold leading-snug">
+          Choose your workspace
+          <br />
+          theme
+        </h2>
+        <p className="text-sm text-base-content/60">
+          Select the interface theme that best suits your team.
+        </p>
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        {THEMES.map((theme) => {
+          const Icon = theme.icon;
+          const isSelected = selectedTheme === theme.id;
+          return (
+            <button
+              key={theme.id}
+              type="button"
+              onClick={() => setSelectedTheme(theme.id)}
+              className={`p-4 rounded-2xl border-2 text-left transition-all hover:scale-[1.01] flex items-start gap-3.5 ${
+                isSelected
+                  ? "border-primary bg-primary/5 ring-2 ring-primary ring-offset-1"
+                  : "border-base-200 bg-base-100 hover:border-base-300"
+              }`}
+            >
+              <div
+                className={`p-2.5 rounded-xl shrink-0 ${
+                  isSelected
+                    ? "bg-primary text-primary-content"
+                    : "bg-base-200 text-base-content/70"
+                }`}
+              >
+                <Icon size={20} />
+              </div>
+              <div className="space-y-0.5">
+                <div className="font-bold text-sm text-base-content">
+                  {theme.label}
+                </div>
+                <div className="text-xs text-base-content/60">
+                  {theme.description}
+                </div>
+              </div>
+            </button>
+          );
+        })}
+      </div>
+
+      <NavRow onBack={prevStep} />
+    </form>
+  );
+}
+
+/* ─────────────────────── Step 8: Hear About Us ─────────────────────── */
 
 function HearAboutUsStep({
   formData,
   advance,
   prevStep,
-}: Pick<StepProps, "formData" | "advance" | "prevStep">) {
+  isPending,
+}: Pick<StepProps, "formData" | "advance" | "prevStep" | "isPending">) {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const fd = new FormData(e.currentTarget);
@@ -905,83 +1014,11 @@ function HearAboutUsStep({
         ))}
       </select>
 
-      <NavRow onBack={prevStep} />
-    </form>
-  );
-}
-
-/* ─────────────────────── Step 9: Create Account ─────────────────────── */
-
-function CreateAccountStep({
-  formData,
-  advance,
-  prevStep,
-  isPending,
-}: Pick<StepProps, "formData" | "advance" | "prevStep" | "isPending">) {
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const fd = new FormData(e.currentTarget);
-    advance({
-      fullName: fd.get("fullName") as string,
-      phoneNumber: fd.get("phoneNumber") as string,
-      username: fd.get("username") as string,
-    });
-  };
-
-  return (
-    <form onSubmit={handleSubmit} className="space-y-6">
-      <div className="space-y-1">
-        <h2 className="text-2xl font-bold leading-snug">Create your account</h2>
-        <p className="text-sm text-base-content/60">
-          Set up your login credentials to securely access your workspace.
-        </p>
-      </div>
-
-      <div className="space-y-4">
-        <div className="space-y-1.5">
-          <label className="text-sm font-semibold fieldset-label">
-            Full Name
-          </label>
-          <input
-            name="fullName"
-            type="text"
-            defaultValue={formData.fullName}
-            placeholder="Please enter your full name"
-            required
-            className="input input-bordered w-full"
-          />
-        </div>
-
-        <div className="space-y-1.5">
-          <label className="text-sm font-semibold fieldset-label">
-            Phone Number
-          </label>
-          <input
-            name="phoneNumber"
-            type="tel"
-            defaultValue={formData.phoneNumber}
-            placeholder="Enter your Phone Number"
-            required
-            className="input input-bordered w-full"
-          />
-        </div>
-
-        <div className="space-y-1.5">
-          <label className="text-sm font-semibold fieldset-label">
-            Username
-          </label>
-          <input
-            name="username"
-            type="text"
-            defaultValue={formData.username}
-            placeholder="Please enter your desired Username"
-            required
-            className="input input-bordered w-full"
-          />
-        </div>
-      </div>
-
-      <NavRow onBack={prevStep} isPending={isPending} label="Submit" />
+      <NavRow
+        onBack={prevStep}
+        isPending={isPending}
+        label="Complete Onboarding"
+      />
     </form>
   );
 }

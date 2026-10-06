@@ -2,25 +2,18 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
 export interface OnboardingFormData {
-  _id: string;
-  email: string;
   industry: string;
   teamSize: string;
-  companyName: string;
+  logo: string | null;
+  theme: string;
+  companyAddress: string;
   companyCity: string;
   companyCountry: string;
   companyWebsite: string;
   companyState: string;
-  companyAddress: string;
   businessType: string;
   isCacRegistered: boolean;
   hearAboutUs: string;
-  fullName: string;
-  phoneNumber: string;
-  username: string;
-  logo: string | null;
-  theme: string;
-  isOnboarded: boolean;
 }
 
 interface OnboardingState {
@@ -34,25 +27,18 @@ interface OnboardingState {
 }
 
 const defaultFormData: OnboardingFormData = {
-  _id: "",
-  email: "",
   industry: "",
   teamSize: "1-20",
-  companyName: "",
+  logo: null,
+  theme: "light",
+  companyAddress: "",
   companyCity: "",
   companyCountry: "Nigeria",
   companyWebsite: "",
   companyState: "",
-  companyAddress: "",
   businessType: "",
   isCacRegistered: false,
   hearAboutUs: "",
-  fullName: "",
-  phoneNumber: "",
-  username: "",
-  logo: null,
-  theme: "light",
-  isOnboarded: false,
 };
 
 export const useOnboardingStore = create<OnboardingState>()(

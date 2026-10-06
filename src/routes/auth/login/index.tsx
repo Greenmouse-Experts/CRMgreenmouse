@@ -6,7 +6,6 @@ import { toast } from "sonner";
 import SimpleInput from "@/components/inputs/SimpleInput";
 import apiClient, { new_url } from "@/client/api";
 import { set_user_value, set_profile_value } from "@/store/authStore";
-import { useOnboardingStore } from "@/store/onboarding-store";
 import axios from "axios";
 
 export const Route = createFileRoute("/auth/login/")({
@@ -31,7 +30,6 @@ function RouteComponent() {
       email: email || "",
     },
   });
-  const { updateFormData } = useOnboardingStore();
 
   const { mutate, isPending } = useMutation({
     mutationFn: (data: LoginProps) =>
@@ -50,13 +48,6 @@ function RouteComponent() {
         if (profileData) {
           // Store detailed profile in auth store
           set_profile_value(profileData);
-
-          updateFormData({
-            _id: profileData.sub,
-            email: profileData.email,
-            companyName: profileData.companyName,
-            isOnboarded: profileData.isOnboarded,
-          });
 
           if (!profileData.isOnboarded) {
             nav({ to: "/auth/register/on-boarding" });
