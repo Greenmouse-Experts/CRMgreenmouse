@@ -1,132 +1,89 @@
 import SimpleContainer from "@/components/SimpleContainer";
-import { PieChart, Pie, Cell } from "recharts";
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
+import { useDashboardUserAnalytics } from "@/api/tenantApi";
 
-// #region Sample data
+export default function PieChartExample() {
+  const query = useDashboardUserAnalytics();
+  const data = query.data;
 
-const data02 = [
-  {
-    name: "Users",
-    value: 2400,
-    color: "#8884d8",
-  },
-  {
-    name: "Products",
-    value: 4567,
-    color: "#83a6ed",
-  },
-  {
-    name: "Expenses",
-    value: 1398,
-    color: "#8dd1e1",
-  },
-  {
-    name: "Revenue",
-    value: 9800,
-    color: "#82ca9d",
-  },
-  {
-    name: "Marketing",
-    value: 3908,
-    color: "#a4de6c",
-  },
-];
+  const chartData = [
+    {
+      name: "Users",
+      value: data?.users ?? 0,
+      color: "#007047",
+    },
+    {
+      name: "Products",
+      value: data?.products ?? 0,
+      color: "#3b82f6",
+    },
+    {
+      name: "Expenses",
+      value: data?.expenses ?? 0,
+      color: "#ef4444",
+    },
+    {
+      name: "Revenue",
+      value: data?.revenue ?? 0,
+      color: "#f59e0b",
+    },
+  ];
 
-// #endregion
-export const PieChartExample = ({
-  isAnimationActive = true,
-}: {
-  isAnimationActive?: boolean;
-}) => (
-  <div className="space-y-4 h-fit  ">
-    {/*<h2 className="text-md font-bold">User Analytics</h2>
-    <div className="flex gap-2 text-xs flex-wrap">
-      {data02.map((item, index) => (
-        <div key={index} className="flex items-center  ">
-          <div
-            className="w-4 h-4 rounded-full mr-2"
-            style={{ backgroundColor: item.color }}
-          />
-          <span>{item.name}</span>
-        </div>
-      ))}
-    </div>*/}
-    {/*<PieChart
-      style={{
-        width: "100%",
-        // maxWidth: "500px",
-        height: "100%",
-        // aspectRatio: 1,
-      }}
-      className="flex-1"
-      responsive
-      margin={{ top: 50, right: 50, bottom: 50, left: 50 }}
-    >
-      <Pie
-        data={data02}
-        dataKey="value"
-        nameKey="name"
-        cx="50%"
-        cy="50%"
-        innerRadius="40%"
-        outerRadius="80%"
-        // fill="#82ca9d"
-        label
-        isAnimationActive={isAnimationActive}
-        stroke="#fff" // Add a white stroke to create gaps
-        strokeWidth={4} // Adjust stroke width for desired gap size
-      >
-        {data02.map((entry, index) => (
-          <Cell key={`cell-${index}`} fill={entry.color} />
-        ))}
-      </Pie>
-    </PieChart>*/}
+  const total = chartData.reduce((acc, curr) => acc + curr.value, 0);
 
-    <SimpleContainer title="User Analytics">
-      <div className="ring ring-current/20 rounded-b-box p-4">
-        <div className="flex gap-2 text-xs flex-wrap">
-          {data02.map((item, index) => (
-            <div key={index} className="flex items-center  ">
+  return (
+    <SimpleContainer title="Platform & Business Distribution">
+      <div className="bg-base-100 border border-base-200 rounded-b-box p-4 flex flex-col items-center">
+        <div className="flex gap-2 flex-wrap justify-center mb-4">
+          {chartData.map((item, index) => (
+            <div key={index} className="flex items-center text-xs">
               <div
-                className="w-4 h-4 rounded-full mr-2"
+                className="size-3 rounded-full mr-1.5"
                 style={{ backgroundColor: item.color }}
               />
-              <span>{item.name}</span>
+              <span className="font-medium text-base-content/80">
+                {item.name}: {item.value.toLocaleString()}
+              </span>
             </div>
           ))}
         </div>
-        <PieChart
-          style={{
-            width: "100%",
-            // maxWidth: "500px",
-            height: "100%",
-            // aspectRatio: 1,
-          }}
-          className="flex-1"
-          responsive
-          margin={{ top: 50, right: 50, bottom: 50, left: 50 }}
-        >
-          <Pie
-            data={data02}
-            dataKey="value"
-            nameKey="name"
-            cx="50%"
-            cy="50%"
-            innerRadius="40%"
-            outerRadius="80%"
-            // fill="#82ca9d"
-            label
-            isAnimationActive={isAnimationActive}
-            stroke="#fff" // Add a white stroke to create gaps
-            strokeWidth={4} // Adjust stroke width for desired gap size
-          >
-            {data02.map((entry, index) => (
-              <Cell key={`cell-${index}`} fill={entry.color} />
-            ))}
-          </Pie>
-        </PieChart>
+
+        <div className="w-full h-64">
+          <ResponsiveContainer width="100%" height="100%">
+            <PieChart>
+              <Pie
+                data={
+                  total > 0
+                    ? chartData
+                    : [{ name: "No Data", value: 1, color: "#d1d5db" }]
+                }
+                dataKey="value"
+                nameKey="name"
+                cx="50%"
+                cy="50%"
+                innerRadius={50}
+                outerRadius={80}
+                paddingAngle={3}
+              >
+                {(total > 0
+                  ? chartData
+                  : [{ name: "No Data", value: 1, color: "#d1d5db" }]
+                ).map((entry, index) => (
+                  <Cell key={`cell-${index}`} fill={entry.color} />
+                ))}
+              </Pie>
+              <Tooltip
+                contentStyle={{
+                  backgroundColor: "var(--color-base-100)",
+                  borderColor: "var(--color-base-300)",
+                  borderRadius: "0.5rem",
+                  color: "var(--color-base-content)",
+                }}
+              />
+            </PieChart>
+          </ResponsiveContainer>
+        </div>
       </div>
     </SimpleContainer>
-  </div>
-);
-
-export default PieChartExample;
+  );
+}
