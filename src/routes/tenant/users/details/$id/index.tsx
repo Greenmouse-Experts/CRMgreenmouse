@@ -3,7 +3,7 @@ import UserInfo from "./-components/UserInfo";
 import FullInfo from "./-components/FullInfo";
 import PageHeader from "@/components/Headers/PageHeader";
 import PageLoader from "@/components/layout/PageLoader";
-import { useStaff, type StaffMember } from "@/api/adminApi";
+import { useStaff, type StaffMember } from "@/api/tenantApi";
 import { ArrowLeft } from "lucide-react";
 
 export const Route = createFileRoute("/tenant/users/details/$id/")({

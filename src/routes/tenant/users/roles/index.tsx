@@ -23,7 +23,7 @@ import {
   useRolePermissions,
   type Role,
   type RolePermission,
-} from "@/api/adminApi";
+} from "@/api/tenantApi";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/tenant/users/roles/")({
@@ -251,7 +251,7 @@ function RouteComponent() {
           <>
             Workspace Roles{" "}
             {query.data && (
-              <span className="opacity-80 text-xs">({query.data.length})</span>
+              <span className="opacity-80 text-sm">({query.data.length})</span>
             )}
           </>
         }

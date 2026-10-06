@@ -17,7 +17,7 @@ import {
   useCreateStaff,
   useDeleteStaff,
   type StaffMember,
-} from "@/api/adminApi";
+} from "@/api/tenantApi";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/tenant/users/")({
@@ -198,7 +198,7 @@ function RouteComponent() {
           <>
             Staff Directory{" "}
             {query.data && (
-              <span className="opacity-80 text-xs">({query.data.length})</span>
+              <span className="opacity-80 text-sm">({query.data.length})</span>
             )}
           </>
         }
@@ -217,8 +217,7 @@ function RouteComponent() {
 
         <PageLoader
           query={query}
-          emptyState={{
-            title: "No Staff Members",
+          emptyState={{            title: "No Staff Members",
             description: "Build your team by inviting your first team member.",
             actionText: "Invite Staff",
             onAction: handleOpenAdd,
@@ -248,102 +247,89 @@ function RouteComponent() {
 
       {/* Add Staff Quick Modal */}
       <Modal ref={addModalRef} title="Invite Staff Member">
-        <form onSubmit={handleCreateStaff} className="space-y-4">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <form onSubmit={handleCreateStaff} className="space-y-4 p-2">
+          <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="label">
-                <span className="label-text font-semibold">First Name *</span>
-              </label>
+              <label className="label text-sm font-semibold">First Name *</label>
               <input
                 type="text"
                 required
+                className="input input-bordered w-full"
                 value={form.firstName}
                 onChange={(e) =>
                   setForm({ ...form, firstName: e.target.value })
                 }
                 placeholder="Jane"
-                className="input input-sm input-bordered w-full"
               />
             </div>
-
             <div>
-              <label className="label">
-                <span className="label-text font-semibold">Last Name *</span>
-              </label>
+              <label className="label text-sm font-semibold">Last Name *</label>
               <input
                 type="text"
                 required
+                className="input input-bordered w-full"
                 value={form.lastName}
                 onChange={(e) => setForm({ ...form, lastName: e.target.value })}
                 placeholder="Doe"
-                className="input input-sm input-bordered w-full"
               />
-            </div>
-
-            <div className="sm:col-span-2">
-              <label className="label">
-                <span className="label-text font-semibold">
-                  Email Address *
-                </span>
-              </label>
-              <input
-                type="email"
-                required
-                value={form.email}
-                onChange={(e) => setForm({ ...form, email: e.target.value })}
-                placeholder="staff@example.com"
-                className="input input-sm input-bordered w-full"
-              />
-            </div>
-
-            <div className="sm:col-span-2">
-              <label className="label">
-                <span className="label-text font-semibold">Phone Number</span>
-              </label>
-              <input
-                type="text"
-                value={form.phoneNumber}
-                onChange={(e) =>
-                  setForm({ ...form, phoneNumber: e.target.value })
-                }
-                placeholder="+2348012345678"
-                className="input input-sm input-bordered w-full"
-              />
-            </div>
-
-            <div className="sm:col-span-2">
-              <label className="label">
-                <span className="label-text font-semibold">Assigned Role</span>
-              </label>
-              <select
-                value={form.roleId}
-                onChange={(e) => setForm({ ...form, roleId: e.target.value })}
-                className="select select-sm select-bordered w-full"
-              >
-                <option value="">-- Select Role --</option>
-                {rolesQuery.data?.map((role) => (
-                  <option key={role.id} value={role.id}>
-                    {role.name}
-                  </option>
-                ))}
-              </select>
             </div>
           </div>
 
-          <div className="flex justify-end gap-2 pt-4 border-t border-base-200">
+          <div>
+            <label className="label text-sm font-semibold">Email *</label>
+            <input
+              type="email"
+              required
+              className="input input-bordered w-full"
+              value={form.email}
+              onChange={(e) => setForm({ ...form, email: e.target.value })}
+              placeholder="jane@company.com"
+            />
+          </div>
+
+          <div>
+            <label className="label text-sm font-semibold">Phone Number</label>
+            <input
+              type="text"
+              className="input input-bordered w-full"
+              value={form.phoneNumber}
+              onChange={(e) =>
+                setForm({ ...form, phoneNumber: e.target.value })
+              }
+              placeholder="+234..."
+            />
+          </div>
+
+          <div>
+            <label className="label text-sm font-semibold">Assign Role</label>
+            <select
+              className="select select-bordered w-full"
+              value={form.roleId}
+              onChange={(e) => setForm({ ...form, roleId: e.target.value })}
+            >
+              <option value="">No Role / Default Staff</option>
+              {rolesQuery.data?.map((role) => (
+                <option key={role.id} value={role.id}>
+                  {role.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="pt-2 flex justify-end gap-2">
             <button
               type="button"
+              className="btn btn-ghost"
               onClick={() => addModalRef.current?.close()}
-              className="btn btn-sm btn-ghost"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={createStaff.isPending}
-              className="btn btn-sm btn-primary"
+              className="btn btn-primary"
             >
-              {createStaff.isPending ? "Adding..." : "Add Staff"}
+              {createStaff.isPending ? "Inviting..." : "Send Invite"}
             </button>
           </div>
         </form>

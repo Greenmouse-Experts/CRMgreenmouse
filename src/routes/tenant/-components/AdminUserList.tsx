@@ -1,7 +1,7 @@
 import SimpleContainer from "@/components/SimpleContainer";
 import CustomTable, { type columnType } from "@/components/tables/CustomTable";
 import { Link } from "@tanstack/react-router";
-import { useStaffs, type StaffMember } from "@/api/adminApi";
+import { useStaffs, type StaffMember } from "@/api/tenantApi";
 import QueryCompLayout from "@/components/layout/QueryCompLayout";
 import { Users } from "lucide-react";
 
@@ -115,7 +115,7 @@ export default function AdminUserList() {
                   </p>
                   <Link
                     to="/tenant/users/add"
-                    className="btn btn-xs btn-primary mt-2"
+                    className="btn btn-sm btn-primary mt-2"
                   >
                     Add Staff Member
                   </Link>

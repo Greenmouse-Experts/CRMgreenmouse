@@ -1,6 +1,6 @@
 import SummaryCard from "@/components/SummaryCard";
 import SummaryGrid from "@/components/SummaryGrid";
-import { useStaffs } from "@/api/adminApi";
+import { useStaffs } from "@/api/tenantApi";
 
 export default function UserSummary() {
   const { data: staffs = [] } = useStaffs();

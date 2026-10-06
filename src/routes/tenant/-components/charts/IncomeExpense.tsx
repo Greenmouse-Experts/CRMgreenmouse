@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useDashboardIncomeExpense } from "@/api/adminApi";
+import { useDashboardIncomeExpense } from "@/api/tenantApi";
 import QueryCompLayout from "@/components/layout/QueryCompLayout";
 import {
   AreaChart,

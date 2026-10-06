@@ -1,5 +1,5 @@
 import { User, Mail, Phone, Shield } from "lucide-react";
-import type { StaffMember } from "@/api/adminApi";
+import type { StaffMember } from "@/api/tenantApi";
 
 interface UserInfoProps {
   staff?: StaffMember;

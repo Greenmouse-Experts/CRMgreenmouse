@@ -5,7 +5,7 @@ export default function AdminHeader() {
   return (
     <div className="h-18 px-4 flex sticky top-0 bg-base-100  border-b border-current/10 shadow z-20 items-center">
       <label
-        htmlFor="admin-drawer"
+        htmlFor="tenant-drawer"
         className="btn btn-square btn-ghost lg:hidden"
       >
         <Menu />

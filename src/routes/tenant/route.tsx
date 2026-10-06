@@ -214,7 +214,7 @@ function RouteComponent() {
 
   return (
     <div className="drawer lg:drawer-open">
-      <input id="admin-drawer" type="checkbox" className="drawer-toggle" />
+      <input id="tenant-drawer" type="checkbox" className="drawer-toggle" />
       <div className="drawer-content bg-base-200 isolate">
         <AdminHeader />
         <main className=" min-h-screen bg-base-200 pt-4 space-y-4 px-4">
@@ -223,7 +223,7 @@ function RouteComponent() {
       </div>
       <div className="drawer-side">
         <label
-          htmlFor="admin-drawer"
+          htmlFor="tenant-drawer"
           aria-label="close sidebar"
           className="drawer-overlay"
         ></label>

@@ -1,6 +1,6 @@
 import SimpleContainer from "@/components/SimpleContainer";
 import { Cell, Pie, PieChart, Tooltip, ResponsiveContainer } from "recharts";
-import { useDashboardBalance } from "@/api/adminApi";
+import { useDashboardBalance } from "@/api/tenantApi";
 import QueryCompLayout from "@/components/layout/QueryCompLayout";
 import { TrendingUp, TrendingDown, DollarSign } from "lucide-react";
 
@@ -15,8 +15,7 @@ export default function TenantMonthly() {
         const expenseMonth = balanceData?.expenseThisMonth ?? 0;
 
         const balanceDetails = [
-          {
-            label: "Income Today",
+          {            label: "Income Today",
             value: balanceData?.incomeToday ?? 0,
             type: "income",
             icon: TrendingUp,
@@ -73,8 +72,7 @@ export default function TenantMonthly() {
                   </span>
                 </div>
 
-                {hasActivity ? (
-                  <div className="w-full h-72">
+                {hasActivity ? (                  <div className="w-full h-72">
                     <ResponsiveContainer width="100%" height="100%">
                       <PieChart>
                         <Pie

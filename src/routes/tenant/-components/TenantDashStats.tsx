@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { Users, FileText, UsersRound, ShoppingBag, Clock } from "lucide-react";
-import { useDashboardStats } from "@/api/adminApi";
+import { useDashboardStats } from "@/api/tenantApi";
 
 export default function TenantDashStats() {
   const { data: stats, isLoading } = useDashboardStats();

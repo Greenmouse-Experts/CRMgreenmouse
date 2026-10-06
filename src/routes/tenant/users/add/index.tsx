@@ -7,7 +7,7 @@ import { useSelectImage } from "@/helpers/images";
 import SelectImage from "@/components/images/SelectImage";
 import SimpleTitle from "@/components/SimpleTitle";
 import LocalSelect from "@/components/inputs/LocalSelect";
-import { useCreateStaff, useRoles } from "@/api/adminApi";
+import { useCreateStaff, useRoles } from "@/api/tenantApi";
 import { useUploadImage } from "@/api/imageApi";
 import { toast } from "sonner";
 

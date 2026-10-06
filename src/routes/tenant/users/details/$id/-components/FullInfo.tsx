@@ -1,6 +1,6 @@
 import CustomTabs from "@/components/CustomTabs";
 import { useTabs } from "@/stores/client";
-import type { StaffMember } from "@/api/adminApi";
+import type { StaffMember } from "@/api/tenantApi";
 
 interface FullInfoProps {
   staff?: StaffMember;
