@@ -1,4 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { isAxiosError } from "axios";
 import apiClient from "./simpleApi";
 
 // ==================== COMPANIES ====================\n
@@ -127,6 +128,25 @@ export interface Contact {
 // Backward compatibility alias
 export type Customer = Contact;
 
+type CreateContactInput = Pick<Contact, "firstName" | "lastName" | "email"> &
+  Partial<
+    Pick<
+      Contact,
+      | "type"
+      | "companyName"
+      | "phone"
+      | "address"
+      | "city"
+      | "state"
+      | "zipCode"
+      | "country"
+      | "tags"
+      | "assignedTo"
+      | "source"
+      | "status"
+    >
+  >;
+
 export const useContacts = (params?: { search?: string; status?: string }) => {
   return useQuery<Contact[]>({
     queryKey: ["contacts", params],
@@ -173,11 +193,14 @@ export const useCustomer = useContact;
 export const useCreateContact = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (contact: Partial<Contact>) => {
+    mutationFn: async (contact: CreateContactInput) => {
       try {
         const { data } = await apiClient.post<any>("/contacts", contact);
         return data?.data || data;
-      } catch {
+      } catch (error) {
+        if (!isAxiosError(error) || error.response?.status !== 404) {
+          throw error;
+        }
         const { data } = await apiClient.post<any>("/customers", contact);
         return data?.data || data;
       }

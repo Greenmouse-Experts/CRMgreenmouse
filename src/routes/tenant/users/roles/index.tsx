@@ -7,8 +7,7 @@ import {
   PlusCircleIcon,
   Shield,
   Search,
-  CheckSquare,
-  Square,
+  X,
 } from "lucide-react";
 import CustomTable from "@/components/tables/CustomTable";
 import type { Actions } from "@/components/tables/pop-up";
@@ -79,37 +78,30 @@ function RouteComponent() {
   };
 
   const handleTogglePermission = (key: string) => {
-    if (selectedPermissions.includes(key)) {
-      setSelectedPermissions(selectedPermissions.filter((k) => k !== key));
-    } else {
-      setSelectedPermissions([...selectedPermissions, key]);
-    }
+    setSelectedPermissions((current) =>
+      current.includes(key)
+        ? current.filter((permission) => permission !== key)
+        : [...current, key],
+    );
   };
 
-  const handleSelectAllPermissions = () => {
-    if (!permissionsQuery.data) return;
-    if (selectedPermissions.length === permissionsQuery.data.length) {
-      setSelectedPermissions([]);
-    } else {
-      setSelectedPermissions(permissionsQuery.data.map((p) => p.key));
-    }
-  };
-
-  // Group permissions by category/prefix
-  const groupedPermissions = useMemo(() => {
+  const filteredPermissions = useMemo(() => {
     const permissions = permissionsQuery.data || [];
-    const filtered = permissions.filter((p) => {
+    return permissions.filter((p) => {
       if (!permissionFilter) return true;
-      const q = permissionFilter.toLowerCase();
+      const q = permissionFilter.trim().toLowerCase();
       return (
         p.key.toLowerCase().includes(q) ||
-        p.description.toLowerCase().includes(q) ||
-        (p.name && p.name.toLowerCase().includes(q))
+        p.description?.toLowerCase().includes(q) ||
+        p.name?.toLowerCase().includes(q) ||
+        p.category?.toLowerCase().includes(q)
       );
     });
+  }, [permissionsQuery.data, permissionFilter]);
 
+  const groupedPermissions = useMemo(() => {
     const groups: Record<string, RolePermission[]> = {};
-    for (const p of filtered) {
+    for (const p of filteredPermissions) {
       const category =
         p.category || (p.key.includes(":") ? p.key.split(":")[0] : "general");
       const normalizedCat =
@@ -118,20 +110,35 @@ function RouteComponent() {
       groups[normalizedCat].push(p);
     }
     return groups;
-  }, [permissionsQuery.data, permissionFilter]);
+  }, [filteredPermissions]);
+
+  const visibleKeys = filteredPermissions.map((permission) => permission.key);
+  const selectedVisibleCount = visibleKeys.filter((key) =>
+    selectedPermissions.includes(key),
+  ).length;
+  const allVisibleSelected =
+    visibleKeys.length > 0 && selectedVisibleCount === visibleKeys.length;
+
+  const handleSelectAllPermissions = () => {
+    if (visibleKeys.length === 0) return;
+    setSelectedPermissions((current) =>
+      allVisibleSelected
+        ? permissionFilter
+          ? current.filter((key) => !visibleKeys.includes(key))
+          : []
+        : Array.from(new Set([...current, ...visibleKeys])),
+    );
+  };
 
   const handleToggleCategory = (categoryKeys: string[]) => {
     const allSelected = categoryKeys.every((k) =>
       selectedPermissions.includes(k),
     );
-    if (allSelected) {
-      setSelectedPermissions(
-        selectedPermissions.filter((k) => !categoryKeys.includes(k)),
-      );
-    } else {
-      const set = new Set([...selectedPermissions, ...categoryKeys]);
-      setSelectedPermissions(Array.from(set));
-    }
+    setSelectedPermissions((current) =>
+      allSelected
+        ? current.filter((key) => !categoryKeys.includes(key))
+        : Array.from(new Set([...current, ...categoryKeys])),
+    );
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -303,144 +310,181 @@ function RouteComponent() {
             : "Create Workspace Role"
         }
       >
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <label className="label">
-              <span className="label-text font-semibold">Role Name *</span>
+            <label htmlFor="role-name" className="mb-2 block text-sm font-semibold">
+              Role name <span className="text-error">*</span>
             </label>
             <input
+              id="role-name"
               type="text"
               required
               value={roleName}
               onChange={(e) => setRoleName(e.target.value)}
               placeholder="e.g. Sales Representative, Store Manager"
-              className="input input-sm input-bordered w-full"
+              className="input input-bordered w-full"
             />
           </div>
 
           <div>
-            <label className="label">
-              <span className="label-text font-semibold">Description</span>
+            <label htmlFor="role-description" className="mb-2 block text-sm font-semibold">
+              Description
             </label>
             <textarea
+              id="role-description"
               value={roleDescription}
               onChange={(e) => setRoleDescription(e.target.value)}
               placeholder="Brief description of the role responsibilities"
-              className="textarea textarea-bordered textarea-sm w-full"
+              className="textarea textarea-bordered w-full"
               rows={2}
             />
           </div>
 
-          <div className="space-y-2">
-            <div className="flex items-center justify-between">
-              <label className="label-text font-semibold">
-                Assigned Permissions ({selectedPermissions.length})
-              </label>
-              <button
-                type="button"
-                onClick={handleSelectAllPermissions}
-                className="btn btn-xs btn-ghost text-primary font-medium"
-              >
-                {permissionsQuery.data &&
-                selectedPermissions.length === permissionsQuery.data.length
-                  ? "Deselect All"
-                  : "Select All"}
-              </button>
+          <section aria-labelledby="role-permissions-heading" className="space-y-3">
+            <div className="flex flex-wrap items-start justify-between gap-2">
+              <div>
+                <h4 id="role-permissions-heading" className="text-sm font-semibold">
+                  Assigned permissions
+                </h4>
+                <p className="mt-0.5 text-xs text-base-content/70">
+                  Choose what people with this role can access.
+                </p>
+              </div>
+              <span className="badge badge-primary badge-soft badge-sm font-medium">
+                {selectedPermissions.length} selected
+              </span>
             </div>
 
-            {/* Permissions Search & Filter */}
-            <div className="relative">
-              <Search className="absolute left-2.5 top-2.5 size-3.5 text-base-content/40" />
-              <input
-                type="text"
-                value={permissionFilter}
-                onChange={(e) => setPermissionFilter(e.target.value)}
-                placeholder="Filter permissions..."
-                className="input input-xs input-bordered w-full pl-8"
-              />
-            </div>
-
-            <div className="border border-base-200 rounded-xl p-3 max-h-72 overflow-y-auto space-y-3 bg-base-200/30">
-              {permissionsQuery.isLoading ? (
-                <div className="text-center py-6 text-xs text-base-content/50">
-                  Loading permissions from workspace...
+            <div className="overflow-hidden rounded-xl border border-base-300">
+              <div className="flex flex-col gap-2 border-b border-base-300 bg-base-200/50 p-3 sm:flex-row sm:items-center sm:justify-between">
+                <div className="relative min-w-0 flex-1">
+                  <Search aria-hidden="true" className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-base-content/60" />
+                  <input
+                    type="text"
+                    aria-label="Search permissions"
+                    value={permissionFilter}
+                    onChange={(e) => setPermissionFilter(e.target.value)}
+                    placeholder="Search permissions"
+                    className="input input-sm input-bordered w-full pl-9 pr-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                  />
+                  {permissionFilter && (
+                    <button
+                      type="button"
+                      aria-label="Clear permission search"
+                      onClick={() => setPermissionFilter("")}
+                      className="btn btn-ghost btn-xs btn-square absolute right-1 top-1/2 -translate-y-1/2"
+                    >
+                      <X aria-hidden="true" className="size-3.5" />
+                    </button>
+                  )}
                 </div>
-              ) : Object.keys(groupedPermissions).length === 0 ? (
-                <div className="text-center py-6 text-xs text-base-content/50">
+                <button
+                  type="button"
+                  onClick={handleSelectAllPermissions}
+                  disabled={visibleKeys.length === 0}
+                  className="btn btn-sm btn-ghost text-primary sm:shrink-0"
+                >
+                  {allVisibleSelected
+                    ? permissionFilter ? "Clear matches" : "Clear all"
+                    : permissionFilter ? "Select matches" : "Select all"}
+                </button>
+              </div>
+
+              <div className="max-h-80 overflow-y-auto overscroll-contain">
+                {permissionsQuery.isLoading ? (
+                  <div className="px-4 py-10 text-center text-sm text-base-content/70" role="status">
+                    Loading permissions…
+                  </div>
+                ) : permissionsQuery.isError ? (
+                  <div className="flex flex-col items-center gap-3 px-4 py-8 text-center">
+                    <p className="text-sm text-base-content/70">Permissions could not be loaded.</p>
+                    <button type="button" onClick={() => permissionsQuery.refetch()} className="btn btn-sm btn-outline">
+                      Try again
+                    </button>
+                  </div>
+                ) : Object.keys(groupedPermissions).length === 0 ? (
+                  <div className="px-4 py-10 text-center text-sm text-base-content/70">
+                    {permissionFilter
+                      ? "No permissions match your search."
+                      : "No permissions available."}
+                  </div>
+                ) : (
+                  Object.entries(groupedPermissions).map(([category, items]) => {
+                    const categoryKeys = items.map((item) => item.key);
+                    const selectedInCategory = categoryKeys.filter((key) =>
+                      selectedPermissions.includes(key),
+                    ).length;
+                    const allCatSelected = selectedInCategory === categoryKeys.length;
+
+                    return (
+                      <div key={category} className="border-b border-base-200 last:border-b-0">
+                        <div className="sticky top-0 z-10 flex items-center justify-between gap-3 bg-base-200 px-4 py-2">
+                          <div className="flex min-w-0 items-center gap-2">
+                            <h5 className="truncate text-xs font-semibold text-base-content">
+                              {category}
+                            </h5>
+                            <span className="text-xs tabular-nums text-base-content/70">
+                              {selectedInCategory}/{items.length}
+                            </span>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => handleToggleCategory(categoryKeys)}
+                            className="rounded px-1 py-0.5 text-xs font-medium text-primary hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                          >
+                            {allCatSelected ? "Clear group" : "Select group"}
+                          </button>
+                        </div>
+
+                        <div className="divide-y divide-base-200">
+                          {items.map((perm) => {
+                            const isChecked = selectedPermissions.includes(perm.key);
+                            return (
+                              <label
+                                key={perm.key}
+                                className={`flex cursor-pointer items-start gap-3 px-4 py-3 transition-colors hover:bg-base-200/60 focus-within:bg-base-200/60 ${
+                                  isChecked ? "bg-primary/5" : "bg-base-100"
+                                }`}
+                              >
+                                <input
+                                  type="checkbox"
+                                  checked={isChecked}
+                                  onChange={() => handleTogglePermission(perm.key)}
+                                  className="checkbox checkbox-primary checkbox-sm mt-0.5 shrink-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                                />
+                                <span className="min-w-0 flex-1">
+                                  <span className="block text-sm font-medium leading-5 text-base-content">
+                                    {perm.name || perm.key}
+                                  </span>
+                                  {perm.name && perm.name !== perm.key && (
+                                    <span className="block break-all font-mono text-[11px] leading-4 text-base-content/70">
+                                      {perm.key}
+                                    </span>
+                                  )}
+                                  {perm.description && (
+                                    <span className="mt-0.5 block text-xs leading-5 text-base-content/70">
+                                      {perm.description}
+                                    </span>
+                                  )}
+                                </span>
+                              </label>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    );
+                  })
+                )}
+              </div>
+              {permissionsQuery.data && filteredPermissions.length > 0 && (
+                <div className="border-t border-base-300 bg-base-200/50 px-4 py-2 text-xs tabular-nums text-base-content/70">
                   {permissionFilter
-                    ? "No matching permissions found."
-                    : "No permissions available."}
+                    ? `${selectedVisibleCount} of ${filteredPermissions.length} matches selected`
+                    : `${selectedPermissions.length} of ${permissionsQuery.data.length} permissions selected`}
                 </div>
-              ) : (
-                Object.entries(groupedPermissions).map(([category, items]) => {
-                  const categoryKeys = items.map((i) => i.key);
-                  const allCatSelected = categoryKeys.every((k) =>
-                    selectedPermissions.includes(k),
-                  );
-
-                  return (
-                    <div key={category} className="space-y-1.5">
-                      <div className="flex items-center justify-between px-1">
-                        <span className="text-xs font-bold text-base-content/70 uppercase tracking-wider">
-                          {category}
-                        </span>
-                        <button
-                          type="button"
-                          onClick={() => handleToggleCategory(categoryKeys)}
-                          className="text-[11px] text-primary hover:underline flex items-center gap-1"
-                        >
-                          {allCatSelected ? (
-                            <>
-                              <CheckSquare className="size-3" /> Deselect Module
-                            </>
-                          ) : (
-                            <>
-                              <Square className="size-3" /> Select Module
-                            </>
-                          )}
-                        </button>
-                      </div>
-
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                        {items.map((perm) => {
-                          const isChecked = selectedPermissions.includes(
-                            perm.key,
-                          );
-                          return (
-                            <label
-                              key={perm.key}
-                              className={`flex items-start gap-2.5 p-2 rounded-lg cursor-pointer border transition-colors ${
-                                isChecked
-                                  ? "bg-primary/5 border-primary/30"
-                                  : "bg-base-100 border-base-200 hover:border-base-300"
-                              }`}
-                            >
-                              <input
-                                type="checkbox"
-                                checked={isChecked}
-                                onChange={() =>
-                                  handleTogglePermission(perm.key)
-                                }
-                                className="checkbox checkbox-primary checkbox-xs mt-0.5"
-                              />
-                              <div className="space-y-0.5 min-w-0">
-                                <span className="font-mono text-xs font-semibold block leading-tight truncate">
-                                  {perm.key}
-                                </span>
-                                <span className="text-[11px] text-base-content/60 block leading-tight line-clamp-2">
-                                  {perm.description || perm.name || perm.key}
-                                </span>
-                              </div>
-                            </label>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  );
-                })
               )}
             </div>
-          </div>
+          </section>
 
           <div className="flex justify-end gap-2 pt-4 border-t border-base-200">
             <button

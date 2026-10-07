@@ -16,7 +16,6 @@ export const Route = createFileRoute("/tenant/accounts/Invoices/add/")({
 });
 
 interface FormValues {
-  invoiceNumber: string;
   issuedDate: string;
   dueDate: string;
   contactId: string;
@@ -37,7 +36,6 @@ function RouteComponent() {
 
   const methods = useForm<FormValues>({
     defaultValues: {
-      invoiceNumber: `INV-${Date.now().toString().slice(-6)}`,
       issuedDate: new Date().toISOString().split("T")[0],
       dueDate: new Date(Date.now() + 14 * 86400000).toISOString().split("T")[0],
       contactId: "",
@@ -77,6 +75,14 @@ function RouteComponent() {
       acc + (Number(curr.qty) || 0) * (Number(curr.unitPrice) || 0),
     0,
   );
+  const currency = methods.watch("currency");
+  const formatAmount = (amount: number) =>
+    new Intl.NumberFormat(undefined, { style: "currency", currency }).format(
+      amount,
+    );
+  const discount = Number(methods.watch("discount")) || 0;
+  const tax = Number(methods.watch("tax")) || 0;
+  const grandTotal = Math.max(0, subtotal - discount + tax);
 
   const onSubmit = async (data: FormValues) => {
     if (items.some((i) => !i.description.trim())) {
@@ -86,11 +92,9 @@ function RouteComponent() {
 
     const discountVal = Number(data.discount) || 0;
     const taxVal = Number(data.tax) || 0;
-    const total = Math.max(0, subtotal - discountVal + taxVal);
 
     try {
-      await createInvoice.mutateAsync({
-        invoiceNumber: data.invoiceNumber,
+      const invoice = await createInvoice.mutateAsync({
         issuedDate: data.issuedDate,
         dueDate: data.dueDate,
         contactId: data.contactId || undefined,
@@ -99,14 +103,18 @@ function RouteComponent() {
         items,
         discount: discountVal,
         tax: taxVal,
-        total,
         status: "draft",
       });
-      toast.success(`Invoice "${data.invoiceNumber}" created successfully!`);
+      toast.success(
+        invoice?.invoiceNumber
+          ? `Invoice "${invoice.invoiceNumber}" created successfully!`
+          : "Invoice created successfully!",
+      );
       navigate({ to: "/tenant/accounts/Invoices" });
     } catch (err: any) {
+      const message = err.response?.data?.message;
       toast.error(
-        err.response?.data?.message ||
+        (Array.isArray(message) ? message.join(". ") : message) ||
           "Failed to create invoice. Please try again.",
       );
     }
@@ -120,13 +128,9 @@ function RouteComponent() {
           <form onSubmit={methods.handleSubmit(onSubmit)} className="space-y-6">
             <div className="grid md:grid-cols-2 gap-6">
               <FormWrapper title="Invoice Details">
-                <SimpleInput
-                  label="Invoice Number"
-                  placeholder="e.g. INV-00123"
-                  {...methods.register("invoiceNumber", {
-                    required: "Invoice Number is required",
-                  })}
-                />
+                <p className="text-sm text-base-content/70">
+                  An invoice number will be generated when you save.
+                </p>
                 <SimpleInput
                   label="Issue Date"
                   type="date"
@@ -235,7 +239,7 @@ function RouteComponent() {
                             />
                           </td>
                           <td className="text-right font-semibold">
-                            ${lineTotal.toFixed(2)}
+                            {formatAmount(lineTotal)}
                           </td>
                           <td className="text-center">
                             <button
@@ -265,10 +269,10 @@ function RouteComponent() {
                 <div className="w-72 space-y-2 bg-base-200/40 p-4 rounded-xl">
                   <div className="flex justify-between text-sm">
                     <span className="text-base-content/70">Subtotal:</span>
-                    <span className="font-medium">${subtotal.toFixed(2)}</span>
+                    <span className="font-medium">{formatAmount(subtotal)}</span>
                   </div>
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-base-content/70">Discount ($):</span>
+                    <span className="text-base-content/70">Discount ({currency}):</span>
                     <input
                       type="number"
                       min="0"
@@ -278,7 +282,7 @@ function RouteComponent() {
                     />
                   </div>
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-base-content/70">Tax ($):</span>
+                    <span className="text-base-content/70">Tax ({currency}):</span>
                     <input
                       type="number"
                       min="0"
@@ -290,7 +294,7 @@ function RouteComponent() {
                   <div className="divider my-1"></div>
                   <div className="flex justify-between text-base font-bold">
                     <span>Grand Total:</span>
-                    <span className="text-primary">${subtotal.toFixed(2)}</span>
+                    <span className="text-primary">{formatAmount(grandTotal)}</span>
                   </div>
                 </div>
               </div>

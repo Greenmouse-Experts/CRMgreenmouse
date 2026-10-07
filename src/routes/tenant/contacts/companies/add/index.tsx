@@ -12,9 +12,28 @@ export const Route = createFileRoute("/tenant/contacts/companies/add/")({
   component: RouteComponent,
 });
 
+const INDUSTRIES = [
+  "Technology",
+  "Healthcare",
+  "Finance",
+  "Education",
+  "Retail",
+  "Manufacturing",
+  "Real Estate",
+  "Hospitality",
+  "Transportation",
+  "Media & Entertainment",
+  "Agriculture",
+  "Construction",
+  "Energy",
+  "Legal",
+  "Consulting",
+  "Other",
+] as const;
+
 interface CompanyFormData {
   companyName: string;
-  industry: string;
+  industry: (typeof INDUSTRIES)[number];
   federalId: string;
   groupName: string;
   workPhone: string;
@@ -35,7 +54,7 @@ function RouteComponent() {
   const methods = useForm<CompanyFormData>({
     defaultValues: {
       companyName: "",
-      industry: "technology",
+      industry: "Technology",
       federalId: "",
       groupName: "",
       workPhone: "",
@@ -72,8 +91,9 @@ function RouteComponent() {
       toast.success(`Company "${data.companyName}" created successfully!`);
       navigate({ to: "/tenant/contacts/companies" });
     } catch (err: any) {
+      const message = err.response?.data?.message;
       toast.error(
-        err.response?.data?.message ||
+        (Array.isArray(message) ? message.join(". ") : message) ||
           "Failed to create company. Please try again.",
       );
     }
@@ -98,14 +118,11 @@ function RouteComponent() {
                   {...methods.register("companyName", { required: "Required" })}
                 />
                 <LocalSelect label="Industry" {...methods.register("industry")}>
-                  <option value="">Select Industry</option>
-                  <option value="fintech">FinTech</option>
-                  <option value="technology">Technology</option>
-                  <option value="manufacturing">Manufacturing</option>
-                  <option value="logistics">Logistics</option>
-                  <option value="healthcare">Healthcare</option>
-                  <option value="retail">Retail</option>
-                  <option value="services">Professional Services</option>
+                  {INDUSTRIES.map((industry) => (
+                    <option key={industry} value={industry}>
+                      {industry}
+                    </option>
+                  ))}
                 </LocalSelect>
                 <SimpleInput
                   label="Federal ID / Tax Number"

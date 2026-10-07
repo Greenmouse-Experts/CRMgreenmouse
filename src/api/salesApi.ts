@@ -184,6 +184,24 @@ export interface Order {
   updatedAt?: string;
 }
 
+type OrderWriteFields = Pick<
+  Order,
+  | "items"
+  | "quoteId"
+  | "discount"
+  | "tax"
+  | "currency"
+  | "status"
+  | "paymentStatus"
+  | "assignedTo"
+  | "notes"
+> & { contactId?: string | null };
+
+type CreateOrderInput = Pick<OrderWriteFields, "items"> &
+  Partial<Omit<OrderWriteFields, "items">>;
+
+type UpdateOrderInput = Partial<OrderWriteFields> & { id: string };
+
 export interface OrderQueryParams {
   search?: string;
   status?: string;
@@ -233,7 +251,7 @@ export const useOrderStats = () => {
 export const useCreateOrder = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (order: Partial<Order>) => {
+    mutationFn: async (order: CreateOrderInput) => {
       const { data } = await apiClient.post<Order>("/orders", order);
       return data;
     },
@@ -246,7 +264,7 @@ export const useCreateOrder = () => {
 export const useUpdateOrder = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async ({ id, ...order }: Partial<Order> & { id: string }) => {
+    mutationFn: async ({ id, ...order }: UpdateOrderInput) => {
       const { data } = await apiClient.patch<Order>(`/orders/${id}`, order);
       return data;
     },

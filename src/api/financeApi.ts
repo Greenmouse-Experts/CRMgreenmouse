@@ -45,6 +45,7 @@ export const useCreateIncome = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["income"] });
+      queryClient.invalidateQueries({ queryKey: ["transactions"] });
     },
   });
 };
@@ -61,6 +62,7 @@ export const useUpdateIncome = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["income"] });
+      queryClient.invalidateQueries({ queryKey: ["transactions"] });
     },
   });
 };
@@ -74,6 +76,7 @@ export const useDeleteIncome = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["income"] });
+      queryClient.invalidateQueries({ queryKey: ["transactions"] });
     },
   });
 };
@@ -89,6 +92,7 @@ export const useUpdateIncomeStatus = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["income"] });
+      queryClient.invalidateQueries({ queryKey: ["transactions"] });
     },
   });
 };
@@ -137,6 +141,7 @@ export const useCreateExpense = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["expenses"] });
+      queryClient.invalidateQueries({ queryKey: ["transactions"] });
     },
   });
 };
@@ -153,6 +158,7 @@ export const useUpdateExpense = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["expenses"] });
+      queryClient.invalidateQueries({ queryKey: ["transactions"] });
     },
   });
 };
@@ -166,6 +172,7 @@ export const useDeleteExpense = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["expenses"] });
+      queryClient.invalidateQueries({ queryKey: ["transactions"] });
     },
   });
 };
@@ -181,6 +188,7 @@ export const useUpdateExpenseStatus = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["expenses"] });
+      queryClient.invalidateQueries({ queryKey: ["transactions"] });
     },
   });
 };
@@ -222,6 +230,20 @@ export interface Invoice {
   createdAt?: string;
   updatedAt?: string;
 }
+
+type CreateInvoiceInput = {
+  issuedDate: string;
+  dueDate: string;
+  items: InvoiceItem[];
+  orderId?: string;
+  quoteId?: string;
+  contactId?: string;
+  billingAddress?: string;
+  discount?: number;
+  tax?: number;
+  currency?: string;
+  status?: Invoice["status"];
+};
 
 export interface InvoiceQueryParams {
   search?: string;
@@ -343,7 +365,7 @@ export const useInvoicePdf = (id?: string) => {
 export const useCreateInvoice = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (invoice: Partial<Invoice>) => {
+    mutationFn: async (invoice: CreateInvoiceInput) => {
       const { data } = await apiClient.post<any>("/invoices", invoice);
       return data?.data || data;
     },
@@ -612,6 +634,15 @@ export interface Transaction {
   category?: string;
 }
 
+const transactionStatus = (status?: string) => {
+  const value = status?.toLowerCase();
+  if (["paid", "approved", "completed", "success"].includes(value || "")) {
+    return "Completed";
+  }
+  if (["rejected", "failed"].includes(value || "")) return "Failed";
+  return "Pending";
+};
+
 export const useTransactions = () => {
   return useQuery<Transaction[]>({
     queryKey: ["transactions"],
@@ -630,6 +661,12 @@ export const useTransactions = () => {
             apiClient.get<any>("/income"),
             apiClient.get<any>("/expenses"),
           ]);
+          if (incomeRes.status === "rejected") {
+            throw incomeRes.reason;
+          }
+          if (expenseRes.status === "rejected") {
+            throw expenseRes.reason;
+          }
           const list: Transaction[] = [];
           if (incomeRes.status === "fulfilled") {
             const incData = Array.isArray(incomeRes.value.data)
@@ -643,12 +680,7 @@ export const useTransactions = () => {
                   type: "Income",
                   amount: Number(inc.amount),
                   description: inc.description || `Income from ${inc.source}`,
-                  status:
-                    inc.status === "Approved"
-                      ? "Completed"
-                      : inc.status === "Rejected"
-                        ? "Failed"
-                        : "Pending",
+                  status: transactionStatus(inc.status),
                   category: inc.type,
                 });
               });
@@ -666,12 +698,7 @@ export const useTransactions = () => {
                   type: "Expense",
                   amount: -Math.abs(Number(exp.amount)),
                   description: exp.description || `Payment to ${exp.paidTo}`,
-                  status:
-                    exp.status === "Approved"
-                      ? "Completed"
-                      : exp.status === "Rejected"
-                        ? "Failed"
-                        : "Pending",
+                  status: transactionStatus(exp.status),
                   category: exp.category,
                 });
               });

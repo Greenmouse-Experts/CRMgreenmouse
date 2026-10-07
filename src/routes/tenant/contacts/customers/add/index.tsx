@@ -58,12 +58,9 @@ function RouteComponent() {
         lastName: data.lastName,
         email: data.email,
         phone: data.phone,
-        workPhone: data.phone,
-        cellPhone: data.phone,
         type: data.type,
         companyName: data.companyName,
         address: data.address,
-        addressLine1: data.address,
         city: data.city,
         state: data.state,
         zipCode: data.zipCode,
@@ -76,8 +73,9 @@ function RouteComponent() {
       );
       navigate({ to: "/tenant/contacts/customers" });
     } catch (err: any) {
+      const message = err.response?.data?.message;
       toast.error(
-        err.response?.data?.message ||
+        (Array.isArray(message) ? message.join(". ") : message) ||
           "Failed to create customer. Please try again.",
       );
     }
