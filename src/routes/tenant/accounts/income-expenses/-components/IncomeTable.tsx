@@ -197,17 +197,18 @@ export default function IncomeTable() {
           />
           <LocalSelect
             label="Type"
-            value={editingItem.type || "Sales"}
+            value={editingItem.type || "Other"}
             onChange={(e) =>
               setEditingItem((prev) => ({ ...prev, type: e.target.value }))
             }
           >
-            <option value="Sales">Sales</option>
-            <option value="Consulting">Consulting</option>
+            <option value="Salary">Salary</option>
+            <option value="Bonus">Bonus</option>
+            <option value="Commission">Commission</option>
             <option value="Freelance">Freelance</option>
             <option value="Investment">Investment</option>
-            <option value="Bonus">Bonus</option>
-            <option value="Rental Income">Rental Income</option>
+            <option value="Rental">Rental</option>
+            <option value="Grant">Grant</option>
             <option value="Other">Other</option>
           </LocalSelect>
           <SimpleInput
@@ -221,14 +222,15 @@ export default function IncomeTable() {
           />
           <LocalSelect
             label="Status"
-            value={editingItem.status || "Received"}
+            value={editingItem.status || "Paid"}
             onChange={(e) =>
               setEditingItem((prev) => ({ ...prev, status: e.target.value }))
             }
           >
-            <option value="Received">Received</option>
             <option value="Pending">Pending</option>
-            <option value="Overdue">Overdue</option>
+            <option value="Approved">Approved</option>
+            <option value="Rejected">Rejected</option>
+            <option value="Paid">Paid</option>
           </LocalSelect>
           <SimpleTextArea
             label="Description"

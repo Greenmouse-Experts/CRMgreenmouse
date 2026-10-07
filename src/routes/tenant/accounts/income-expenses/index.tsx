@@ -31,11 +31,10 @@ function RouteComponent() {
 
   const [incomeForm, setIncomeForm] = useState({
     amount: "",
-    type: "Sales",
+    type: "Other",
     source: "",
     description: "",
-    status: "Received",
-    date: new Date().toISOString().split("T")[0],
+    status: "Paid",
   });
 
   const [expenseForm, setExpenseForm] = useState({
@@ -44,17 +43,15 @@ function RouteComponent() {
     paidTo: "",
     description: "",
     status: "Approved",
-    date: new Date().toISOString().split("T")[0],
   });
 
   const handleOpenIncome = () => {
     setIncomeForm({
       amount: "",
-      type: "Sales",
+      type: "Other",
       source: "",
       description: "",
-      status: "Received",
-      date: new Date().toISOString().split("T")[0],
+      status: "Paid",
     });
     incomeModalRef.current?.open();
   };
@@ -66,7 +63,6 @@ function RouteComponent() {
       paidTo: "",
       description: "",
       status: "Approved",
-      date: new Date().toISOString().split("T")[0],
     });
     expenseModalRef.current?.open();
   };
@@ -84,7 +80,6 @@ function RouteComponent() {
         source: incomeForm.source,
         description: incomeForm.description,
         status: incomeForm.status,
-        date: incomeForm.date,
       });
       toast.success("Income record created successfully.");
       incomeModalRef.current?.close();
@@ -108,7 +103,6 @@ function RouteComponent() {
         paidTo: expenseForm.paidTo,
         description: expenseForm.description,
         status: expenseForm.status,
-        date: expenseForm.date,
       });
       toast.success("Expense record created successfully.");
       expenseModalRef.current?.close();
@@ -174,12 +168,13 @@ function RouteComponent() {
               setIncomeForm({ ...incomeForm, type: e.target.value })
             }
           >
-            <option value="Sales">Sales</option>
-            <option value="Consulting">Consulting</option>
+            <option value="Salary">Salary</option>
+            <option value="Bonus">Bonus</option>
+            <option value="Commission">Commission</option>
             <option value="Freelance">Freelance</option>
             <option value="Investment">Investment</option>
-            <option value="Bonus">Bonus</option>
-            <option value="Rental Income">Rental Income</option>
+            <option value="Rental">Rental</option>
+            <option value="Grant">Grant</option>
             <option value="Other">Other</option>
           </LocalSelect>
           <SimpleInput
@@ -192,14 +187,6 @@ function RouteComponent() {
             }
             required
           />
-          <SimpleInput
-            label="Date"
-            type="date"
-            value={incomeForm.date}
-            onChange={(e) =>
-              setIncomeForm({ ...incomeForm, date: e.target.value })
-            }
-          />
           <LocalSelect
             label="Payment Status"
             value={incomeForm.status}
@@ -207,9 +194,10 @@ function RouteComponent() {
               setIncomeForm({ ...incomeForm, status: e.target.value })
             }
           >
-            <option value="Received">Received</option>
             <option value="Pending">Pending</option>
-            <option value="Overdue">Overdue</option>
+            <option value="Approved">Approved</option>
+            <option value="Rejected">Rejected</option>
+            <option value="Paid">Paid</option>
           </LocalSelect>
           <SimpleTextArea
             label="Description / Memo"
@@ -277,14 +265,6 @@ function RouteComponent() {
               setExpenseForm({ ...expenseForm, paidTo: e.target.value })
             }
             required
-          />
-          <SimpleInput
-            label="Date"
-            type="date"
-            value={expenseForm.date}
-            onChange={(e) =>
-              setExpenseForm({ ...expenseForm, date: e.target.value })
-            }
           />
           <LocalSelect
             label="Approval Status"
