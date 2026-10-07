@@ -38,14 +38,12 @@ function RouteComponent() {
   const [form, setForm] = useState({
     name: "",
     description: "",
-    type: "product",
   });
 
   const handleOpenAdd = () => {
     setForm({
       name: "",
       description: "",
-      type: "product",
     });
     addModalRef.current?.open();
   };
@@ -55,7 +53,6 @@ function RouteComponent() {
     setForm({
       name: category.name || "",
       description: category.description || "",
-      type: category.type || "product",
     });
     editModalRef.current?.open();
   };
@@ -215,21 +212,6 @@ function RouteComponent() {
 
           <div>
             <label className="text-xs font-semibold text-base-content/70">
-              Category Scope / Type
-            </label>
-            <select
-              className="select select-bordered w-full mt-1"
-              value={form.type}
-              onChange={(e) => setForm({ ...form, type: e.target.value })}
-            >
-              <option value="product">Physical Products</option>
-              <option value="service">Services & Consulting</option>
-              <option value="general">General (All)</option>
-            </select>
-          </div>
-
-          <div>
-            <label className="text-xs font-semibold text-base-content/70">
               Description
             </label>
             <textarea
@@ -276,21 +258,6 @@ function RouteComponent() {
               value={form.name}
               onChange={(e) => setForm({ ...form, name: e.target.value })}
             />
-          </div>
-
-          <div>
-            <label className="text-xs font-semibold text-base-content/70">
-              Category Scope / Type
-            </label>
-            <select
-              className="select select-bordered w-full mt-1"
-              value={form.type}
-              onChange={(e) => setForm({ ...form, type: e.target.value })}
-            >
-              <option value="product">Physical Products</option>
-              <option value="service">Services & Consulting</option>
-              <option value="general">General (All)</option>
-            </select>
           </div>
 
           <div>
