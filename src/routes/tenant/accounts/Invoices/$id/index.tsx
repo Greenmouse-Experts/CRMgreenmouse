@@ -1,5 +1,5 @@
 import SimpleTitle from "@/components/SimpleTitle";
-import { useParams } from "@tanstack/react-router";
+import { useParams, Link } from "@tanstack/react-router";
 import { createFileRoute } from "@tanstack/react-router";
 import {
   useInvoice,
@@ -15,6 +15,7 @@ import {
   Calendar,
   Building,
   Mail,
+  Edit,
 } from "lucide-react";
 
 export const Route = createFileRoute("/tenant/accounts/Invoices/$id/")({
@@ -83,6 +84,13 @@ function RouteComponent() {
                   <span className="badge badge-lg bg-white/20 text-white font-semibold uppercase tracking-wider border-0">
                     {invoice.status || "Draft"}
                   </span>
+                  <Link
+                    to="/tenant/accounts/Invoices/$id/edit"
+                    params={{ id: invoice.id }}
+                    className="btn btn-sm bg-white/20 hover:bg-white/30 text-white border-0"
+                  >
+                    <Edit className="size-4 mr-1" /> Edit
+                  </Link>
                   {invoice.status !== "paid" && (
                     <button
                       onClick={handleMarkPaid}

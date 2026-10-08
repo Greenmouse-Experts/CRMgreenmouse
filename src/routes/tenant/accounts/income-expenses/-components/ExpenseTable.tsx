@@ -203,7 +203,7 @@ export default function ExpenseTable() {
             <option value="Meals">Meals & Entertainment</option>
             <option value="Utilities">Utilities & Hosting</option>
             <option value="Marketing">Marketing & Ads</option>
-            <option value="Contractors">Contractors / Services</option>
+            <option value="Payroll">Contractors / Payroll</option>
             <option value="Other">Other</option>
           </LocalSelect>
           <SimpleInput

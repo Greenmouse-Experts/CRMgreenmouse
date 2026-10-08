@@ -31,7 +31,11 @@ function RouteComponent() {
   const { data: contacts = [] } = useContacts();
 
   const [items, setItems] = useState<InvoiceItem[]>([
-    { description: "Standard Consultation & Service", qty: 1, unitPrice: 150 },
+    {
+      description: "Standard Consultation & Service",
+      qty: 1,
+      unitPrice: 15000,
+    },
   ]);
 
   const methods = useForm<FormValues>({
@@ -40,7 +44,7 @@ function RouteComponent() {
       dueDate: new Date(Date.now() + 14 * 86400000).toISOString().split("T")[0],
       contactId: "",
       billingAddress: "",
-      currency: "USD",
+      currency: "NGN",
       tax: 0,
       discount: 0,
     },
@@ -75,7 +79,7 @@ function RouteComponent() {
       acc + (Number(curr.qty) || 0) * (Number(curr.unitPrice) || 0),
     0,
   );
-  const currency = methods.watch("currency");
+  const currency = methods.watch("currency") || "NGN";
   const formatAmount = (amount: number) =>
     new Intl.NumberFormat(undefined, { style: "currency", currency }).format(
       amount,
@@ -146,10 +150,10 @@ function RouteComponent() {
                   })}
                 />
                 <LocalSelect label="Currency" {...methods.register("currency")}>
+                  <option value="NGN">NGN (₦)</option>
                   <option value="USD">USD ($)</option>
                   <option value="EUR">EUR (€)</option>
                   <option value="GBP">GBP (£)</option>
-                  <option value="NGN">NGN (₦)</option>
                 </LocalSelect>
               </FormWrapper>
 
@@ -269,10 +273,14 @@ function RouteComponent() {
                 <div className="w-72 space-y-2 bg-base-200/40 p-4 rounded-xl">
                   <div className="flex justify-between text-sm">
                     <span className="text-base-content/70">Subtotal:</span>
-                    <span className="font-medium">{formatAmount(subtotal)}</span>
+                    <span className="font-medium">
+                      {formatAmount(subtotal)}
+                    </span>
                   </div>
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-base-content/70">Discount ({currency}):</span>
+                    <span className="text-base-content/70">
+                      Discount ({currency}):
+                    </span>
                     <input
                       type="number"
                       min="0"
@@ -282,7 +290,9 @@ function RouteComponent() {
                     />
                   </div>
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-base-content/70">Tax ({currency}):</span>
+                    <span className="text-base-content/70">
+                      Tax ({currency}):
+                    </span>
                     <input
                       type="number"
                       min="0"
@@ -294,7 +304,9 @@ function RouteComponent() {
                   <div className="divider my-1"></div>
                   <div className="flex justify-between text-base font-bold">
                     <span>Grand Total:</span>
-                    <span className="text-primary">{formatAmount(grandTotal)}</span>
+                    <span className="text-primary">
+                      {formatAmount(grandTotal)}
+                    </span>
                   </div>
                 </div>
               </div>

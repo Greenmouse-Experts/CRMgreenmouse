@@ -7,7 +7,14 @@ import CustomTable from "@/components/tables/CustomTable";
 import PageHeader from "@/components/Headers/PageHeader";
 import PageLoader from "@/components/layout/PageLoader";
 import type { Actions } from "@/components/tables/pop-up";
-import { PlusCircleIcon, Send, CheckCircle, Trash2, Eye } from "lucide-react";
+import {
+  PlusCircleIcon,
+  Send,
+  CheckCircle,
+  Trash2,
+  Eye,
+  Edit,
+} from "lucide-react";
 import { useSearch } from "@/stores/data";
 import {
   useInvoices,
@@ -141,7 +148,7 @@ function RouteComponent() {
       label: "Issue Date",
       render: (date: string) => (
         <span className="text-xs text-base-content/70">
-          {date ? new Date(date).toLocaleDateString() : "—"}
+          {date ? new Date(date).toLocaleDateString() : "\u2014"}
         </span>
       ),
     },
@@ -150,7 +157,7 @@ function RouteComponent() {
       label: "Due Date",
       render: (date: string) => (
         <span className="text-xs text-base-content/70">
-          {date ? new Date(date).toLocaleDateString() : "—"}
+          {date ? new Date(date).toLocaleDateString() : "\u2014"}
         </span>
       ),
     },
@@ -183,6 +190,18 @@ function RouteComponent() {
       ),
       action: (item: Invoice) => {
         navigate({ to: `/tenant/accounts/Invoices/${item.id}` });
+      },
+    },
+    {
+      key: "edit",
+      label: "Edit Invoice",
+      render: () => (
+        <span className="flex items-center gap-2">
+          <Edit className="size-4" /> Edit Invoice
+        </span>
+      ),
+      action: (item: Invoice) => {
+        navigate({ to: `/tenant/accounts/Invoices/${item.id}/edit` });
       },
     },
     {

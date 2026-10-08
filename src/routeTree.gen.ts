@@ -86,6 +86,7 @@ import { Route as AdminContactsCustomersAddIndexRouteImport } from './routes/adm
 import { Route as AdminContactsCompaniesAddIndexRouteImport } from './routes/admin/contacts/companies/add/index'
 import { Route as AdminAccountsInvoicesAddIndexRouteImport } from './routes/admin/accounts/Invoices/add/index'
 import { Route as AdminAccountsInvoicesIdIndexRouteImport } from './routes/admin/accounts/Invoices/$id/index'
+import { Route as TenantAccountsInvoicesIdEditRouteImport } from './routes/tenant/accounts/Invoices/$id/edit'
 import { Route as TenantContactsCompaniesDetailsIdIndexRouteImport } from './routes/tenant/contacts/companies/details/$id/index'
 import { Route as AdminContactsCompaniesDetailsIdIndexRouteImport } from './routes/admin/contacts/companies/details/$id/index'
 
@@ -512,6 +513,12 @@ const AdminAccountsInvoicesIdIndexRoute =
     path: '/accounts/Invoices/$id/',
     getParentRoute: () => AdminRouteRoute,
   } as any)
+const TenantAccountsInvoicesIdEditRoute =
+  TenantAccountsInvoicesIdEditRouteImport.update({
+    id: '/accounts/Invoices/$id/edit',
+    path: '/accounts/Invoices/$id/edit',
+    getParentRoute: () => TenantRouteRoute,
+  } as any)
 const TenantContactsCompaniesDetailsIdIndexRoute =
   TenantContactsCompaniesDetailsIdIndexRouteImport.update({
     id: '/contacts/companies/details/$id/',
@@ -591,6 +598,7 @@ export interface FileRoutesByFullPath {
   '/tenant/settings/theme': typeof TenantSettingsThemeIndexRoute
   '/tenant/users/add': typeof TenantUsersAddIndexRoute
   '/tenant/users/roles': typeof TenantUsersRolesIndexRoute
+  '/tenant/accounts/Invoices/$id/edit': typeof TenantAccountsInvoicesIdEditRoute
   '/admin/accounts/Invoices/$id': typeof AdminAccountsInvoicesIdIndexRoute
   '/admin/accounts/Invoices/add': typeof AdminAccountsInvoicesAddIndexRoute
   '/admin/contacts/companies/add': typeof AdminContactsCompaniesAddIndexRoute
@@ -665,6 +673,7 @@ export interface FileRoutesByTo {
   '/tenant/settings/theme': typeof TenantSettingsThemeIndexRoute
   '/tenant/users/add': typeof TenantUsersAddIndexRoute
   '/tenant/users/roles': typeof TenantUsersRolesIndexRoute
+  '/tenant/accounts/Invoices/$id/edit': typeof TenantAccountsInvoicesIdEditRoute
   '/admin/accounts/Invoices/$id': typeof AdminAccountsInvoicesIdIndexRoute
   '/admin/accounts/Invoices/add': typeof AdminAccountsInvoicesAddIndexRoute
   '/admin/contacts/companies/add': typeof AdminContactsCompaniesAddIndexRoute
@@ -747,6 +756,7 @@ export interface FileRoutesById {
   '/tenant/settings/theme/': typeof TenantSettingsThemeIndexRoute
   '/tenant/users/add/': typeof TenantUsersAddIndexRoute
   '/tenant/users/roles/': typeof TenantUsersRolesIndexRoute
+  '/tenant/accounts/Invoices/$id/edit': typeof TenantAccountsInvoicesIdEditRoute
   '/admin/accounts/Invoices/$id/': typeof AdminAccountsInvoicesIdIndexRoute
   '/admin/accounts/Invoices/add/': typeof AdminAccountsInvoicesAddIndexRoute
   '/admin/contacts/companies/add/': typeof AdminContactsCompaniesAddIndexRoute
@@ -830,6 +840,7 @@ export interface FileRouteTypes {
     | '/tenant/settings/theme'
     | '/tenant/users/add'
     | '/tenant/users/roles'
+    | '/tenant/accounts/Invoices/$id/edit'
     | '/admin/accounts/Invoices/$id'
     | '/admin/accounts/Invoices/add'
     | '/admin/contacts/companies/add'
@@ -904,6 +915,7 @@ export interface FileRouteTypes {
     | '/tenant/settings/theme'
     | '/tenant/users/add'
     | '/tenant/users/roles'
+    | '/tenant/accounts/Invoices/$id/edit'
     | '/admin/accounts/Invoices/$id'
     | '/admin/accounts/Invoices/add'
     | '/admin/contacts/companies/add'
@@ -985,6 +997,7 @@ export interface FileRouteTypes {
     | '/tenant/settings/theme/'
     | '/tenant/users/add/'
     | '/tenant/users/roles/'
+    | '/tenant/accounts/Invoices/$id/edit'
     | '/admin/accounts/Invoices/$id/'
     | '/admin/accounts/Invoices/add/'
     | '/admin/contacts/companies/add/'
@@ -1556,6 +1569,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminAccountsInvoicesIdIndexRouteImport
       parentRoute: typeof AdminRouteRoute
     }
+    '/tenant/accounts/Invoices/$id/edit': {
+      id: '/tenant/accounts/Invoices/$id/edit'
+      path: '/accounts/Invoices/$id/edit'
+      fullPath: '/tenant/accounts/Invoices/$id/edit'
+      preLoaderRoute: typeof TenantAccountsInvoicesIdEditRouteImport
+      parentRoute: typeof TenantRouteRoute
+    }
     '/tenant/contacts/companies/details/$id/': {
       id: '/tenant/contacts/companies/details/$id/'
       path: '/contacts/companies/details/$id'
@@ -1695,6 +1715,7 @@ interface TenantRouteRouteChildren {
   TenantProductsServiceIndexRoute: typeof TenantProductsServiceIndexRoute
   TenantUsersAddIndexRoute: typeof TenantUsersAddIndexRoute
   TenantUsersRolesIndexRoute: typeof TenantUsersRolesIndexRoute
+  TenantAccountsInvoicesIdEditRoute: typeof TenantAccountsInvoicesIdEditRoute
   TenantAccountsInvoicesIdIndexRoute: typeof TenantAccountsInvoicesIdIndexRoute
   TenantAccountsInvoicesAddIndexRoute: typeof TenantAccountsInvoicesAddIndexRoute
   TenantContactsCompaniesAddIndexRoute: typeof TenantContactsCompaniesAddIndexRoute
@@ -1726,6 +1747,7 @@ const TenantRouteRouteChildren: TenantRouteRouteChildren = {
   TenantProductsServiceIndexRoute: TenantProductsServiceIndexRoute,
   TenantUsersAddIndexRoute: TenantUsersAddIndexRoute,
   TenantUsersRolesIndexRoute: TenantUsersRolesIndexRoute,
+  TenantAccountsInvoicesIdEditRoute: TenantAccountsInvoicesIdEditRoute,
   TenantAccountsInvoicesIdIndexRoute: TenantAccountsInvoicesIdIndexRoute,
   TenantAccountsInvoicesAddIndexRoute: TenantAccountsInvoicesAddIndexRoute,
   TenantContactsCompaniesAddIndexRoute: TenantContactsCompaniesAddIndexRoute,

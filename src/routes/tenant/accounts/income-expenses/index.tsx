@@ -253,7 +253,7 @@ function RouteComponent() {
             <option value="Meals">Meals & Entertainment</option>
             <option value="Utilities">Utilities & Hosting</option>
             <option value="Marketing">Marketing & Advertising</option>
-            <option value="Contractors">Contractors & Payroll</option>
+            <option value="Payroll">Contractors & Payroll</option>
             <option value="Other">Other</option>
           </LocalSelect>
           <SimpleInput
