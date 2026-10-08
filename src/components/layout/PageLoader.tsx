@@ -72,7 +72,7 @@ export default function PageLoader<TData>(props: PageLoaderProps<TData>) {
           <div className="mb-4 rounded-full bg-error/10 p-3 text-error">
             <ShieldOff className="h-8 w-8" />
           </div>
-          <h3 className="text-lg font-bold text-base-content">Access Denied</h3>
+          <h3 className="text-lg font-semibold text-base-content">Access Denied</h3>
           <p className="mt-1 text-sm text-base-content/60 max-w-xs">
             You don't have permission to view this resource. Contact support or
             a Super Admin to request access.
@@ -86,7 +86,7 @@ export default function PageLoader<TData>(props: PageLoaderProps<TData>) {
         <div className="mb-4 rounded-full bg-error/10 p-3 text-error">
           <AlertCircle className="h-8 w-8" />
         </div>
-        <h3 className="text-lg font-bold text-base-content">
+        <h3 className="text-lg font-semibold text-base-content">
           Something went wrong
         </h3>
         <p className="mt-1 text-sm text-base-content/60 max-w-xs">
@@ -111,7 +111,7 @@ export default function PageLoader<TData>(props: PageLoaderProps<TData>) {
         <div className="mb-4 rounded-full bg-base-200 p-4 text-base-content/40">
           <Inbox className="h-8 w-8" />
         </div>
-        <h3 className="text-lg font-bold text-base-content">
+        <h3 className="text-lg font-semibold text-base-content">
           {emptyState.title ?? "No Records Found"}
         </h3>
         <p className="mt-1 text-sm text-base-content/60 max-w-sm">

@@ -360,7 +360,7 @@ function RouteComponent() {
                         />
                       </div>
                       <div className="divider my-1"></div>
-                      <div className="flex justify-between text-base font-bold">
+                      <div className="flex justify-between text-base font-semibold">
                         <span>Grand Total:</span>
                         <span className="text-primary">
                           {formatAmount(grandTotal)}

@@ -252,7 +252,7 @@ function RouteComponent() {
       label: "Product",
       render: (_: any, item: Product) => (
         <div className="flex items-center gap-3">
-          <div className="size-10 rounded-lg bg-primary/10 flex items-center justify-center text-primary font-bold overflow-hidden shrink-0 border border-base-200">
+          <div className="size-10 rounded-lg bg-primary/10 flex items-center justify-center text-primary font-semibold overflow-hidden shrink-0 border border-base-200">
             {item.images && item.images.length > 0 && item.images[0] ? (
               <img
                 src={item.images[0]}
@@ -680,7 +680,7 @@ function RouteComponent() {
 
           <div className="p-3 bg-base-200/50 rounded-lg text-xs text-base-content/70">
             New calculated stock:{" "}
-            <span className="font-bold text-base-content">
+            <span className="font-semibold text-base-content">
               {Math.max(
                 0,
                 (selectedProduct?.stock ?? selectedProduct?.quantity ?? 0) +
@@ -727,7 +727,7 @@ function RouteComponent() {
                 )}
               </div>
               <div>
-                <h4 className="text-lg font-bold text-base-content">
+                <h4 className="text-lg font-semibold text-base-content">
                   {selectedProduct.name}
                 </h4>
                 <div className="flex items-center gap-2 mt-1">
@@ -775,7 +775,7 @@ function RouteComponent() {
                 <span className="text-xs text-base-content/60 block">
                   Selling Price
                 </span>
-                <span className="font-bold text-base-content text-base">
+                <span className="font-semibold text-base-content text-base">
                   ₦{Number(selectedProduct.price || 0).toLocaleString()}
                 </span>
               </div>
@@ -783,7 +783,7 @@ function RouteComponent() {
                 <span className="text-xs text-base-content/60 block">
                   Cost Price
                 </span>
-                <span className="font-bold text-base-content text-base">
+                <span className="font-semibold text-base-content text-base">
                   ₦{Number(selectedProduct.cost || 0).toLocaleString()}
                 </span>
               </div>
@@ -791,7 +791,7 @@ function RouteComponent() {
                 <span className="text-xs text-base-content/60 block">
                   Current Stock
                 </span>
-                <span className="font-bold text-base-content text-base">
+                <span className="font-semibold text-base-content text-base">
                   {selectedProduct.stock ?? selectedProduct.quantity ?? 0} units
                 </span>
               </div>

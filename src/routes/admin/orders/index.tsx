@@ -75,7 +75,7 @@ function RouteComponent() {
       label: "Order #",
       render: (val: any, item: Order) => (
         <div className="flex items-center gap-2.5">
-          <div className="size-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary font-bold">
+          <div className="size-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary font-semibold">
             <ShoppingBag className="size-4" />
           </div>
           <div>
@@ -125,7 +125,7 @@ function RouteComponent() {
             0,
           );
         return (
-          <span className="font-bold text-base-content">
+          <span className="font-semibold text-base-content">
             {item.currency || "₦"}
             {Number(computed || 0).toLocaleString()}
           </span>
@@ -207,7 +207,7 @@ function RouteComponent() {
                     <p className="text-sm font-semibold text-base-content/60 uppercase">
                       Total Orders
                     </p>
-                    <h3 className="text-2xl font-bold text-base-content mt-1">
+                    <h3 className="text-2xl font-semibold text-base-content mt-1">
                       {totalOrders}
                     </h3>
                   </div>
@@ -223,7 +223,7 @@ function RouteComponent() {
                     <p className="text-sm font-semibold text-base-content/60 uppercase">
                       Pending
                     </p>
-                    <h3 className="text-2xl font-bold text-warning mt-1">
+                    <h3 className="text-2xl font-semibold text-warning mt-1">
                       {pendingOrders}
                     </h3>
                   </div>
@@ -239,7 +239,7 @@ function RouteComponent() {
                     <p className="text-sm font-semibold text-base-content/60 uppercase">
                       Processing
                     </p>
-                    <h3 className="text-2xl font-bold text-info mt-1">
+                    <h3 className="text-2xl font-semibold text-info mt-1">
                       {processingOrders}
                     </h3>
                   </div>
@@ -255,7 +255,7 @@ function RouteComponent() {
                     <p className="text-sm font-semibold text-base-content/60 uppercase">
                       Completed
                     </p>
-                    <h3 className="text-2xl font-bold text-success mt-1">
+                    <h3 className="text-2xl font-semibold text-success mt-1">
                       {completedOrders}
                     </h3>
                   </div>
@@ -309,7 +309,7 @@ function RouteComponent() {
                 <div className="p-6 space-y-6">
                   <div className="flex items-center justify-between border-b border-base-200 pb-4">
                     <div>
-                      <h3 className="text-lg font-bold text-base-content">
+                      <h3 className="text-lg font-semibold text-base-content">
                         Order #
                         {selectedOrder.orderNumber ||
                           selectedOrder.id.slice(0, 8).toUpperCase()}
@@ -356,7 +356,7 @@ function RouteComponent() {
                       <span className="text-sm text-base-content/60 block">
                         Total Amount
                       </span>
-                      <span className="text-base font-bold text-base-content">
+                      <span className="text-base font-semibold text-base-content">
                         {selectedOrder.currency || "₦"}
                         {Number(
                           selectedOrder.total ??

@@ -103,7 +103,7 @@ function RouteComponent() {
                     <Tag size={20} />
                   </div>
                   <div>
-                    <div className="text-2xl font-bold text-base-content">
+                    <div className="text-2xl font-semibold text-base-content">
                       {stats.total}
                     </div>
                     <div className="text-sm text-base-content/60">
@@ -119,7 +119,7 @@ function RouteComponent() {
                     <Package size={20} />
                   </div>
                   <div>
-                    <div className="text-2xl font-bold text-info">
+                    <div className="text-2xl font-semibold text-info">
                       {stats.products}
                     </div>
                     <div className="text-sm text-base-content/60">
@@ -135,7 +135,7 @@ function RouteComponent() {
                     <Wrench size={20} />
                   </div>
                   <div>
-                    <div className="text-2xl font-bold text-secondary">
+                    <div className="text-2xl font-semibold text-secondary">
                       {stats.services}
                     </div>
                     <div className="text-sm text-base-content/60">
@@ -254,7 +254,7 @@ function RouteComponent() {
                         <Tag size={24} />
                       </div>
                       <div>
-                        <h3 className="text-xl font-bold text-base-content">
+                        <h3 className="text-xl font-semibold text-base-content">
                           {selectedCategory.name}
                         </h3>
                         <p className="text-sm text-base-content/60">

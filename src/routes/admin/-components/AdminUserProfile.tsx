@@ -24,7 +24,7 @@ export default function AdminUserProfile() {
   return (
     <div className="flex items-center border-l pl-3 ml-2 border-base-300">
       <div className="mr-3 md:flex flex-col text-sm text-right hidden">
-        <span className="font-bold leading-tight">{displayName}</span>
+        <span className="font-semibold leading-tight">{displayName}</span>
         <div className="flex items-center justify-end gap-1 text-xs text-primary font-medium">
           <ShieldCheck className="size-3" />
           <span>Super Admin</span>
@@ -35,7 +35,7 @@ export default function AdminUserProfile() {
           tabIndex={0}
           className="btn btn-circle avatar ring ring-primary/20 ring-offset-2 ring-offset-base-100"
         >
-          <div className="w-9 rounded-full bg-primary text-primary-content flex items-center justify-center font-bold">
+          <div className="w-9 rounded-full bg-primary text-primary-content flex items-center justify-center font-semibold">
             {displayName.charAt(0).toUpperCase()}
           </div>
         </button>
@@ -44,11 +44,18 @@ export default function AdminUserProfile() {
           className="dropdown-content menu z-30 p-2 shadow-xl bg-base-100 rounded-box w-56 border border-base-200 mt-2"
         >
           <li className="menu-title px-4 py-2 border-b border-base-200">
-            <span className="font-bold text-base-content block truncate">{displayName}</span>
-            <span className="text-xs text-base-content/60 block truncate">{email}</span>
+            <span className="font-semibold text-base-content block truncate">
+              {displayName}
+            </span>
+            <span className="text-xs text-base-content/60 block truncate">
+              {email}
+            </span>
           </li>
           <li>
-            <Link to="/admin/settings/profile" className="flex items-center gap-2 py-2">
+            <Link
+              to="/admin/settings/profile"
+              className="flex items-center gap-2 py-2"
+            >
               <User className="size-4" />
               <span>Admin Profile</span>
             </Link>

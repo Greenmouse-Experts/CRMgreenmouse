@@ -36,7 +36,7 @@ const Modal = forwardRef<ModalHandle, ModalProps>(
         <Toaster theme="dark" richColors />
         <div className="modal-box max-w-2xl flex flex-col max-h-[90vh] p-6 rounded-lg shadow-xl relative">
           <div className="flex">
-            {title && <h3 className="font-bold text-lg ">{title}</h3>}
+            {title && <h3 className="font-semibold text-lg ">{title}</h3>}
             <form method="dialog" className="ml-auto">
               <button
                 className="btn btn-sm btn-circle btn-ghost text-gray-500 hover:text-gray-700"

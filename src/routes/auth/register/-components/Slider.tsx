@@ -55,7 +55,7 @@ export default function OnboardingSlider() {
           <div className="mb-8 p-4 w-fit rounded-3xl bg-white/10 backdrop-blur-md">
             {slides[currentSlide].icon}
           </div>
-          <h2 className="text-4xl font-bold mb-6 leading-tight animate-in fade-in slide-in-from-bottom-4 duration-700">
+          <h2 className="text-4xl font-semibold mb-6 leading-tight animate-in fade-in slide-in-from-bottom-4 duration-700">
             {slides[currentSlide].title}
           </h2>
           <p className="text-xl opacity-80 leading-relaxed animate-in fade-in slide-in-from-bottom-2 duration-1000">

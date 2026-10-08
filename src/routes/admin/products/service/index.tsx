@@ -115,7 +115,7 @@ function RouteComponent() {
                     <Wrench size={20} />
                   </div>
                   <div>
-                    <div className="text-2xl font-bold text-base-content">
+                    <div className="text-2xl font-semibold text-base-content">
                       {stats.total}
                     </div>
                     <div className="text-sm text-base-content/60">
@@ -128,10 +128,10 @@ function RouteComponent() {
               <div className="bg-base-100 rounded-box border border-base-200 p-4 shadow-sm">
                 <div className="flex items-center gap-3">
                   <div className="bg-success/10 text-success p-2.5 rounded-lg">
-                    <span className="font-bold text-sm">✓</span>
+                    <span className="font-semibold text-sm">✓</span>
                   </div>
                   <div>
-                    <div className="text-2xl font-bold text-base-content">
+                    <div className="text-2xl font-semibold text-base-content">
                       {stats.active}
                     </div>
                     <div className="text-sm text-base-content/60">Active</div>
@@ -142,10 +142,10 @@ function RouteComponent() {
               <div className="bg-base-100 rounded-box border border-base-200 p-4 shadow-sm">
                 <div className="flex items-center gap-3">
                   <div className="bg-base-200 text-base-content/60 p-2.5 rounded-lg">
-                    <span className="font-bold text-sm">—</span>
+                    <span className="font-semibold text-sm">—</span>
                   </div>
                   <div>
-                    <div className="text-2xl font-bold text-base-content">
+                    <div className="text-2xl font-semibold text-base-content">
                       {stats.inactive}
                     </div>
                     <div className="text-sm text-base-content/60">Inactive</div>
@@ -156,10 +156,10 @@ function RouteComponent() {
               <div className="bg-base-100 rounded-box border border-base-200 p-4 shadow-sm">
                 <div className="flex items-center gap-3">
                   <div className="bg-info/10 text-info p-2.5 rounded-lg">
-                    <span className="font-bold text-sm">₦</span>
+                    <span className="font-semibold text-sm">₦</span>
                   </div>
                   <div>
-                    <div className="text-2xl font-bold text-base-content">
+                    <div className="text-2xl font-semibold text-base-content">
                       ₦ {stats.avgPrice.toLocaleString()}
                     </div>
                     <div className="text-sm text-base-content/60">
@@ -293,7 +293,7 @@ function RouteComponent() {
                         <Wrench size={24} />
                       </div>
                       <div>
-                        <h3 className="text-xl font-bold text-base-content">
+                        <h3 className="text-xl font-semibold text-base-content">
                           {selectedService.name}
                         </h3>
                         <p className="text-sm text-base-content/60">
@@ -319,7 +319,7 @@ function RouteComponent() {
                       <span className="text-sm text-base-content/60 block">
                         Billing Rate
                       </span>
-                      <span className="text-xl font-bold text-base-content">
+                      <span className="text-xl font-semibold text-base-content">
                         ₦ {Number(selectedService.price).toLocaleString()}
                       </span>
                     </div>

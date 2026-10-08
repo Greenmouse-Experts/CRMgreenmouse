@@ -14,7 +14,7 @@ export default function UserInfo({ staff }: UserInfoProps) {
   return (
     <div className="flex flex-col sm:flex-row items-center sm:items-start p-6 bg-base-100 border border-base-200 shadow-sm rounded-2xl gap-6">
       <div className="avatar">
-        <div className="size-28 rounded-2xl ring-4 ring-primary/20 ring-offset-2 overflow-hidden bg-primary/10 text-primary flex items-center justify-center font-bold text-2xl">
+        <div className="size-28 rounded-2xl ring-4 ring-primary/20 ring-offset-2 overflow-hidden bg-primary/10 text-primary flex items-center justify-center font-semibold text-2xl">
           {staff?.profilePic ? (
             <img
               src={staff.profilePic}

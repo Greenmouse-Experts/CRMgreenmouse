@@ -301,7 +301,7 @@ function RouteComponent() {
                         <Package size={24} />
                       </div>
                       <div>
-                        <h3 className="text-xl font-bold text-base-content">
+                        <h3 className="text-xl font-semibold text-base-content">
                           {selectedProduct.name}
                         </h3>
                         <p className="text-sm text-base-content/60">
@@ -327,7 +327,7 @@ function RouteComponent() {
                       <span className="text-sm text-base-content/60 block">
                         Selling Price
                       </span>
-                      <span className="text-base font-bold text-base-content">
+                      <span className="text-base font-semibold text-base-content">
                         {selectedProduct.currency || "NGN"}{" "}
                         {Number(selectedProduct.price).toLocaleString()}
                       </span>
@@ -336,7 +336,7 @@ function RouteComponent() {
                       <span className="text-sm text-base-content/60 block">
                         Cost Price
                       </span>
-                      <span className="text-base font-bold text-base-content">
+                      <span className="text-base font-semibold text-base-content">
                         {selectedProduct.currency || "NGN"}{" "}
                         {Number(selectedProduct.cost || 0).toLocaleString()}
                       </span>
@@ -345,7 +345,7 @@ function RouteComponent() {
                       <span className="text-sm text-base-content/60 block">
                         Profit Margin
                       </span>
-                      <span className="text-base font-bold text-success">
+                      <span className="text-base font-semibold text-success">
                         {selectedProduct.price && selectedProduct.cost
                           ? (
                               ((Number(selectedProduct.price) -
@@ -360,7 +360,7 @@ function RouteComponent() {
                       <span className="text-sm text-base-content/60 block">
                         Stock Count
                       </span>
-                      <span className="text-base font-bold text-base-content">
+                      <span className="text-base font-semibold text-base-content">
                         {selectedProduct.stock ?? selectedProduct.quantity ?? 0}
                       </span>
                     </div>

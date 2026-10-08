@@ -63,7 +63,7 @@ const ProductSummary: React.FC<ProductSummaryProps> = ({ products }) => {
               <p className="text-xs font-medium text-base-content/60 uppercase tracking-wider">
                 {stat.title}
               </p>
-              <h3 className="text-2xl font-bold text-base-content mt-1">
+              <h3 className="text-2xl font-semibold text-base-content mt-1">
                 {stat.value}
               </h3>
               <p className="text-xs text-base-content/50 mt-0.5">

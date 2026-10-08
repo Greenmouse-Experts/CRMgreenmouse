@@ -16,7 +16,7 @@ export default function AdminHeader() {
           <Shield className="size-5" />
         </div>
         <div>
-          <h2 className="text-current font-bold text-md md:text-lg">
+          <h2 className="text-current font-semibold text-md md:text-lg">
             Super Admin Portal
           </h2>
           <span className="text-xs text-base-content/60 hidden sm:inline-block">

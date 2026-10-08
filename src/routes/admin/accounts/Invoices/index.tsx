@@ -54,7 +54,7 @@ function RouteComponent() {
       label: "Invoice #",
       render: (val: any, item: Invoice) => (
         <div className="flex items-center gap-2.5">
-          <div className="size-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary font-bold">
+          <div className="size-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary font-semibold">
             <FileText className="size-4" />
           </div>
           <div>
@@ -108,7 +108,7 @@ function RouteComponent() {
             0,
           );
         return (
-          <span className="font-bold text-base-content">
+          <span className="font-semibold text-base-content">
             {item.currency || "₦"}
             {Number(computed || 0).toLocaleString()}
           </span>
@@ -212,7 +212,7 @@ function RouteComponent() {
                 <div className="p-6 space-y-6">
                   <div className="flex items-center justify-between border-b border-base-200 pb-4">
                     <div>
-                      <h3 className="text-lg font-bold text-base-content">
+                      <h3 className="text-lg font-semibold text-base-content">
                         Invoice #
                         {selectedInvoice.invoiceNumber ||
                           selectedInvoice.id.slice(0, 8).toUpperCase()}
@@ -253,7 +253,7 @@ function RouteComponent() {
                       <span className="text-sm text-base-content/60 block">
                         Total Amount
                       </span>
-                      <span className="text-base font-bold text-base-content">
+                      <span className="text-base font-semibold text-base-content">
                         {selectedInvoice.currency || "₦"}
                         {Number(
                           selectedInvoice.total ??

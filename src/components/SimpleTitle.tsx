@@ -23,7 +23,7 @@ const SimpleTitle = forwardRef<
       <div className="flex items-center gap-2 flex-1    ">
         <div
           ref={ref}
-          className="text-xl flex-1 font-bold  divider divider-start"
+          className="text-xl flex-1 font-semibold  divider divider-start"
         >
           {title}
         </div>

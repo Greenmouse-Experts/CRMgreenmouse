@@ -10,7 +10,7 @@ export default function UserInfo() {
           </div>
         </div>
         <div className="space-y-1">
-          <h2 className="text-xl font-bold">Rafiqur Rahman</h2>
+          <h2 className="text-xl font-semibold">Rafiqur Rahman</h2>
           <span className="text-base-content/70">Team Manager</span>
           <p className="text-sm text-base-content/50">Leeds, United Kingdom</p>
         </div>

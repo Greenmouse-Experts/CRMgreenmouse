@@ -167,7 +167,7 @@ function RouteComponent() {
       label: "Service",
       render: (_: any, item: ServiceItem) => (
         <div className="flex items-center gap-3">
-          <div className="size-9 rounded-lg bg-secondary/10 flex items-center justify-center text-secondary font-bold">
+          <div className="size-9 rounded-lg bg-secondary/10 flex items-center justify-center text-secondary font-semibold">
             <Wrench className="size-4" />
           </div>
           <div>
@@ -278,7 +278,7 @@ function RouteComponent() {
                 <p className="text-xs font-medium text-base-content/60 uppercase">
                   Total Services
                 </p>
-                <h3 className="text-2xl font-bold text-base-content mt-1">
+                <h3 className="text-2xl font-semibold text-base-content mt-1">
                   {totalServices}
                 </h3>
               </div>
@@ -293,7 +293,7 @@ function RouteComponent() {
                 <p className="text-xs font-medium text-base-content/60 uppercase">
                   Active Services
                 </p>
-                <h3 className="text-2xl font-bold text-base-content mt-1">
+                <h3 className="text-2xl font-semibold text-base-content mt-1">
                   {activeServices}
                 </h3>
               </div>
@@ -308,7 +308,7 @@ function RouteComponent() {
                 <p className="text-xs font-medium text-base-content/60 uppercase">
                   Average Service Rate
                 </p>
-                <h3 className="text-2xl font-bold text-base-content mt-1">
+                <h3 className="text-2xl font-semibold text-base-content mt-1">
                   ₦{Math.round(avgRate).toLocaleString()}
                 </h3>
               </div>
@@ -513,7 +513,7 @@ function RouteComponent() {
                 <Wrench className="size-7" />
               </div>
               <div>
-                <h4 className="text-lg font-bold text-base-content">
+                <h4 className="text-lg font-semibold text-base-content">
                   {selectedService.name}
                 </h4>
                 <div className="flex items-center gap-2 mt-1">
@@ -538,7 +538,7 @@ function RouteComponent() {
                 <span className="text-xs text-base-content/60 block">
                   Service Rate
                 </span>
-                <span className="font-bold text-base-content text-base">
+                <span className="font-semibold text-base-content text-base">
                   ₦{Number(selectedService.price || 0).toLocaleString()}
                 </span>
               </div>

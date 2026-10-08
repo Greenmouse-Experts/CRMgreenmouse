@@ -59,9 +59,12 @@ function RouteComponent() {
             <KeyRound className="size-5" />
           </div>
           <div>
-            <h2 className="text-xl font-bold text-base-content">Change Admin Password</h2>
+            <h2 className="text-xl font-semibold text-base-content">
+              Change Admin Password
+            </h2>
             <p className="text-xs text-base-content/60">
-              Ensure your account uses a strong password to safeguard administrative access.
+              Ensure your account uses a strong password to safeguard
+              administrative access.
             </p>
           </div>
         </div>
@@ -70,7 +73,8 @@ function RouteComponent() {
           <div>
             <label className="label">
               <span className="label-text font-semibold flex items-center gap-1.5">
-                <Lock className="size-3.5 text-base-content/60" /> Current Password
+                <Lock className="size-3.5 text-base-content/60" /> Current
+                Password
               </span>
             </label>
             <input
@@ -87,7 +91,8 @@ function RouteComponent() {
             <div>
               <label className="label">
                 <span className="label-text font-semibold flex items-center gap-1.5">
-                  <Lock className="size-3.5 text-base-content/60" /> New Password
+                  <Lock className="size-3.5 text-base-content/60" /> New
+                  Password
                 </span>
               </label>
               <input
@@ -103,7 +108,8 @@ function RouteComponent() {
             <div>
               <label className="label">
                 <span className="label-text font-semibold flex items-center gap-1.5">
-                  <Lock className="size-3.5 text-base-content/60" /> Confirm New Password
+                  <Lock className="size-3.5 text-base-content/60" /> Confirm New
+                  Password
                 </span>
               </label>
               <input
@@ -123,7 +129,9 @@ function RouteComponent() {
               disabled={changePassword.isPending}
               className="btn btn-primary btn-sm"
             >
-              {changePassword.isPending ? "Updating Password..." : "Update Password"}
+              {changePassword.isPending
+                ? "Updating Password..."
+                : "Update Password"}
             </button>
           </div>
         </form>
@@ -136,9 +144,12 @@ function RouteComponent() {
             <ShieldCheck className="size-5" />
           </div>
           <div>
-            <h2 className="text-xl font-bold text-base-content">Platform Permissions Directory</h2>
+            <h2 className="text-xl font-semibold text-base-content">
+              Platform Permissions Directory
+            </h2>
             <p className="text-xs text-base-content/60">
-              Complete catalog of granular permissions recognized by Greenmouse CRM backend.
+              Complete catalog of granular permissions recognized by Greenmouse
+              CRM backend.
             </p>
           </div>
         </div>
@@ -151,7 +162,7 @@ function RouteComponent() {
                   key={perm.key}
                   className="p-3 bg-base-200/50 rounded-lg border border-base-200 space-y-1"
                 >
-                  <span className="font-mono text-xs font-bold text-primary block">
+                  <span className="font-mono text-xs font-semibold text-primary block">
                     {perm.key}
                   </span>
                   <p className="text-xs text-base-content/70 leading-snug">

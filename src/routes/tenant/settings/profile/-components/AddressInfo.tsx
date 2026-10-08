@@ -11,7 +11,7 @@ export default function AddressInfo() {
     <FormProvider {...methods}>
       <div className="card bg-base-100">
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-lg font-bold">Address</h2>
+          <h2 className="text-lg font-semibold">Address</h2>
           <button
             className="btn btn-ghost btn-sm"
             onClick={() => setEditMode(!editMode)}

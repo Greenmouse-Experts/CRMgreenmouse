@@ -100,11 +100,11 @@ function RouteComponent() {
       label: "Tenant Company",
       render: (_value: string, item: Tenant) => (
         <div className="flex items-center gap-3">
-          <div className="size-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center font-bold">
+          <div className="size-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center font-semibold">
             <Building2 className="size-5" />
           </div>
           <div>
-            <div className="font-bold text-base-content leading-tight">
+            <div className="font-semibold text-base-content leading-tight">
               {item.companyName || "Unnamed Business"}
             </div>
             <div className="text-sm text-base-content/60">{item.email}</div>
@@ -318,7 +318,7 @@ function RouteComponent() {
             <div className="p-4 rounded-xl bg-base-200/50 space-y-3">
               <div className="flex items-center justify-between">
                 <span className="text-sm font-semibold text-base-content/60">Company Name</span>
-                <span className="font-bold text-base-content">{selectedTenant.companyName}</span>
+                <span className="font-semibold text-base-content">{selectedTenant.companyName}</span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-sm font-semibold text-base-content/60">Email</span>

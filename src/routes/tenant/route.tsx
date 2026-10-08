@@ -196,7 +196,7 @@ export const Route = createFileRoute("/tenant")({
     <div className="hero min-h-screen bg-base-200">
       <div className="hero-content text-center">
         <div className="max-w-md">
-          <h1 className="text-5xl font-bold">404 - Page Not Found</h1>
+          <h1 className="text-5xl font-semibold">404 - Page Not Found</h1>
           <p className="py-6">
             Oops! The page you are looking for does not exist.
           </p>
@@ -228,7 +228,7 @@ function RouteComponent() {
           className="drawer-overlay"
         ></label>
         <div className="min-h-full w-3xs bg-primary text-primary-content">
-          <div className="font-bold h-18 text-lg flex  items-center px-4 border-b border-base-300/40">
+          <div className="font-semibold h-18 text-lg flex  items-center px-4 border-b border-base-300/40">
             KINOVIA CRM
           </div>
           <ul className="menu  w-full space-y-2 ">

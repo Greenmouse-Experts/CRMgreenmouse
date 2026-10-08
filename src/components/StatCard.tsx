@@ -48,7 +48,7 @@ export default function StatCard({
           <p className="text-sm font-semibold text-base-content/60 uppercase tracking-wider truncate">
             {title}
           </p>
-          <h3 className="text-2xl font-bold text-base-content mt-1 truncate">
+          <h3 className="text-2xl font-semibold text-base-content mt-1 truncate">
             {value}
           </h3>
           {desc && (

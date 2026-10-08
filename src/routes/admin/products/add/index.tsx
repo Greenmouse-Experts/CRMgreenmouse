@@ -153,7 +153,7 @@ function RouteComponent() {
                   <span>Estimated Profit Margin:</span>
                 </div>
                 <div
-                  className={`text-lg font-bold ${
+                  className={`text-lg font-semibold ${
                     Number(calculatedMargin) >= 20
                       ? "text-success"
                       : Number(calculatedMargin) > 0

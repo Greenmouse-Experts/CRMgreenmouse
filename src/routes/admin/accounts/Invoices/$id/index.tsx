@@ -31,7 +31,7 @@ function RouteComponent() {
                 <div className="card bg-base-100 border border-base-200 shadow-sm p-6">
                   <div className="flex flex-wrap items-center justify-between gap-4 border-b border-base-200 pb-4">
                     <div>
-                      <h2 className="text-xl font-bold text-base-content">
+                      <h2 className="text-xl font-semibold text-base-content">
                         Invoice #
                         {invoice.invoiceNumber ||
                           invoice.id?.slice(0, 8).toUpperCase()}
@@ -96,7 +96,7 @@ function RouteComponent() {
 
                 {/* Items */}
                 <div className="card bg-base-100 border border-base-200 shadow-sm p-6">
-                  <h3 className="font-bold text-base text-base-content mb-4">
+                  <h3 className="font-semibold text-base text-base-content mb-4">
                     Line Items
                   </h3>
                   <div className="overflow-x-auto">
@@ -176,7 +176,7 @@ function RouteComponent() {
                         </div>
                       )}
                       <div className="divider my-1"></div>
-                      <div className="flex justify-between text-base font-bold text-base-content">
+                      <div className="flex justify-between text-base font-semibold text-base-content">
                         <span>Total:</span>
                         <span>
                           {invoice.currency || "₦"}

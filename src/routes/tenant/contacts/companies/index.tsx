@@ -76,7 +76,7 @@ function RouteComponent() {
       label: "Company",
       render: (_value: any, item: Company) => (
         <div className="flex items-center gap-3">
-          <div className="size-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center font-bold">
+          <div className="size-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center font-semibold">
             <Building2 className="size-5" />
           </div>
           <div>
@@ -193,11 +193,11 @@ function RouteComponent() {
         {selectedCompany && (
           <div className="space-y-6 pt-2">
             <div className="flex items-center gap-4 bg-base-200/50 p-4 rounded-xl">
-              <div className="size-14 rounded-xl bg-primary/20 text-primary flex items-center justify-center font-bold text-xl">
+              <div className="size-14 rounded-xl bg-primary/20 text-primary flex items-center justify-center font-semibold text-xl">
                 <Building2 className="size-7" />
               </div>
               <div>
-                <h3 className="text-lg font-bold text-base-content">
+                <h3 className="text-lg font-semibold text-base-content">
                   {selectedCompany.name}
                 </h3>
                 <div className="flex items-center gap-2 text-xs text-base-content/60 mt-0.5">

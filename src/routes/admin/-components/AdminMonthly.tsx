@@ -51,7 +51,7 @@ export default function AdminMonthly() {
           },
           {
             name: "Expense",
-            value: expenseMonth > 0 ? expenseMonth : (incomeMonth > 0 ? 0 : 1),
+            value: expenseMonth > 0 ? expenseMonth : incomeMonth > 0 ? 0 : 1,
             color: "#ef4444",
             badge: "badge-error",
             actual: expenseMonth,
@@ -110,8 +110,12 @@ export default function AdminMonthly() {
                     <div className="p-3 bg-base-200 rounded-full w-fit mx-auto text-base-content/40">
                       <DollarSign className="size-8" />
                     </div>
-                    <p className="text-sm font-semibold text-base-content/70">No financial activity this month</p>
-                    <p className="text-xs text-base-content/50">Income and expenses recorded this month will appear here.</p>
+                    <p className="text-sm font-semibold text-base-content/70">
+                      No financial activity this month
+                    </p>
+                    <p className="text-xs text-base-content/50">
+                      Income and expenses recorded this month will appear here.
+                    </p>
                   </div>
                 )}
               </div>
@@ -124,7 +128,8 @@ export default function AdminMonthly() {
                     Total System Balance
                   </span>
                   <h2 className="text-4xl sm:text-5xl font-black mt-1 text-primary">
-                    ${total.toLocaleString(undefined, {
+                    $
+                    {total.toLocaleString(undefined, {
                       minimumFractionDigits: 2,
                       maximumFractionDigits: 2,
                     })}
@@ -145,16 +150,21 @@ export default function AdminMonthly() {
                           </span>
                           <Icon
                             className={`size-4 ${
-                              item.type === "income" ? "text-success" : "text-error"
+                              item.type === "income"
+                                ? "text-success"
+                                : "text-error"
                             }`}
                           />
                         </div>
                         <span
-                          className={`text-xl font-bold mt-2 ${
-                            item.type === "income" ? "text-success" : "text-error"
+                          className={`text-xl font-semibold mt-2 ${
+                            item.type === "income"
+                              ? "text-success"
+                              : "text-error"
                           }`}
                         >
-                          ${item.value.toLocaleString(undefined, {
+                          $
+                          {item.value.toLocaleString(undefined, {
                             minimumFractionDigits: 2,
                             maximumFractionDigits: 2,
                           })}

@@ -17,7 +17,7 @@ export default function IncomeExpense() {
 
   return (
     <div className="w-full bg-base-100 ring shadow-sm ring-base-300 rounded-box">
-      <div className="p-4 text-lg font-bold text-base-content/90 border-b border-base-200 flex flex-wrap items-center justify-between gap-3">
+      <div className="p-4 text-lg font-semibold text-base-content/90 border-b border-base-200 flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-2">
           <span className="text-sm">Income & Expense</span>
           <select

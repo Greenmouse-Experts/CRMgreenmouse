@@ -23,7 +23,7 @@ function RouteComponent() {
   return (
     <div className="space-y-4">
       <div className="flex items-center">
-        <h2 className="text-lg font-bold opacity-90">Account Settings </h2>
+        <h2 className="text-lg font-semibold opacity-90">Account Settings </h2>
         <label
           htmlFor="my-drawer-3"
           className="btn btn-neutral btn-ghost btn-square ml-auto lg:hidden"
@@ -52,7 +52,7 @@ function RouteComponent() {
             ></label>
             <ul className="menu bg-base-100 py-4 min-h-full w-60  space-y-2 border-r border-r-current/20">
               {/* Sidebar content here */}
-              <h2 className="text-lg px-3  font-bold"> Settings</h2>
+              <h2 className="text-lg px-3  font-semibold"> Settings</h2>
               {links.map((link) => (
                 <li key={link.path}>
                   <Link

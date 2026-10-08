@@ -77,7 +77,7 @@ function RouteComponent() {
   const handleDeleteStaff = async (staff: StaffMember) => {
     if (
       !window.confirm(
-        `Are you sure you want to remove staff member "${staff.firstName} ${staff.lastName}"?`
+        `Are you sure you want to remove staff member "${staff.firstName} ${staff.lastName}"?`,
       )
     ) {
       return;
@@ -87,7 +87,9 @@ function RouteComponent() {
       await deleteStaff.mutateAsync(staff.id);
       toast.success("Staff member removed.");
     } catch (err: any) {
-      toast.error(err.response?.data?.message || "Failed to delete staff member.");
+      toast.error(
+        err.response?.data?.message || "Failed to delete staff member.",
+      );
     }
   };
 
@@ -97,7 +99,7 @@ function RouteComponent() {
       label: "Avatar",
       render: (value: string, item: StaffMember) => (
         <div className="avatar">
-          <div className="mask mask-squircle w-10 h-10 bg-primary/10 text-primary flex items-center justify-center font-bold">
+          <div className="mask mask-squircle w-10 h-10 bg-primary/10 text-primary flex items-center justify-center font-semibold">
             {value ? (
               <img src={value} alt={`${item.firstName} ${item.lastName}`} />
             ) : (
@@ -137,7 +139,9 @@ function RouteComponent() {
       render: (value: string) => (
         <span
           className={`badge badge-md ${
-            value === "active" ? "badge-success text-success-content" : "badge-ghost"
+            value === "active"
+              ? "badge-success text-success-content"
+              : "badge-ghost"
           }`}
         >
           {value || "active"}
@@ -159,7 +163,9 @@ function RouteComponent() {
     {
       key: "delete",
       label: "Remove Staff",
-      render: () => <span className="text-error font-medium">Remove Staff</span>,
+      render: () => (
+        <span className="text-error font-medium">Remove Staff</span>
+      ),
       action: (item: StaffMember) => {
         handleDeleteStaff(item);
       },
@@ -233,7 +239,9 @@ function RouteComponent() {
                 type="text"
                 required
                 value={form.firstName}
-                onChange={(e) => setForm({ ...form, firstName: e.target.value })}
+                onChange={(e) =>
+                  setForm({ ...form, firstName: e.target.value })
+                }
                 placeholder="Jane"
                 className="input input-sm input-bordered w-full"
               />
@@ -255,7 +263,9 @@ function RouteComponent() {
 
             <div className="sm:col-span-2">
               <label className="label">
-                <span className="label-text font-semibold">Email Address *</span>
+                <span className="label-text font-semibold">
+                  Email Address *
+                </span>
               </label>
               <input
                 type="email"
@@ -274,7 +284,9 @@ function RouteComponent() {
               <input
                 type="text"
                 value={form.phoneNumber}
-                onChange={(e) => setForm({ ...form, phoneNumber: e.target.value })}
+                onChange={(e) =>
+                  setForm({ ...form, phoneNumber: e.target.value })
+                }
                 placeholder="+2348012345678"
                 className="input input-sm input-bordered w-full"
               />

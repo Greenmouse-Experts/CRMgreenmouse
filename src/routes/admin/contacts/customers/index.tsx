@@ -62,7 +62,7 @@ function RouteComponent() {
           `${item.firstName?.[0] || ""}${item.lastName?.[0] || ""}`.toUpperCase();
         return (
           <div className="flex items-center gap-3">
-            <div className="size-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center font-bold text-sm">
+            <div className="size-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center font-semibold text-sm">
               {initials || <User className="size-5" />}
             </div>
             <div>
@@ -222,13 +222,13 @@ function RouteComponent() {
                 <div className="p-6 space-y-6">
                   <div className="flex items-center justify-between border-b border-base-200 pb-4">
                     <div className="flex items-center gap-3">
-                      <div className="bg-primary/10 text-primary p-3 rounded-xl font-bold text-base">
+                      <div className="bg-primary/10 text-primary p-3 rounded-xl font-semibold text-base">
                         {`${selectedCustomer.firstName?.[0] || ""}${selectedCustomer.lastName?.[0] || ""}`.toUpperCase() || (
                           <User size={24} />
                         )}
                       </div>
                       <div>
-                        <h3 className="text-xl font-bold text-base-content">
+                        <h3 className="text-xl font-semibold text-base-content">
                           {selectedCustomer.firstName}{" "}
                           {selectedCustomer.lastName}
                         </h3>

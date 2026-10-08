@@ -55,7 +55,9 @@ function RouteComponent() {
   };
 
   const handleDelete = async (role: Role) => {
-    if (!window.confirm(`Are you sure you want to delete role "${role.name}"?`)) {
+    if (
+      !window.confirm(`Are you sure you want to delete role "${role.name}"?`)
+    ) {
       return;
     }
     try {
@@ -119,7 +121,7 @@ function RouteComponent() {
       label: "Role Name",
       render: (_value: any, item: Role) => (
         <div className="flex items-center gap-3">
-          <div className="size-9 rounded-lg bg-primary/10 text-primary flex items-center justify-center font-bold">
+          <div className="size-9 rounded-lg bg-primary/10 text-primary flex items-center justify-center font-semibold">
             <Shield className="size-4" />
           </div>
           <div>
@@ -212,7 +214,9 @@ function RouteComponent() {
             const filtered = rolesList.filter((r) => {
               if (!searchProps.search) return true;
               return (
-                r.name.toLowerCase().includes(searchProps.search.toLowerCase()) ||
+                r.name
+                  .toLowerCase()
+                  .includes(searchProps.search.toLowerCase()) ||
                 (r.description &&
                   r.description
                     .toLowerCase()
@@ -234,7 +238,9 @@ function RouteComponent() {
       {/* Create / Edit Role Modal */}
       <Modal
         ref={roleModalRef}
-        title={editingRole ? `Edit Role: ${editingRole.name}` : "Create System Role"}
+        title={
+          editingRole ? `Edit Role: ${editingRole.name}` : "Create System Role"
+        }
       >
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>

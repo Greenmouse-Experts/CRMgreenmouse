@@ -29,7 +29,7 @@ const attachments = [
 export default function OtherInfo() {
   return (
     <div className="container mx-auto p-4">
-      <h2 className="text-2xl font-bold mb-6">Attachments</h2>
+      <h2 className="text-2xl font-semibold mb-6">Attachments</h2>
       <div className="grid grid-cols-[repeat(auto-fill,minmax(240px,1fr))] gap-6">
         {attachments.map((attachment) => (
           <div

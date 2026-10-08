@@ -144,11 +144,11 @@ function RouteComponent() {
       label: "Plan Name",
       render: (_value: string, item: SubscriptionPlan) => (
         <div className="flex items-center gap-3">
-          <div className="size-9 rounded-lg bg-primary/10 text-primary flex items-center justify-center font-bold">
+          <div className="size-9 rounded-lg bg-primary/10 text-primary flex items-center justify-center font-semibold">
             <Layers className="size-4" />
           </div>
           <div>
-            <div className="font-bold text-base-content leading-tight">
+            <div className="font-semibold text-base-content leading-tight">
               {item.name}
             </div>
             <div className="text-sm text-base-content/60 max-w-xs truncate">
@@ -167,7 +167,7 @@ function RouteComponent() {
             <span className="badge badge-info badge-soft badge-md">Custom Price</span>
           ) : (
             <div className="text-sm">
-              <span className="font-bold text-base-content">
+              <span className="font-semibold text-base-content">
                 ${Number(item.priceMonthly).toLocaleString()}
               </span>
               <span className="text-sm text-base-content/50">/mo</span>

@@ -61,7 +61,7 @@ export default function FullInfo({ staff }: FullInfoProps) {
               <p className="text-xs text-base-content/60 font-semibold uppercase">
                 Assigned Role
               </p>
-              <p className="text-base font-bold text-base-content mt-1">
+              <p className="text-base font-semibold text-base-content mt-1">
                 {staff?.role?.name || "Standard Staff"}
               </p>
               {staff?.role?.description && (

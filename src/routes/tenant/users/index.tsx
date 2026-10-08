@@ -99,7 +99,7 @@ function RouteComponent() {
       label: "Avatar",
       render: (value: string, item: StaffMember) => (
         <div className="avatar">
-          <div className="mask mask-squircle w-10 h-10 bg-primary/10 text-primary flex items-center justify-center font-bold">
+          <div className="mask mask-squircle w-10 h-10 bg-primary/10 text-primary flex items-center justify-center font-semibold">
             {value ? (
               <img src={value} alt={`${item.firstName} ${item.lastName}`} />
             ) : (
@@ -217,7 +217,8 @@ function RouteComponent() {
 
         <PageLoader
           query={query}
-          emptyState={{            title: "No Staff Members",
+          emptyState={{
+            title: "No Staff Members",
             description: "Build your team by inviting your first team member.",
             actionText: "Invite Staff",
             onAction: handleOpenAdd,
@@ -250,7 +251,9 @@ function RouteComponent() {
         <form onSubmit={handleCreateStaff} className="space-y-4 p-2">
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="label text-sm font-semibold">First Name *</label>
+              <label className="label text-sm font-semibold">
+                First Name *
+              </label>
               <input
                 type="text"
                 required

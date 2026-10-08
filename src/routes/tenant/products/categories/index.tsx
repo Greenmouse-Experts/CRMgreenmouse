@@ -116,7 +116,7 @@ function RouteComponent() {
       label: "Category Name",
       render: (_: any, item: Category) => (
         <div className="flex items-center gap-3">
-          <div className="size-9 rounded-lg bg-primary/10 flex items-center justify-center text-primary font-bold">
+          <div className="size-9 rounded-lg bg-primary/10 flex items-center justify-center text-primary font-semibold">
             <Tag className="size-4" />
           </div>
           <div>

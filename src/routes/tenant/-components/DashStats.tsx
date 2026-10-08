@@ -20,7 +20,7 @@ export default function DashStats() {
             <div className="p-1.5 rounded-lg bg-success/10 text-success">
               <TrendingUp className="size-4" />
             </div>
-            <h3 className="font-bold text-base text-base-content">
+            <h3 className="font-semibold text-base text-base-content">
               Recent Income
             </h3>
           </div>
@@ -92,7 +92,7 @@ export default function DashStats() {
                       </div>
                     </div>
                     <div className="text-right shrink-0 ml-3">
-                      <span className="text-sm font-bold text-success">
+                      <span className="text-sm font-semibold text-success">
                         +$
                         {item.amount.toLocaleString(undefined, {
                           minimumFractionDigits: 2,
@@ -120,7 +120,7 @@ export default function DashStats() {
             <div className="p-1.5 rounded-lg bg-error/10 text-error">
               <TrendingDown className="size-4" />
             </div>
-            <h3 className="font-bold text-base text-base-content">
+            <h3 className="font-semibold text-base text-base-content">
               Recent Expenses
             </h3>
           </div>
@@ -192,7 +192,7 @@ export default function DashStats() {
                       </div>
                     </div>
                     <div className="text-right shrink-0 ml-3">
-                      <span className="text-sm font-bold text-error">
+                      <span className="text-sm font-semibold text-error">
                         -$
                         {item.amount.toLocaleString(undefined, {
                           minimumFractionDigits: 2,

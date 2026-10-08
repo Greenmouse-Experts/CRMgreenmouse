@@ -22,14 +22,14 @@ export default function UserInfo({ id }: UserInfoProps) {
             className="object-cover w-full h-full"
           />
         ) : (
-          <span className="text-4xl font-bold text-primary">
+          <span className="text-4xl font-semibold text-primary">
             {fullName.charAt(0).toUpperCase()}
           </span>
         )}
       </figure>
 
       <div className="card-body p-0 text-center sm:text-left flex-1">
-        <h2 className="card-title text-2xl font-bold text-base-content mb-1">
+        <h2 className="card-title text-2xl font-semibold text-base-content mb-1">
           {fullName}
         </h2>
         <p className="text-sm font-semibold text-primary mb-4">

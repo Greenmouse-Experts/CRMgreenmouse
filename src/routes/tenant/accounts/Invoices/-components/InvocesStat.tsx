@@ -73,7 +73,7 @@ export default function InvoicesStat({
           <div className="stat-title text-xs font-medium text-base-content/60">
             {stat.title}
           </div>
-          <div className="stat-value text-2xl font-bold text-base-content mt-1">
+          <div className="stat-value text-2xl font-semibold text-base-content mt-1">
             {stat.value}
           </div>
           <div className="stat-desc text-xs mt-1 text-base-content/70">

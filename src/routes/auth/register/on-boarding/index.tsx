@@ -313,7 +313,7 @@ function OnboardingWizard() {
   return (
     <div className="space-y-6 animate-in fade-in duration-300">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight">CRM</h1>
+        <h1 className="text-2xl font-semibold tracking-tight">CRM</h1>
       </div>
 
       {/* Progress bar */}
@@ -494,7 +494,7 @@ function IndustryStep({
   return (
     <div className="space-y-6">
       <div className="space-y-1">
-        <h2 className="text-2xl font-bold leading-snug">
+        <h2 className="text-2xl font-semibold leading-snug">
           What industry best
           <br />
           describes your business?
@@ -593,7 +593,7 @@ function LocationStep({
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       <div className="space-y-1">
-        <h2 className="text-2xl font-bold leading-snug">
+        <h2 className="text-2xl font-semibold leading-snug">
           Where is your business
           <br />
           located?
@@ -711,7 +711,7 @@ function TeamSizeStep({
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       <div className="space-y-1">
-        <h2 className="text-2xl font-bold leading-snug">
+        <h2 className="text-2xl font-semibold leading-snug">
           What is your staff /
           <br />
           team size?
@@ -760,7 +760,7 @@ function CompanyWebsiteStep({
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       <div className="space-y-1">
-        <h2 className="text-2xl font-bold leading-snug">
+        <h2 className="text-2xl font-semibold leading-snug">
           Your online presence
         </h2>
         <p className="text-sm text-base-content/60">
@@ -823,7 +823,7 @@ function LogoUploadStep({
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       <div className="space-y-1">
-        <h2 className="text-2xl font-bold leading-snug">
+        <h2 className="text-2xl font-semibold leading-snug">
           Upload your company
           <br />
           logo
@@ -861,7 +861,7 @@ function BusinessTypeStep({
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       <div className="space-y-1">
-        <h2 className="text-2xl font-bold leading-snug">
+        <h2 className="text-2xl font-semibold leading-snug">
           Business registration
           <br />
           details
@@ -930,7 +930,7 @@ function ThemeStep({
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       <div className="space-y-1">
-        <h2 className="text-2xl font-bold leading-snug">
+        <h2 className="text-2xl font-semibold leading-snug">
           Choose your workspace
           <br />
           theme
@@ -965,7 +965,7 @@ function ThemeStep({
                 <Icon size={24} />
               </div>
               <div className="space-y-1">
-                <div className="font-bold text-base text-base-content">
+                <div className="font-semibold text-base text-base-content">
                   {theme.label}
                 </div>
                 <div className="text-xs text-base-content/60 leading-relaxed">
@@ -1001,7 +1001,7 @@ function HearAboutUsStep({
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       <div className="space-y-1">
-        <h2 className="text-2xl font-bold leading-snug">
+        <h2 className="text-2xl font-semibold leading-snug">
           How did you hear about
           <br />
           us?

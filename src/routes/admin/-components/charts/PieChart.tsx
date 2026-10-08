@@ -38,7 +38,7 @@ export const PieChartExample = ({
   isAnimationActive?: boolean;
 }) => (
   <div className="space-y-4 h-fit  ">
-    {/*<h2 className="text-md font-bold">User Analytics</h2>
+    {/*<h2 className="text-md font-semibold">User Analytics</h2>
     <div className="flex gap-2 text-xs flex-wrap">
       {data02.map((item, index) => (
         <div key={index} className="flex items-center  ">

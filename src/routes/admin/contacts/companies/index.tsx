@@ -38,7 +38,7 @@ function RouteComponent() {
       render: (company: Company) => (
         <div className="flex items-center gap-3">
           <div className="avatar placeholder">
-            <div className="bg-primary/10 text-primary rounded-lg w-10 h-10 flex items-center justify-center font-bold">
+            <div className="bg-primary/10 text-primary rounded-lg w-10 h-10 flex items-center justify-center font-semibold">
               {company.name?.charAt(0)?.toUpperCase() || "C"}
             </div>
           </div>
@@ -173,7 +173,7 @@ function RouteComponent() {
                       <Building2 size={24} />
                     </div>
                     <div>
-                      <h3 className="text-xl font-bold text-base-content">
+                      <h3 className="text-xl font-semibold text-base-content">
                         {selectedCompany.name}
                       </h3>
                       {selectedCompany.industry && (

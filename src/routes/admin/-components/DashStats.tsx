@@ -46,7 +46,7 @@ export default function DashStats() {
 const Card = (props: any) => {
   return (
     <div className=" ring ring-current/10 shadow-md rounded-box bg-base-100 ">
-      <div className="h-14 p-4 font-bold text-lg border-b border-current/20">
+      <div className="h-14 p-4 font-semibold text-lg border-b border-current/20">
         {props.title}
       </div>
       <ul className="menu w-full space-y-2">{props.children}</ul>

@@ -48,7 +48,7 @@ export default function HomeNav() {
             <MousePointer2 className="size-6 rotate-12" />
           </div>
           <div className="flex flex-col leading-none">
-            <span className="text-xl font-bold tracking-tight text-primary">
+            <span className="text-xl font-semibold tracking-tight text-primary">
               <span className="text-base-content">Kinovia</span>
             </span>
             <span className="text-[10px] font-medium tracking-[0.2em] uppercase opacity-50">
@@ -75,7 +75,7 @@ export default function HomeNav() {
           {user ? (
             <Link
               to="/tenant"
-              className="btn btn-primary btn-sm rounded-lg px-6 font-bold shadow-md shadow-primary/10 hover:shadow-primary/30 gap-2"
+              className="btn btn-primary btn-sm rounded-lg px-6 font-semibold shadow-md shadow-primary/10 hover:shadow-primary/30 gap-2"
             >
               <LayoutDashboard className="size-4" />
               Dashboard
@@ -85,14 +85,14 @@ export default function HomeNav() {
               <Link
                 to="/auth/login"
                 search={{ email: "" }}
-                className="btn btn-ghost btn-sm font-bold gap-2"
+                className="btn btn-ghost btn-sm font-semibold gap-2"
               >
                 <LogIn className="size-4" />
                 Sign In
               </Link>
               <Link
                 to="/auth/register"
-                className="btn btn-primary btn-sm rounded-lg px-6 font-bold shadow-md shadow-primary/10 hover:shadow-primary/30"
+                className="btn btn-primary btn-sm rounded-lg px-6 font-semibold shadow-md shadow-primary/10 hover:shadow-primary/30"
               >
                 Get Started
                 <ChevronRight className="size-4" />
@@ -135,7 +135,7 @@ export default function HomeNav() {
             {user ? (
               <Link
                 to="/tenant"
-                className="btn btn-primary font-bold shadow-lg shadow-primary/20 col-span-2 gap-2"
+                className="btn btn-primary font-semibold shadow-lg shadow-primary/20 col-span-2 gap-2"
                 onClick={() => setIsOpen(false)}
               >
                 <LayoutDashboard className="size-4" />
@@ -146,14 +146,14 @@ export default function HomeNav() {
                 <Link
                   to="/auth/login"
                   search={{ email: "" }}
-                  className="btn btn-outline btn-primary font-bold"
+                  className="btn btn-outline btn-primary font-semibold"
                   onClick={() => setIsOpen(false)}
                 >
                   Sign In
                 </Link>
                 <Link
                   to="/auth/register"
-                  className="btn btn-primary font-bold shadow-lg shadow-primary/20"
+                  className="btn btn-primary font-semibold shadow-lg shadow-primary/20"
                   onClick={() => setIsOpen(false)}
                 >
                   Join Now

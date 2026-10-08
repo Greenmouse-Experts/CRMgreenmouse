@@ -83,7 +83,7 @@ export default function AdminRecents() {
         }
         return (
           <span
-            className={`badge badge-xs uppercase font-bold text-[10px] ${badge}`}
+            className={`badge badge-xs uppercase font-semibold text-[10px] ${badge}`}
           >
             {status || "Completed"}
           </span>

@@ -52,7 +52,7 @@ const Modal = forwardRef<ModalHandle, ModalProps>(
         <div className="modal-box bg-base-100 text-base-content border border-base-300 max-w-2xl flex flex-col max-h-[90vh] rounded-2xl shadow-xl relative p-0 overflow-hidden">
           <div className="flex border-b border-base-200 py-4 items-center px-6 bg-base-100">
             {title && (
-              <h3 className="font-bold text-lg text-base-content">{title}</h3>
+              <h3 className="font-semibold text-lg text-base-content">{title}</h3>
             )}
             <form method="dialog" className="ml-auto">
               <button

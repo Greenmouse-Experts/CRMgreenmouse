@@ -20,7 +20,7 @@ function RouteComponent() {
           onSubmit={methods.handleSubmit(onSubmit)}
           className="card bg-base-100 shadow-xl p-6 space-y-4"
         >
-          <h2 className="card-title text-2xl font-bold">Password Change</h2>
+          <h2 className="card-title text-2xl font-semibold">Password Change</h2>
           <p className="text-sm text-base-content/70">
             Update your account password.
           </p>
@@ -51,7 +51,7 @@ function RouteComponent() {
       </FormProvider>
 
       <div className="card bg-base-100 shadow-xl p-6 space-y-4">
-        <h2 className="card-title text-2xl font-bold">
+        <h2 className="card-title text-2xl font-semibold">
           Two-Factor Authentication
         </h2>
         <p className="text-sm text-base-content/70">
@@ -64,7 +64,9 @@ function RouteComponent() {
       </div>
 
       <div className="card bg-base-100 shadow-xl p-6 space-y-4">
-        <h2 className="card-title text-2xl font-bold">Recent Login Activity</h2>
+        <h2 className="card-title text-2xl font-semibold">
+          Recent Login Activity
+        </h2>
         <p className="text-sm text-base-content/70">
           Review your recent login sessions.
         </p>

@@ -59,7 +59,7 @@ function RouteComponent() {
 
       <div className="w-full flex flex-col mx-auto space-y-4 px-4 z-20">
         <div className="mt-12 text-center">
-          <h2 className="text-3xl font-bold leading-normal">CRMgreenmouse</h2>
+          <h2 className="text-3xl font-semibold leading-normal">CRMgreenmouse</h2>
           <p className="font-semibold text-primary mx-auto w-fit text-sm">
             Reset Password
           </p>

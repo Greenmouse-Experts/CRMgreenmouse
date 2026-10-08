@@ -226,7 +226,7 @@ function RouteComponent() {
             <div className="bg-gradient-to-r from-primary/10 via-base-100 to-base-100 p-6 border-b border-base-200 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
               <div className="space-y-1">
                 <div className="flex items-center gap-2">
-                  <span className="badge badge-primary uppercase text-[10px] font-bold tracking-wider">
+                  <span className="badge badge-primary uppercase text-[10px] font-semibold tracking-wider">
                     Current Active Plan
                   </span>
                   {currentSub.cancelAtPeriodEnd && (
@@ -235,7 +235,7 @@ function RouteComponent() {
                     </span>
                   )}
                 </div>
-                <h2 className="text-2xl font-bold text-base-content flex items-center gap-2">
+                <h2 className="text-2xl font-semibold text-base-content flex items-center gap-2">
                   {currentSub.planName ||
                     currentSub.plan?.name ||
                     "Standard Plan"}
@@ -282,7 +282,7 @@ function RouteComponent() {
                 </div>
                 <div>
                   <p className="text-xs text-base-content/60">Plan Price</p>
-                  <p className="font-bold text-base text-base-content">
+                  <p className="font-semibold text-base text-base-content">
                     {formatCurrency(currentSub.plan?.price || currentSub.price)}
                     <span className="text-xs font-normal text-base-content/60">
                       /{currentSub.billingCycle === "yearly" ? "yr" : "mo"}
@@ -333,7 +333,7 @@ function RouteComponent() {
       <section className="space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-base-100 p-6 rounded-box shadow border border-base-200">
           <div>
-            <h3 className="text-xl font-bold text-base-content flex items-center gap-2">
+            <h3 className="text-xl font-semibold text-base-content flex items-center gap-2">
               <Sparkles className="size-5 text-primary" /> Choose a Subscription
               Plan
             </h3>
@@ -366,7 +366,7 @@ function RouteComponent() {
               }`}
             >
               Yearly Billing
-              <span className="badge badge-accent badge-xs text-[9px] uppercase font-bold">
+              <span className="badge badge-accent badge-xs text-[9px] uppercase font-semibold">
                 Save
               </span>
             </button>
@@ -409,13 +409,13 @@ function RouteComponent() {
                   >
                     <div className="card-body p-6 space-y-4">
                       {isCurrent && (
-                        <div className="badge badge-primary font-bold text-[10px] uppercase tracking-wider self-start">
+                        <div className="badge badge-primary font-semibold text-[10px] uppercase tracking-wider self-start">
                           Your Active Plan
                         </div>
                       )}
 
                       <div className="space-y-1">
-                        <h4 className="text-xl font-bold text-base-content">
+                        <h4 className="text-xl font-semibold text-base-content">
                           {plan.name}
                         </h4>
                         {plan.description && (
@@ -449,7 +449,7 @@ function RouteComponent() {
                           {plan.maxStaff !== undefined && (
                             <li className="flex justify-between border-b border-base-200/50 pb-1">
                               <span>Max Staff Users</span>
-                              <span className="font-bold">
+                              <span className="font-semibold">
                                 {plan.maxStaff === 0 || plan.maxStaff === -1
                                   ? "Unlimited"
                                   : plan.maxStaff}
@@ -459,7 +459,7 @@ function RouteComponent() {
                           {plan.maxContacts !== undefined && (
                             <li className="flex justify-between border-b border-base-200/50 pb-1">
                               <span>Max Contacts</span>
-                              <span className="font-bold">
+                              <span className="font-semibold">
                                 {plan.maxContacts === 0 ||
                                 plan.maxContacts === -1
                                   ? "Unlimited"
@@ -470,7 +470,7 @@ function RouteComponent() {
                           {plan.maxInvoicesPerMonth !== undefined && (
                             <li className="flex justify-between border-b border-base-200/50 pb-1">
                               <span>Invoices / Month</span>
-                              <span className="font-bold">
+                              <span className="font-semibold">
                                 {plan.maxInvoicesPerMonth === 0 ||
                                 plan.maxInvoicesPerMonth === -1
                                   ? "Unlimited"

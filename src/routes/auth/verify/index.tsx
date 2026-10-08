@@ -63,7 +63,7 @@ function RouteComponent() {
           <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center mb-4">
             <Mail className="text-primary" size={24} />
           </div>
-          <h1 className="text-3xl font-bold tracking-tight">
+          <h1 className="text-3xl font-semibold tracking-tight">
             Verify your email
           </h1>
           <p className="text-base-content/60 text-sm">

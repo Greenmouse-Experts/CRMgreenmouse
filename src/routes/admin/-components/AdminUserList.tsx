@@ -14,7 +14,7 @@ export default function AdminUserList() {
       label: "Tenant Company",
       render: (_value: string, item: Tenant) => (
         <div className="flex items-center gap-3">
-          <div className="size-9 rounded-lg bg-primary/10 text-primary flex items-center justify-center font-bold">
+          <div className="size-9 rounded-lg bg-primary/10 text-primary flex items-center justify-center font-semibold">
             <Building2 className="size-4" />
           </div>
           <div>

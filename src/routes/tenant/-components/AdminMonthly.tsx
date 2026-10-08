@@ -156,7 +156,7 @@ export default function TenantMonthly() {
                           />
                         </div>
                         <span
-                          className={`text-xl font-bold mt-2 ${
+                          className={`text-xl font-semibold mt-2 ${
                             item.type === "income"
                               ? "text-success"
                               : "text-error"

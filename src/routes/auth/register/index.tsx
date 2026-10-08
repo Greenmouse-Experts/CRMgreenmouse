@@ -41,7 +41,7 @@ function RouteComponent() {
     <FormProvider {...form}>
       <div className="space-y-8 animate-in fade-in slide-in-from-left-4 duration-500">
         <div className="space-y-1">
-          <h1 className="text-3xl font-bold tracking-tight">Get started</h1>
+          <h1 className="text-3xl font-semibold tracking-tight">Get started</h1>
           <p className="text-base-content/60 text-sm">
             Create your account to start managing your business.
           </p>

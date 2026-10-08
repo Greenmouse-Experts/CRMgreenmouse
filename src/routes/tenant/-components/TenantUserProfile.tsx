@@ -31,7 +31,7 @@ export default function TenantUserProfile() {
         <ul className="dropdown-content rounded-box bg-base-100 shadow-xl border border-base-200 min-w-[200px] w-auto menu m-1 p-2 gap-1 z-50">
           <li className="px-4 py-2 border-b border-base-200 mb-1">
             <div className="flex flex-col gap-0.5 overflow-hidden">
-              <span className="text-sm font-bold truncate">
+              <span className="text-sm font-semibold truncate">
                 {profile?.companyName}
               </span>
               <span className="text-xs opacity-60 truncate">

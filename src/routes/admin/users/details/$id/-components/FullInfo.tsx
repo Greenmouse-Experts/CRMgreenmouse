@@ -15,7 +15,7 @@ export default function FullInfo() {
     <div className="bg-base-100 px-4 py-4">
       <CustomTabs tabs={tabs} tabProps={props} />
       <div className="mt-4 px-4">
-        <h2 className="text-xl font-bold mb-4">{props.tab.name}</h2>
+        <h2 className="text-xl font-semibold mb-4">{props.tab.name}</h2>
         <div className="grid grid-cols-2 gap-4 min-h-52">
           {props.tab.name === "Employee Information" && (
             <>

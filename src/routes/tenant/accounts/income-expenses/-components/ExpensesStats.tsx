@@ -66,7 +66,7 @@ export default function ExpensesStat() {
                   {item.title}
                 </span>
               </div>
-              <span className={`text-2xl font-bold mt-1 text-base-content`}>
+              <span className={`text-2xl font-semibold mt-1 text-base-content`}>
                 {item.isRaw
                   ? item.value
                   : `$${Number(item.value).toLocaleString(undefined, {

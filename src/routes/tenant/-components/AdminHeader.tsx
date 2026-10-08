@@ -10,7 +10,7 @@ export default function AdminHeader() {
       >
         <Menu />
       </label>
-      <h2 className="text-current/80 font-bold text-md md:text-xl">
+      <h2 className="text-current/80 font-semibold text-md md:text-xl">
         Tenant DashBoard
       </h2>
 

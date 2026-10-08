@@ -72,7 +72,7 @@ export default function ExpenseTable({ searchTerm = "" }: ExpenseTableProps) {
       key: "amount",
       label: "Amount",
       render: (val: any) => (
-        <span className="font-bold text-error">
+        <span className="font-semibold text-error">
           -₦{Number(val || 0).toLocaleString()}
         </span>
       ),
@@ -133,7 +133,7 @@ export default function ExpenseTable({ searchTerm = "" }: ExpenseTableProps) {
           <div className="p-6 space-y-6">
             <div className="flex items-center justify-between border-b border-base-200 pb-4">
               <div>
-                <h3 className="text-lg font-bold text-base-content">
+                <h3 className="text-lg font-semibold text-base-content">
                   Expense #{selectedExpense.id.slice(0, 8).toUpperCase()}
                 </h3>
                 <p className="text-sm text-base-content/60">
@@ -159,7 +159,7 @@ export default function ExpenseTable({ searchTerm = "" }: ExpenseTableProps) {
                 <span className="text-sm text-base-content/60 block">
                   Amount
                 </span>
-                <span className="text-xl font-bold text-error">
+                <span className="text-xl font-semibold text-error">
                   -₦{Number(selectedExpense.amount || 0).toLocaleString()}
                 </span>
               </div>

@@ -75,7 +75,7 @@ function RouteComponent() {
       label: "Customer",
       render: (_value: any, item: Contact) => (
         <div className="flex items-center gap-3">
-          <div className="size-10 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold">
+          <div className="size-10 rounded-full bg-primary/10 text-primary flex items-center justify-center font-semibold">
             <User className="size-5" />
           </div>
           <div>
@@ -197,11 +197,11 @@ function RouteComponent() {
         {selectedContact && (
           <div className="space-y-6 pt-2">
             <div className="flex items-center gap-4 bg-base-200/50 p-4 rounded-xl">
-              <div className="size-14 rounded-full bg-primary/20 text-primary flex items-center justify-center font-bold text-xl">
+              <div className="size-14 rounded-full bg-primary/20 text-primary flex items-center justify-center font-semibold text-xl">
                 <User className="size-7" />
               </div>
               <div>
-                <h3 className="text-lg font-bold text-base-content">
+                <h3 className="text-lg font-semibold text-base-content">
                   {selectedContact.firstName} {selectedContact.lastName}
                 </h3>
                 <div className="flex items-center gap-2 text-xs text-base-content/60 mt-0.5">

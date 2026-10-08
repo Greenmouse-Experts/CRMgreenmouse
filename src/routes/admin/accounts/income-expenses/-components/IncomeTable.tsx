@@ -72,7 +72,7 @@ export default function IncomeTable({ searchTerm = "" }: IncomeTableProps) {
       key: "amount",
       label: "Amount",
       render: (val: any) => (
-        <span className="font-bold text-success">
+        <span className="font-semibold text-success">
           +₦{Number(val || 0).toLocaleString()}
         </span>
       ),
@@ -133,7 +133,7 @@ export default function IncomeTable({ searchTerm = "" }: IncomeTableProps) {
           <div className="p-6 space-y-6">
             <div className="flex items-center justify-between border-b border-base-200 pb-4">
               <div>
-                <h3 className="text-lg font-bold text-base-content">
+                <h3 className="text-lg font-semibold text-base-content">
                   Income #{selectedIncome.id.slice(0, 8).toUpperCase()}
                 </h3>
                 <p className="text-sm text-base-content/60">
@@ -159,7 +159,7 @@ export default function IncomeTable({ searchTerm = "" }: IncomeTableProps) {
                 <span className="text-sm text-base-content/60 block">
                   Amount
                 </span>
-                <span className="text-xl font-bold text-success">
+                <span className="text-xl font-semibold text-success">
                   +₦{Number(selectedIncome.amount || 0).toLocaleString()}
                 </span>
               </div>

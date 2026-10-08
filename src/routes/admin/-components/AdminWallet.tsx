@@ -43,10 +43,10 @@ export default function AdminWallet() {
 
   return (
     <div className="p-6 bg-base-100 shadow rounded-box space-y-8">
-      <h2 className="font-bold text-sm">Wallet</h2>
+      <h2 className="font-semibold text-sm">Wallet</h2>
       <div className="bg-linear-30 from-primary to-secondary space-y-4 p-4 text-white rounded-box">
         <div className="flex items-center">
-          <p className="text-md font-bold">Total Balance</p>
+          <p className="text-md font-semibold">Total Balance</p>
           <button
             onClick={() => setShowBalance(!showBalance)}
             className="btn btn-ghost btn-circle ml-auto"
@@ -56,9 +56,9 @@ export default function AdminWallet() {
         </div>
         <div>
           {showBalance ? (
-            <h2 className="text-xl font-bold">3,500,000</h2>
+            <h2 className="text-xl font-semibold">3,500,000</h2>
           ) : (
-            <h2 className="text-xl font-bold">********</h2>
+            <h2 className="text-xl font-semibold">********</h2>
           )}
         </div>
       </div>
@@ -69,7 +69,7 @@ export default function AdminWallet() {
           </div>
           <div className="flex-1 space-y-1">
             <h2 className="text-success text-xs">Income</h2>
-            <p className="text-xs font-bold">7,200,3455</p>
+            <p className="text-xs font-semibold">7,200,3455</p>
           </div>
         </div>
         <div className="flex gap-2 items-center justify-items-end justify-end">
@@ -78,12 +78,12 @@ export default function AdminWallet() {
           </div>
           <div className=" space-y-1">
             <h2 className="text-error text-xs">Expense</h2>
-            <p className="text-xs font-bold">7,200,3455</p>
+            <p className="text-xs font-semibold">7,200,3455</p>
           </div>
         </div>
       </section>
       <div className="space-y-2">
-        <p className="text-sm text-current/60 font-bold">Recents</p>
+        <p className="text-sm text-current/60 font-semibold">Recents</p>
         <div className="space-y-2">
           {recentTransactions
             .sort(
@@ -136,7 +136,7 @@ const RecentTransactionCard = ({
           <p className="text-xs text-base-content/70">{date}</p>
         </div>
       </div>
-      <p className={`text-sm font-bold ${amountClass}`}>
+      <p className={`text-sm font-semibold ${amountClass}`}>
         {amountPrefix}${amount}
       </p>
     </div>

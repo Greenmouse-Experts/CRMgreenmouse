@@ -3,12 +3,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import ContainerRow from "@/components/ContainerRow";
 import SimpleContainer from "@/components/SimpleContainer";
 import { useSearch } from "@/stores/data";
-import {
-  PlusCircleIcon,
-  Shield,
-  Search,
-  X,
-} from "lucide-react";
+import { PlusCircleIcon, Shield, Search, X } from "lucide-react";
 import CustomTable from "@/components/tables/CustomTable";
 import type { Actions } from "@/components/tables/pop-up";
 import Modal, { type ModalHandle } from "@/components/DialogModal";
@@ -177,7 +172,7 @@ function RouteComponent() {
       label: "Role Name",
       render: (_value: any, item: Role) => (
         <div className="flex items-center gap-3">
-          <div className="size-9 rounded-lg bg-primary/10 text-primary flex items-center justify-center font-bold">
+          <div className="size-9 rounded-lg bg-primary/10 text-primary flex items-center justify-center font-semibold">
             <Shield className="size-4" />
           </div>
           <div>
@@ -312,7 +307,10 @@ function RouteComponent() {
       >
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <label htmlFor="role-name" className="mb-2 block text-sm font-semibold">
+            <label
+              htmlFor="role-name"
+              className="mb-2 block text-sm font-semibold"
+            >
               Role name <span className="text-error">*</span>
             </label>
             <input
@@ -327,7 +325,10 @@ function RouteComponent() {
           </div>
 
           <div>
-            <label htmlFor="role-description" className="mb-2 block text-sm font-semibold">
+            <label
+              htmlFor="role-description"
+              className="mb-2 block text-sm font-semibold"
+            >
               Description
             </label>
             <textarea
@@ -340,10 +341,16 @@ function RouteComponent() {
             />
           </div>
 
-          <section aria-labelledby="role-permissions-heading" className="space-y-3">
+          <section
+            aria-labelledby="role-permissions-heading"
+            className="space-y-3"
+          >
             <div className="flex flex-wrap items-start justify-between gap-2">
               <div>
-                <h4 id="role-permissions-heading" className="text-sm font-semibold">
+                <h4
+                  id="role-permissions-heading"
+                  className="text-sm font-semibold"
+                >
                   Assigned permissions
                 </h4>
                 <p className="mt-0.5 text-xs text-base-content/70">
@@ -358,7 +365,10 @@ function RouteComponent() {
             <div className="overflow-hidden rounded-xl border border-base-300">
               <div className="flex flex-col gap-2 border-b border-base-300 bg-base-200/50 p-3 sm:flex-row sm:items-center sm:justify-between">
                 <div className="relative min-w-0 flex-1">
-                  <Search aria-hidden="true" className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-base-content/60" />
+                  <Search
+                    aria-hidden="true"
+                    className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-base-content/60"
+                  />
                   <input
                     type="text"
                     aria-label="Search permissions"
@@ -385,20 +395,33 @@ function RouteComponent() {
                   className="btn btn-sm btn-ghost text-primary sm:shrink-0"
                 >
                   {allVisibleSelected
-                    ? permissionFilter ? "Clear matches" : "Clear all"
-                    : permissionFilter ? "Select matches" : "Select all"}
+                    ? permissionFilter
+                      ? "Clear matches"
+                      : "Clear all"
+                    : permissionFilter
+                      ? "Select matches"
+                      : "Select all"}
                 </button>
               </div>
 
               <div className="max-h-80 overflow-y-auto overscroll-contain">
                 {permissionsQuery.isLoading ? (
-                  <div className="px-4 py-10 text-center text-sm text-base-content/70" role="status">
+                  <div
+                    className="px-4 py-10 text-center text-sm text-base-content/70"
+                    role="status"
+                  >
                     Loading permissions…
                   </div>
                 ) : permissionsQuery.isError ? (
                   <div className="flex flex-col items-center gap-3 px-4 py-8 text-center">
-                    <p className="text-sm text-base-content/70">Permissions could not be loaded.</p>
-                    <button type="button" onClick={() => permissionsQuery.refetch()} className="btn btn-sm btn-outline">
+                    <p className="text-sm text-base-content/70">
+                      Permissions could not be loaded.
+                    </p>
+                    <button
+                      type="button"
+                      onClick={() => permissionsQuery.refetch()}
+                      className="btn btn-sm btn-outline"
+                    >
                       Try again
                     </button>
                   </div>
@@ -409,71 +432,81 @@ function RouteComponent() {
                       : "No permissions available."}
                   </div>
                 ) : (
-                  Object.entries(groupedPermissions).map(([category, items]) => {
-                    const categoryKeys = items.map((item) => item.key);
-                    const selectedInCategory = categoryKeys.filter((key) =>
-                      selectedPermissions.includes(key),
-                    ).length;
-                    const allCatSelected = selectedInCategory === categoryKeys.length;
+                  Object.entries(groupedPermissions).map(
+                    ([category, items]) => {
+                      const categoryKeys = items.map((item) => item.key);
+                      const selectedInCategory = categoryKeys.filter((key) =>
+                        selectedPermissions.includes(key),
+                      ).length;
+                      const allCatSelected =
+                        selectedInCategory === categoryKeys.length;
 
-                    return (
-                      <div key={category} className="border-b border-base-200 last:border-b-0">
-                        <div className="sticky top-0 z-10 flex items-center justify-between gap-3 bg-base-200 px-4 py-2">
-                          <div className="flex min-w-0 items-center gap-2">
-                            <h5 className="truncate text-xs font-semibold text-base-content">
-                              {category}
-                            </h5>
-                            <span className="text-xs tabular-nums text-base-content/70">
-                              {selectedInCategory}/{items.length}
-                            </span>
+                      return (
+                        <div
+                          key={category}
+                          className="border-b border-base-200 last:border-b-0"
+                        >
+                          <div className="sticky top-0 z-10 flex items-center justify-between gap-3 bg-base-200 px-4 py-2">
+                            <div className="flex min-w-0 items-center gap-2">
+                              <h5 className="truncate text-xs font-semibold text-base-content">
+                                {category}
+                              </h5>
+                              <span className="text-xs tabular-nums text-base-content/70">
+                                {selectedInCategory}/{items.length}
+                              </span>
+                            </div>
+                            <button
+                              type="button"
+                              onClick={() => handleToggleCategory(categoryKeys)}
+                              className="rounded px-1 py-0.5 text-xs font-medium text-primary hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                            >
+                              {allCatSelected ? "Clear group" : "Select group"}
+                            </button>
                           </div>
-                          <button
-                            type="button"
-                            onClick={() => handleToggleCategory(categoryKeys)}
-                            className="rounded px-1 py-0.5 text-xs font-medium text-primary hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-                          >
-                            {allCatSelected ? "Clear group" : "Select group"}
-                          </button>
-                        </div>
 
-                        <div className="divide-y divide-base-200">
-                          {items.map((perm) => {
-                            const isChecked = selectedPermissions.includes(perm.key);
-                            return (
-                              <label
-                                key={perm.key}
-                                className={`flex cursor-pointer items-start gap-3 px-4 py-3 transition-colors hover:bg-base-200/60 focus-within:bg-base-200/60 ${
-                                  isChecked ? "bg-primary/5" : "bg-base-100"
-                                }`}
-                              >
-                                <input
-                                  type="checkbox"
-                                  checked={isChecked}
-                                  onChange={() => handleTogglePermission(perm.key)}
-                                  className="checkbox checkbox-primary checkbox-sm mt-0.5 shrink-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-                                />
-                                <span className="min-w-0 flex-1">
-                                  <span className="block text-sm font-medium leading-5 text-base-content">
-                                    {perm.name || perm.key}
+                          <div className="divide-y divide-base-200">
+                            {items.map((perm) => {
+                              const isChecked = selectedPermissions.includes(
+                                perm.key,
+                              );
+                              return (
+                                <label
+                                  key={perm.key}
+                                  className={`flex cursor-pointer items-start gap-3 px-4 py-3 transition-colors hover:bg-base-200/60 focus-within:bg-base-200/60 ${
+                                    isChecked ? "bg-primary/5" : "bg-base-100"
+                                  }`}
+                                >
+                                  <input
+                                    type="checkbox"
+                                    checked={isChecked}
+                                    onChange={() =>
+                                      handleTogglePermission(perm.key)
+                                    }
+                                    className="checkbox checkbox-primary checkbox-sm mt-0.5 shrink-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                                  />
+                                  <span className="min-w-0 flex-1">
+                                    <span className="block text-sm font-medium leading-5 text-base-content">
+                                      {perm.name || perm.key}
+                                    </span>
+                                    {perm.name && perm.name !== perm.key && (
+                                      <span className="block break-all font-mono text-[11px] leading-4 text-base-content/70">
+                                        {perm.key}
+                                      </span>
+                                    )}
+                                    {perm.description && (
+                                      <span className="mt-0.5 block text-xs leading-5 text-base-content/70">
+                                        {perm.description}
+                                      </span>
+                                    )}
                                   </span>
-                                  {perm.name && perm.name !== perm.key && (
-                                    <span className="block break-all font-mono text-[11px] leading-4 text-base-content/70">
-                                      {perm.key}
-                                    </span>
-                                  )}
-                                  {perm.description && (
-                                    <span className="mt-0.5 block text-xs leading-5 text-base-content/70">
-                                      {perm.description}
-                                    </span>
-                                  )}
-                                </span>
-                              </label>
-                            );
-                          })}
+                                </label>
+                              );
+                            })}
+                          </div>
                         </div>
-                      </div>
-                    );
-                  })
+                      );
+                    },
+                  )
                 )}
               </div>
               {permissionsQuery.data && filteredPermissions.length > 0 && (

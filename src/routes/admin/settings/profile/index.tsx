@@ -69,7 +69,7 @@ function ProfileContent({ profile }: { profile: AdminProfile }) {
       <form onSubmit={handleSave} className="card bg-base-100 p-6 border border-base-200 space-y-6">
         <div className="flex items-center justify-between border-b border-base-200 pb-4">
           <div>
-            <h3 className="text-lg font-bold text-base-content">Profile & Organization Details</h3>
+            <h3 className="text-lg font-semibold text-base-content">Profile & Organization Details</h3>
             <p className="text-xs text-base-content/60">
               Manage personal and administrative contact details.
             </p>

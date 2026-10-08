@@ -28,7 +28,7 @@ export default function AdminUserList() {
                 </div>
               </div>
             ) : (
-              <div className="size-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center font-bold text-sm">
+              <div className="size-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center font-semibold text-sm">
                 {initials}
               </div>
             )}
