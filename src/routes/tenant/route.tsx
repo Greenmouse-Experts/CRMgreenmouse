@@ -227,7 +227,7 @@ function RouteComponent() {
           aria-label="close sidebar"
           className="drawer-overlay"
         ></label>
-        <div className="min-h-full w-3xs bg-accent text-accent-content">
+        <div className="min-h-full w-3xs bg-primary text-primary-content">
           <div className="font-bold h-18 text-lg flex  items-center px-4 border-b border-base-300/40">
             KINOVIA CRM
           </div>
@@ -251,7 +251,7 @@ function RouteComponent() {
                             <li key={childLink.path}>
                               <Link
                                 to={childLink.path}
-                                className={` ${isChildActive ? "bg-primary text-primary-content " : ""} text-md  py-2 rounded-box`}
+                                className={` ${isChildActive ? "bg-accent text-accent-content " : ""} text-md  py-2 rounded-box`}
                               >
                                 {childLink.icon}
                                 {childLink.label}
