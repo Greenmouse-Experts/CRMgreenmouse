@@ -19,7 +19,6 @@ import {
   PlusCircleIcon,
   Layers,
   Sparkles,
-  Check,
   Plus,
   Search,
   HelpCircle,
@@ -111,7 +110,7 @@ function RouteComponent() {
     return Array.from(list);
   }, [featuresQuery.data, formData.selectedFeatures]);
 
-  // Filtered features for the chip picker
+  // Filter the available feature list by name or key.
   const filteredFeatures = useMemo(() => {
     if (!featureSearch.trim()) return availableFeatures;
     const term = featureSearch.toLowerCase();
@@ -724,7 +723,7 @@ function RouteComponent() {
             </div>
           </div>
 
-          {/* SECTION 4: Feature Entitlements (Clean Chip Selector without raw text input) */}
+          {/* SECTION 4: Feature Entitlements */}
           <div className="space-y-3 pt-2 border-t border-base-200">
             <div className="flex flex-wrap items-center justify-between gap-2">
               <div className="flex items-center gap-2">
@@ -764,7 +763,8 @@ function RouteComponent() {
                   value={featureSearch}
                   onChange={(e) => setFeatureSearch(e.target.value)}
                   placeholder="Filter available features..."
-                  className="input input-xs input-bordered w-full pl-8"
+                  aria-label="Filter available features"
+                  className="input input-sm input-bordered w-full pl-8"
                 />
               </div>
 
@@ -780,59 +780,70 @@ function RouteComponent() {
                     }
                   }}
                   placeholder="Add custom slug..."
-                  className="input input-xs input-bordered w-36 font-mono text-xs"
+                  aria-label="Custom feature key"
+                  className="input input-sm input-bordered w-36 font-mono text-xs"
                 />
                 <button
                   type="button"
                   onClick={() => handleAddCustomFeature()}
                   disabled={!customFeatureInput.trim()}
-                  className="btn btn-xs btn-ghost border border-base-300 gap-1 shrink-0"
+                  className="btn btn-sm btn-ghost border border-base-300 gap-1 shrink-0"
                 >
                   <Plus className="size-3" /> Add
                 </button>
               </div>
             </div>
 
-            {/* Selectable Feature Badges Grid */}
-            <div className="p-3.5 rounded-xl bg-base-200/50 border border-base-200 max-h-52 overflow-y-auto space-y-2">
+            <div className="overflow-hidden rounded-xl border border-base-200 bg-base-100">
+              <div className="flex items-center justify-between border-b border-base-200 bg-base-200/50 px-3 py-2 text-xs text-base-content/70">
+                <span>Available features</span>
+                <span>{filteredFeatures.length} shown</span>
+              </div>
               {filteredFeatures.length === 0 ? (
-                <div className="text-center py-4 text-xs text-base-content/50">
+                <div className="px-4 py-8 text-center text-sm text-base-content/60">
                   No features match "{featureSearch}". Use the input above to
                   add it.
                 </div>
               ) : (
-                <div className="flex flex-wrap gap-1.5">
+                <ul className="max-h-64 divide-y divide-base-200 overflow-y-auto">
                   {filteredFeatures.map((featKey) => {
                     const isSelected =
                       formData.selectedFeatures.includes(featKey);
                     const label = FEATURE_LABELS[featKey] || featKey;
 
                     return (
-                      <button
-                        type="button"
-                        key={featKey}
-                        onClick={() => toggleFeature(featKey)}
-                        className={`badge badge-sm py-2.5 px-2.5 gap-1.5 transition-all cursor-pointer ${
-                          isSelected
-                            ? "badge-primary font-medium shadow-xs ring-1 ring-primary/30"
-                            : "badge-ghost bg-base-100 hover:bg-base-200 text-base-content/70 border border-base-300"
-                        }`}
-                      >
-                        {isSelected ? (
-                          <Check className="size-3 text-primary-content" />
-                        ) : (
-                          <Plus className="size-3 text-base-content/40" />
-                        )}
-                        <span>{label}</span>
-                        {FEATURE_LABELS[featKey] && (
-                          <span className="font-mono text-[10px] opacity-60">
-                            ({featKey})
+                      <li key={featKey}>
+                        <label
+                          className={`flex min-h-14 cursor-pointer items-center gap-3 px-3 py-2.5 transition-colors hover:bg-base-200/60 focus-within:bg-base-200/60 ${
+                            isSelected ? "bg-primary/5" : ""
+                          }`}
+                        >
+                          <input
+                            type="checkbox"
+                            checked={isSelected}
+                            onChange={() => toggleFeature(featKey)}
+                            className="checkbox checkbox-primary checkbox-sm shrink-0"
+                          />
+                          <span className="flex min-w-0 flex-1 flex-col gap-0.5">
+                            <span className="text-sm font-medium text-base-content">
+                              {label}
+                            </span>
+                            {FEATURE_LABELS[featKey] && (
+                              <span className="break-all font-mono text-xs text-base-content/60">
+                                {featKey}
+                              </span>
+                            )}
                           </span>
-                        )}
-                      </button>
+                          {isSelected && (
+                            <span className="shrink-0 text-xs font-medium text-primary">
+                              Included
+                            </span>
+                          )}
+                        </label>
+                      </li>
                     );
                   })}
-                </div>
+                </ul>
               )}
             </div>
           </div>
