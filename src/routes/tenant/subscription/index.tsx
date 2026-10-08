@@ -1,348 +1,552 @@
-import ActionButton from "@/components/buttons/ActionButton";
-import Modal from "@/components/modals/DialogModal";
+import { useState, useEffect } from "react";
+import { createFileRoute } from "@tanstack/react-router";
+import PageHeader from "@/components/Headers/PageHeader";
+import PageLoader from "@/components/layout/PageLoader";
 import SimpleContainer from "@/components/SimpleContainer";
 import CustomTable from "@/components/tables/CustomTable";
-import { useModal } from "@/store/modals";
-import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
-import { useForm, FormProvider } from "react-hook-form";
-import SimpleInput from "@/components/inputs/SimpleInput";
-import { nanoid } from "nanoid";
-import PageHeader from "@/components/Headers/PageHeader";
-import { PlusCircleIcon } from "lucide-react";
-import LocalSelect from "@/components/inputs/LocalSelect";
-
-// Define the type for the form values
-interface SubscriptionFormValues {
-  id?: string; // Optional for new plans
-  name: string;
-  planDuration: string;
-  currency: string;
-  planPrice: string;
-  roles: string; // Comma-separated string for input
-}
-
-// Define the type for the subscription items stored in state/table data
-interface SubscriptionItem {
-  id: string;
-  name: string;
-  planDuration: string;
-  currency: string;
-  planPrice: string;
-  roles: string[]; // Array of strings for data storage
-}
+import {
+  useTenantSubscriptionCurrent,
+  useTenantSubscriptionPlans,
+  useTenantSubscriptionHistory,
+  useTenantSubscriptionUpgrade,
+  useTenantSubscriptionDowngrade,
+  useTenantSubscriptionCancel,
+  useTenantSubscriptionVerify,
+} from "@/api/tenantApi";
+import { toast } from "sonner";
+import {
+  Check,
+  Zap,
+  ShieldCheck,
+  Calendar,
+  CreditCard,
+  AlertCircle,
+  Clock,
+  Sparkles,
+  RefreshCw,
+  XCircle,
+  Layers,
+} from "lucide-react";
 
 export const Route = createFileRoute("/tenant/subscription/")({
   component: RouteComponent,
 });
 
-const columns = [
-  {
-    key: "name",
-    label: "Name",
-  },
-  {
-    key: "planDuration",
-    label: "Plan Duration",
-  },
-  {
-    key: "currency",
-    label: "Currency",
-  },
-  {
-    key: "planPrice",
-    label: "Plan Price",
-  },
-  {
-    key: "roles",
-    label: "Roles",
-    render: (value: string[]) => (
-      <div className="flex flex-wrap gap-1">
-        {value.map((role, index) => (
-          <span key={index} className="badge shadow badge-sm badge-accent">
-            {role}
-          </span>
-        ))}
-      </div>
-    ),
-  },
-];
-
-const initialData: SubscriptionItem[] = [
-  {
-    id: "1",
-    name: "Basic Plan",
-    planDuration: "Monthly",
-    currency: "USD",
-    planPrice: "10",
-    roles: ["User"],
-  },
-  {
-    id: "2",
-    name: "Pro Plan",
-    planDuration: "Annually",
-    currency: "USD",
-    planPrice: "99",
-    roles: ["User", "Editor"],
-  },
-  {
-    id: "3",
-    name: "Enterprise Plan",
-    planDuration: "Annually",
-    currency: "USD",
-    planPrice: "Custom",
-    roles: ["User", "Editor", "Admin"],
-  },
-  {
-    id: "4",
-    name: "Free Trial",
-    planDuration: "7 Days",
-    currency: "USD",
-    planPrice: "0",
-    roles: ["Guest"],
-  },
-];
-
-// Reusable Subscription Form Component
-interface SubscriptionFormProps {
-  initialValues?: SubscriptionFormValues;
-  onSubmit: (values: SubscriptionFormValues) => void;
-  onCancel: () => void;
-}
-
-const SubscriptionForm = ({
-  initialValues,
-  onSubmit,
-  onCancel,
-}: SubscriptionFormProps) => {
-  const methods = useForm<SubscriptionFormValues>({
-    defaultValues: initialValues || {
-      name: "",
-      planDuration: "",
-      currency: "USD",
-      planPrice: "",
-      roles: "",
-    },
-  });
-  const { register } = methods;
-
-  return (
-    <FormProvider {...methods}>
-      <form onSubmit={methods.handleSubmit(onSubmit)} className="space-y-4">
-        {/* Hidden input for ID when editing, ensuring it's registered with react-hook-form */}
-        {initialValues?.id && (
-          <input type="hidden" {...methods.register("id")} />
-        )}
-
-        <SimpleInput label="Name" {...register("name")} />
-        <SimpleInput label="Plan Duration" {...register("planDuration")} />
-        <SimpleInput label="Currency" {...register("currency")} />
-        <SimpleInput label="Plan Price" {...register("planPrice")} />
-        <LocalSelect label="Roles" {...register("roles")}>
-          <option value="">Select a role</option>
-          <option value="Admin">Admin</option>
-          <option value="Editor">Staff</option>
-          <option value="Viewer">Sub-Admin</option>
-        </LocalSelect>
-        {/*<SimpleInput
-          label="Roles (comma-separated)"
-          name="roles"
-          placeholder="e.g., User, Editor"
-        />*/}
-
-        <div className="modal-action flex justify-end gap-2 mt-6">
-          <button type="button" className="btn btn-ghost" onClick={onCancel}>
-            Cancel
-          </button>
-          <button type="submit" className="btn btn-primary">
-            Save Changes
-          </button>
-        </div>
-      </form>
-    </FormProvider>
-  );
-};
-
 function RouteComponent() {
-  const modal = useModal();
-  const [subscriptions, setSubscriptions] =
-    useState<SubscriptionItem[]>(initialData);
-  const [modalTitle, setModalTitle] = useState("");
-  const [modalContent, setModalContent] = useState<React.ReactNode | null>(
-    null,
+  const [billingCycle, setBillingCycle] = useState<"monthly" | "yearly">(
+    "monthly",
   );
-  const [currentPlanId] = useState<string | null>("2"); // Example: Set a default current plan
 
-  const onSubmit = (values: SubscriptionFormValues) => {
-    const updatedRoles = values.roles
-      .split(",")
-      .map((r) => r.trim())
-      .filter((r) => r !== "");
+  const currentQuery = useTenantSubscriptionCurrent();
+  const plansQuery = useTenantSubscriptionPlans();
+  const historyQuery = useTenantSubscriptionHistory();
 
-    const baseSubscription: Omit<SubscriptionItem, "id"> = {
-      name: values.name,
-      planDuration: values.planDuration,
-      currency: values.currency,
-      planPrice: values.planPrice,
-      roles: updatedRoles,
-    };
+  const upgradeMutation = useTenantSubscriptionUpgrade();
+  const downgradeMutation = useTenantSubscriptionDowngrade();
+  const cancelMutation = useTenantSubscriptionCancel();
+  const verifyMutation = useTenantSubscriptionVerify();
 
-    if (values.id) {
-      const subscriptionToSave: SubscriptionItem = {
-        ...baseSubscription,
-        id: values.id,
-      };
-      setSubscriptions((prev) =>
-        prev.map((item) =>
-          item.id === subscriptionToSave.id ? subscriptionToSave : item,
-        ),
-      );
-    } else {
-      const subscriptionToSave: SubscriptionItem = {
-        ...baseSubscription,
-        id: nanoid(),
-      };
-      setSubscriptions((prev) => [...prev, subscriptionToSave]);
+  const currentSub = currentQuery.data;
+  const plans = plansQuery.data || [];
+  const history = historyQuery.data || [];
+
+  // Verify payment on mount if reference is present in query parameters
+  useEffect(() => {
+    const searchParams = new URLSearchParams(window.location.search);
+    const reference =
+      searchParams.get("reference") || searchParams.get("trxref");
+    if (reference) {
+      verifyMutation
+        .mutateAsync({ reference })
+        .then(() => {
+          toast.success("Subscription payment verified successfully!");
+          window.history.replaceState(
+            {},
+            document.title,
+            window.location.pathname,
+          );
+        })
+        .catch((err: any) => {
+          toast.error(
+            err?.response?.data?.message ||
+              "Failed to verify subscription payment.",
+          );
+        });
     }
-    modal.closeModal();
+  }, []);
+
+  const handleSubscribeOrUpgrade = async (plan: any) => {
+    try {
+      const res = await upgradeMutation.mutateAsync({
+        planId: plan.id,
+        billingCycle,
+      });
+
+      const authUrl =
+        res?.authorizationUrl ||
+        res?.authorization_url ||
+        res?.checkoutUrl ||
+        res?.paystackUrl ||
+        res?.url ||
+        res?.data?.authorization_url ||
+        res?.data?.authorizationUrl;
+
+      if (authUrl) {
+        toast.info("Redirecting to Paystack checkout...");
+        window.location.href = authUrl;
+      } else {
+        toast.success("Subscription updated successfully!");
+      }
+    } catch (err: any) {
+      toast.error(
+        err?.response?.data?.message ||
+          "Failed to initiate subscription upgrade. Please try again.",
+      );
+    }
   };
 
-  const handleEditView = (item: SubscriptionItem) => {
-    setModalTitle("Edit Subscription Plan");
-
-    setModalContent(
-      <SubscriptionForm
-        initialValues={{
-          id: item.id,
-          name: item.name,
-          planDuration: item.planDuration,
-          currency: item.currency,
-          planPrice: item.planPrice,
-          roles: item.roles.join(", "),
-        }}
-        onSubmit={onSubmit}
-        onCancel={modal.closeModal}
-      />,
-    );
-    modal.showModal();
+  const handleDowngrade = async (plan: any) => {
+    if (
+      !window.confirm(`Are you sure you want to downgrade to "${plan.name}"?`)
+    ) {
+      return;
+    }
+    try {
+      await downgradeMutation.mutateAsync({ planId: plan.id });
+      toast.success(`Downgraded to ${plan.name} plan successfully.`);
+    } catch (err: any) {
+      toast.error(
+        err?.response?.data?.message || "Failed to downgrade subscription.",
+      );
+    }
   };
 
-  const handleAddSubscription = () => {
-    setModalTitle("Add New Subscription Plan");
-    setModalContent(
-      <SubscriptionForm onSubmit={onSubmit} onCancel={modal.closeModal} />,
-    );
-    modal.showModal();
+  const handleCancel = async () => {
+    if (
+      !window.confirm(
+        "Are you sure you want to cancel your subscription? Your workspace will remain active until the end of the current billing cycle.",
+      )
+    ) {
+      return;
+    }
+    try {
+      await cancelMutation.mutateAsync();
+      toast.success(
+        "Subscription cancelled. Access will remain active until the billing period ends.",
+      );
+    } catch (err: any) {
+      toast.error(
+        err?.response?.data?.message || "Failed to cancel subscription.",
+      );
+    }
   };
 
-  const handleDelete = (item: SubscriptionItem) => {
-    setModalTitle("Confirm Deletion");
-    setModalContent(
-      <div>
-        <p className="mb-4">
-          Are you sure you want to delete the subscription plan "
-          <span className="font-semibold">{item.name}</span>"?
-        </p>
-        <p>This action cannot be undone.</p>
-        <div className="modal-action flex justify-end gap-2 mt-4">
-          <button className="btn btn-ghost" onClick={modal.closeModal}>
-            Cancel
-          </button>
-          <button
-            className="btn btn-error"
-            onClick={() => {
-              setSubscriptions((prev) => prev.filter((d) => d.id !== item.id));
-              modal.closeModal();
-            }}
-          >
-            Delete
-          </button>
-        </div>
-      </div>,
-    );
-    modal.showModal();
+  const formatCurrency = (amount?: number) => {
+    if (amount === undefined || amount === null) return "₦0";
+    return new Intl.NumberFormat(undefined, {
+      style: "currency",
+      currency: "NGN",
+      maximumFractionDigits: 0,
+    }).format(amount);
   };
 
-  const actions = [
+  const historyColumns = [
     {
-      key: "editView",
-      label: "Edit/View",
-      action: (item: SubscriptionItem) => handleEditView(item),
+      key: "planName",
+      label: "Plan",
+      render: (_val: any, item: any) => (
+        <span className="font-semibold text-base-content">
+          {item.planName || item.plan?.name || "Subscription"}
+        </span>
+      ),
     },
     {
-      key: "delete",
-      label: "Delete",
-      action: (item: SubscriptionItem) => handleDelete(item),
+      key: "billingCycle",
+      label: "Billing Cycle",
+      render: (cycle: string) => (
+        <span className="capitalize text-xs text-base-content/70">
+          {cycle || "Monthly"}
+        </span>
+      ),
+    },
+    {
+      key: "amount",
+      label: "Amount",
+      render: (amount: number) => (
+        <span className="font-medium text-base-content">
+          {formatCurrency(amount)}
+        </span>
+      ),
+    },
+    {
+      key: "status",
+      label: "Status",
+      render: (status: string) => {
+        const s = (status || "completed").toLowerCase();
+        let badgeClass = "badge-ghost";
+        if (s === "success" || s === "completed" || s === "active")
+          badgeClass = "badge-success badge-soft";
+        else if (s === "pending") badgeClass = "badge-warning badge-soft";
+        else if (s === "failed" || s === "cancelled")
+          badgeClass = "badge-error badge-soft";
+
+        return (
+          <span
+            className={`badge badge-sm font-semibold uppercase text-[10px] ${badgeClass}`}
+          >
+            {status || "Completed"}
+          </span>
+        );
+      },
+    },
+    {
+      key: "createdAt",
+      label: "Date",
+      render: (date: string) => (
+        <span className="text-xs text-base-content/70">
+          {date ? new Date(date).toLocaleDateString() : "—"}
+        </span>
+      ),
     },
   ];
 
-  const currentPlan = subscriptions.find((plan) => plan.id === currentPlanId);
+  const currentPlanId = currentSub?.planId || currentSub?.plan?.id;
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       <PageHeader
-        title="Subscription Plans"
-        description="Manage your subscription plans and their associated roles."
-      >
-        <ActionButton
-          className="btn btn-primary "
-          onClick={handleAddSubscription}
-        >
-          <PlusCircleIcon /> Add Subscription
-        </ActionButton>
-      </PageHeader>
-      <Modal ref={modal.ref} title={modalTitle}>
-        {modalContent}
-      </Modal>
+        title="Subscription & Billing"
+        description="View your current plan, upgrade your tier, manage billing cycles, and view payment history"
+      />
 
-      {currentPlan && (
-        <div className="card bg-base-100 shadow-md ring ring-current/20 ">
-          <div className="card-body">
-            <h2 className="text-2xl font-bold text-primary ">
-              {currentPlan.name}
-            </h2>
-            <p className="text-sm text-gray-500 ">Your Current Plan</p>
-            <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-base text-gray-700">
-              <span className="font-semibold">
-                Price: {currentPlan.currency}
-                {currentPlan.planPrice}
-              </span>
-              <span className="hidden sm:inline">•</span>
-              <span className="font-semibold">
-                Duration: {currentPlan.planDuration}
-              </span>
+      <PageLoader query={currentQuery}>
+        {/* Current Subscription Card */}
+        {currentSub && (
+          <div className="card bg-base-100 shadow-md border border-base-200 overflow-hidden">
+            <div className="bg-gradient-to-r from-primary/10 via-base-100 to-base-100 p-6 border-b border-base-200 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+              <div className="space-y-1">
+                <div className="flex items-center gap-2">
+                  <span className="badge badge-primary uppercase text-[10px] font-bold tracking-wider">
+                    Current Active Plan
+                  </span>
+                  {currentSub.cancelAtPeriodEnd && (
+                    <span className="badge badge-warning text-[10px] font-semibold gap-1">
+                      <AlertCircle className="size-3" /> Cancels at period end
+                    </span>
+                  )}
+                </div>
+                <h2 className="text-2xl font-bold text-base-content flex items-center gap-2">
+                  {currentSub.planName ||
+                    currentSub.plan?.name ||
+                    "Standard Plan"}
+                  <ShieldCheck className="size-6 text-primary" />
+                </h2>
+                <p className="text-sm text-base-content/70 flex items-center gap-3">
+                  <span className="capitalize font-semibold text-base-content">
+                    {currentSub.billingCycle || "Monthly"} Billing
+                  </span>
+                  <span>•</span>
+                  <span>
+                    Status:{" "}
+                    <span className="font-semibold uppercase text-success">
+                      {currentSub.status || "Active"}
+                    </span>
+                  </span>
+                </p>
+              </div>
+
+              <div className="flex flex-wrap items-center gap-3">
+                {currentSub.status !== "cancelled" &&
+                  !currentSub.cancelAtPeriodEnd && (
+                    <button
+                      onClick={handleCancel}
+                      disabled={cancelMutation.isPending}
+                      className="btn btn-sm btn-outline btn-error gap-1"
+                    >
+                      <XCircle className="size-4" /> Cancel Subscription
+                    </button>
+                  )}
+                <button
+                  onClick={() => currentQuery.refetch()}
+                  className="btn btn-sm btn-ghost gap-1"
+                >
+                  <RefreshCw className="size-4" /> Refresh
+                </button>
+              </div>
             </div>
-            <div className="flex flex-wrap gap-1 mt-2 items-center">
-              <span className="font-semibold">Roles:</span>
-              {currentPlan.roles.map((role, index) => (
-                <span key={index} className="badge badge-accent">
-                  {role}
-                </span>
-              ))}
+
+            <div className="p-6 grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm bg-base-100">
+              <div className="flex items-center gap-3 p-3 rounded-xl bg-base-200/50">
+                <div className="size-10 rounded-lg bg-primary/10 text-primary grid place-items-center">
+                  <CreditCard className="size-5" />
+                </div>
+                <div>
+                  <p className="text-xs text-base-content/60">Plan Price</p>
+                  <p className="font-bold text-base text-base-content">
+                    {formatCurrency(currentSub.plan?.price || currentSub.price)}
+                    <span className="text-xs font-normal text-base-content/60">
+                      /{currentSub.billingCycle === "yearly" ? "yr" : "mo"}
+                    </span>
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-3 p-3 rounded-xl bg-base-200/50">
+                <div className="size-10 rounded-lg bg-info/10 text-info grid place-items-center">
+                  <Calendar className="size-5" />
+                </div>
+                <div>
+                  <p className="text-xs text-base-content/60">Period Start</p>
+                  <p className="font-semibold text-base-content">
+                    {currentSub.currentPeriodStart
+                      ? new Date(
+                          currentSub.currentPeriodStart,
+                        ).toLocaleDateString()
+                      : "—"}
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-3 p-3 rounded-xl bg-base-200/50">
+                <div className="size-10 rounded-lg bg-success/10 text-success grid place-items-center">
+                  <Clock className="size-5" />
+                </div>
+                <div>
+                  <p className="text-xs text-base-content/60">
+                    Renews / Expiration
+                  </p>
+                  <p className="font-semibold text-base-content">
+                    {currentSub.currentPeriodEnd
+                      ? new Date(
+                          currentSub.currentPeriodEnd,
+                        ).toLocaleDateString()
+                      : "—"}
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        )}
+      </PageLoader>
 
-      <SimpleContainer
-        title="Subscriptions"
-        actions={
-          <>
-            {/*<ActionButton
-              className="btn btn-primary btn-sm"
-              onClick={handleAddSubscription}
+      {/* Subscription Plans Selection Grid */}
+      <section className="space-y-6">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-base-100 p-6 rounded-box shadow border border-base-200">
+          <div>
+            <h3 className="text-xl font-bold text-base-content flex items-center gap-2">
+              <Sparkles className="size-5 text-primary" /> Choose a Subscription
+              Plan
+            </h3>
+            <p className="text-sm text-base-content/70">
+              Upgrade or switch your workspace plan to unlock more staff,
+              contacts, and features.
+            </p>
+          </div>
+
+          {/* Billing Cycle Switcher */}
+          <div className="flex items-center gap-3 bg-base-200/60 p-1.5 rounded-xl border border-base-200 self-start sm:self-auto">
+            <button
+              type="button"
+              onClick={() => setBillingCycle("monthly")}
+              className={`px-4 py-1.5 text-xs font-semibold rounded-lg transition-all ${
+                billingCycle === "monthly"
+                  ? "bg-base-100 text-primary shadow"
+                  : "text-base-content/70 hover:text-base-content"
+              }`}
             >
-              Add Subscription
-            </ActionButton>*/}
-          </>
-        }
-      >
-        <CustomTable
-          ring={false}
-          columns={columns}
-          data={subscriptions}
-          actions={actions}
-        />
+              Monthly Billing
+            </button>
+            <button
+              type="button"
+              onClick={() => setBillingCycle("yearly")}
+              className={`px-4 py-1.5 text-xs font-semibold rounded-lg transition-all flex items-center gap-1 ${
+                billingCycle === "yearly"
+                  ? "bg-base-100 text-primary shadow"
+                  : "text-base-content/70 hover:text-base-content"
+              }`}
+            >
+              Yearly Billing
+              <span className="badge badge-accent badge-xs text-[9px] uppercase font-bold">
+                Save
+              </span>
+            </button>
+          </div>
+        </div>
+
+        <PageLoader query={plansQuery}>
+          {plans.length === 0 ? (
+            <div className="text-center py-12 bg-base-100 rounded-box border border-base-200 space-y-2">
+              <Layers className="size-12 mx-auto text-base-content/30" />
+              <p className="text-base font-semibold text-base-content/70">
+                No active subscription plans available at the moment.
+              </p>
+              <p className="text-xs text-base-content/50">
+                Please check back later or contact system administration.
+              </p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {plans.map((plan: any) => {
+                const isCurrent = currentPlanId === plan.id;
+                const price =
+                  billingCycle === "yearly"
+                    ? (plan.priceYearly ?? plan.price ?? 0)
+                    : (plan.priceMonthly ?? plan.price ?? 0);
+
+                const isHigher =
+                  currentSub?.plan?.price !== undefined
+                    ? price > currentSub.plan.price
+                    : true;
+
+                return (
+                  <div
+                    key={plan.id}
+                    className={`card bg-base-100 shadow-md border-2 transition-all hover:shadow-lg flex flex-col justify-between ${
+                      isCurrent
+                        ? "border-primary ring-2 ring-primary/20"
+                        : "border-base-200"
+                    }`}
+                  >
+                    <div className="card-body p-6 space-y-4">
+                      {isCurrent && (
+                        <div className="badge badge-primary font-bold text-[10px] uppercase tracking-wider self-start">
+                          Your Active Plan
+                        </div>
+                      )}
+
+                      <div className="space-y-1">
+                        <h4 className="text-xl font-bold text-base-content">
+                          {plan.name}
+                        </h4>
+                        {plan.description && (
+                          <p className="text-xs text-base-content/60 min-h-[32px] leading-relaxed">
+                            {plan.description}
+                          </p>
+                        )}
+                      </div>
+
+                      <div className="py-2 border-y border-base-200">
+                        <div className="text-3xl font-extrabold text-base-content">
+                          {plan.isCustomPrice ? (
+                            "Custom"
+                          ) : (
+                            <>
+                              {formatCurrency(price)}
+                              <span className="text-xs font-normal text-base-content/60 ml-1">
+                                /{billingCycle === "yearly" ? "year" : "month"}
+                              </span>
+                            </>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Quotas & Limits */}
+                      <div className="space-y-2 text-xs">
+                        <p className="font-semibold text-base-content/70 uppercase text-[10px] tracking-wider">
+                          Resource Limits
+                        </p>
+                        <ul className="space-y-1.5 text-base-content/80">
+                          {plan.maxStaff !== undefined && (
+                            <li className="flex justify-between border-b border-base-200/50 pb-1">
+                              <span>Max Staff Users</span>
+                              <span className="font-bold">
+                                {plan.maxStaff === 0 || plan.maxStaff === -1
+                                  ? "Unlimited"
+                                  : plan.maxStaff}
+                              </span>
+                            </li>
+                          )}
+                          {plan.maxContacts !== undefined && (
+                            <li className="flex justify-between border-b border-base-200/50 pb-1">
+                              <span>Max Contacts</span>
+                              <span className="font-bold">
+                                {plan.maxContacts === 0 ||
+                                plan.maxContacts === -1
+                                  ? "Unlimited"
+                                  : plan.maxContacts}
+                              </span>
+                            </li>
+                          )}
+                          {plan.maxInvoicesPerMonth !== undefined && (
+                            <li className="flex justify-between border-b border-base-200/50 pb-1">
+                              <span>Invoices / Month</span>
+                              <span className="font-bold">
+                                {plan.maxInvoicesPerMonth === 0 ||
+                                plan.maxInvoicesPerMonth === -1
+                                  ? "Unlimited"
+                                  : plan.maxInvoicesPerMonth}
+                              </span>
+                            </li>
+                          )}
+                        </ul>
+                      </div>
+
+                      {/* Included Features */}
+                      {Array.isArray(plan.features) &&
+                        plan.features.length > 0 && (
+                          <div className="space-y-2 text-xs">
+                            <p className="font-semibold text-base-content/70 uppercase text-[10px] tracking-wider">
+                              Included Features
+                            </p>
+                            <ul className="space-y-1.5">
+                              {plan.features.map(
+                                (feat: string, idx: number) => (
+                                  <li
+                                    key={idx}
+                                    className="flex items-start gap-2 text-base-content/80"
+                                  >
+                                    <Check className="size-4 text-success shrink-0 mt-0.5" />
+                                    <span>{feat}</span>
+                                  </li>
+                                ),
+                              )}
+                            </ul>
+                          </div>
+                        )}
+                    </div>
+
+                    {/* Action Footer */}
+                    <div className="p-6 pt-0 mt-auto">
+                      {isCurrent ? (
+                        <button
+                          disabled
+                          className="btn btn-outline btn-block btn-disabled"
+                        >
+                          Current Plan
+                        </button>
+                      ) : isHigher ? (
+                        <button
+                          onClick={() => handleSubscribeOrUpgrade(plan)}
+                          disabled={upgradeMutation.isPending}
+                          className="btn btn-primary btn-block gap-2"
+                        >
+                          <Zap className="size-4" /> Subscribe / Upgrade
+                        </button>
+                      ) : (
+                        <button
+                          onClick={() => handleDowngrade(plan)}
+                          disabled={downgradeMutation.isPending}
+                          className="btn btn-outline btn-secondary btn-block"
+                        >
+                          Downgrade
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </PageLoader>
+      </section>
+
+      {/* Subscription Change & Payment History */}
+      <SimpleContainer title="Subscription History">
+        <PageLoader query={historyQuery}>
+          <div className="bg-base-100">
+            <CustomTable ring={false} data={history} columns={historyColumns} />
+          </div>
+        </PageLoader>
       </SimpleContainer>
     </div>
   );

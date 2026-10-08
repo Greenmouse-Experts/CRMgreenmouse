@@ -1,7 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { Country, State } from "country-state-city";
+import LocalSelect from "@/components/inputs/LocalSelect";
 import {
   ArrowRight,
   ArrowLeft,
@@ -159,46 +161,6 @@ const INDUSTRIES = [
 
 const TEAM_SIZES = ["1-20", "11-50", "51-200", "201-500", "500+"];
 
-const NIGERIAN_STATES = [
-  "Abia",
-  "Adamawa",
-  "Akwa Ibom",
-  "Anambra",
-  "Bauchi",
-  "Bayelsa",
-  "Benue",
-  "Borno",
-  "Cross River",
-  "Delta",
-  "Ebonyi",
-  "Edo",
-  "Ekiti",
-  "Enugu",
-  "FCT",
-  "Gombe",
-  "Imo",
-  "Jigawa",
-  "Kaduna",
-  "Kano",
-  "Katsina",
-  "Kebbi",
-  "Kogi",
-  "Kwara",
-  "Lagos",
-  "Nasarawa",
-  "Niger",
-  "Ogun",
-  "Ondo",
-  "Osun",
-  "Oyo",
-  "Plateau",
-  "Rivers",
-  "Sokoto",
-  "Taraba",
-  "Yobe",
-  "Zamfara",
-];
-
 const BUSINESS_TYPES = [
   "Sole Proprietorship",
   "Partnership",
@@ -297,7 +259,12 @@ function OnboardingWizard() {
     const updated: OnboardingFormData = {
       ...formData,
       ...payload,
-      theme: payload.theme === "dark" ? "dark" : payload.theme === "light" ? "light" : formData.theme,
+      theme:
+        payload.theme === "dark"
+          ? "dark"
+          : payload.theme === "light"
+            ? "light"
+            : formData.theme,
       teamSize: payload.teamSize || formData.teamSize || "1-20",
     };
     updateFormData(updated);
@@ -552,7 +519,8 @@ function IndustryStep({
               }`}
             >
               <span
-                className={`flex items-center justify-center w-10 h-10 rounded-full bg-white/70 shrink-0 ${ind.iconColor}`}>
+                className={`flex items-center justify-center w-10 h-10 rounded-full bg-white/70 shrink-0 ${ind.iconColor}`}
+              >
                 <Icon size={20} />
               </span>
               {ind.label}
@@ -571,15 +539,54 @@ function LocationStep({
   advance,
   prevStep,
 }: Pick<StepProps, "formData" | "advance" | "prevStep">) {
+  const allCountries = useMemo(() => Country.getAllCountries(), []);
+
+  const initialCountry = useMemo(() => {
+    const raw = formData.companyCountry?.trim() || "Nigeria";
+    return (
+      allCountries.find(
+        (c) =>
+          c.name.toLowerCase() === raw.toLowerCase() ||
+          c.isoCode.toLowerCase() === raw.toLowerCase(),
+      ) || allCountries.find((c) => c.isoCode === "NG")
+    );
+  }, [allCountries, formData.companyCountry]);
+
+  const [selectedCountryCode, setSelectedCountryCode] = useState<string>(
+    initialCountry?.isoCode || "NG",
+  );
+
+  const availableStates = useMemo(() => {
+    return State.getStatesOfCountry(selectedCountryCode);
+  }, [selectedCountryCode]);
+
+  const [selectedState, setSelectedState] = useState<string>(() => {
+    if (formData.companyState) return formData.companyState;
+    return availableStates[0]?.name || "";
+  });
+
+  const handleCountryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const code = e.target.value;
+    setSelectedCountryCode(code);
+    const states = State.getStatesOfCountry(code);
+    setSelectedState(states[0]?.name || "");
+  };
+
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const fd = new FormData(e.currentTarget);
+    const countryObj = allCountries.find(
+      (c) => c.isoCode === selectedCountryCode,
+    );
+    const countryName = countryObj ? countryObj.name : "Nigeria";
+
     advance({
       companyAddress: (fd.get("companyAddress") as string).trim(),
-      companyState: (fd.get("companyState") as string).trim(),
+      companyState: (
+        (fd.get("companyState") as string) || selectedState
+      ).trim(),
       companyCity: (fd.get("companyCity") as string).trim(),
-      companyCountry:
-        (fd.get("companyCountry") as string).trim() || "Nigeria",
+      companyCountry: countryName,
     });
   };
 
@@ -611,27 +618,54 @@ function LocationStep({
           />
         </div>
 
+        <LocalSelect
+          label="Country *"
+          name="companyCountry"
+          value={selectedCountryCode}
+          onChange={handleCountryChange}
+          required
+        >
+          {allCountries.map((c) => (
+            <option key={c.isoCode} value={c.isoCode}>
+              {c.flag} {c.name}
+            </option>
+          ))}
+        </LocalSelect>
+
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <div className="space-y-1.5">
-            <label className="text-sm font-semibold fieldset-label">
-              State *
-            </label>
-            <select
+          {availableStates.length > 0 ? (
+            <LocalSelect
+              label="State *"
               name="companyState"
-              defaultValue={formData.companyState}
+              value={selectedState}
+              onChange={(e) => setSelectedState(e.target.value)}
               required
-              className="select select-bordered w-full"
             >
               <option value="" disabled>
                 Select State
               </option>
-              {NIGERIAN_STATES.map((s) => (
-                <option key={s} value={s}>
-                  {s}
+              {availableStates.map((s) => (
+                <option key={s.isoCode || s.name} value={s.name}>
+                  {s.name}
                 </option>
               ))}
-            </select>
-          </div>
+            </LocalSelect>
+          ) : (
+            <div className="space-y-1.5">
+              <label className="text-sm font-semibold fieldset-label">
+                State / Province *
+              </label>
+              <input
+                name="companyState"
+                type="text"
+                value={selectedState}
+                onChange={(e) => setSelectedState(e.target.value)}
+                placeholder="State or Province"
+                required
+                className="input input-bordered w-full"
+              />
+            </div>
+          )}
 
           <div className="space-y-1.5">
             <label className="text-sm font-semibold fieldset-label">
@@ -646,20 +680,6 @@ function LocationStep({
               className="input input-bordered w-full"
             />
           </div>
-        </div>
-
-        <div className="space-y-1.5">
-          <label className="text-sm font-semibold fieldset-label">
-            Country *
-          </label>
-          <input
-            name="companyCountry"
-            type="text"
-            defaultValue={formData.companyCountry || "Nigeria"}
-            placeholder="Nigeria"
-            required
-            className="input input-bordered w-full"
-          />
         </div>
       </div>
 
