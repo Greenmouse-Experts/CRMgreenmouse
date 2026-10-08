@@ -65,3 +65,7 @@ html {
 @utility container {
   @apply px-4;
 }
+
+@utility fade {
+  @apply ring-current/20 border-current/20;
+}
