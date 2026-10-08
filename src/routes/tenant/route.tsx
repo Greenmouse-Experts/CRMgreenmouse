@@ -251,7 +251,7 @@ function RouteComponent() {
                             <li key={childLink.path}>
                               <Link
                                 to={childLink.path}
-                                className={` ${isChildActive ? "bg-accent text-accent-content " : ""} text-md  py-2 rounded-box`}
+                                className={` ${isChildActive ? "bg-primary text-primary-content " : ""} text-md  py-2 rounded-box`}
                               >
                                 {childLink.icon}
                                 {childLink.label}
