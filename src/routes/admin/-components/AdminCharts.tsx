@@ -10,7 +10,9 @@ export default function AdminCharts() {
     day: "numeric",
   });
 
-  const adminName = profile ? `${profile.firstName} ${profile.lastName}` : "Greenmouse Admin";
+  const adminName = profile
+    ? `${profile.firstName} ${profile.lastName}`
+    : "Greenmouse Admin";
 
   return (
     <div className="w-full space-y-4 py-2">
@@ -20,11 +22,12 @@ export default function AdminCharts() {
           <div className="bg-white/15 text-white font-medium rounded-md px-3 py-1 text-xs w-fit backdrop-blur-xs">
             {currentDate}
           </div>
-          <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
+          <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight">
             Welcome back, {adminName}
           </h2>
           <p className="text-xs sm:text-sm text-white/80 max-w-xl leading-relaxed">
-            Monitor platform performance, manage business tenants, and oversee subscription plans across Greenmouse CRM.
+            Monitor platform performance, manage business tenants, and oversee
+            subscription plans across Greenmouse CRM.
           </p>
         </div>
       </div>

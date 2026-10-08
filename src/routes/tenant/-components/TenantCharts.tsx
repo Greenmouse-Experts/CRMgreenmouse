@@ -69,7 +69,7 @@ export default function TenantCharts() {
           </div>
 
           <div>
-            <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
+            <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight">
               Welcome back, {companyName}
             </h2>
             <p className="text-xs sm:text-sm text-white/80 max-w-xl leading-relaxed mt-1">
