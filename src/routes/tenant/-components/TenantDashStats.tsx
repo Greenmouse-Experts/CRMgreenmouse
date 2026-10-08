@@ -67,7 +67,7 @@ export default function TenantDashStats() {
                   <span className="text-xs font-semibold text-base-content/60 uppercase tracking-wider">
                     {card.title}
                   </span>
-                  <p className="text-2xl font-bold text-base-content">
+                  <p className="text-2xl font-semibold text-base-content">
                     {card.value}
                   </p>
                   <p className="text-xs text-base-content/60 font-medium">

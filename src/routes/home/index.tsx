@@ -10,7 +10,7 @@ function RouteComponent() {
     <div className="min-h-screen bg-base-100">
       <HomeNav />
       <main className="container mx-auto py-20 text-center">
-        <h1 className="text-5xl font-bold tracking-tight mb-6">
+        <h1 className="text-5xl font-semibold tracking-tight mb-6">
           Management made{" "}
           <span className="text-primary italic underline decoration-wavy decoration-base-300">
             effortless.

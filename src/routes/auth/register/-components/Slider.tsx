@@ -46,7 +46,7 @@ export default function OnboardingSlider() {
           <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white text-primary shadow-xl">
             <MousePointer2 className="size-7 rotate-12" />
           </div>
-          <span className="text-2xl font-bold tracking-tight text-white">
+          <span className="text-2xl font-semibold tracking-tight text-white">
             CRMgreenmouse
           </span>
         </div>
