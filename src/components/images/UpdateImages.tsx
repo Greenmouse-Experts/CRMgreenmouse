@@ -1,4 +1,4 @@
-import { XCircle } from "lucide-react";
+import { XCircle, UploadCloud } from "lucide-react";
 import { useEffect, useState, useId } from "react";
 
 interface UpdateImagesProps {
@@ -48,9 +48,10 @@ export default function UpdateImages({
   };
 
   return (
-    <div className="space-y-4">
-      <div className="grid grid-cols-[repeat(auto-fill,minmax(200px,1fr))] gap-4">
-        <div className="h-36 flex flex-col justify-center items-center border-2 border-dashed border-base-300 rounded-lg p-4 hover:border-primary transition-colors duration-200">
+    <div className="w-full max-w-full p-1">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 w-full">
+        {/* Upload Box */}
+        <div className="min-w-0 w-full h-32 flex flex-col justify-center items-center border-2 border-dashed border-base-300 rounded-xl p-2 hover:border-primary transition-colors duration-200 bg-base-200/20">
           <input
             type="file"
             accept="image/*"
@@ -61,66 +62,58 @@ export default function UpdateImages({
           />
           <label
             htmlFor={inputId}
-            className="flex flex-col items-center justify-center text-center cursor-pointer h-full w-full"
+            className="flex flex-col items-center justify-center text-center cursor-pointer h-full w-full select-none"
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-10 w-10 text-base-content opacity-60"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth={2}
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M7 16a4 4 0 01-.88-7.903A5 5 0 0115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
-              />
-            </svg>
-            <span className="mt-1 text-sm font-semibold text-base-content opacity-80">
+            <UploadCloud className="h-7 w-7 text-primary/70 mb-1" />
+            <span className="text-xs font-semibold text-base-content leading-tight">
               Upload Images
             </span>
-            <span className="text-xs text-base-content opacity-60">
-              Click or drop to select multiple
+            <span className="text-[10px] text-base-content/50 mt-0.5">
+              Click or drag
             </span>
           </label>
         </div>
 
+        {/* Existing Images */}
         {prevImages?.map((image, index) => (
-          <div key={image.path || index} className="relative h-36 w-full group">
+          <div
+            key={image.path || index}
+            className="relative min-w-0 w-full h-32 rounded-xl overflow-hidden border border-base-200 shadow-sm group bg-base-200/40"
+          >
             <img
-              className="size-full object-cover rounded-lg shadow-md border border-base-200"
+              className="size-full object-cover"
               src={image.url}
               alt={`Existing image ${index + 1}`}
             />
             <button
               type="button"
-              className="btn btn-circle btn-error btn-xs absolute -right-2 -top-2 z-10"
+              className="btn btn-circle btn-error btn-xs absolute right-1.5 top-1.5 shadow z-10 opacity-90 hover:opacity-100 transition-opacity"
               onClick={() => removePrevImage(image.path)}
               aria-label="Remove existing image"
             >
-              <XCircle className="size-4" />
+              <XCircle className="size-3.5" />
             </button>
           </div>
         ))}
 
+        {/* New Uploaded Images */}
         {newImages.map((image, index) => (
           <div
             key={`${image.name}-${index}`}
-            className="relative h-36 w-full group"
+            className="relative min-w-0 w-full h-32 rounded-xl overflow-hidden border border-base-200 shadow-sm group bg-base-200/40"
           >
             <img
-              className="size-full object-cover rounded-lg shadow-md border border-base-200"
+              className="size-full object-cover"
               src={URL.createObjectURL(image)}
               alt={`New image ${index + 1}`}
             />
             <button
               type="button"
-              className="btn btn-circle btn-error btn-xs absolute -right-2 -top-2 z-10"
+              className="btn btn-circle btn-error btn-xs absolute right-1.5 top-1.5 shadow z-10 opacity-90 hover:opacity-100 transition-opacity"
               onClick={() => removeNewImage(index)}
               aria-label="Remove new image"
             >
-              <XCircle className="size-4" />
+              <XCircle className="size-3.5" />
             </button>
           </div>
         ))}
