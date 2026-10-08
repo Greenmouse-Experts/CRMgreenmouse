@@ -63,7 +63,7 @@ export default function TenantCharts() {
             )}
             {loginDateStr && (
               <span className="badge badge-xs badge-accent bg-current/20">
-                <ShieldCheck className="size-3" />
+                <ShieldCheck className="!size-4" />
                 Last login: {loginDateStr}
               </span>
             )}
