@@ -43,6 +43,7 @@ import { Route as AdminOrdersIndexRouteImport } from './routes/admin/orders/inde
 import { Route as AuthForgotPasswordNewPasswordRouteImport } from './routes/auth/forgot-password/new-password'
 import { Route as TenantUsersRolesIndexRouteImport } from './routes/tenant/users/roles/index'
 import { Route as TenantUsersAddIndexRouteImport } from './routes/tenant/users/add/index'
+import { Route as TenantSubscriptionCallbackIndexRouteImport } from './routes/tenant/subscription/callback/index'
 import { Route as TenantSettingsThemeIndexRouteImport } from './routes/tenant/settings/theme/index'
 import { Route as TenantSettingsSecurityIndexRouteImport } from './routes/tenant/settings/security/index'
 import { Route as TenantSettingsProfileIndexRouteImport } from './routes/tenant/settings/profile/index'
@@ -262,6 +263,12 @@ const TenantUsersAddIndexRoute = TenantUsersAddIndexRouteImport.update({
   path: '/users/add/',
   getParentRoute: () => TenantRouteRoute,
 } as any)
+const TenantSubscriptionCallbackIndexRoute =
+  TenantSubscriptionCallbackIndexRouteImport.update({
+    id: '/subscription/callback/',
+    path: '/subscription/callback/',
+    getParentRoute: () => TenantRouteRoute,
+  } as any)
 const TenantSettingsThemeIndexRoute =
   TenantSettingsThemeIndexRouteImport.update({
     id: '/theme/',
@@ -604,6 +611,7 @@ export interface FileRoutesByFullPath {
   '/tenant/settings/profile': typeof TenantSettingsProfileIndexRoute
   '/tenant/settings/security': typeof TenantSettingsSecurityIndexRoute
   '/tenant/settings/theme': typeof TenantSettingsThemeIndexRoute
+  '/tenant/subscription/callback': typeof TenantSubscriptionCallbackIndexRoute
   '/tenant/users/add': typeof TenantUsersAddIndexRoute
   '/tenant/users/roles': typeof TenantUsersRolesIndexRoute
   '/tenant/accounts/Invoices/$id/edit': typeof TenantAccountsInvoicesIdEditRoute
@@ -680,6 +688,7 @@ export interface FileRoutesByTo {
   '/tenant/settings/profile': typeof TenantSettingsProfileIndexRoute
   '/tenant/settings/security': typeof TenantSettingsSecurityIndexRoute
   '/tenant/settings/theme': typeof TenantSettingsThemeIndexRoute
+  '/tenant/subscription/callback': typeof TenantSubscriptionCallbackIndexRoute
   '/tenant/users/add': typeof TenantUsersAddIndexRoute
   '/tenant/users/roles': typeof TenantUsersRolesIndexRoute
   '/tenant/accounts/Invoices/$id/edit': typeof TenantAccountsInvoicesIdEditRoute
@@ -764,6 +773,7 @@ export interface FileRoutesById {
   '/tenant/settings/profile/': typeof TenantSettingsProfileIndexRoute
   '/tenant/settings/security/': typeof TenantSettingsSecurityIndexRoute
   '/tenant/settings/theme/': typeof TenantSettingsThemeIndexRoute
+  '/tenant/subscription/callback/': typeof TenantSubscriptionCallbackIndexRoute
   '/tenant/users/add/': typeof TenantUsersAddIndexRoute
   '/tenant/users/roles/': typeof TenantUsersRolesIndexRoute
   '/tenant/accounts/Invoices/$id/edit': typeof TenantAccountsInvoicesIdEditRoute
@@ -849,6 +859,7 @@ export interface FileRouteTypes {
     | '/tenant/settings/profile'
     | '/tenant/settings/security'
     | '/tenant/settings/theme'
+    | '/tenant/subscription/callback'
     | '/tenant/users/add'
     | '/tenant/users/roles'
     | '/tenant/accounts/Invoices/$id/edit'
@@ -925,6 +936,7 @@ export interface FileRouteTypes {
     | '/tenant/settings/profile'
     | '/tenant/settings/security'
     | '/tenant/settings/theme'
+    | '/tenant/subscription/callback'
     | '/tenant/users/add'
     | '/tenant/users/roles'
     | '/tenant/accounts/Invoices/$id/edit'
@@ -1008,6 +1020,7 @@ export interface FileRouteTypes {
     | '/tenant/settings/profile/'
     | '/tenant/settings/security/'
     | '/tenant/settings/theme/'
+    | '/tenant/subscription/callback/'
     | '/tenant/users/add/'
     | '/tenant/users/roles/'
     | '/tenant/accounts/Invoices/$id/edit'
@@ -1279,6 +1292,13 @@ declare module '@tanstack/react-router' {
       path: '/users/add'
       fullPath: '/tenant/users/add'
       preLoaderRoute: typeof TenantUsersAddIndexRouteImport
+      parentRoute: typeof TenantRouteRoute
+    }
+    '/tenant/subscription/callback/': {
+      id: '/tenant/subscription/callback/'
+      path: '/subscription/callback'
+      fullPath: '/tenant/subscription/callback'
+      preLoaderRoute: typeof TenantSubscriptionCallbackIndexRouteImport
       parentRoute: typeof TenantRouteRoute
     }
     '/tenant/settings/theme/': {
@@ -1735,6 +1755,7 @@ interface TenantRouteRouteChildren {
   TenantProductsAddIndexRoute: typeof TenantProductsAddIndexRoute
   TenantProductsCategoriesIndexRoute: typeof TenantProductsCategoriesIndexRoute
   TenantProductsServiceIndexRoute: typeof TenantProductsServiceIndexRoute
+  TenantSubscriptionCallbackIndexRoute: typeof TenantSubscriptionCallbackIndexRoute
   TenantUsersAddIndexRoute: typeof TenantUsersAddIndexRoute
   TenantUsersRolesIndexRoute: typeof TenantUsersRolesIndexRoute
   TenantAccountsInvoicesIdEditRoute: typeof TenantAccountsInvoicesIdEditRoute
@@ -1767,6 +1788,7 @@ const TenantRouteRouteChildren: TenantRouteRouteChildren = {
   TenantProductsAddIndexRoute: TenantProductsAddIndexRoute,
   TenantProductsCategoriesIndexRoute: TenantProductsCategoriesIndexRoute,
   TenantProductsServiceIndexRoute: TenantProductsServiceIndexRoute,
+  TenantSubscriptionCallbackIndexRoute: TenantSubscriptionCallbackIndexRoute,
   TenantUsersAddIndexRoute: TenantUsersAddIndexRoute,
   TenantUsersRolesIndexRoute: TenantUsersRolesIndexRoute,
   TenantAccountsInvoicesIdEditRoute: TenantAccountsInvoicesIdEditRoute,

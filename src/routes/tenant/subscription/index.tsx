@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import PageHeader from "@/components/Headers/PageHeader";
 import PageLoader from "@/components/layout/PageLoader";
@@ -11,7 +11,6 @@ import {
   useTenantSubscriptionUpgrade,
   useTenantSubscriptionDowngrade,
   useTenantSubscriptionCancel,
-  useTenantSubscriptionVerify,
 } from "@/api/tenantApi";
 import { toast } from "sonner";
 import {
@@ -37,8 +36,6 @@ function RouteComponent() {
     "monthly",
   );
   const [checkoutPlanId, setCheckoutPlanId] = useState<string | null>(null);
-  const [verificationError, setVerificationError] = useState<string | null>(null);
-  const verifyingReferences = useRef(new Set<string>());
 
   const currentQuery = useTenantSubscriptionCurrent();
   const plansQuery = useTenantSubscriptionPlans();
@@ -47,67 +44,38 @@ function RouteComponent() {
   const upgradeMutation = useTenantSubscriptionUpgrade();
   const downgradeMutation = useTenantSubscriptionDowngrade();
   const cancelMutation = useTenantSubscriptionCancel();
-  const verifyMutation = useTenantSubscriptionVerify();
 
   const currentSub = currentQuery.data;
   const plans = plansQuery.data || [];
   const history = historyQuery.data || [];
 
-  const verifyPayment = async (reference: string) => {
-    if (verifyingReferences.current.has(reference)) return;
-    verifyingReferences.current.add(reference);
-    setVerificationError(null);
-
-    try {
-      const result = await verifyMutation.mutateAsync({ reference });
-      const verification = result?.data ?? result;
-      if (
-        verification?.success === false ||
-        verification?.verified === false ||
-        ["failed", "pending", "abandoned", "reversed", "declined", "error"].includes(
-          String(verification?.status ?? "").toLowerCase(),
-        )
-      ) {
-        throw new Error("Payment has not been confirmed yet.");
-      }
-
-      toast.success("Subscription payment verified successfully!");
-      const url = new URL(window.location.href);
-      url.searchParams.delete("reference");
-      url.searchParams.delete("trxref");
-      window.history.replaceState(
-        window.history.state,
-        "",
-        `${url.pathname}${url.search}${url.hash}`,
-      );
-    } catch (err: any) {
-      verifyingReferences.current.delete(reference);
-      setVerificationError(reference);
-      toast.error(
-        err?.response?.data?.message ||
-          err?.message ||
-          "Failed to verify subscription payment.",
-      );
-    } finally {
-      setCheckoutPlanId(null);
-    }
-  };
-
-  // Hosted Paystack checkout returns to this page with a transaction reference.
+  // Existing Paystack callback settings may still point to the plan page.
   useEffect(() => {
     const searchParams = new URLSearchParams(window.location.search);
     const reference =
       searchParams.get("reference") || searchParams.get("trxref");
-    if (reference) void verifyPayment(reference);
+    if (reference) {
+      const callback = new URL(
+        "/tenant/subscription/callback/",
+        window.location.origin,
+      );
+      callback.searchParams.set("reference", reference);
+      window.location.replace(callback.toString());
+    }
   }, []);
 
   const handleSubscribeOrUpgrade = async (plan: any) => {
     if (checkoutPlanId) return;
     setCheckoutPlanId(plan.id);
     try {
+      const callbackUrl = new URL(
+        "/tenant/subscription/callback/",
+        window.location.origin,
+      ).toString();
       const res = await upgradeMutation.mutateAsync({
         planId: plan.id,
         billingCycle,
+        callbackUrl,
       });
 
       const checkout = res?.data ?? res;
@@ -128,7 +96,9 @@ function RouteComponent() {
             onSuccess: (transaction) => {
               const paymentReference = transaction.reference || reference;
               if (paymentReference) {
-                void verifyPayment(paymentReference);
+                const callback = new URL(callbackUrl);
+                callback.searchParams.set("reference", paymentReference);
+                window.location.assign(callback.toString());
               } else {
                 setCheckoutPlanId(null);
                 toast.error(
@@ -279,20 +249,6 @@ function RouteComponent() {
         title="Subscription & Billing"
         description="View your current plan, upgrade your tier, manage billing cycles, and view payment history"
       />
-
-      {verificationError && (
-        <div role="alert" className="alert alert-warning flex flex-wrap justify-between gap-3">
-          <span>We could not confirm your payment yet. Retry verification before starting another checkout.</span>
-          <button
-            type="button"
-            className="btn btn-sm btn-outline"
-            disabled={verifyMutation.isPending}
-            onClick={() => void verifyPayment(verificationError)}
-          >
-            {verifyMutation.isPending ? "Verifying..." : "Retry verification"}
-          </button>
-        </div>
-      )}
 
       <PageLoader query={currentQuery}>
         {/* Current Subscription Card */}
@@ -592,11 +548,7 @@ function RouteComponent() {
                       ) : isHigher ? (
                         <button
                           onClick={() => handleSubscribeOrUpgrade(plan)}
-                          disabled={
-                            Boolean(checkoutPlanId) ||
-                            verifyMutation.isPending ||
-                            Boolean(verificationError)
-                          }
+                          disabled={Boolean(checkoutPlanId)}
                           className="btn btn-primary btn-block gap-2"
                         >
                           <Zap className="size-4" />{" "}

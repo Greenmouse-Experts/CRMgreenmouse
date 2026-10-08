@@ -576,12 +576,38 @@ export const useTenantSubscriptionHistory = (params?: {
 export const useTenantSubscriptionUpgrade = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (payload: { planId: string; billingCycle?: string }) => {
-      const { data } = await apiClient.post<any>(
-        "/tenant/subscription/upgrade",
-        payload,
-      );
-      return data?.data ?? data;
+    mutationFn: async (payload: {
+      planId: string;
+      billingCycle?: string;
+      callbackUrl?: string;
+    }) => {
+      try {
+        const { data } = await apiClient.post<any>(
+          "/tenant/subscription/upgrade",
+          payload,
+        );
+        return data?.data ?? data;
+      } catch (error: any) {
+        const messages = error?.response?.data?.message;
+        const rejectedCallback =
+          error?.response?.status === 400 &&
+          (Array.isArray(messages) ? messages : [messages]).some(
+            (message) =>
+              typeof message === "string" &&
+              message.includes("property callbackUrl should not exist"),
+          );
+        if (!payload.callbackUrl || !rejectedCallback) throw error;
+
+        // Older API deployments only accept planId and billingCycle.
+        const { data } = await apiClient.post<any>(
+          "/tenant/subscription/upgrade",
+          {
+            planId: payload.planId,
+            billingCycle: payload.billingCycle,
+          },
+        );
+        return data?.data ?? data;
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["tenant", "subscription"] });

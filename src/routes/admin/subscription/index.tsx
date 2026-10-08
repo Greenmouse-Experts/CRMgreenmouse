@@ -15,7 +15,15 @@ import type { Actions } from "@/components/tables/pop-up";
 import PageLoader from "@/components/layout/PageLoader";
 import Modal, { type ModalHandle } from "@/components/DialogModal";
 import { toast } from "sonner";
-import { PlusCircleIcon, Layers, Sparkles, Check, Plus } from "lucide-react";
+import {
+  PlusCircleIcon,
+  Layers,
+  Sparkles,
+  Check,
+  Plus,
+  Search,
+  HelpCircle,
+} from "lucide-react";
 
 export const Route = createFileRoute("/admin/subscription/")({
   component: RouteComponent,
@@ -34,7 +42,7 @@ const DEFAULT_PLAN_FORM = {
   maxInvoicesPerMonth: 30,
   maxOrdersPerMonth: 60,
   maxCategories: 10,
-  features: "analytics, data_export",
+  selectedFeatures: ["analytics", "data_export"],
   isCustomPrice: false,
   isActive: true,
 };
@@ -57,9 +65,29 @@ const SUGGESTED_FEATURES = [
   "priority_support",
 ];
 
+const FEATURE_LABELS: Record<string, string> = {
+  analytics: "Advanced Analytics",
+  data_export: "CSV & PDF Exports",
+  financial_reports: "Financial Reports",
+  custom_roles: "Custom Staff Roles",
+  audit_logs: "Security Audit Logs",
+  bulk_import: "Bulk Data Import",
+  inventory_management: "Inventory & Stock Alerts",
+  invoicing: "Automated Invoicing",
+  quotes_estimates: "Quotes & Estimates",
+  multi_currency: "Multi-Currency Rates",
+  white_labeling: "White-Label Branding",
+  custom_domain: "Custom Domain",
+  api_access: "REST API Access",
+  webhooks: "Outgoing Webhooks",
+  priority_support: "24/7 Dedicated Support",
+};
+
 function RouteComponent() {
   const [editingPlan, setEditingPlan] = useState<SubscriptionPlan | null>(null);
   const [formData, setFormData] = useState(DEFAULT_PLAN_FORM);
+  const [featureSearch, setFeatureSearch] = useState("");
+  const [customFeatureInput, setCustomFeatureInput] = useState("");
 
   const query = useAdminSubscriptions();
   const featuresQuery = useAdminSubscriptionFeatures();
@@ -78,12 +106,29 @@ function RouteComponent() {
         else if (f && typeof f === "object" && f.key) list.add(f.key);
       });
     }
+    // Include any features present in current editing plan or user selections
+    formData.selectedFeatures.forEach((f) => list.add(f));
     return Array.from(list);
-  }, [featuresQuery.data]);
+  }, [featuresQuery.data, formData.selectedFeatures]);
+
+  // Filtered features for the chip picker
+  const filteredFeatures = useMemo(() => {
+    if (!featureSearch.trim()) return availableFeatures;
+    const term = featureSearch.toLowerCase();
+    return availableFeatures.filter((featKey) => {
+      const label = FEATURE_LABELS[featKey] || featKey;
+      return (
+        featKey.toLowerCase().includes(term) ||
+        label.toLowerCase().includes(term)
+      );
+    });
+  }, [availableFeatures, featureSearch]);
 
   const handleOpenCreate = () => {
     setEditingPlan(null);
     setFormData(DEFAULT_PLAN_FORM);
+    setFeatureSearch("");
+    setCustomFeatureInput("");
     planModalRef.current?.open();
   };
 
@@ -102,26 +147,59 @@ function RouteComponent() {
       maxInvoicesPerMonth: plan.maxInvoicesPerMonth ?? 30,
       maxOrdersPerMonth: plan.maxOrdersPerMonth ?? 60,
       maxCategories: plan.maxCategories ?? 10,
-      features: (plan.features || []).join(", "),
+      selectedFeatures: plan.features || [],
       isCustomPrice: plan.isCustomPrice || false,
       isActive: plan.isActive !== undefined ? plan.isActive : true,
     });
+    setFeatureSearch("");
+    setCustomFeatureInput("");
     planModalRef.current?.open();
   };
 
-  const toggleFeatureInForm = (featureKey: string) => {
-    const currentFeatures = formData.features
-      .split(",")
-      .map((f) => f.trim())
-      .filter(Boolean);
+  const toggleFeature = (featureKey: string) => {
+    setFormData((prev) => {
+      const isAlreadySelected = prev.selectedFeatures.includes(featureKey);
+      return {
+        ...prev,
+        selectedFeatures: isAlreadySelected
+          ? prev.selectedFeatures.filter((f) => f !== featureKey)
+          : [...prev.selectedFeatures, featureKey],
+      };
+    });
+  };
 
-    let updated: string[];
-    if (currentFeatures.includes(featureKey)) {
-      updated = currentFeatures.filter((f) => f !== featureKey);
-    } else {
-      updated = [...currentFeatures, featureKey];
+  const handleSelectAllFeatures = () => {
+    setFormData((prev) => ({
+      ...prev,
+      selectedFeatures: Array.from(
+        new Set([...prev.selectedFeatures, ...availableFeatures]),
+      ),
+    }));
+  };
+
+  const handleClearAllFeatures = () => {
+    setFormData((prev) => ({
+      ...prev,
+      selectedFeatures: [],
+    }));
+  };
+
+  const handleAddCustomFeature = (e?: React.FormEvent) => {
+    e?.preventDefault();
+    const cleanKey = customFeatureInput
+      .trim()
+      .toLowerCase()
+      .replace(/[^a-z0-9_]/g, "_");
+
+    if (!cleanKey) return;
+
+    if (!formData.selectedFeatures.includes(cleanKey)) {
+      setFormData((prev) => ({
+        ...prev,
+        selectedFeatures: [...prev.selectedFeatures, cleanKey],
+      }));
     }
-    setFormData({ ...formData, features: updated.join(", ") });
+    setCustomFeatureInput("");
   };
 
   const handleDelete = async (plan: SubscriptionPlan) => {
@@ -147,10 +225,10 @@ function RouteComponent() {
     }
 
     const payload: Partial<SubscriptionPlan> = {
-      name: formData.name,
-      description: formData.description,
-      priceMonthly: Number(formData.priceMonthly),
-      priceYearly: Number(formData.priceYearly),
+      name: formData.name.trim(),
+      description: formData.description.trim(),
+      priceMonthly: formData.isCustomPrice ? 0 : Number(formData.priceMonthly),
+      priceYearly: formData.isCustomPrice ? 0 : Number(formData.priceYearly),
       trialDays: Number(formData.trialDays),
       maxStaff: Number(formData.maxStaff),
       maxContacts: Number(formData.maxContacts),
@@ -159,10 +237,7 @@ function RouteComponent() {
       maxInvoicesPerMonth: Number(formData.maxInvoicesPerMonth),
       maxOrdersPerMonth: Number(formData.maxOrdersPerMonth),
       maxCategories: Number(formData.maxCategories),
-      features: formData.features
-        .split(",")
-        .map((f) => f.trim())
-        .filter(Boolean),
+      features: formData.selectedFeatures,
       isCustomPrice: formData.isCustomPrice,
       isActive: formData.isActive,
     };
@@ -261,7 +336,7 @@ function RouteComponent() {
           {features && features.length > 0 ? (
             features.map((feat, i) => (
               <span key={i} className="badge badge-xs badge-ghost">
-                {feat}
+                {FEATURE_LABELS[feat] || feat}
               </span>
             ))
           ) : (
@@ -344,232 +419,425 @@ function RouteComponent() {
             : "Create Subscription Plan"
         }
       >
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <div className="sm:col-span-2">
-              <label className="label">
-                <span className="label-text font-semibold">Plan Name *</span>
-              </label>
-              <input
-                type="text"
-                required
-                value={formData.name}
-                onChange={(e) =>
-                  setFormData({ ...formData, name: e.target.value })
-                }
-                placeholder="e.g. Starter, Growth, Enterprise"
-                className="input input-sm input-bordered w-full"
-              />
+        <form onSubmit={handleSubmit} className="space-y-6">
+          {/* SECTION 1: Basic Plan Information */}
+          <div className="space-y-3">
+            <h4 className="text-xs font-semibold uppercase tracking-wider text-base-content/60 flex items-center gap-1.5">
+              <span>Plan Overview</span>
+            </h4>
+
+            <div className="space-y-3">
+              <div>
+                <label className="label py-1">
+                  <span className="label-text font-semibold text-sm">
+                    Plan Name <span className="text-error">*</span>
+                  </span>
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={formData.name}
+                  onChange={(e) =>
+                    setFormData({ ...formData, name: e.target.value })
+                  }
+                  placeholder="e.g. Starter, Growth, Enterprise"
+                  className="input input-sm input-bordered w-full"
+                />
+              </div>
+
+              <div>
+                <label className="label py-1">
+                  <span className="label-text font-semibold text-sm">
+                    Description
+                  </span>
+                </label>
+                <textarea
+                  value={formData.description}
+                  onChange={(e) =>
+                    setFormData({ ...formData, description: e.target.value })
+                  }
+                  placeholder="Brief summary of who this plan is suitable for"
+                  className="textarea textarea-bordered textarea-sm w-full"
+                  rows={2}
+                />
+              </div>
+
+              {/* Toggles */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                <label className="flex items-center gap-3 p-3 rounded-xl border border-base-200 bg-base-100 hover:bg-base-200/40 cursor-pointer transition-colors">
+                  <input
+                    type="checkbox"
+                    checked={formData.isActive}
+                    onChange={(e) =>
+                      setFormData({ ...formData, isActive: e.target.checked })
+                    }
+                    className="checkbox checkbox-primary checkbox-sm"
+                  />
+                  <div>
+                    <div className="text-sm font-semibold">Active Tier</div>
+                    <div className="text-xs text-base-content/60">
+                      Visible to tenant businesses for subscription
+                    </div>
+                  </div>
+                </label>
+
+                <label className="flex items-center gap-3 p-3 rounded-xl border border-base-200 bg-base-100 hover:bg-base-200/40 cursor-pointer transition-colors">
+                  <input
+                    type="checkbox"
+                    checked={formData.isCustomPrice}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        isCustomPrice: e.target.checked,
+                      })
+                    }
+                    className="checkbox checkbox-primary checkbox-sm"
+                  />
+                  <div>
+                    <div className="text-sm font-semibold">
+                      Enterprise / Custom Pricing
+                    </div>
+                    <div className="text-xs text-base-content/60">
+                      Requires direct sales consultation
+                    </div>
+                  </div>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          {/* SECTION 2: Pricing & Trial */}
+          <div className="space-y-3 pt-2 border-t border-base-200">
+            <h4 className="text-xs font-semibold uppercase tracking-wider text-base-content/60">
+              Pricing & Trial
+            </h4>
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div>
+                <label className="label py-1">
+                  <span className="label-text font-semibold text-sm">
+                    Monthly Price ($)
+                  </span>
+                </label>
+                <input
+                  type="number"
+                  disabled={formData.isCustomPrice}
+                  value={formData.priceMonthly}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      priceMonthly: Number(e.target.value),
+                    })
+                  }
+                  className="input input-sm input-bordered w-full disabled:bg-base-200 disabled:opacity-60"
+                  min={0}
+                />
+              </div>
+
+              <div>
+                <label className="label py-1">
+                  <span className="label-text font-semibold text-sm">
+                    Yearly Price ($)
+                  </span>
+                </label>
+                <input
+                  type="number"
+                  disabled={formData.isCustomPrice}
+                  value={formData.priceYearly}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      priceYearly: Number(e.target.value),
+                    })
+                  }
+                  className="input input-sm input-bordered w-full disabled:bg-base-200 disabled:opacity-60"
+                  min={0}
+                />
+              </div>
+
+              <div>
+                <label className="label py-1">
+                  <span className="label-text font-semibold text-sm">
+                    Trial Period (Days)
+                  </span>
+                </label>
+                <input
+                  type="number"
+                  value={formData.trialDays}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      trialDays: Number(e.target.value),
+                    })
+                  }
+                  className="input input-sm input-bordered w-full"
+                  min={0}
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* SECTION 3: Resource Quotas & Limits */}
+          <div className="space-y-3 pt-2 border-t border-base-200">
+            <div className="flex items-center justify-between">
+              <h4 className="text-xs font-semibold uppercase tracking-wider text-base-content/60">
+                Resource Allocations
+              </h4>
+              <span className="text-xs text-base-content/50 flex items-center gap-1">
+                <HelpCircle className="size-3" /> Set -1 for unlimited
+              </span>
             </div>
 
-            <div className="sm:col-span-2">
-              <label className="label">
-                <span className="label-text font-semibold">Description</span>
-              </label>
-              <textarea
-                value={formData.description}
-                onChange={(e) =>
-                  setFormData({ ...formData, description: e.target.value })
-                }
-                placeholder="Brief description of who this plan is for"
-                className="textarea textarea-bordered textarea-sm w-full"
-                rows={2}
-              />
-            </div>
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+              <div>
+                <label className="label py-1">
+                  <span className="label-text text-xs font-medium">
+                    Max Staff
+                  </span>
+                </label>
+                <input
+                  type="number"
+                  value={formData.maxStaff}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      maxStaff: Number(e.target.value),
+                    })
+                  }
+                  className="input input-sm input-bordered w-full"
+                />
+              </div>
 
-            <div>
-              <label className="label">
-                <span className="label-text font-semibold">
-                  Monthly Price ($)
+              <div>
+                <label className="label py-1">
+                  <span className="label-text text-xs font-medium">
+                    Max Contacts
+                  </span>
+                </label>
+                <input
+                  type="number"
+                  value={formData.maxContacts}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      maxContacts: Number(e.target.value),
+                    })
+                  }
+                  className="input input-sm input-bordered w-full"
+                />
+              </div>
+
+              <div>
+                <label className="label py-1">
+                  <span className="label-text text-xs font-medium">
+                    Max Products
+                  </span>
+                </label>
+                <input
+                  type="number"
+                  value={formData.maxProducts}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      maxProducts: Number(e.target.value),
+                    })
+                  }
+                  className="input input-sm input-bordered w-full"
+                />
+              </div>
+
+              <div>
+                <label className="label py-1">
+                  <span className="label-text text-xs font-medium">
+                    Max Services
+                  </span>
+                </label>
+                <input
+                  type="number"
+                  value={formData.maxServices}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      maxServices: Number(e.target.value),
+                    })
+                  }
+                  className="input input-sm input-bordered w-full"
+                />
+              </div>
+
+              <div>
+                <label className="label py-1">
+                  <span className="label-text text-xs font-medium">
+                    Invoices / Mo
+                  </span>
+                </label>
+                <input
+                  type="number"
+                  value={formData.maxInvoicesPerMonth}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      maxInvoicesPerMonth: Number(e.target.value),
+                    })
+                  }
+                  className="input input-sm input-bordered w-full"
+                />
+              </div>
+
+              <div>
+                <label className="label py-1">
+                  <span className="label-text text-xs font-medium">
+                    Orders / Mo
+                  </span>
+                </label>
+                <input
+                  type="number"
+                  value={formData.maxOrdersPerMonth}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      maxOrdersPerMonth: Number(e.target.value),
+                    })
+                  }
+                  className="input input-sm input-bordered w-full"
+                />
+              </div>
+
+              <div>
+                <label className="label py-1">
+                  <span className="label-text text-xs font-medium">
+                    Categories
+                  </span>
+                </label>
+                <input
+                  type="number"
+                  value={formData.maxCategories}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      maxCategories: Number(e.target.value),
+                    })
+                  }
+                  className="input input-sm input-bordered w-full"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* SECTION 4: Feature Entitlements (Clean Chip Selector without raw text input) */}
+          <div className="space-y-3 pt-2 border-t border-base-200">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <div className="flex items-center gap-2">
+                <h4 className="text-xs font-semibold uppercase tracking-wider text-base-content/60">
+                  Feature Entitlements
+                </h4>
+                <span className="badge badge-sm badge-primary badge-outline font-semibold">
+                  {formData.selectedFeatures.length} active
                 </span>
-              </label>
-              <input
-                type="number"
-                value={formData.priceMonthly}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    priceMonthly: Number(e.target.value),
-                  })
-                }
-                className="input input-sm input-bordered w-full"
-                min={0}
-              />
+              </div>
+
+              <div className="flex items-center gap-2 text-xs">
+                <button
+                  type="button"
+                  onClick={handleSelectAllFeatures}
+                  className="text-primary hover:underline font-medium"
+                >
+                  Select All
+                </button>
+                <span className="text-base-content/30">·</span>
+                <button
+                  type="button"
+                  onClick={handleClearAllFeatures}
+                  className="text-base-content/60 hover:text-base-content"
+                >
+                  Clear All
+                </button>
+              </div>
             </div>
 
-            <div>
-              <label className="label">
-                <span className="label-text font-semibold">
-                  Yearly Price ($)
-                </span>
-              </label>
-              <input
-                type="number"
-                value={formData.priceYearly}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    priceYearly: Number(e.target.value),
-                  })
-                }
-                className="input input-sm input-bordered w-full"
-                min={0}
-              />
+            {/* Feature Search Filter & Quick Custom Add */}
+            <div className="flex flex-col sm:flex-row gap-2">
+              <div className="relative flex-1">
+                <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 size-3.5 text-base-content/40 pointer-events-none" />
+                <input
+                  type="text"
+                  value={featureSearch}
+                  onChange={(e) => setFeatureSearch(e.target.value)}
+                  placeholder="Filter available features..."
+                  className="input input-xs input-bordered w-full pl-8"
+                />
+              </div>
+
+              <div className="flex items-center gap-1.5">
+                <input
+                  type="text"
+                  value={customFeatureInput}
+                  onChange={(e) => setCustomFeatureInput(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      e.preventDefault();
+                      handleAddCustomFeature();
+                    }
+                  }}
+                  placeholder="Add custom slug..."
+                  className="input input-xs input-bordered w-36 font-mono text-xs"
+                />
+                <button
+                  type="button"
+                  onClick={() => handleAddCustomFeature()}
+                  disabled={!customFeatureInput.trim()}
+                  className="btn btn-xs btn-ghost border border-base-300 gap-1 shrink-0"
+                >
+                  <Plus className="size-3" /> Add
+                </button>
+              </div>
             </div>
 
-            <div>
-              <label className="label">
-                <span className="label-text font-semibold">Trial Days</span>
-              </label>
-              <input
-                type="number"
-                value={formData.trialDays}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    trialDays: Number(e.target.value),
-                  })
-                }
-                className="input input-sm input-bordered w-full"
-                min={0}
-              />
-            </div>
+            {/* Selectable Feature Badges Grid */}
+            <div className="p-3.5 rounded-xl bg-base-200/50 border border-base-200 max-h-52 overflow-y-auto space-y-2">
+              {filteredFeatures.length === 0 ? (
+                <div className="text-center py-4 text-xs text-base-content/50">
+                  No features match "{featureSearch}". Use the input above to
+                  add it.
+                </div>
+              ) : (
+                <div className="flex flex-wrap gap-1.5">
+                  {filteredFeatures.map((featKey) => {
+                    const isSelected =
+                      formData.selectedFeatures.includes(featKey);
+                    const label = FEATURE_LABELS[featKey] || featKey;
 
-            <div>
-              <label className="label">
-                <span className="label-text font-semibold">
-                  Max Staff (-1 for unlimited)
-                </span>
-              </label>
-              <input
-                type="number"
-                value={formData.maxStaff}
-                onChange={(e) =>
-                  setFormData({ ...formData, maxStaff: Number(e.target.value) })
-                }
-                className="input input-sm input-bordered w-full"
-              />
-            </div>
-
-            <div>
-              <label className="label">
-                <span className="label-text font-semibold">Max Contacts</span>
-              </label>
-              <input
-                type="number"
-                value={formData.maxContacts}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    maxContacts: Number(e.target.value),
-                  })
-                }
-                className="input input-sm input-bordered w-full"
-              />
-            </div>
-
-            <div>
-              <label className="label">
-                <span className="label-text font-semibold">Max Products</span>
-              </label>
-              <input
-                type="number"
-                value={formData.maxProducts}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    maxProducts: Number(e.target.value),
-                  })
-                }
-                className="input input-sm input-bordered w-full"
-              />
-            </div>
-
-            <div className="sm:col-span-2">
-              <label className="label">
-                <span className="label-text font-semibold">
-                  Features (comma separated)
-                </span>
-              </label>
-              <input
-                type="text"
-                value={formData.features}
-                onChange={(e) =>
-                  setFormData({ ...formData, features: e.target.value })
-                }
-                placeholder="analytics, data_export, custom_roles, bulk_import"
-                className="input input-sm input-bordered w-full"
-              />
-
-              {/* Clickable Feature Quick-Select Chips */}
-              <div className="mt-2 space-y-1">
-                <span className="text-xs text-base-content/60 font-medium">
-                  Quick toggle available features:
-                </span>
-                <div className="flex flex-wrap gap-1 max-h-28 overflow-y-auto pr-1">
-                  {availableFeatures.map((featKey) => {
-                    const currentSelected = formData.features
-                      .split(",")
-                      .map((f) => f.trim())
-                      .includes(featKey);
                     return (
                       <button
                         type="button"
                         key={featKey}
-                        onClick={() => toggleFeatureInForm(featKey)}
-                        className={`badge badge-xs gap-1 cursor-pointer transition-all ${
-                          currentSelected
-                            ? "badge-primary"
-                            : "badge-ghost opacity-60 hover:opacity-100"
+                        onClick={() => toggleFeature(featKey)}
+                        className={`badge badge-sm py-2.5 px-2.5 gap-1.5 transition-all cursor-pointer ${
+                          isSelected
+                            ? "badge-primary font-medium shadow-xs ring-1 ring-primary/30"
+                            : "badge-ghost bg-base-100 hover:bg-base-200 text-base-content/70 border border-base-300"
                         }`}
                       >
-                        {currentSelected ? (
-                          <Check className="size-2.5" />
+                        {isSelected ? (
+                          <Check className="size-3 text-primary-content" />
                         ) : (
-                          <Plus className="size-2.5" />
+                          <Plus className="size-3 text-base-content/40" />
                         )}
-                        {featKey}
+                        <span>{label}</span>
+                        {FEATURE_LABELS[featKey] && (
+                          <span className="font-mono text-[10px] opacity-60">
+                            ({featKey})
+                          </span>
+                        )}
                       </button>
                     );
                   })}
                 </div>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-4 sm:col-span-2 pt-2">
-              <label className="label cursor-pointer gap-2">
-                <input
-                  type="checkbox"
-                  checked={formData.isActive}
-                  onChange={(e) =>
-                    setFormData({ ...formData, isActive: e.target.checked })
-                  }
-                  className="checkbox checkbox-primary checkbox-sm"
-                />
-                <span className="label-text font-medium">
-                  Active (Visible to Tenants)
-                </span>
-              </label>
-
-              <label className="label cursor-pointer gap-2">
-                <input
-                  type="checkbox"
-                  checked={formData.isCustomPrice}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      isCustomPrice: e.target.checked,
-                    })
-                  }
-                  className="checkbox checkbox-primary checkbox-sm"
-                />
-                <span className="label-text font-medium">
-                  Custom Enterprise Pricing
-                </span>
-              </label>
+              )}
             </div>
           </div>
 
+          {/* Modal Action Buttons */}
           <div className="flex justify-end gap-2 pt-4 border-t border-base-200">
             <button
               type="button"
