@@ -50,18 +50,6 @@ function RouteComponent() {
             <BarChart3 className="size-4" />
             <span>Analytics</span>
           </button>
-          <button
-            type="button"
-            onClick={() => setActiveTab("ledger")}
-            className={`btn btn-sm gap-1.5 rounded-lg transition-all ${
-              activeTab === "ledger"
-                ? "btn-primary shadow-sm"
-                : "btn-ghost text-base-content/70 hover:text-base-content"
-            }`}
-          >
-            <Receipt className="size-4" />
-            <span>Ledger</span>
-          </button>
         </div>
       </PageHeader>
 
