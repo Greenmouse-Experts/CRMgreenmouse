@@ -30,7 +30,7 @@ export default function UserInfo({ staff }: UserInfoProps) {
       <div className="flex-1 text-center sm:text-left space-y-3">
         <div>
           <div className="flex items-center justify-center sm:justify-start gap-3">
-            <h2 className="text-2xl font-extrabold text-base-content">
+            <h2 className="text-2xl font-semibold text-base-content">
               {fullName}
             </h2>
             <span

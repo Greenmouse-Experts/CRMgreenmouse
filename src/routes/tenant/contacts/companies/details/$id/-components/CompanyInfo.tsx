@@ -9,7 +9,7 @@ export default function CompanyInfo() {
         />
       </figure>
       <div className="card-body p-0 text-center sm:text-left">
-        <h2 className="card-title text-3xl font-extrabold text-gray-900 mb-2">
+        <h2 className="card-title text-3xl font-semibold text-gray-900 mb-2">
           Acme Corporation
         </h2>
         <p className="text-lg text-blue-600 mb-2">FinTech</p>

@@ -426,7 +426,7 @@ function RouteComponent() {
                       </div>
 
                       <div className="py-2 border-y border-base-200">
-                        <div className="text-3xl font-extrabold text-base-content">
+                        <div className="text-3xl font-semibold text-base-content">
                           {plan.isCustomPrice ? (
                             "Custom"
                           ) : (
