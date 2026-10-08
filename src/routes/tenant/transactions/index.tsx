@@ -7,6 +7,7 @@ export const Route = createFileRoute("/tenant/transactions/")({
 });
 
 function RouteComponent() {
+  return <></>;
   return (
     <div className="space-y-6 pb-12">
       <PageHeader

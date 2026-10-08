@@ -150,13 +150,13 @@ const nav_links = [
         type: "menu",
         children: null,
       },
-      {
-        path: "/tenant/accounts/transactions",
-        label: "Transactions",
-        icon: <DollarSign size={ICON_SIZE} />,
-        type: "menu",
-        children: null,
-      },
+      // {
+      //   path: "/tenant/accounts/transactions",
+      //   label: "Transactions",
+      //   icon: <DollarSign size={ICON_SIZE} />,
+      //   type: "menu",
+      //   children: null,
+      // },
     ],
   },
   {
