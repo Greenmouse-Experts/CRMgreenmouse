@@ -227,7 +227,7 @@ function RouteComponent() {
           aria-label="close sidebar"
           className="drawer-overlay"
         ></label>
-        <div className="min-h-full w-3xs bg-primary text-primary-content">
+        <div className="min-h-full w-3xs bg-base-100 text-base-content">
           <div className="font-semibold h-18 text-lg flex  items-center px-4 border-b border-base-300/40">
             KINOVIA CRM
           </div>
