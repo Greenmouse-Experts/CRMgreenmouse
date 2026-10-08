@@ -152,7 +152,7 @@ function RouteComponent() {
                     ))}
                   </LocalSelect>
                   <LocalSelect label="Status" {...methods.register("status")}>
-                    <option value="customer">Active Customer</option>
+                    <option value="active">Active Customer</option>
                     <option value="lead">Lead / Prospect</option>
                     <option value="inactive">Inactive</option>
                   </LocalSelect>
