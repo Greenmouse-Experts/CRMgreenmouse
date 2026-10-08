@@ -11,6 +11,8 @@ import Modal, { type ModalHandle } from "@/components/DialogModal";
 import PageHeader from "@/components/Headers/PageHeader";
 import PageLoader from "@/components/layout/PageLoader";
 import ProductSummary from "./-components/ProductSummary";
+import UpdateImages from "@/components/images/UpdateImages";
+import { useUploadImage } from "@/api/imageApi";
 import {
   useProducts,
   useCreateProduct,
@@ -49,6 +51,7 @@ function RouteComponent() {
   const updateProduct = useUpdateProduct();
   const deleteProduct = useDeleteProduct();
   const adjustStock = useAdjustStock();
+  const uploadImage = useUploadImage();
   const searchProps = useSearch();
 
   const addModalRef = useRef<ModalHandle>(null);
@@ -58,6 +61,20 @@ function RouteComponent() {
 
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [stockAdjustment, setStockAdjustment] = useState<number>(0);
+
+  // Add Product Images State
+  const [addNewImages, setAddNewImages] = useState<File[] | FileList | []>([]);
+  const [addPrevImages, setAddPrevImages] = useState<
+    { url: string; path: string }[]
+  >([]);
+
+  // Edit Product Images State
+  const [editNewImages, setEditNewImages] = useState<File[] | FileList | []>(
+    [],
+  );
+  const [editPrevImages, setEditPrevImages] = useState<
+    { url: string; path: string }[]
+  >([]);
 
   const addMethods = useForm<AddProductFormValues>({
     defaultValues: {
@@ -88,6 +105,8 @@ function RouteComponent() {
       categoryId: "",
       description: "",
     });
+    setAddNewImages([]);
+    setAddPrevImages([]);
     addModalRef.current?.open();
   };
 
@@ -99,6 +118,10 @@ function RouteComponent() {
       categoryId: product.categoryId || "",
       description: product.description || "",
     });
+    setEditNewImages([]);
+    setEditPrevImages(
+      (product.images || []).map((url) => ({ url, path: url })),
+    );
     editModalRef.current?.open();
   };
 
@@ -113,6 +136,24 @@ function RouteComponent() {
     stockModalRef.current?.open();
   };
 
+  const uploadMultipleImages = async (files: File[] | FileList | []) => {
+    const uploadedUrls: string[] = [];
+    if (files && files.length > 0) {
+      const filesArr = Array.from(files);
+      for (const file of filesArr) {
+        try {
+          const res = await uploadImage.mutateAsync(file);
+          const url =
+            res?.data?.url || (res as any)?.url || (res as any)?.payload?.url;
+          if (url) uploadedUrls.push(url);
+        } catch (err) {
+          console.error("Failed to upload image file:", err);
+        }
+      }
+    }
+    return uploadedUrls;
+  };
+
   const handleSaveAdd = async (data: AddProductFormValues) => {
     const priceVal = Number(data.price);
     if (isNaN(priceVal) || priceVal <= 0) {
@@ -120,6 +161,9 @@ function RouteComponent() {
       return;
     }
     try {
+      const uploadedUrls = await uploadMultipleImages(addNewImages);
+      const finalImages = [...addPrevImages.map((i) => i.url), ...uploadedUrls];
+
       await createProduct.mutateAsync({
         name: data.name.trim(),
         price: priceVal,
@@ -127,6 +171,7 @@ function RouteComponent() {
         stock: data.stock ? Number(data.stock) : 0,
         categoryId: data.categoryId || undefined,
         description: data.description?.trim() || undefined,
+        images: finalImages.length > 0 ? finalImages : undefined,
         type: "product",
       });
       toast.success("Product created successfully");
@@ -144,12 +189,19 @@ function RouteComponent() {
       return;
     }
     try {
+      const uploadedUrls = await uploadMultipleImages(editNewImages);
+      const finalImages = [
+        ...editPrevImages.map((i) => i.url),
+        ...uploadedUrls,
+      ];
+
       await updateProduct.mutateAsync({
         id: selectedProduct.id,
         name: data.name.trim(),
         price: priceVal,
         categoryId: data.categoryId || undefined,
         description: data.description?.trim() || undefined,
+        images: finalImages,
       });
       toast.success("Product updated successfully");
       editModalRef.current?.close();
@@ -200,8 +252,16 @@ function RouteComponent() {
       label: "Product",
       render: (_: any, item: Product) => (
         <div className="flex items-center gap-3">
-          <div className="size-9 rounded-lg bg-primary/10 flex items-center justify-center text-primary font-bold">
-            <Package className="size-4" />
+          <div className="size-10 rounded-lg bg-primary/10 flex items-center justify-center text-primary font-bold overflow-hidden shrink-0 border border-base-200">
+            {item.images && item.images.length > 0 && item.images[0] ? (
+              <img
+                src={item.images[0]}
+                alt={item.name}
+                className="size-full object-cover"
+              />
+            ) : (
+              <Package className="size-5" />
+            )}
           </div>
           <div>
             <div className="font-semibold text-base-content">{item.name}</div>
@@ -346,8 +406,19 @@ function RouteComponent() {
       <Modal ref={addModalRef} title="Create New Product">
         <form
           onSubmit={addMethods.handleSubmit(handleSaveAdd)}
-          className="space-y-4"
+          className="space-y-4 max-h-[80vh] overflow-y-auto pr-1"
         >
+          <div>
+            <label className="text-xs font-semibold text-base-content/70 mb-1 block">
+              Product Images
+            </label>
+            <UpdateImages
+              images={addPrevImages}
+              setNew={(files) => setAddNewImages(files)}
+              setPrev={(imgs) => setAddPrevImages(imgs)}
+            />
+          </div>
+
           <div>
             <label className="text-xs font-semibold text-base-content/70">
               Product Name *
@@ -449,7 +520,7 @@ function RouteComponent() {
             />
           </div>
 
-          <div className="modal-action">
+          <div className="modal-action pt-2">
             <button
               type="button"
               className="btn btn-ghost"
@@ -460,9 +531,11 @@ function RouteComponent() {
             <button
               type="submit"
               className="btn btn-primary"
-              disabled={createProduct.isPending}
+              disabled={createProduct.isPending || uploadImage.isPending}
             >
-              {createProduct.isPending ? "Creating..." : "Create Product"}
+              {createProduct.isPending || uploadImage.isPending
+                ? "Saving..."
+                : "Create Product"}
             </button>
           </div>
         </form>
@@ -472,8 +545,19 @@ function RouteComponent() {
       <Modal ref={editModalRef} title="Edit Product">
         <form
           onSubmit={editMethods.handleSubmit(handleSaveEdit)}
-          className="space-y-4"
+          className="space-y-4 max-h-[80vh] overflow-y-auto pr-1"
         >
+          <div>
+            <label className="text-xs font-semibold text-base-content/70 mb-1 block">
+              Product Images
+            </label>
+            <UpdateImages
+              images={editPrevImages}
+              setNew={(files) => setEditNewImages(files)}
+              setPrev={(imgs) => setEditPrevImages(imgs)}
+            />
+          </div>
+
           <div>
             <label className="text-xs font-semibold text-base-content/70">
               Product Name *
@@ -545,7 +629,7 @@ function RouteComponent() {
             />
           </div>
 
-          <div className="modal-action">
+          <div className="modal-action pt-2">
             <button
               type="button"
               className="btn btn-ghost"
@@ -556,9 +640,11 @@ function RouteComponent() {
             <button
               type="submit"
               className="btn btn-primary"
-              disabled={updateProduct.isPending}
+              disabled={updateProduct.isPending || uploadImage.isPending}
             >
-              {updateProduct.isPending ? "Saving..." : "Save Changes"}
+              {updateProduct.isPending || uploadImage.isPending
+                ? "Saving..."
+                : "Save Changes"}
             </button>
           </div>
         </form>
@@ -627,8 +713,18 @@ function RouteComponent() {
         {selectedProduct && (
           <div className="space-y-4">
             <div className="flex items-center gap-4 p-4 bg-base-200/50 rounded-xl">
-              <div className="size-14 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
-                <Package className="size-7" />
+              <div className="size-16 rounded-xl bg-primary/10 flex items-center justify-center text-primary overflow-hidden shrink-0 border border-base-200">
+                {selectedProduct.images &&
+                selectedProduct.images.length > 0 &&
+                selectedProduct.images[0] ? (
+                  <img
+                    src={selectedProduct.images[0]}
+                    alt={selectedProduct.name}
+                    className="size-full object-cover"
+                  />
+                ) : (
+                  <Package className="size-8" />
+                )}
               </div>
               <div>
                 <h4 className="text-lg font-bold text-base-content">
@@ -650,6 +746,29 @@ function RouteComponent() {
                 </div>
               </div>
             </div>
+
+            {/* Product Images Gallery */}
+            {selectedProduct.images && selectedProduct.images.length > 0 && (
+              <div className="space-y-2">
+                <span className="text-xs font-semibold text-base-content/70 block">
+                  Product Gallery ({selectedProduct.images.length})
+                </span>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                  {selectedProduct.images.map((imgUrl, idx) => (
+                    <div
+                      key={idx}
+                      className="aspect-square rounded-lg overflow-hidden border border-base-200 bg-base-200/50"
+                    >
+                      <img
+                        src={imgUrl}
+                        alt={`${selectedProduct.name} image ${idx + 1}`}
+                        className="size-full object-cover"
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
 
             <div className="grid grid-cols-2 gap-4 text-sm">
               <div className="p-3 bg-base-200/30 rounded-lg">

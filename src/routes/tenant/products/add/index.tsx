@@ -1,12 +1,11 @@
 import { useState } from "react";
 import SimpleTitle from "@/components/SimpleTitle";
-import { useSelectImage } from "@/helpers/images";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import SelectImage from "@/components/images/SelectImage";
 import SimpleInput from "@/components/inputs/SimpleInput";
 import { useForm, FormProvider } from "react-hook-form";
 import SimpleTextArea from "@/components/inputs/SimpleTextArea";
 import LocalSelect from "@/components/inputs/LocalSelect";
+import UpdateImages from "@/components/images/UpdateImages";
 import { useCreateProduct } from "@/api/catalogApi";
 import { useCategories } from "@/api/crmApi";
 import { useUploadImage } from "@/api/imageApi";
@@ -30,8 +29,12 @@ function RouteComponent() {
   const createProduct = useCreateProduct();
   const categoriesQuery = useCategories();
   const uploadImage = useUploadImage();
-  const { image, setImage, image_link } = useSelectImage();
   const [submitting, setSubmitting] = useState(false);
+
+  const [newImages, setNewImages] = useState<File[] | FileList | []>([]);
+  const [prevImages, setPrevImages] = useState<{ url: string; path: string }[]>(
+    [],
+  );
 
   const methods = useForm<ProductFormFields>({
     defaultValues: {
@@ -47,16 +50,25 @@ function RouteComponent() {
   const onSubmit = async (data: ProductFormFields) => {
     try {
       setSubmitting(true);
-      let imageUrl: string | undefined = undefined;
+      const uploadedUrls: string[] = [];
 
-      if (image) {
-        try {
-          const uploadRes = await uploadImage.mutateAsync(image);
-          imageUrl = uploadRes?.data?.url;
-        } catch {
-          // If image fails, proceed with item creation
+      if (newImages && newImages.length > 0) {
+        const filesArr = Array.from(newImages);
+        for (const file of filesArr) {
+          try {
+            const uploadRes = await uploadImage.mutateAsync(file);
+            const url =
+              uploadRes?.data?.url ||
+              (uploadRes as any)?.url ||
+              (uploadRes as any)?.payload?.url;
+            if (url) uploadedUrls.push(url);
+          } catch {
+            // Proceed if single image fails
+          }
         }
       }
+
+      const finalImages = [...prevImages.map((i) => i.url), ...uploadedUrls];
 
       await createProduct.mutateAsync({
         name: data.name,
@@ -65,7 +77,7 @@ function RouteComponent() {
         stock: Number(data.quantity),
         description: data.description || undefined,
         categoryId: data.categoryId || undefined,
-        images: imageUrl ? [imageUrl] : undefined,
+        images: finalImages.length > 0 ? finalImages : undefined,
         type: "product",
       });
 
@@ -86,12 +98,16 @@ function RouteComponent() {
           onSubmit={methods.handleSubmit(onSubmit)}
           className="flex flex-col gap-6 p-6 bg-base-100 border border-base-200 shadow-sm rounded-2xl"
         >
-          <SelectImage
-            image={image}
-            setImage={setImage}
-            image_link={image_link}
-            title="Product Image"
-          />
+          <div>
+            <label className="text-sm font-semibold mb-2 block">
+              Product Images
+            </label>
+            <UpdateImages
+              images={prevImages}
+              setNew={(files) => setNewImages(files)}
+              setPrev={(imgs) => setPrevImages(imgs)}
+            />
+          </div>
 
           <div className="flex flex-col gap-4">
             <SimpleInput
@@ -132,7 +148,10 @@ function RouteComponent() {
                 {...methods.register("price", {
                   required: "Price is required",
                   valueAsNumber: true,
-                  min: { value: 0, message: "Price must be positive" },
+                  min: {
+                    value: 0.01,
+                    message: "Price must be a positive number",
+                  },
                 })}
               />
 
