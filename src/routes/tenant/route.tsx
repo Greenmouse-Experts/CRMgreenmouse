@@ -211,7 +211,6 @@ export const Route = createFileRoute("/tenant")({
 
 function RouteComponent() {
   const url = useLocation();
-
   return (
     <div className="drawer lg:drawer-open">
       <input id="tenant-drawer" type="checkbox" className="drawer-toggle" />

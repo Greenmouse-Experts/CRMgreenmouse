@@ -17,7 +17,7 @@ function RouteComponent() {
       <TenantDashStats />
       <AdminMonthly />
       <DashStats />
-      <AdminRecents />
+      {/*<AdminRecents />*/}
       <AdminUserList />
     </div>
   );
