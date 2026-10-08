@@ -1,5 +1,6 @@
 import { useState, useRef } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useForm } from "react-hook-form";
 import SimpleContainer from "@/components/SimpleContainer";
 import ContainerRow from "@/components/ContainerRow";
 import { useSearch } from "@/stores/data";
@@ -25,6 +26,22 @@ export const Route = createFileRoute("/tenant/products/")({
   component: RouteComponent,
 });
 
+interface AddProductFormValues {
+  name: string;
+  price: number;
+  cost?: number;
+  stock?: number;
+  categoryId?: string;
+  description?: string;
+}
+
+interface EditProductFormValues {
+  name: string;
+  price: number;
+  categoryId?: string;
+  description?: string;
+}
+
 function RouteComponent() {
   const query = useProducts();
   const categoriesQuery = useCategories();
@@ -42,42 +59,45 @@ function RouteComponent() {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [stockAdjustment, setStockAdjustment] = useState<number>(0);
 
-  const [form, setForm] = useState({
-    name: "",
-    price: 0,
-    cost: 0,
-    description: "",
-    categoryId: "",
-    stock: 0,
-    currency: "NGN",
-    isActive: true,
-  });
-
-  const handleOpenAdd = () => {
-    setForm({
+  const addMethods = useForm<AddProductFormValues>({
+    defaultValues: {
       name: "",
       price: 0,
       cost: 0,
-      description: "",
-      categoryId: "",
       stock: 0,
-      currency: "NGN",
-      isActive: true,
+      categoryId: "",
+      description: "",
+    },
+  });
+
+  const editMethods = useForm<EditProductFormValues>({
+    defaultValues: {
+      name: "",
+      price: 0,
+      categoryId: "",
+      description: "",
+    },
+  });
+
+  const handleOpenAdd = () => {
+    addMethods.reset({
+      name: "",
+      price: 0,
+      cost: 0,
+      stock: 0,
+      categoryId: "",
+      description: "",
     });
     addModalRef.current?.open();
   };
 
   const handleOpenEdit = (product: Product) => {
     setSelectedProduct(product);
-    setForm({
+    editMethods.reset({
       name: product.name || "",
       price: Number(product.price) || 0,
-      cost: Number(product.cost) || 0,
-      description: product.description || "",
       categoryId: product.categoryId || "",
-      stock: product.stock ?? product.quantity ?? 0,
-      currency: product.currency || "NGN",
-      isActive: product.isActive ?? true,
+      description: product.description || "",
     });
     editModalRef.current?.open();
   };
@@ -93,15 +113,20 @@ function RouteComponent() {
     stockModalRef.current?.open();
   };
 
-  const handleSaveAdd = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!form.name.trim()) {
-      toast.error("Product name is required");
+  const handleSaveAdd = async (data: AddProductFormValues) => {
+    const priceVal = Number(data.price);
+    if (isNaN(priceVal) || priceVal <= 0) {
+      toast.error("Price must be a positive number");
       return;
     }
     try {
       await createProduct.mutateAsync({
-        ...form,
+        name: data.name.trim(),
+        price: priceVal,
+        cost: data.cost ? Number(data.cost) : undefined,
+        stock: data.stock ? Number(data.stock) : 0,
+        categoryId: data.categoryId || undefined,
+        description: data.description?.trim() || undefined,
         type: "product",
       });
       toast.success("Product created successfully");
@@ -111,13 +136,20 @@ function RouteComponent() {
     }
   };
 
-  const handleSaveEdit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSaveEdit = async (data: EditProductFormValues) => {
     if (!selectedProduct) return;
+    const priceVal = Number(data.price);
+    if (isNaN(priceVal) || priceVal <= 0) {
+      toast.error("Price must be a positive number");
+      return;
+    }
     try {
       await updateProduct.mutateAsync({
         id: selectedProduct.id,
-        ...form,
+        name: data.name.trim(),
+        price: priceVal,
+        categoryId: data.categoryId || undefined,
+        description: data.description?.trim() || undefined,
       });
       toast.success("Product updated successfully");
       editModalRef.current?.close();
@@ -312,19 +344,27 @@ function RouteComponent() {
 
       {/* Quick Add Product Modal */}
       <Modal ref={addModalRef} title="Create New Product">
-        <form onSubmit={handleSaveAdd} className="space-y-4">
+        <form
+          onSubmit={addMethods.handleSubmit(handleSaveAdd)}
+          className="space-y-4"
+        >
           <div>
             <label className="text-xs font-semibold text-base-content/70">
               Product Name *
             </label>
             <input
               type="text"
-              required
               className="input input-bordered w-full mt-1"
               placeholder="e.g. Ergonomic Office Chair"
-              value={form.name}
-              onChange={(e) => setForm({ ...form, name: e.target.value })}
+              {...addMethods.register("name", {
+                required: "Product name is required",
+              })}
             />
+            {addMethods.formState.errors.name && (
+              <span className="text-xs text-error mt-1 block">
+                {addMethods.formState.errors.name.message}
+              </span>
+            )}
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -334,15 +374,22 @@ function RouteComponent() {
               </label>
               <input
                 type="number"
-                required
-                min="0"
+                step="0.01"
                 className="input input-bordered w-full mt-1"
                 placeholder="0.00"
-                value={form.price}
-                onChange={(e) =>
-                  setForm({ ...form, price: Number(e.target.value) })
-                }
+                {...addMethods.register("price", {
+                  required: "Price is required",
+                  valueAsNumber: true,
+                  validate: (val) =>
+                    (val !== undefined && !isNaN(val) && val > 0) ||
+                    "Price must be a positive number",
+                })}
               />
+              {addMethods.formState.errors.price && (
+                <span className="text-xs text-error mt-1 block">
+                  {addMethods.formState.errors.price.message}
+                </span>
+              )}
             </div>
             <div>
               <label className="text-xs font-semibold text-base-content/70">
@@ -350,13 +397,11 @@ function RouteComponent() {
               </label>
               <input
                 type="number"
+                step="0.01"
                 min="0"
                 className="input input-bordered w-full mt-1"
                 placeholder="0.00"
-                value={form.cost}
-                onChange={(e) =>
-                  setForm({ ...form, cost: Number(e.target.value) })
-                }
+                {...addMethods.register("cost", { valueAsNumber: true })}
               />
             </div>
           </div>
@@ -371,10 +416,7 @@ function RouteComponent() {
                 min="0"
                 className="input input-bordered w-full mt-1"
                 placeholder="0"
-                value={form.stock}
-                onChange={(e) =>
-                  setForm({ ...form, stock: Number(e.target.value) })
-                }
+                {...addMethods.register("stock", { valueAsNumber: true })}
               />
             </div>
             <div>
@@ -383,10 +425,7 @@ function RouteComponent() {
               </label>
               <select
                 className="select select-bordered w-full mt-1"
-                value={form.categoryId}
-                onChange={(e) =>
-                  setForm({ ...form, categoryId: e.target.value })
-                }
+                {...addMethods.register("categoryId")}
               >
                 <option value="">Select a category</option>
                 {categoriesQuery.data?.map((c) => (
@@ -406,10 +445,7 @@ function RouteComponent() {
               className="textarea textarea-bordered w-full mt-1"
               rows={3}
               placeholder="Product description and specifications..."
-              value={form.description}
-              onChange={(e) =>
-                setForm({ ...form, description: e.target.value })
-              }
+              {...addMethods.register("description")}
             />
           </div>
 
@@ -434,18 +470,26 @@ function RouteComponent() {
 
       {/* Edit Product Modal */}
       <Modal ref={editModalRef} title="Edit Product">
-        <form onSubmit={handleSaveEdit} className="space-y-4">
+        <form
+          onSubmit={editMethods.handleSubmit(handleSaveEdit)}
+          className="space-y-4"
+        >
           <div>
             <label className="text-xs font-semibold text-base-content/70">
               Product Name *
             </label>
             <input
               type="text"
-              required
               className="input input-bordered w-full mt-1"
-              value={form.name}
-              onChange={(e) => setForm({ ...form, name: e.target.value })}
+              {...editMethods.register("name", {
+                required: "Product name is required",
+              })}
             />
+            {editMethods.formState.errors.name && (
+              <span className="text-xs text-error mt-1 block">
+                {editMethods.formState.errors.name.message}
+              </span>
+            )}
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -455,42 +499,30 @@ function RouteComponent() {
               </label>
               <input
                 type="number"
-                required
-                min="0"
+                step="0.01"
                 className="input input-bordered w-full mt-1"
-                value={form.price}
-                onChange={(e) =>
-                  setForm({ ...form, price: Number(e.target.value) })
-                }
+                {...editMethods.register("price", {
+                  required: "Price is required",
+                  valueAsNumber: true,
+                  validate: (val) =>
+                    (val !== undefined && !isNaN(val) && val > 0) ||
+                    "Price must be a positive number",
+                })}
               />
+              {editMethods.formState.errors.price && (
+                <span className="text-xs text-error mt-1 block">
+                  {editMethods.formState.errors.price.message}
+                </span>
+              )}
             </div>
-            <div>
-              <label className="text-xs font-semibold text-base-content/70">
-                Cost Price (₦)
-              </label>
-              <input
-                type="number"
-                min="0"
-                className="input input-bordered w-full mt-1"
-                value={form.cost}
-                onChange={(e) =>
-                  setForm({ ...form, cost: Number(e.target.value) })
-                }
-              />
-            </div>
-          </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="text-xs font-semibold text-base-content/70">
                 Category
               </label>
               <select
                 className="select select-bordered w-full mt-1"
-                value={form.categoryId}
-                onChange={(e) =>
-                  setForm({ ...form, categoryId: e.target.value })
-                }
+                {...editMethods.register("categoryId")}
               >
                 <option value="">Select a category</option>
                 {categoriesQuery.data?.map((c) => (
@@ -498,21 +530,6 @@ function RouteComponent() {
                     {c.name}
                   </option>
                 ))}
-              </select>
-            </div>
-            <div>
-              <label className="text-xs font-semibold text-base-content/70">
-                Status
-              </label>
-              <select
-                className="select select-bordered w-full mt-1"
-                value={form.isActive ? "active" : "inactive"}
-                onChange={(e) =>
-                  setForm({ ...form, isActive: e.target.value === "active" })
-                }
-              >
-                <option value="active">Active</option>
-                <option value="inactive">Inactive</option>
               </select>
             </div>
           </div>
@@ -524,10 +541,7 @@ function RouteComponent() {
             <textarea
               className="textarea textarea-bordered w-full mt-1"
               rows={3}
-              value={form.description}
-              onChange={(e) =>
-                setForm({ ...form, description: e.target.value })
-              }
+              {...editMethods.register("description")}
             />
           </div>
 
