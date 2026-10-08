@@ -70,10 +70,10 @@ export default function TenantCharts() {
           </div>
 
           <div>
-            <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight">
+            <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight text-primary-content">
               Welcome back, {companyName}
             </h2>
-            <p className="text-xs sm:text-sm text-white/80 max-w-xl leading-relaxed mt-1">
+            <p className="text-xs sm:text-sm text-primary-content/80 max-w-xl leading-relaxed mt-1">
               Here is your business performance overview. Manage customer
               relationships, track incoming revenue, and oversee team
               operations.
@@ -82,23 +82,20 @@ export default function TenantCharts() {
 
           {/* Quick Actions */}
           <div className="flex flex-wrap gap-2 pt-2">
-            <Link
-              to="/tenant/accounts/Invoices"
-              className="btn btn-sm bg-white text-primary hover:bg-white/90 border-0 gap-1.5 shadow-sm font-semibold"
-            >
+            <Link to="/tenant/accounts/Invoices" className="btn ">
               <FileText className="size-3.5" />
               New Invoice
             </Link>
             <Link
               to="/tenant/contacts/customers"
-              className="btn btn-sm bg-white/20 text-white hover:bg-white/30 border-0 gap-1.5 backdrop-blur-xs font-semibold"
+              className="btn btn-primary ring fade "
             >
               <UserPlus className="size-3.5" />
               Add Customer
             </Link>
             <Link
               to="/tenant/accounts/income-expenses"
-              className="btn btn-sm bg-white/20 text-white hover:bg-white/30 border-0 gap-1.5 backdrop-blur-xs font-semibold"
+              className="btn btn-primary ring fade "
             >
               <Receipt className="size-3.5" />
               Record Expense
