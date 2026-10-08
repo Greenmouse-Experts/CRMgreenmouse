@@ -127,7 +127,7 @@ export default function AdminMonthly() {
                   <span className="text-xs font-semibold uppercase tracking-wider text-base-content/60">
                     Total System Balance
                   </span>
-                  <h2 className="text-4xl sm:text-5xl font-black mt-1 text-primary">
+                  <h2 className="text-4xl sm:text-5xl font-bold mt-1 text-primary">
                     $
                     {total.toLocaleString(undefined, {
                       minimumFractionDigits: 2,

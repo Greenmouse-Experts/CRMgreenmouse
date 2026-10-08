@@ -15,7 +15,8 @@ export default function TenantMonthly() {
         const expenseMonth = balanceData?.expenseThisMonth ?? 0;
 
         const balanceDetails = [
-          {            label: "Income Today",
+          {
+            label: "Income Today",
             value: balanceData?.incomeToday ?? 0,
             type: "income",
             icon: TrendingUp,
@@ -72,7 +73,8 @@ export default function TenantMonthly() {
                   </span>
                 </div>
 
-                {hasActivity ? (                  <div className="w-full h-72">
+                {hasActivity ? (
+                  <div className="w-full h-72">
                     <ResponsiveContainer width="100%" height="100%">
                       <PieChart>
                         <Pie
@@ -126,7 +128,7 @@ export default function TenantMonthly() {
                   <span className="text-xs font-semibold uppercase tracking-wider text-base-content/60">
                     Total Operating Balance
                   </span>
-                  <h2 className="text-4xl sm:text-5xl font-black mt-1 text-primary">
+                  <h2 className="text-4xl sm:text-5xl font-bold mt-1 text-primary">
                     $
                     {total.toLocaleString(undefined, {
                       minimumFractionDigits: 2,

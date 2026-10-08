@@ -16,10 +16,13 @@ export default function AdminDashStats() {
     {
       title: "Active Tenants",
       value: tenantLoading ? "..." : (tenantStats?.total ?? 0),
-      subtitle: tenantStats ? `${tenantStats.active} Active • ${tenantStats.trial} Trial` : "Registered businesses",
+      subtitle: tenantStats
+        ? `${tenantStats.active} Active • ${tenantStats.trial} Trial`
+        : "Registered businesses",
       icon: Building2,
       to: "/admin/tenants",
-      color: "from-emerald-500/20 to-emerald-500/5 text-emerald-600 dark:text-emerald-400",
+      color:
+        "from-emerald-500/20 to-emerald-500/5 text-emerald-600 dark:text-emerald-400",
     },
     {
       title: "Total Staffs",
@@ -35,7 +38,8 @@ export default function AdminDashStats() {
       subtitle: "Across CRM accounts",
       icon: UsersRound,
       to: "/admin/contacts/customers",
-      color: "from-purple-500/20 to-purple-500/5 text-purple-600 dark:text-purple-400",
+      color:
+        "from-purple-500/20 to-purple-500/5 text-purple-600 dark:text-purple-400",
     },
     {
       title: "Total Invoices",
@@ -43,7 +47,8 @@ export default function AdminDashStats() {
       subtitle: "System invoices generated",
       icon: FileText,
       to: "/admin/accounts/invoices",
-      color: "from-amber-500/20 to-amber-500/5 text-amber-600 dark:text-amber-400",
+      color:
+        "from-amber-500/20 to-amber-500/5 text-amber-600 dark:text-amber-400",
     },
     {
       title: "Catalog Products",
@@ -71,14 +76,16 @@ export default function AdminDashStats() {
                   <span className="text-xs font-semibold text-base-content/60 uppercase tracking-wider">
                     {card.title}
                   </span>
-                  <p className="text-2xl font-black text-base-content">
+                  <p className="text-2xl font-bold text-base-content">
                     {card.value}
                   </p>
                   <p className="text-xs text-base-content/60 font-medium">
                     {card.subtitle}
                   </p>
                 </div>
-                <div className={`p-2.5 rounded-xl bg-gradient-to-br ${card.color}`}>
+                <div
+                  className={`p-2.5 rounded-xl bg-gradient-to-br ${card.color}`}
+                >
                   <Icon className="size-5" />
                 </div>
               </div>

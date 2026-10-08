@@ -8,7 +8,7 @@ export default function UserInfo({ profile }: { profile: AdminProfile }) {
     <div className="card bg-base-100 p-6 border border-base-200">
       <div className="flex flex-col sm:flex-row items-center sm:items-start gap-5">
         <div className="avatar">
-          <div className="w-20 h-20 rounded-2xl bg-primary text-primary-content flex items-center justify-center text-2xl font-black shadow-md ring ring-primary/20 ring-offset-2 ring-offset-base-100">
+          <div className="w-20 h-20 rounded-2xl bg-primary text-primary-content flex items-center justify-center text-2xl font-bold shadow-md ring ring-primary/20 ring-offset-2 ring-offset-base-100">
             {profile.profilePic ? (
               <img
                 src={profile.profilePic}
