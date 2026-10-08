@@ -90,14 +90,14 @@ function RouteComponent() {
       )}
 
       {/* Transactions Section (Shown in combined and ledger tabs) */}
-      {(activeTab === "combined" || activeTab === "ledger") && (
+      {/*{(activeTab === "combined" || activeTab === "ledger") && (
         <div className="pt-2">
           <TransactionsLedger
             title="Transactions History & Audit"
             showHeaderMetrics={activeTab === "ledger"}
           />
         </div>
-      )}
+      )}*/}
     </div>
   );
 }
