@@ -7,8 +7,7 @@ import AdminMonthly from "../../-components/AdminMonthly";
 import AreaChartExample from "../../-components/charts/AreaChart";
 import PieChartExample from "../../-components/charts/PieChart";
 import SimpleContainer from "@/components/SimpleContainer";
-import TransactionsLedger from "../../-components/TransactionsLedger";
-import { BarChart3, Receipt, LayoutDashboard } from "lucide-react";
+import { BarChart3, LayoutDashboard } from "lucide-react";
 
 export const Route = createFileRoute("/tenant/accounts/analysis/")({
   component: RouteComponent,

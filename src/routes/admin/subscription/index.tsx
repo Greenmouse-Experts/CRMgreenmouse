@@ -1,7 +1,8 @@
-import { useState, useRef } from "react";
-import { createFileRoute } from "@tanstack/react-router";
+import { useState, useRef, useMemo } from "react";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import {
   useAdminSubscriptions,
+  useAdminSubscriptionFeatures,
   useCreateSubscriptionPlan,
   useUpdateSubscriptionPlan,
   useDeleteSubscriptionPlan,
@@ -14,10 +15,7 @@ import type { Actions } from "@/components/tables/pop-up";
 import PageLoader from "@/components/layout/PageLoader";
 import Modal, { type ModalHandle } from "@/components/DialogModal";
 import { toast } from "sonner";
-import {
-  PlusCircleIcon,
-  Layers,
-} from "lucide-react";
+import { PlusCircleIcon, Layers, Sparkles, Check, Plus } from "lucide-react";
 
 export const Route = createFileRoute("/admin/subscription/")({
   component: RouteComponent,
@@ -41,16 +39,47 @@ const DEFAULT_PLAN_FORM = {
   isActive: true,
 };
 
+const SUGGESTED_FEATURES = [
+  "analytics",
+  "data_export",
+  "financial_reports",
+  "custom_roles",
+  "audit_logs",
+  "bulk_import",
+  "inventory_management",
+  "invoicing",
+  "quotes_estimates",
+  "multi_currency",
+  "white_labeling",
+  "custom_domain",
+  "api_access",
+  "webhooks",
+  "priority_support",
+];
+
 function RouteComponent() {
   const [editingPlan, setEditingPlan] = useState<SubscriptionPlan | null>(null);
   const [formData, setFormData] = useState(DEFAULT_PLAN_FORM);
 
   const query = useAdminSubscriptions();
+  const featuresQuery = useAdminSubscriptionFeatures();
   const createPlan = useCreateSubscriptionPlan();
   const updatePlan = useUpdateSubscriptionPlan();
   const deletePlan = useDeleteSubscriptionPlan();
 
   const planModalRef = useRef<ModalHandle>(null);
+
+  // Available feature keys list
+  const availableFeatures = useMemo(() => {
+    const list = new Set(SUGGESTED_FEATURES);
+    if (Array.isArray(featuresQuery.data)) {
+      featuresQuery.data.forEach((f: any) => {
+        if (typeof f === "string") list.add(f);
+        else if (f && typeof f === "object" && f.key) list.add(f.key);
+      });
+    }
+    return Array.from(list);
+  }, [featuresQuery.data]);
 
   const handleOpenCreate = () => {
     setEditingPlan(null);
@@ -80,8 +109,25 @@ function RouteComponent() {
     planModalRef.current?.open();
   };
 
+  const toggleFeatureInForm = (featureKey: string) => {
+    const currentFeatures = formData.features
+      .split(",")
+      .map((f) => f.trim())
+      .filter(Boolean);
+
+    let updated: string[];
+    if (currentFeatures.includes(featureKey)) {
+      updated = currentFeatures.filter((f) => f !== featureKey);
+    } else {
+      updated = [...currentFeatures, featureKey];
+    }
+    setFormData({ ...formData, features: updated.join(", ") });
+  };
+
   const handleDelete = async (plan: SubscriptionPlan) => {
-    if (!window.confirm(`Are you sure you want to delete plan "${plan.name}"?`)) {
+    if (
+      !window.confirm(`Are you sure you want to delete plan "${plan.name}"?`)
+    ) {
       return;
     }
 
@@ -164,7 +210,9 @@ function RouteComponent() {
       render: (_value: any, item: SubscriptionPlan) => (
         <div>
           {item.isCustomPrice ? (
-            <span className="badge badge-info badge-soft badge-md">Custom Price</span>
+            <span className="badge badge-info badge-soft badge-md">
+              Custom Price
+            </span>
           ) : (
             <div className="text-sm">
               <span className="font-semibold text-base-content">
@@ -185,13 +233,22 @@ function RouteComponent() {
       render: (_value: any, item: SubscriptionPlan) => (
         <div className="text-sm space-y-0.5 text-base-content/70">
           <div>
-            Staff: <strong>{item.maxStaff === -1 ? "Unlimited" : item.maxStaff}</strong>
+            Staff:{" "}
+            <strong>
+              {item.maxStaff === -1 ? "Unlimited" : item.maxStaff}
+            </strong>
           </div>
           <div>
-            Contacts: <strong>{item.maxContacts === -1 ? "Unlimited" : item.maxContacts}</strong>
+            Contacts:{" "}
+            <strong>
+              {item.maxContacts === -1 ? "Unlimited" : item.maxContacts}
+            </strong>
           </div>
           <div>
-            Products: <strong>{item.maxProducts === -1 ? "Unlimited" : item.maxProducts}</strong>
+            Products:{" "}
+            <strong>
+              {item.maxProducts === -1 ? "Unlimited" : item.maxProducts}
+            </strong>
           </div>
         </div>
       ),
@@ -252,9 +309,17 @@ function RouteComponent() {
         title="Subscription Plans"
         description="Configure subscription tiers, pricing, and resource allocations for tenant businesses."
       >
-        <button onClick={handleOpenCreate} className="btn btn-primary btn-sm">
-          <PlusCircleIcon className="size-4" /> Create Plan
-        </button>
+        <div className="flex flex-wrap items-center gap-2">
+          <Link
+            to="/admin/subscription/features"
+            className="btn btn-sm btn-ghost border border-base-300"
+          >
+            <Sparkles className="size-4" /> Feature Catalog
+          </Link>
+          <button onClick={handleOpenCreate} className="btn btn-primary btn-sm">
+            <PlusCircleIcon className="size-4" /> Create Plan
+          </button>
+        </div>
       </PageHeader>
 
       <SimpleContainer title="Platform Subscription Tiers">
@@ -273,7 +338,11 @@ function RouteComponent() {
       {/* Create / Edit Plan Modal */}
       <Modal
         ref={planModalRef}
-        title={editingPlan ? `Edit Plan: ${editingPlan.name}` : "Create Subscription Plan"}
+        title={
+          editingPlan
+            ? `Edit Plan: ${editingPlan.name}`
+            : "Create Subscription Plan"
+        }
       >
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -285,7 +354,9 @@ function RouteComponent() {
                 type="text"
                 required
                 value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, name: e.target.value })
+                }
                 placeholder="e.g. Starter, Growth, Enterprise"
                 className="input input-sm input-bordered w-full"
               />
@@ -297,7 +368,9 @@ function RouteComponent() {
               </label>
               <textarea
                 value={formData.description}
-                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, description: e.target.value })
+                }
                 placeholder="Brief description of who this plan is for"
                 className="textarea textarea-bordered textarea-sm w-full"
                 rows={2}
@@ -306,12 +379,19 @@ function RouteComponent() {
 
             <div>
               <label className="label">
-                <span className="label-text font-semibold">Monthly Price ($)</span>
+                <span className="label-text font-semibold">
+                  Monthly Price ($)
+                </span>
               </label>
               <input
                 type="number"
                 value={formData.priceMonthly}
-                onChange={(e) => setFormData({ ...formData, priceMonthly: Number(e.target.value) })}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    priceMonthly: Number(e.target.value),
+                  })
+                }
                 className="input input-sm input-bordered w-full"
                 min={0}
               />
@@ -319,12 +399,19 @@ function RouteComponent() {
 
             <div>
               <label className="label">
-                <span className="label-text font-semibold">Yearly Price ($)</span>
+                <span className="label-text font-semibold">
+                  Yearly Price ($)
+                </span>
               </label>
               <input
                 type="number"
                 value={formData.priceYearly}
-                onChange={(e) => setFormData({ ...formData, priceYearly: Number(e.target.value) })}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    priceYearly: Number(e.target.value),
+                  })
+                }
                 className="input input-sm input-bordered w-full"
                 min={0}
               />
@@ -337,7 +424,12 @@ function RouteComponent() {
               <input
                 type="number"
                 value={formData.trialDays}
-                onChange={(e) => setFormData({ ...formData, trialDays: Number(e.target.value) })}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    trialDays: Number(e.target.value),
+                  })
+                }
                 className="input input-sm input-bordered w-full"
                 min={0}
               />
@@ -345,12 +437,16 @@ function RouteComponent() {
 
             <div>
               <label className="label">
-                <span className="label-text font-semibold">Max Staff (-1 for unlimited)</span>
+                <span className="label-text font-semibold">
+                  Max Staff (-1 for unlimited)
+                </span>
               </label>
               <input
                 type="number"
                 value={formData.maxStaff}
-                onChange={(e) => setFormData({ ...formData, maxStaff: Number(e.target.value) })}
+                onChange={(e) =>
+                  setFormData({ ...formData, maxStaff: Number(e.target.value) })
+                }
                 className="input input-sm input-bordered w-full"
               />
             </div>
@@ -362,7 +458,12 @@ function RouteComponent() {
               <input
                 type="number"
                 value={formData.maxContacts}
-                onChange={(e) => setFormData({ ...formData, maxContacts: Number(e.target.value) })}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    maxContacts: Number(e.target.value),
+                  })
+                }
                 className="input input-sm input-bordered w-full"
               />
             </div>
@@ -374,7 +475,12 @@ function RouteComponent() {
               <input
                 type="number"
                 value={formData.maxProducts}
-                onChange={(e) => setFormData({ ...formData, maxProducts: Number(e.target.value) })}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    maxProducts: Number(e.target.value),
+                  })
+                }
                 className="input input-sm input-bordered w-full"
               />
             </div>
@@ -388,10 +494,46 @@ function RouteComponent() {
               <input
                 type="text"
                 value={formData.features}
-                onChange={(e) => setFormData({ ...formData, features: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, features: e.target.value })
+                }
                 placeholder="analytics, data_export, custom_roles, bulk_import"
                 className="input input-sm input-bordered w-full"
               />
+
+              {/* Clickable Feature Quick-Select Chips */}
+              <div className="mt-2 space-y-1">
+                <span className="text-xs text-base-content/60 font-medium">
+                  Quick toggle available features:
+                </span>
+                <div className="flex flex-wrap gap-1 max-h-28 overflow-y-auto pr-1">
+                  {availableFeatures.map((featKey) => {
+                    const currentSelected = formData.features
+                      .split(",")
+                      .map((f) => f.trim())
+                      .includes(featKey);
+                    return (
+                      <button
+                        type="button"
+                        key={featKey}
+                        onClick={() => toggleFeatureInForm(featKey)}
+                        className={`badge badge-xs gap-1 cursor-pointer transition-all ${
+                          currentSelected
+                            ? "badge-primary"
+                            : "badge-ghost opacity-60 hover:opacity-100"
+                        }`}
+                      >
+                        {currentSelected ? (
+                          <Check className="size-2.5" />
+                        ) : (
+                          <Plus className="size-2.5" />
+                        )}
+                        {featKey}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
             </div>
 
             <div className="flex items-center gap-4 sm:col-span-2 pt-2">
@@ -399,20 +541,31 @@ function RouteComponent() {
                 <input
                   type="checkbox"
                   checked={formData.isActive}
-                  onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, isActive: e.target.checked })
+                  }
                   className="checkbox checkbox-primary checkbox-sm"
                 />
-                <span className="label-text font-medium">Active (Visible to Tenants)</span>
+                <span className="label-text font-medium">
+                  Active (Visible to Tenants)
+                </span>
               </label>
 
               <label className="label cursor-pointer gap-2">
                 <input
                   type="checkbox"
                   checked={formData.isCustomPrice}
-                  onChange={(e) => setFormData({ ...formData, isCustomPrice: e.target.checked })}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      isCustomPrice: e.target.checked,
+                    })
+                  }
                   className="checkbox checkbox-primary checkbox-sm"
                 />
-                <span className="label-text font-medium">Custom Enterprise Pricing</span>
+                <span className="label-text font-medium">
+                  Custom Enterprise Pricing
+                </span>
               </label>
             </div>
           </div>

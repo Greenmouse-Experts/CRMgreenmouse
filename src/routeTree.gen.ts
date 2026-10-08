@@ -60,6 +60,7 @@ import { Route as TenantAccountsInvoicesIndexRouteImport } from './routes/tenant
 import { Route as AuthRegisterOnBoardingIndexRouteImport } from './routes/auth/register/on-boarding/index'
 import { Route as AdminUsersRolesIndexRouteImport } from './routes/admin/users/roles/index'
 import { Route as AdminUsersAddIndexRouteImport } from './routes/admin/users/add/index'
+import { Route as AdminSubscriptionFeaturesIndexRouteImport } from './routes/admin/subscription/features.index'
 import { Route as AdminSettingsThemeIndexRouteImport } from './routes/admin/settings/theme/index'
 import { Route as AdminSettingsSecurityIndexRouteImport } from './routes/admin/settings/security/index'
 import { Route as AdminSettingsProfileIndexRouteImport } from './routes/admin/settings/profile/index'
@@ -360,6 +361,12 @@ const AdminUsersAddIndexRoute = AdminUsersAddIndexRouteImport.update({
   path: '/users/add/',
   getParentRoute: () => AdminRouteRoute,
 } as any)
+const AdminSubscriptionFeaturesIndexRoute =
+  AdminSubscriptionFeaturesIndexRouteImport.update({
+    id: '/subscription/features/',
+    path: '/subscription/features/',
+    getParentRoute: () => AdminRouteRoute,
+  } as any)
 const AdminSettingsThemeIndexRoute = AdminSettingsThemeIndexRouteImport.update({
   id: '/theme/',
   path: '/theme/',
@@ -579,6 +586,7 @@ export interface FileRoutesByFullPath {
   '/admin/settings/profile': typeof AdminSettingsProfileIndexRoute
   '/admin/settings/security': typeof AdminSettingsSecurityIndexRoute
   '/admin/settings/theme': typeof AdminSettingsThemeIndexRoute
+  '/admin/subscription/features': typeof AdminSubscriptionFeaturesIndexRoute
   '/admin/users/add': typeof AdminUsersAddIndexRoute
   '/admin/users/roles': typeof AdminUsersRolesIndexRoute
   '/auth/register/on-boarding': typeof AuthRegisterOnBoardingIndexRoute
@@ -654,6 +662,7 @@ export interface FileRoutesByTo {
   '/admin/settings/profile': typeof AdminSettingsProfileIndexRoute
   '/admin/settings/security': typeof AdminSettingsSecurityIndexRoute
   '/admin/settings/theme': typeof AdminSettingsThemeIndexRoute
+  '/admin/subscription/features': typeof AdminSubscriptionFeaturesIndexRoute
   '/admin/users/add': typeof AdminUsersAddIndexRoute
   '/admin/users/roles': typeof AdminUsersRolesIndexRoute
   '/auth/register/on-boarding': typeof AuthRegisterOnBoardingIndexRoute
@@ -737,6 +746,7 @@ export interface FileRoutesById {
   '/admin/settings/profile/': typeof AdminSettingsProfileIndexRoute
   '/admin/settings/security/': typeof AdminSettingsSecurityIndexRoute
   '/admin/settings/theme/': typeof AdminSettingsThemeIndexRoute
+  '/admin/subscription/features/': typeof AdminSubscriptionFeaturesIndexRoute
   '/admin/users/add/': typeof AdminUsersAddIndexRoute
   '/admin/users/roles/': typeof AdminUsersRolesIndexRoute
   '/auth/register/on-boarding/': typeof AuthRegisterOnBoardingIndexRoute
@@ -821,6 +831,7 @@ export interface FileRouteTypes {
     | '/admin/settings/profile'
     | '/admin/settings/security'
     | '/admin/settings/theme'
+    | '/admin/subscription/features'
     | '/admin/users/add'
     | '/admin/users/roles'
     | '/auth/register/on-boarding'
@@ -896,6 +907,7 @@ export interface FileRouteTypes {
     | '/admin/settings/profile'
     | '/admin/settings/security'
     | '/admin/settings/theme'
+    | '/admin/subscription/features'
     | '/admin/users/add'
     | '/admin/users/roles'
     | '/auth/register/on-boarding'
@@ -978,6 +990,7 @@ export interface FileRouteTypes {
     | '/admin/settings/profile/'
     | '/admin/settings/security/'
     | '/admin/settings/theme/'
+    | '/admin/subscription/features/'
     | '/admin/users/add/'
     | '/admin/users/roles/'
     | '/auth/register/on-boarding/'
@@ -1387,6 +1400,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminUsersAddIndexRouteImport
       parentRoute: typeof AdminRouteRoute
     }
+    '/admin/subscription/features/': {
+      id: '/admin/subscription/features/'
+      path: '/subscription/features'
+      fullPath: '/admin/subscription/features'
+      preLoaderRoute: typeof AdminSubscriptionFeaturesIndexRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
     '/admin/settings/theme/': {
       id: '/admin/settings/theme/'
       path: '/theme'
@@ -1630,6 +1650,7 @@ interface AdminRouteRouteChildren {
   AdminProductsAddIndexRoute: typeof AdminProductsAddIndexRoute
   AdminProductsCategoriesIndexRoute: typeof AdminProductsCategoriesIndexRoute
   AdminProductsServiceIndexRoute: typeof AdminProductsServiceIndexRoute
+  AdminSubscriptionFeaturesIndexRoute: typeof AdminSubscriptionFeaturesIndexRoute
   AdminUsersAddIndexRoute: typeof AdminUsersAddIndexRoute
   AdminUsersRolesIndexRoute: typeof AdminUsersRolesIndexRoute
   AdminAccountsInvoicesIdIndexRoute: typeof AdminAccountsInvoicesIdIndexRoute
@@ -1661,6 +1682,7 @@ const AdminRouteRouteChildren: AdminRouteRouteChildren = {
   AdminProductsAddIndexRoute: AdminProductsAddIndexRoute,
   AdminProductsCategoriesIndexRoute: AdminProductsCategoriesIndexRoute,
   AdminProductsServiceIndexRoute: AdminProductsServiceIndexRoute,
+  AdminSubscriptionFeaturesIndexRoute: AdminSubscriptionFeaturesIndexRoute,
   AdminUsersAddIndexRoute: AdminUsersAddIndexRoute,
   AdminUsersRolesIndexRoute: AdminUsersRolesIndexRoute,
   AdminAccountsInvoicesIdIndexRoute: AdminAccountsInvoicesIdIndexRoute,

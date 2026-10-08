@@ -3,7 +3,6 @@ import TenantCharts from "./-components/TenantCharts";
 import TenantDashStats from "./-components/TenantDashStats";
 import AdminUserList from "./-components/AdminUserList";
 import DashStats from "./-components/DashStats";
-import AdminRecents from "./-components/AdminRecents";
 import AdminMonthly from "./-components/AdminMonthly";
 
 export const Route = createFileRoute("/tenant/")({

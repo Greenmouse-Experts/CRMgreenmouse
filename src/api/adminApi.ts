@@ -320,6 +320,29 @@ export const useDeleteSubscriptionPlan = () => {
   });
 };
 
+export interface SubscriptionFeature {
+  key: string;
+  name: string;
+  description?: string;
+  category?: string;
+}
+
+export const useAdminSubscriptionFeatures = () => {
+  return useQuery<any>({
+    queryKey: ["admin", "subscriptions", "features"],
+    queryFn: async () => {
+      const { data } = await apiClient.get<any>("/admins/subscriptions/features");
+      if (Array.isArray(data)) {
+        return data;
+      }
+      if (data && Array.isArray(data.data)) {
+        return data.data;
+      }
+      return [];
+    },
+  });
+};
+
 // ==================== ADMIN PROFILE & SECURITY HOOKS ====================
 
 export interface AdminProfile {

@@ -13,6 +13,8 @@ import {
   QuoteIcon,
   List,
   Building2,
+  Layers,
+  Sparkles,
 } from "lucide-react";
 import AdminHeader from "./-components/AdminHeader";
 import { Link } from "@tanstack/react-router";
@@ -43,10 +45,25 @@ const nav_links = [
   },
   {
     path: "/admin/subscription",
-    label: "Subscription Plans",
+    label: "Subscriptions",
     icon: <CheckCircle size={ICON_SIZE} />,
-    type: "menu",
-    children: null,
+    type: "submenu",
+    children: [
+      {
+        path: "/admin/subscription",
+        label: "Plans",
+        icon: <Layers size={ICON_SIZE} />,
+        type: "menu",
+        children: null,
+      },
+      {
+        path: "/admin/subscription/features",
+        label: "Features",
+        icon: <Sparkles size={ICON_SIZE} />,
+        type: "menu",
+        children: null,
+      },
+    ],
   },
   {
     path: "/admin/users",
@@ -251,7 +268,9 @@ function RouteComponent() {
                       <ul className="py-1 space-y-1">
                         {link.children.map((childLink) => {
                           if (!childLink) return null;
-                          const isChildActive = childLink.path === url.pathname;
+                          const currentPath = url.pathname.replace(/\/$/, "");
+                          const linkPath = childLink.path.replace(/\/$/, "");
+                          const isChildActive = currentPath === linkPath;
                           return (
                             <li key={childLink.path}>
                               <Link
@@ -270,7 +289,9 @@ function RouteComponent() {
                 );
               }
 
-              const isActive = int_url === url.pathname;
+              const currentPath = url.pathname.replace(/\/$/, "");
+              const linkPath = int_url.replace(/\/$/, "");
+              const isActive = currentPath === linkPath;
               return (
                 <li key={link.path} className="mb-2">
                   <Link

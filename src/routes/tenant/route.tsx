@@ -12,7 +12,6 @@ import {
   Tag,
   CheckCircle,
   Users,
-  DollarSign,
   QuoteIcon,
   List,
 } from "lucide-react";
