@@ -1,6 +1,11 @@
 import axios from "axios";
 import { useQuery } from "@tanstack/react-query";
-import { get_user_value, set_user_value, clear_user } from "@/store/authStore";
+import {
+  get_user_value,
+  get_profile_value,
+  set_user_value,
+  clear_user,
+} from "@/store/authStore";
 import { toast } from "sonner";
 
 export interface ApiResponse<T = any> {
@@ -45,9 +50,15 @@ apiClient.interceptors.request.use((config) => {
   }
   // Standardize /admin/* to /admins/* so all admin endpoints route cleanly to the backend
   if (config.url) {
-    if (config.url.startsWith("/admin/") && !config.url.startsWith("/admin/login")) {
+    if (
+      config.url.startsWith("/admin/") &&
+      !config.url.startsWith("/admin/login")
+    ) {
       config.url = config.url.replace(/^\/admin\//, "/admins/");
-    } else if (config.url.startsWith("admin/") && !config.url.startsWith("admin/login")) {
+    } else if (
+      config.url.startsWith("admin/") &&
+      !config.url.startsWith("admin/login")
+    ) {
       config.url = config.url.replace(/^admin\//, "admins/");
     }
   }
@@ -62,13 +73,28 @@ const refreshAccessToken = async (): Promise<string | null> => {
     throw new Error("No refresh token available");
   }
 
-  const { data } = await axios.post(`${new_url}auth/refresh`, {
+  const profile = get_profile_value();
+  const userType = (
+    user.user?.userType ||
+    user.profile?.userType ||
+    profile?.userType ||
+    ""
+  ).toLowerCase();
+
+  const isAdmin = userType === "admin";
+  const refreshEndpoint = isAdmin ? "auth/refresh" : "tenant/auth/refresh";
+
+  const { data } = await axios.post(`${new_url}${refreshEndpoint}`, {
     refreshToken: user.refreshToken,
   });
 
-  const newAccessToken = data?.data?.accessToken || data?.accessToken;
+  const newAccessToken =
+    data?.data?.accessToken || data?.accessToken || data?.payload?.accessToken;
   const newRefreshToken =
-    data?.data?.refreshToken || data?.refreshToken || user.refreshToken;
+    data?.data?.refreshToken ||
+    data?.refreshToken ||
+    data?.payload?.refreshToken ||
+    user.refreshToken;
 
   if (!newAccessToken) {
     throw new Error("New access token not received.");
@@ -95,10 +121,12 @@ apiClient.interceptors.response.use(
     const url = original?.url || "";
     const isAuthEndpoint =
       url.includes("auth/refresh") ||
+      url.includes("tenant/auth/refresh") ||
       url.includes("auth/login") ||
       url.includes("auth/admin/login") ||
       url.includes("tenant/auth/login") ||
-      url.includes("auth/users/logout");
+      url.includes("auth/users/logout") ||
+      url.includes("tenant/auth/logout");
 
     if (
       error.response?.status !== 401 ||
