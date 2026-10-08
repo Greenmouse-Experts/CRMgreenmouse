@@ -47,21 +47,22 @@ export default function TenantCharts() {
         <div className="absolute right-0 top-0 w-80 h-80 bg-white/5 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none" />
         <div className="space-y-3 relative z-10">
           <div className="flex flex-wrap items-center gap-2">
-            <div className="bg-white/15 text-white font-medium rounded-md px-3 py-1 text-xs backdrop-blur-xs">
+            <div className="badge badge-xs badge-accent bg-current/20">
               {currentDate}
             </div>
             {industry && (
-              <span className="badge badge-sm bg-white/20 text-white border-0">
+              <span className="badge badge-xs bg-current/20 badge-accent">
                 {industry}
               </span>
             )}
+
             {teamSize && (
-              <span className="badge badge-sm bg-white/20 text-white border-0">
+              <span className="badge badge-xs bg-current/20 badge-accent  ">
                 Staff: {teamSize}
               </span>
             )}
             {loginDateStr && (
-              <span className="badge badge-sm bg-white/15 text-white/90 border-0 gap-1 backdrop-blur-xs">
+              <span className="badge badge-xs badge-accent bg-current/20">
                 <ShieldCheck className="size-3" />
                 Last login: {loginDateStr}
               </span>
