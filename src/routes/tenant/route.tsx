@@ -1,4 +1,4 @@
-import { createFileRoute, Outlet } from "@tanstack/react-router";
+import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
 import {
   LayoutDashboard,
   Package,
@@ -18,6 +18,8 @@ import {
 import AdminHeader from "./-components/AdminHeader";
 import { Link } from "@tanstack/react-router";
 import { useLocation } from "@tanstack/react-router";
+import { get_user_value } from "@/store/authStore";
+import { toast } from "sonner";
 interface Links {
   path: string;
   label: string;
@@ -206,6 +208,21 @@ export const Route = createFileRoute("/tenant")({
       </div>
     </div>
   ),
+  loader: () => {
+    const auth = get_user_value();
+    if (!auth)
+      return redirect({
+        to: "/auth/login",
+      });
+    console.log(auth?.user.userType);
+
+    if (auth?.user?.userType != "tenant") {
+      toast.info("wrong dashboard");
+      return redirect({
+        to: "/auth/login",
+      });
+    }
+  },
 });
 
 function RouteComponent() {
