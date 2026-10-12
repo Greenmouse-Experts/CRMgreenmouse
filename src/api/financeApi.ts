@@ -1,12 +1,70 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import apiClient from "./simpleApi";
 
+export interface FinancialCategory {
+  id: string;
+  kind: "income" | "expense";
+  name: string;
+  isActive: boolean;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export const useFinancialCategories = (params?: {
+  kind?: FinancialCategory["kind"];
+  isActive?: boolean;
+}) =>
+  useQuery<FinancialCategory[]>({
+    queryKey: ["financial-categories", params],
+    queryFn: async () => {
+      const { data } = await apiClient.get("/financial-categories", { params });
+      if (Array.isArray(data)) return data;
+      if (Array.isArray(data?.data)) return data.data;
+      return [];
+    },
+  });
+
+export const useCreateFinancialCategory = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (category: Pick<FinancialCategory, "kind" | "name">) => {
+      const { data } = await apiClient.post("/financial-categories", category);
+      return data?.data || data;
+    },
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: ["financial-categories"] }),
+  });
+};
+
+export const useUpdateFinancialCategory = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({
+      id,
+      ...changes
+    }: {
+      id: string;
+      name?: string;
+      isActive?: boolean;
+    }) => {
+      const { data } = await apiClient.patch(
+        `/financial-categories/${id}`,
+        changes,
+      );
+      return data?.data || data;
+    },
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: ["financial-categories"] }),
+  });
+};
+
 // ==================== INCOME ====================
 
 export interface IncomeRecord {
   id: string;
   amount: number;
-  type: string; // e.g., "Salary", "Grant", "Sales", "Commission", etc.
+  categoryId: string;
+  category?: FinancialCategory;
   source: string;
   description?: string;
   status: "Pending" | "Approved" | "Rejected" | string;
@@ -20,6 +78,11 @@ export interface IncomeQueryParams {
   status?: string;
   type?: string;
 }
+
+export type CreateIncomeInput = Pick<
+  IncomeRecord,
+  "amount" | "categoryId" | "source" | "description" | "status"
+>;
 
 export const useIncomeRecords = (params?: IncomeQueryParams) => {
   return useQuery<IncomeRecord[]>({
@@ -39,7 +102,7 @@ export const useIncomeRecords = (params?: IncomeQueryParams) => {
 export const useCreateIncome = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (record: Partial<IncomeRecord>) => {
+    mutationFn: async (record: CreateIncomeInput) => {
       const { data } = await apiClient.post<any>("/income", record);
       return data?.data || data;
     },
@@ -56,7 +119,7 @@ export const useUpdateIncome = () => {
     mutationFn: async ({
       id,
       ...record
-    }: Partial<IncomeRecord> & { id: string }) => {
+    }: Partial<CreateIncomeInput> & { id: string }) => {
       const { data } = await apiClient.patch<any>(`/income/${id}`, record);
       return data?.data || data;
     },
@@ -102,7 +165,8 @@ export const useUpdateIncomeStatus = () => {
 export interface ExpenseRecord {
   id: string;
   amount: number;
-  category: string; // e.g., "Software", "Travel", "Insurance", "Office Supplies"
+  categoryId: string;
+  category?: FinancialCategory;
   paidTo: string;
   description?: string;
   status: "Pending" | "Approved" | "Rejected" | string;
@@ -116,6 +180,11 @@ export interface ExpenseQueryParams {
   status?: string;
   category?: string;
 }
+
+export type CreateExpenseInput = Pick<
+  ExpenseRecord,
+  "amount" | "categoryId" | "date" | "paidTo" | "description" | "status"
+> & { date: string };
 
 export const useExpenseRecords = (params?: ExpenseQueryParams) => {
   return useQuery<ExpenseRecord[]>({
@@ -135,7 +204,7 @@ export const useExpenseRecords = (params?: ExpenseQueryParams) => {
 export const useCreateExpense = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (record: Partial<ExpenseRecord>) => {
+    mutationFn: async (record: CreateExpenseInput) => {
       const { data } = await apiClient.post<any>("/expenses", record);
       return data?.data || data;
     },
@@ -152,7 +221,7 @@ export const useUpdateExpense = () => {
     mutationFn: async ({
       id,
       ...record
-    }: Partial<ExpenseRecord> & { id: string }) => {
+    }: Partial<CreateExpenseInput> & { id: string }) => {
       const { data } = await apiClient.patch<any>(`/expenses/${id}`, record);
       return data?.data || data;
     },
@@ -504,7 +573,9 @@ export const useInvoicePayments = (invoiceId?: string) => {
     queryKey: ["invoices", invoiceId, "payments"],
     queryFn: async () => {
       if (!invoiceId) throw new Error("Invoice ID required");
-      const { data } = await apiClient.get<any>(`/invoices/${invoiceId}/payments`);
+      const { data } = await apiClient.get<any>(
+        `/invoices/${invoiceId}/payments`,
+      );
       if (Array.isArray(data)) return data;
       if (Array.isArray(data?.data)) return data.data;
       if (Array.isArray(data?.payments)) return data.payments;
@@ -519,7 +590,9 @@ export const useInvoiceReceipts = (invoiceId?: string) => {
     queryKey: ["invoices", invoiceId, "receipts"],
     queryFn: async () => {
       if (!invoiceId) throw new Error("Invoice ID required");
-      const { data } = await apiClient.get<any>(`/invoices/${invoiceId}/receipts`);
+      const { data } = await apiClient.get<any>(
+        `/invoices/${invoiceId}/receipts`,
+      );
       if (Array.isArray(data)) return data;
       if (Array.isArray(data?.data)) return data.data;
       if (Array.isArray(data?.receipts)) return data.receipts;
@@ -536,14 +609,23 @@ export const useRecordInvoicePayment = () => {
       invoiceId,
       ...payload
     }: InvoicePaymentPayload & { invoiceId: string }) => {
-      const { data } = await apiClient.post<any>(`/invoices/${invoiceId}/payments`, payload);
+      const { data } = await apiClient.post<any>(
+        `/invoices/${invoiceId}/payments`,
+        payload,
+      );
       return data?.data || data;
     },
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ["invoices"] });
-      queryClient.invalidateQueries({ queryKey: ["invoices", variables.invoiceId] });
-      queryClient.invalidateQueries({ queryKey: ["invoices", variables.invoiceId, "payments"] });
-      queryClient.invalidateQueries({ queryKey: ["invoices", variables.invoiceId, "receipts"] });
+      queryClient.invalidateQueries({
+        queryKey: ["invoices", variables.invoiceId],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["invoices", variables.invoiceId, "payments"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["invoices", variables.invoiceId, "receipts"],
+      });
       queryClient.invalidateQueries({ queryKey: ["receipts"] });
     },
   });
@@ -591,7 +673,9 @@ export const useVoidReceipt = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async ({ id, reason }: { id: string; reason?: string }) => {
-      const { data } = await apiClient.post<any>(`/receipts/${id}/void`, { reason });
+      const { data } = await apiClient.post<any>(`/receipts/${id}/void`, {
+        reason,
+      });
       return data?.data || data;
     },
     onSuccess: (_, variables) => {

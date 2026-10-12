@@ -84,7 +84,7 @@ export default function DashStats() {
                       </div>
                       <div className="min-w-0">
                         <p className="text-sm font-semibold truncate text-base-content">
-                          {item.source || item.type || "Income"}
+                          {item.source || item.category?.name || "Income"}
                         </p>
                         <p className="text-xs text-base-content/60">
                           {dateStr}
@@ -184,7 +184,7 @@ export default function DashStats() {
                       </div>
                       <div className="min-w-0">
                         <p className="text-sm font-semibold truncate text-base-content">
-                          {item.paidTo || item.category || "Expense"}
+                          {item.paidTo || item.category?.name || "Expense"}
                         </p>
                         <p className="text-xs text-base-content/60">
                           {dateStr}

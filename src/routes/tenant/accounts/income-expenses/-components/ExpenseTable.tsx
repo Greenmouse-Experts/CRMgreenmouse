@@ -10,6 +10,7 @@ import {
   useExpenseRecords,
   useUpdateExpense,
   useDeleteExpense,
+  useFinancialCategories,
   type ExpenseRecord,
 } from "@/api/financeApi";
 import { toast } from "sonner";
@@ -19,6 +20,10 @@ export default function ExpenseTable() {
   const query = useExpenseRecords();
   const updateExpense = useUpdateExpense();
   const deleteExpense = useDeleteExpense();
+  const categoriesQuery = useFinancialCategories({ isActive: true });
+  const categories =
+    categoriesQuery.data?.filter((category) => category.kind === "expense") ??
+    [];
 
   const editModalRef = useRef<ModalHandle>(null);
   const [editingItem, setEditingItem] = useState<Partial<ExpenseRecord>>({});
@@ -32,7 +37,7 @@ export default function ExpenseTable() {
 
   const handleSaveEdit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!editingItem.id || !editingItem.amount) {
+    if (!editingItem.id || !editingItem.amount || !editingItem.categoryId) {
       toast.error("Amount is required.");
       return;
     }
@@ -41,7 +46,8 @@ export default function ExpenseTable() {
       await updateExpense.mutateAsync({
         id: editingItem.id,
         amount: Number(editingItem.amount),
-        category: editingItem.category,
+        categoryId: editingItem.categoryId,
+        date: editingItem.date,
         paidTo: editingItem.paidTo,
         description: editingItem.description,
         status: editingItem.status,
@@ -98,11 +104,13 @@ export default function ExpenseTable() {
       ),
     },
     {
-      key: "category",
+      key: "categoryId",
       label: "Category",
-      render: (value: string) => (
+      render: (_value: string, item: ExpenseRecord) => (
         <span className="badge badge-sm badge-outline font-medium">
-          {value || "General Expense"}
+          {item.category?.name ||
+            categoriesQuery.data?.find((c) => c.id === item.categoryId)?.name ||
+            "—"}
         </span>
       ),
     },
@@ -192,20 +200,40 @@ export default function ExpenseTable() {
           />
           <LocalSelect
             label="Category"
-            value={editingItem.category || "Software"}
+            value={editingItem.categoryId || ""}
             onChange={(e) =>
-              setEditingItem((prev) => ({ ...prev, category: e.target.value }))
+              setEditingItem((prev) => ({
+                ...prev,
+                categoryId: e.target.value,
+              }))
             }
+            required
+            disabled={categoriesQuery.isPending || categoriesQuery.isError}
           >
-            <option value="Software">Software & Subscriptions</option>
-            <option value="Travel">Travel & Lodging</option>
-            <option value="Office Supplies">Office Supplies</option>
-            <option value="Meals">Meals & Entertainment</option>
-            <option value="Utilities">Utilities & Hosting</option>
-            <option value="Marketing">Marketing & Ads</option>
-            <option value="Payroll">Contractors / Payroll</option>
-            <option value="Other">Other</option>
+            <option value="">Select a category</option>
+            {editingItem.category &&
+              !categories.some(
+                (category) => category.id === editingItem.categoryId,
+              ) && (
+                <option value={editingItem.categoryId}>
+                  {editingItem.category.name} (archived)
+                </option>
+              )}
+            {categories.map((category) => (
+              <option key={category.id} value={category.id}>
+                {category.name}
+              </option>
+            ))}
           </LocalSelect>
+          <SimpleInput
+            label="Date"
+            type="date"
+            value={editingItem.date?.slice(0, 10) || ""}
+            onChange={(e) =>
+              setEditingItem((prev) => ({ ...prev, date: e.target.value }))
+            }
+            required
+          />
           <SimpleInput
             label="Vendor / Payee"
             type="text"

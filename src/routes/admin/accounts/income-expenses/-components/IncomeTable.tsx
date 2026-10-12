@@ -31,7 +31,7 @@ export default function IncomeTable({ searchTerm = "" }: IncomeTableProps) {
     return rawList.filter(
       (item) =>
         item.source?.toLowerCase().includes(term) ||
-        item.type?.toLowerCase().includes(term) ||
+        item.category?.name?.toLowerCase().includes(term) ||
         item.description?.toLowerCase().includes(term) ||
         item.status?.toLowerCase().includes(term),
     );
@@ -60,11 +60,11 @@ export default function IncomeTable({ searchTerm = "" }: IncomeTableProps) {
       ),
     },
     {
-      key: "type",
+      key: "categoryId",
       label: "Revenue Stream",
-      render: (type: string) => (
+      render: (_value: string, item: IncomeRecord) => (
         <span className="badge badge-ghost badge-md font-medium">
-          {type || "Service"}
+          {item.category?.name || "—"}
         </span>
       ),
     },
@@ -168,7 +168,7 @@ export default function IncomeTable({ searchTerm = "" }: IncomeTableProps) {
                   Stream Type
                 </span>
                 <span className="text-sm font-semibold text-base-content">
-                  {selectedIncome.type || "Service"}
+                  {selectedIncome.category?.name || "—"}
                 </span>
               </div>
               <div className="bg-base-200/50 p-3 rounded-lg">

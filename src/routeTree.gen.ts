@@ -80,6 +80,7 @@ import { Route as TenantUsersDetailsIdIndexRouteImport } from './routes/tenant/u
 import { Route as TenantProductsServiceAddIndexRouteImport } from './routes/tenant/products/service/add/index'
 import { Route as TenantContactsCustomersAddIndexRouteImport } from './routes/tenant/contacts/customers/add/index'
 import { Route as TenantContactsCompaniesAddIndexRouteImport } from './routes/tenant/contacts/companies/add/index'
+import { Route as TenantAccountsIncomeExpensesCategoriesIndexRouteImport } from './routes/tenant/accounts/income-expenses/categories/index'
 import { Route as TenantAccountsInvoicesAddIndexRouteImport } from './routes/tenant/accounts/Invoices/add/index'
 import { Route as TenantAccountsInvoicesIdIndexRouteImport } from './routes/tenant/accounts/Invoices/$id/index'
 import { Route as AdminUsersDetailsIdIndexRouteImport } from './routes/admin/users/details/$id/index'
@@ -479,6 +480,12 @@ const TenantContactsCompaniesAddIndexRoute =
     path: '/contacts/companies/add/',
     getParentRoute: () => TenantRouteRoute,
   } as any)
+const TenantAccountsIncomeExpensesCategoriesIndexRoute =
+  TenantAccountsIncomeExpensesCategoriesIndexRouteImport.update({
+    id: '/accounts/income-expenses/categories/',
+    path: '/accounts/income-expenses/categories/',
+    getParentRoute: () => TenantRouteRoute,
+  } as any)
 const TenantAccountsInvoicesAddIndexRoute =
   TenantAccountsInvoicesAddIndexRouteImport.update({
     id: '/accounts/Invoices/add/',
@@ -623,6 +630,7 @@ export interface FileRoutesByFullPath {
   '/admin/users/details/$id': typeof AdminUsersDetailsIdIndexRoute
   '/tenant/accounts/Invoices/$id': typeof TenantAccountsInvoicesIdIndexRoute
   '/tenant/accounts/Invoices/add': typeof TenantAccountsInvoicesAddIndexRoute
+  '/tenant/accounts/income-expenses/categories': typeof TenantAccountsIncomeExpensesCategoriesIndexRoute
   '/tenant/contacts/companies/add': typeof TenantContactsCompaniesAddIndexRoute
   '/tenant/contacts/customers/add': typeof TenantContactsCustomersAddIndexRoute
   '/tenant/products/service/add': typeof TenantProductsServiceAddIndexRoute
@@ -700,6 +708,7 @@ export interface FileRoutesByTo {
   '/admin/users/details/$id': typeof AdminUsersDetailsIdIndexRoute
   '/tenant/accounts/Invoices/$id': typeof TenantAccountsInvoicesIdIndexRoute
   '/tenant/accounts/Invoices/add': typeof TenantAccountsInvoicesAddIndexRoute
+  '/tenant/accounts/income-expenses/categories': typeof TenantAccountsIncomeExpensesCategoriesIndexRoute
   '/tenant/contacts/companies/add': typeof TenantContactsCompaniesAddIndexRoute
   '/tenant/contacts/customers/add': typeof TenantContactsCustomersAddIndexRoute
   '/tenant/products/service/add': typeof TenantProductsServiceAddIndexRoute
@@ -785,6 +794,7 @@ export interface FileRoutesById {
   '/admin/users/details/$id/': typeof AdminUsersDetailsIdIndexRoute
   '/tenant/accounts/Invoices/$id/': typeof TenantAccountsInvoicesIdIndexRoute
   '/tenant/accounts/Invoices/add/': typeof TenantAccountsInvoicesAddIndexRoute
+  '/tenant/accounts/income-expenses/categories/': typeof TenantAccountsIncomeExpensesCategoriesIndexRoute
   '/tenant/contacts/companies/add/': typeof TenantContactsCompaniesAddIndexRoute
   '/tenant/contacts/customers/add/': typeof TenantContactsCustomersAddIndexRoute
   '/tenant/products/service/add/': typeof TenantProductsServiceAddIndexRoute
@@ -871,6 +881,7 @@ export interface FileRouteTypes {
     | '/admin/users/details/$id'
     | '/tenant/accounts/Invoices/$id'
     | '/tenant/accounts/Invoices/add'
+    | '/tenant/accounts/income-expenses/categories'
     | '/tenant/contacts/companies/add'
     | '/tenant/contacts/customers/add'
     | '/tenant/products/service/add'
@@ -948,6 +959,7 @@ export interface FileRouteTypes {
     | '/admin/users/details/$id'
     | '/tenant/accounts/Invoices/$id'
     | '/tenant/accounts/Invoices/add'
+    | '/tenant/accounts/income-expenses/categories'
     | '/tenant/contacts/companies/add'
     | '/tenant/contacts/customers/add'
     | '/tenant/products/service/add'
@@ -1032,6 +1044,7 @@ export interface FileRouteTypes {
     | '/admin/users/details/$id/'
     | '/tenant/accounts/Invoices/$id/'
     | '/tenant/accounts/Invoices/add/'
+    | '/tenant/accounts/income-expenses/categories/'
     | '/tenant/contacts/companies/add/'
     | '/tenant/contacts/customers/add/'
     | '/tenant/products/service/add/'
@@ -1553,6 +1566,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TenantContactsCompaniesAddIndexRouteImport
       parentRoute: typeof TenantRouteRoute
     }
+    '/tenant/accounts/income-expenses/categories/': {
+      id: '/tenant/accounts/income-expenses/categories/'
+      path: '/accounts/income-expenses/categories'
+      fullPath: '/tenant/accounts/income-expenses/categories'
+      preLoaderRoute: typeof TenantAccountsIncomeExpensesCategoriesIndexRouteImport
+      parentRoute: typeof TenantRouteRoute
+    }
     '/tenant/accounts/Invoices/add/': {
       id: '/tenant/accounts/Invoices/add/'
       path: '/accounts/Invoices/add'
@@ -1761,6 +1781,7 @@ interface TenantRouteRouteChildren {
   TenantAccountsInvoicesIdEditRoute: typeof TenantAccountsInvoicesIdEditRoute
   TenantAccountsInvoicesIdIndexRoute: typeof TenantAccountsInvoicesIdIndexRoute
   TenantAccountsInvoicesAddIndexRoute: typeof TenantAccountsInvoicesAddIndexRoute
+  TenantAccountsIncomeExpensesCategoriesIndexRoute: typeof TenantAccountsIncomeExpensesCategoriesIndexRoute
   TenantContactsCompaniesAddIndexRoute: typeof TenantContactsCompaniesAddIndexRoute
   TenantContactsCustomersAddIndexRoute: typeof TenantContactsCustomersAddIndexRoute
   TenantProductsServiceAddIndexRoute: typeof TenantProductsServiceAddIndexRoute
@@ -1794,6 +1815,8 @@ const TenantRouteRouteChildren: TenantRouteRouteChildren = {
   TenantAccountsInvoicesIdEditRoute: TenantAccountsInvoicesIdEditRoute,
   TenantAccountsInvoicesIdIndexRoute: TenantAccountsInvoicesIdIndexRoute,
   TenantAccountsInvoicesAddIndexRoute: TenantAccountsInvoicesAddIndexRoute,
+  TenantAccountsIncomeExpensesCategoriesIndexRoute:
+    TenantAccountsIncomeExpensesCategoriesIndexRoute,
   TenantContactsCompaniesAddIndexRoute: TenantContactsCompaniesAddIndexRoute,
   TenantContactsCustomersAddIndexRoute: TenantContactsCustomersAddIndexRoute,
   TenantProductsServiceAddIndexRoute: TenantProductsServiceAddIndexRoute,

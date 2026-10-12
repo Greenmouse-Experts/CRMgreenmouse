@@ -31,7 +31,7 @@ export default function ExpenseTable({ searchTerm = "" }: ExpenseTableProps) {
     return rawList.filter(
       (item) =>
         item.paidTo?.toLowerCase().includes(term) ||
-        item.category?.toLowerCase().includes(term) ||
+        item.category?.name?.toLowerCase().includes(term) ||
         item.description?.toLowerCase().includes(term) ||
         item.status?.toLowerCase().includes(term),
     );
@@ -60,11 +60,11 @@ export default function ExpenseTable({ searchTerm = "" }: ExpenseTableProps) {
       ),
     },
     {
-      key: "category",
+      key: "categoryId",
       label: "Cost Category",
-      render: (category: string) => (
+      render: (_value: string, item: ExpenseRecord) => (
         <span className="badge badge-ghost badge-md font-medium">
-          {category || "Operations"}
+          {item.category?.name || "—"}
         </span>
       ),
     },
@@ -168,7 +168,7 @@ export default function ExpenseTable({ searchTerm = "" }: ExpenseTableProps) {
                   Category
                 </span>
                 <span className="text-sm font-semibold text-base-content">
-                  {selectedExpense.category || "Operations"}
+                  {selectedExpense.category?.name || "—"}
                 </span>
               </div>
               <div className="bg-base-200/50 p-3 rounded-lg">

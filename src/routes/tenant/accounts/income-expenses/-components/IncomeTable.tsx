@@ -10,6 +10,7 @@ import {
   useIncomeRecords,
   useUpdateIncome,
   useDeleteIncome,
+  useFinancialCategories,
   type IncomeRecord,
 } from "@/api/financeApi";
 import { toast } from "sonner";
@@ -19,6 +20,10 @@ export default function IncomeTable() {
   const query = useIncomeRecords();
   const updateIncome = useUpdateIncome();
   const deleteIncome = useDeleteIncome();
+  const categoriesQuery = useFinancialCategories({ isActive: true });
+  const categories =
+    categoriesQuery.data?.filter((category) => category.kind === "income") ??
+    [];
 
   const editModalRef = useRef<ModalHandle>(null);
   const [editingItem, setEditingItem] = useState<Partial<IncomeRecord>>({});
@@ -32,7 +37,7 @@ export default function IncomeTable() {
 
   const handleSaveEdit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!editingItem.id || !editingItem.amount) {
+    if (!editingItem.id || !editingItem.amount || !editingItem.categoryId) {
       toast.error("Amount is required.");
       return;
     }
@@ -41,7 +46,7 @@ export default function IncomeTable() {
       await updateIncome.mutateAsync({
         id: editingItem.id,
         amount: Number(editingItem.amount),
-        type: editingItem.type,
+        categoryId: editingItem.categoryId,
         source: editingItem.source,
         description: editingItem.description,
         status: editingItem.status,
@@ -100,11 +105,13 @@ export default function IncomeTable() {
       ),
     },
     {
-      key: "type",
-      label: "Category / Type",
-      render: (value: string) => (
+      key: "categoryId",
+      label: "Category",
+      render: (_value: string, item: IncomeRecord) => (
         <span className="badge badge-sm badge-outline font-medium">
-          {value || "General"}
+          {item.category?.name ||
+            categoriesQuery.data?.find((c) => c.id === item.categoryId)?.name ||
+            "—"}
         </span>
       ),
     },
@@ -196,20 +203,31 @@ export default function IncomeTable() {
             required
           />
           <LocalSelect
-            label="Type"
-            value={editingItem.type || "Other"}
+            label="Category"
+            value={editingItem.categoryId || ""}
             onChange={(e) =>
-              setEditingItem((prev) => ({ ...prev, type: e.target.value }))
+              setEditingItem((prev) => ({
+                ...prev,
+                categoryId: e.target.value,
+              }))
             }
+            required
+            disabled={categoriesQuery.isPending || categoriesQuery.isError}
           >
-            <option value="Salary">Salary</option>
-            <option value="Bonus">Bonus</option>
-            <option value="Commission">Commission</option>
-            <option value="Freelance">Freelance</option>
-            <option value="Investment">Investment</option>
-            <option value="Rental">Rental</option>
-            <option value="Grant">Grant</option>
-            <option value="Other">Other</option>
+            <option value="">Select a category</option>
+            {editingItem.category &&
+              !categories.some(
+                (category) => category.id === editingItem.categoryId,
+              ) && (
+                <option value={editingItem.categoryId}>
+                  {editingItem.category.name} (archived)
+                </option>
+              )}
+            {categories.map((category) => (
+              <option key={category.id} value={category.id}>
+                {category.name}
+              </option>
+            ))}
           </LocalSelect>
           <SimpleInput
             label="Payer / Source"

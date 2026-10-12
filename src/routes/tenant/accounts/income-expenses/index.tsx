@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import ExpensesStat from "./-components/ExpensesStats";
 import { useTabs, type Tab } from "@/stores/client";
 import CustomTabs from "@/components/CustomTabs";
@@ -11,9 +11,13 @@ import SimpleInput from "@/components/inputs/SimpleInput";
 import SimpleTextArea from "@/components/inputs/SimpleTextArea";
 import PageHeader from "@/components/Headers/PageHeader";
 import LocalSelect from "@/components/inputs/LocalSelect";
-import { useCreateIncome, useCreateExpense } from "@/api/financeApi";
+import {
+  useCreateIncome,
+  useCreateExpense,
+  useFinancialCategories,
+} from "@/api/financeApi";
 import { toast } from "sonner";
-import { PlusCircle } from "lucide-react";
+import { PlusCircle, Tags } from "lucide-react";
 
 export const Route = createFileRoute("/tenant/accounts/income-expenses/")({
   component: RouteComponent,
@@ -25,33 +29,41 @@ function RouteComponent() {
 
   const createIncome = useCreateIncome();
   const createExpense = useCreateExpense();
+  const categoriesQuery = useFinancialCategories({ isActive: true });
+  const incomeCategories =
+    categoriesQuery.data?.filter((category) => category.kind === "income") ??
+    [];
+  const expenseCategories =
+    categoriesQuery.data?.filter((category) => category.kind === "expense") ??
+    [];
 
   const incomeModalRef = useRef<ModalHandle>(null);
   const expenseModalRef = useRef<ModalHandle>(null);
 
   const [incomeForm, setIncomeForm] = useState({
     amount: "",
-    type: "Other",
+    categoryId: "",
     source: "",
     description: "",
-    status: "Paid",
+    status: "Pending",
   });
 
   const [expenseForm, setExpenseForm] = useState({
     amount: "",
-    category: "Software",
+    categoryId: "",
+    date: new Date().toLocaleDateString("en-CA"),
     paidTo: "",
     description: "",
-    status: "Approved",
+    status: "Pending",
   });
 
   const handleOpenIncome = () => {
     setIncomeForm({
       amount: "",
-      type: "Other",
+      categoryId: "",
       source: "",
       description: "",
-      status: "Paid",
+      status: "Pending",
     });
     incomeModalRef.current?.open();
   };
@@ -59,25 +71,34 @@ function RouteComponent() {
   const handleOpenExpense = () => {
     setExpenseForm({
       amount: "",
-      category: "Software",
+      categoryId: "",
+      date: new Date().toLocaleDateString("en-CA"),
       paidTo: "",
       description: "",
-      status: "Approved",
+      status: "Pending",
     });
     expenseModalRef.current?.open();
   };
 
   const handleSubmitIncome = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!incomeForm.amount || !incomeForm.source) {
-      toast.error("Please provide both amount and source.");
+    if (
+      !Number.isFinite(Number(incomeForm.amount)) ||
+      Number(incomeForm.amount) <= 0 ||
+      !incomeForm.source.trim() ||
+      !incomeForm.categoryId ||
+      !incomeCategories.some((c) => c.id === incomeForm.categoryId)
+    ) {
+      toast.error(
+        "Enter a positive amount, source, and active income category.",
+      );
       return;
     }
     try {
       await createIncome.mutateAsync({
-        amount: parseFloat(incomeForm.amount) || 0,
-        type: incomeForm.type,
-        source: incomeForm.source,
+        amount: Number(incomeForm.amount),
+        categoryId: incomeForm.categoryId,
+        source: incomeForm.source.trim(),
         description: incomeForm.description,
         status: incomeForm.status,
       });
@@ -92,15 +113,25 @@ function RouteComponent() {
 
   const handleSubmitExpense = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!expenseForm.amount || !expenseForm.paidTo) {
-      toast.error("Please provide both amount and recipient.");
+    if (
+      !Number.isFinite(Number(expenseForm.amount)) ||
+      Number(expenseForm.amount) <= 0 ||
+      !expenseForm.paidTo.trim() ||
+      !expenseForm.date ||
+      !expenseForm.categoryId ||
+      !expenseCategories.some((c) => c.id === expenseForm.categoryId)
+    ) {
+      toast.error(
+        "Enter a positive amount, date, recipient, and active expense category.",
+      );
       return;
     }
     try {
       await createExpense.mutateAsync({
-        amount: parseFloat(expenseForm.amount) || 0,
-        category: expenseForm.category,
-        paidTo: expenseForm.paidTo,
+        amount: Number(expenseForm.amount),
+        categoryId: expenseForm.categoryId,
+        date: expenseForm.date,
+        paidTo: expenseForm.paidTo.trim(),
         description: expenseForm.description,
         status: expenseForm.status,
       });
@@ -118,7 +149,14 @@ function RouteComponent() {
       <PageHeader
         title="Income & Expenses"
         description="View cash flow, track incoming revenue, and log operational expenses"
-      />
+      >
+        <Link
+          to="/tenant/accounts/income-expenses/categories"
+          className="btn btn-outline btn-sm"
+        >
+          <Tags className="size-4" /> Manage Categories
+        </Link>
+      </PageHeader>
 
       <ExpensesStat />
 
@@ -162,21 +200,40 @@ function RouteComponent() {
             required
           />
           <LocalSelect
-            label="Category / Income Type"
-            value={incomeForm.type}
+            label="Income Category"
+            value={incomeForm.categoryId}
             onChange={(e) =>
-              setIncomeForm({ ...incomeForm, type: e.target.value })
+              setIncomeForm({ ...incomeForm, categoryId: e.target.value })
             }
+            required
+            disabled={categoriesQuery.isPending || categoriesQuery.isError}
           >
-            <option value="Salary">Salary</option>
-            <option value="Bonus">Bonus</option>
-            <option value="Commission">Commission</option>
-            <option value="Freelance">Freelance</option>
-            <option value="Investment">Investment</option>
-            <option value="Rental">Rental</option>
-            <option value="Grant">Grant</option>
-            <option value="Other">Other</option>
+            <option value="">
+              {categoriesQuery.isPending
+                ? "Loading categories..."
+                : "Select a category"}
+            </option>
+            {incomeCategories.map((category) => (
+              <option key={category.id} value={category.id}>
+                {category.name}
+              </option>
+            ))}
           </LocalSelect>
+          {categoriesQuery.isError && (
+            <p className="text-sm text-error">
+              Could not load categories. Please retry.
+            </p>
+          )}
+          {!categoriesQuery.isPending &&
+            !categoriesQuery.isError &&
+            incomeCategories.length === 0 && (
+              <Link
+                to="/tenant/accounts/income-expenses/categories"
+                className="link link-primary text-sm"
+              >
+                Create an income category first
+              </Link>
+            )}
           <SimpleInput
             label="Payer / Source"
             type="text"
@@ -242,20 +299,48 @@ function RouteComponent() {
           />
           <LocalSelect
             label="Expense Category"
-            value={expenseForm.category}
+            value={expenseForm.categoryId}
             onChange={(e) =>
-              setExpenseForm({ ...expenseForm, category: e.target.value })
+              setExpenseForm({ ...expenseForm, categoryId: e.target.value })
             }
+            required
+            disabled={categoriesQuery.isPending || categoriesQuery.isError}
           >
-            <option value="Software">Software & Subscriptions</option>
-            <option value="Travel">Travel & Lodging</option>
-            <option value="Office Supplies">Office Supplies</option>
-            <option value="Meals">Meals & Entertainment</option>
-            <option value="Utilities">Utilities & Hosting</option>
-            <option value="Marketing">Marketing & Advertising</option>
-            <option value="Payroll">Contractors & Payroll</option>
-            <option value="Other">Other</option>
+            <option value="">
+              {categoriesQuery.isPending
+                ? "Loading categories..."
+                : "Select a category"}
+            </option>
+            {expenseCategories.map((category) => (
+              <option key={category.id} value={category.id}>
+                {category.name}
+              </option>
+            ))}
           </LocalSelect>
+          {categoriesQuery.isError && (
+            <p className="text-sm text-error">
+              Could not load categories. Please retry.
+            </p>
+          )}
+          {!categoriesQuery.isPending &&
+            !categoriesQuery.isError &&
+            expenseCategories.length === 0 && (
+              <Link
+                to="/tenant/accounts/income-expenses/categories"
+                className="link link-primary text-sm"
+              >
+                Create an expense category first
+              </Link>
+            )}
+          <SimpleInput
+            label="Date"
+            type="date"
+            value={expenseForm.date}
+            onChange={(e) =>
+              setExpenseForm({ ...expenseForm, date: e.target.value })
+            }
+            required
+          />
           <SimpleInput
             label="Vendor / Payee"
             type="text"
