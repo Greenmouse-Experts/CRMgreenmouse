@@ -39,6 +39,16 @@ export function SubscriptionCallback() {
       ) {
         throw new Error("Your payment has not been confirmed yet.");
       }
+      try {
+        if (
+          sessionStorage.getItem("tenant-subscription-pending-reference") ===
+          reference
+        ) {
+          sessionStorage.removeItem("tenant-subscription-pending-reference");
+        }
+      } catch {
+        // Payment verification does not depend on browser storage.
+      }
       setState("success");
     } catch (error: any) {
       const responseMessage = error?.response?.data?.message;

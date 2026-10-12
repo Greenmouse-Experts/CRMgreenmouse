@@ -31,11 +31,20 @@ export const Route = createFileRoute("/tenant/subscription/")({
   component: RouteComponent,
 });
 
+const PENDING_PAYMENT_KEY = "tenant-subscription-pending-reference";
+
 function RouteComponent() {
   const [billingCycle, setBillingCycle] = useState<"monthly" | "yearly">(
     "monthly",
   );
   const [checkoutPlanId, setCheckoutPlanId] = useState<string | null>(null);
+  const [pendingReference, setPendingReference] = useState<string | null>(() => {
+    try {
+      return sessionStorage.getItem(PENDING_PAYMENT_KEY);
+    } catch {
+      return null;
+    }
+  });
 
   const currentQuery = useTenantSubscriptionCurrent();
   const plansQuery = useTenantSubscriptionPlans();
@@ -48,6 +57,28 @@ function RouteComponent() {
   const currentSub = currentQuery.data;
   const plans = plansQuery.data || [];
   const history = historyQuery.data || [];
+
+  const rememberReference = (reference: string) => {
+    setPendingReference(reference);
+    try {
+      sessionStorage.setItem(PENDING_PAYMENT_KEY, reference);
+    } catch {
+      // Verification still works during this visit if storage is unavailable.
+    }
+  };
+
+  const clearPendingReference = () => {
+    setPendingReference(null);
+    try {
+      sessionStorage.removeItem(PENDING_PAYMENT_KEY);
+    } catch {
+      // The in-memory reminder has already been cleared.
+    }
+  };
+
+  const pendingVerificationUrl = pendingReference
+    ? `/tenant/subscription/callback/?reference=${encodeURIComponent(pendingReference)}`
+    : null;
 
   // Existing Paystack callback settings may still point to the plan page.
   useEffect(() => {
@@ -88,13 +119,21 @@ function RouteComponent() {
         checkout?.paystackUrl ||
         checkout?.url;
 
+      if (reference) rememberReference(reference);
+      if (res?.callbackUrlRejected) {
+        toast.warning(
+          "The payment server did not accept the return URL. Use Verify payment here if Paystack does not return automatically.",
+        );
+      }
+
       if (accessCode) {
         try {
           const { default: PaystackPop } = await import("@paystack/inline-js");
           const paystack = new PaystackPop();
           paystack.resumeTransaction(accessCode, {
             onSuccess: (transaction) => {
-              const paymentReference = transaction.reference || reference;
+              const paymentReference =
+                transaction?.reference || transaction?.trxref || reference;
               if (paymentReference) {
                 const callback = new URL(callbackUrl);
                 callback.searchParams.set("reference", paymentReference);
@@ -108,11 +147,15 @@ function RouteComponent() {
             },
             onCancel: () => {
               setCheckoutPlanId(null);
-              toast.info("Payment was cancelled. Your plan has not changed.");
+              toast.info(
+                reference
+                  ? "Checkout closed. If you completed payment, use Verify payment below."
+                  : "Checkout closed. No payment has been verified.",
+              );
             },
             onError: (error) => {
               setCheckoutPlanId(null);
-              toast.error(error.message || "Unable to open Paystack checkout.");
+              toast.error(error?.message || "Unable to open Paystack checkout.");
             },
           });
         } catch (error) {
@@ -249,6 +292,30 @@ function RouteComponent() {
         title="Subscription & Billing"
         description="View your current plan, upgrade your tier, manage billing cycles, and view payment history"
       />
+
+      {pendingVerificationUrl && (
+        <div role="status" className="alert flex flex-wrap items-center justify-between gap-3 border border-base-300 bg-base-100 text-base-content">
+          <div className="min-w-0 space-y-1">
+            <p className="font-medium">Waiting for payment confirmation</p>
+            <p className="text-sm text-base-content/70">
+              If you completed checkout but were not returned here, verify the
+              transaction. You will not be charged again.
+            </p>
+          </div>
+          <div className="flex shrink-0 gap-2">
+            <a className="btn btn-sm btn-primary" href={pendingVerificationUrl}>
+              Verify payment
+            </a>
+            <button
+              type="button"
+              className="btn btn-sm btn-ghost"
+              onClick={clearPendingReference}
+            >
+              Dismiss
+            </button>
+          </div>
+        </div>
+      )}
 
       <PageLoader query={currentQuery}>
         {/* Current Subscription Card */}

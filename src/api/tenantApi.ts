@@ -606,7 +606,10 @@ export const useTenantSubscriptionUpgrade = () => {
             billingCycle: payload.billingCycle,
           },
         );
-        return data?.data ?? data;
+        return {
+          ...(data?.data ?? data),
+          callbackUrlRejected: true,
+        };
       }
     },
     onSuccess: () => {

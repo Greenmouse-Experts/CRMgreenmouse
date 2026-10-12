@@ -21,6 +21,7 @@ import { SubscriptionCallback } from "@/routes/tenant/subscription/callback";
 describe("subscription payment callback", () => {
   beforeEach(() => {
     mutateAsync.mockReset();
+    sessionStorage.clear();
   });
 
   afterEach(() => {
@@ -34,6 +35,10 @@ describe("subscription payment callback", () => {
       "/tenant/subscription/callback/?reference=payment-123",
     );
     mutateAsync.mockResolvedValue({ status: "success" });
+    sessionStorage.setItem(
+      "tenant-subscription-pending-reference",
+      "payment-123",
+    );
 
     render(<SubscriptionCallback />);
 
@@ -41,6 +46,9 @@ describe("subscription payment callback", () => {
     expect(mutateAsync).toHaveBeenCalledExactlyOnceWith({
       reference: "payment-123",
     });
+    expect(
+      sessionStorage.getItem("tenant-subscription-pending-reference"),
+    ).toBeNull();
   });
 
   it("does not accept a pending payment and lets the user retry verification", async () => {

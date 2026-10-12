@@ -1,7 +1,8 @@
 declare module "@paystack/inline-js" {
   interface TransactionResult {
     id: number;
-    reference: string;
+    reference?: string;
+    trxref?: string;
     message: string;
   }
 
