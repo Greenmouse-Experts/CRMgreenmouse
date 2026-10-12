@@ -36,8 +36,7 @@ export default function QueryCompLayout<T>({
             Access Denied
           </h3>
           <p className="mt-1 text-sm text-base-content/60 max-w-xs">
-            You don't have permission to view this resource. Contact support or
-            a Super Admin to request access.
+            {extract_message(query.error as AxiosError<ApiResponse>)}
           </p>
         </div>
       );
