@@ -46,10 +46,6 @@ const DEFAULT_PLAN_FORM = {
   isActive: true,
 };
 
-const SUGGESTED_FEATURES = [];
-
-const FEATURE_LABELS: Record<string, string> = {};
-
 function RouteComponent() {
   const [editingPlan, setEditingPlan] = useState<SubscriptionPlan | null>(null);
   const [formData, setFormData] = useState(DEFAULT_PLAN_FORM);
@@ -64,13 +60,31 @@ function RouteComponent() {
 
   const planModalRef = useRef<ModalHandle>(null);
 
+  const featureLabels = useMemo(() => {
+    const labels: Record<string, string> = {};
+    if (Array.isArray(featuresQuery.data)) {
+      featuresQuery.data.forEach((feature: any) => {
+        if (!feature || typeof feature !== "object") return;
+        const key = feature.key ?? feature.value;
+        const label = feature.name ?? feature.label;
+        if (typeof key === "string" && typeof label === "string") {
+          labels[key] = label;
+        }
+      });
+    }
+    return labels;
+  }, [featuresQuery.data]);
+
   // Available feature keys list
   const availableFeatures = useMemo(() => {
-    const list = new Set(SUGGESTED_FEATURES);
+    const list = new Set<string>();
     if (Array.isArray(featuresQuery.data)) {
       featuresQuery.data.forEach((f: any) => {
         if (typeof f === "string") list.add(f);
-        else if (f && typeof f === "object" && f.key) list.add(f.key);
+        else if (f && typeof f === "object") {
+          const key = f.key ?? f.value;
+          if (typeof key === "string") list.add(key);
+        }
       });
     }
     // Include any features present in current editing plan or user selections
@@ -83,13 +97,13 @@ function RouteComponent() {
     if (!featureSearch.trim()) return availableFeatures;
     const term = featureSearch.toLowerCase();
     return availableFeatures.filter((featKey) => {
-      const label = FEATURE_LABELS[featKey] || featKey;
+      const label = featureLabels[featKey] || featKey;
       return (
         featKey.toLowerCase().includes(term) ||
         label.toLowerCase().includes(term)
       );
     });
-  }, [availableFeatures, featureSearch]);
+  }, [availableFeatures, featureLabels, featureSearch]);
 
   const handleOpenCreate = () => {
     setEditingPlan(null);
@@ -303,7 +317,7 @@ function RouteComponent() {
           {features && features.length > 0 ? (
             features.map((feat, i) => (
               <span key={i} className="badge badge-xs badge-ghost">
-                {FEATURE_LABELS[feat] || feat}
+                {featureLabels[feat] || feat}
               </span>
             ))
           ) : (
@@ -777,7 +791,7 @@ function RouteComponent() {
                   {filteredFeatures.map((featKey) => {
                     const isSelected =
                       formData.selectedFeatures.includes(featKey);
-                    const label = FEATURE_LABELS[featKey] || featKey;
+                    const label = featureLabels[featKey] || featKey;
 
                     return (
                       <li key={featKey}>
@@ -796,7 +810,7 @@ function RouteComponent() {
                             <span className="text-sm font-medium text-base-content">
                               {label}
                             </span>
-                            {FEATURE_LABELS[featKey] && (
+                            {featureLabels[featKey] && (
                               <span className="break-all font-mono text-xs text-base-content/60">
                                 {featKey}
                               </span>
