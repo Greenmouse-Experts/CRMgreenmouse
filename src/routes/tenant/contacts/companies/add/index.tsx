@@ -1,5 +1,7 @@
+import { useState, useMemo, useEffect } from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useForm, FormProvider } from "react-hook-form";
+import { Country, State } from "country-state-city";
 import SimpleInput from "@/components/inputs/SimpleInput";
 import LocalSelect from "@/components/inputs/LocalSelect";
 import ActionButton from "@/components/buttons/ActionButton";
@@ -51,6 +53,25 @@ interface CompanyFormData {
 function RouteComponent() {
   const navigate = useNavigate();
   const createCompany = useCreateCompany();
+
+  const allCountries = useMemo(() => Country.getAllCountries(), []);
+
+  const [selectedCountryCode, setSelectedCountryCode] = useState<string>(() => {
+    const defaultCountry = "Nigeria";
+    const found = allCountries.find(
+      (c) =>
+        c.name.toLowerCase() === defaultCountry.toLowerCase() ||
+        c.isoCode.toLowerCase() === defaultCountry.toLowerCase(),
+    );
+    return found?.isoCode || "NG";
+  });
+
+  const availableStates = useMemo(() => {
+    return selectedCountryCode
+      ? State.getStatesOfCountry(selectedCountryCode)
+      : [];
+  }, [selectedCountryCode]);
+
   const methods = useForm<CompanyFormData>({
     defaultValues: {
       companyName: "",
@@ -66,12 +87,34 @@ function RouteComponent() {
       city: "",
       state: "",
       zip: "",
-      country: "United States",
+      country: "Nigeria",
     },
   });
 
+  useEffect(() => {
+    const countryObj = allCountries.find(
+      (c) => c.isoCode === selectedCountryCode,
+    );
+    if (countryObj) {
+      methods.setValue("country", countryObj.name);
+    }
+  }, [selectedCountryCode, allCountries, methods]);
+
+  const handleCountryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const code = e.target.value;
+    setSelectedCountryCode(code);
+    const countryObj = allCountries.find((c) => c.isoCode === code);
+    methods.setValue("country", countryObj ? countryObj.name : "");
+    methods.setValue("state", "");
+  };
+
   const onSubmit = async (data: CompanyFormData) => {
     try {
+      const countryName =
+        allCountries.find((c) => c.isoCode === selectedCountryCode)?.name ||
+        data.country ||
+        "Nigeria";
+
       await createCompany.mutateAsync({
         name: data.companyName,
         industry: data.industry,
@@ -86,7 +129,7 @@ function RouteComponent() {
         city: data.city,
         state: data.state,
         zipCode: data.zip,
-        country: data.country,
+        country: countryName,
       });
       toast.success(`Company "${data.companyName}" created successfully!`);
       navigate({ to: "/tenant/contacts/companies" });
@@ -186,16 +229,47 @@ function RouteComponent() {
                   placeholder="Suite, Floor, etc."
                   {...methods.register("address2")}
                 />
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <LocalSelect
+                    label="Country"
+                    value={selectedCountryCode}
+                    onChange={handleCountryChange}
+                  >
+                    <option value="" disabled>
+                      Select Country
+                    </option>
+                    {allCountries.map((c) => (
+                      <option key={c.isoCode} value={c.isoCode}>
+                        {c.flag} {c.name}
+                      </option>
+                    ))}
+                  </LocalSelect>
+
+                  {availableStates.length > 0 ? (
+                    <LocalSelect
+                      label="State / Province"
+                      {...methods.register("state")}
+                    >
+                      <option value="">Select State / Province</option>
+                      {availableStates.map((s) => (
+                        <option key={s.isoCode || s.name} value={s.name}>
+                          {s.name}
+                        </option>
+                      ))}
+                    </LocalSelect>
+                  ) : (
+                    <SimpleInput
+                      label="State / Province"
+                      placeholder="State or Province"
+                      {...methods.register("state")}
+                    />
+                  )}
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <SimpleInput
                     label="City"
-                    placeholder="Anytown"
+                    placeholder="City / Town"
                     {...methods.register("city")}
-                  />
-                  <SimpleInput
-                    label="State / Province"
-                    placeholder="CA"
-                    {...methods.register("state")}
                   />
                   <SimpleInput
                     label="ZIP / Postal Code"
@@ -203,11 +277,6 @@ function RouteComponent() {
                     {...methods.register("zip")}
                   />
                 </div>
-                <SimpleInput
-                  label="Country"
-                  placeholder="United States"
-                  {...methods.register("country")}
-                />
               </div>
             </div>
 

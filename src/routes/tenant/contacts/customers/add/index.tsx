@@ -1,5 +1,7 @@
+import { useState, useMemo, useEffect } from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useForm, FormProvider } from "react-hook-form";
+import { Country, State } from "country-state-city";
 import SimpleInput from "@/components/inputs/SimpleInput";
 import ActionButton from "@/components/buttons/ActionButton";
 import SimpleTitle from "@/components/SimpleTitle";
@@ -33,6 +35,24 @@ function RouteComponent() {
   const createContact = useCreateContact();
   const { data: companies = [] } = useCompanies();
 
+  const allCountries = useMemo(() => Country.getAllCountries(), []);
+
+  const [selectedCountryCode, setSelectedCountryCode] = useState<string>(() => {
+    const defaultCountry = "Nigeria";
+    const found = allCountries.find(
+      (c) =>
+        c.name.toLowerCase() === defaultCountry.toLowerCase() ||
+        c.isoCode.toLowerCase() === defaultCountry.toLowerCase(),
+    );
+    return found?.isoCode || "NG";
+  });
+
+  const availableStates = useMemo(() => {
+    return selectedCountryCode
+      ? State.getStatesOfCountry(selectedCountryCode)
+      : [];
+  }, [selectedCountryCode]);
+
   const methods = useForm<CustomerFormData>({
     defaultValues: {
       firstName: "",
@@ -45,14 +65,36 @@ function RouteComponent() {
       city: "",
       state: "",
       zipCode: "",
-      country: "United States",
+      country: "Nigeria",
       source: "Referral",
       status: "customer",
     },
   });
 
+  useEffect(() => {
+    const countryObj = allCountries.find(
+      (c) => c.isoCode === selectedCountryCode,
+    );
+    if (countryObj) {
+      methods.setValue("country", countryObj.name);
+    }
+  }, [selectedCountryCode, allCountries, methods]);
+
+  const handleCountryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const code = e.target.value;
+    setSelectedCountryCode(code);
+    const countryObj = allCountries.find((c) => c.isoCode === code);
+    methods.setValue("country", countryObj ? countryObj.name : "");
+    methods.setValue("state", "");
+  };
+
   const onSubmit = async (data: CustomerFormData) => {
     try {
+      const countryName =
+        allCountries.find((c) => c.isoCode === selectedCountryCode)?.name ||
+        data.country ||
+        "Nigeria";
+
       await createContact.mutateAsync({
         firstName: data.firstName,
         lastName: data.lastName,
@@ -64,7 +106,7 @@ function RouteComponent() {
         city: data.city,
         state: data.state,
         zipCode: data.zipCode,
-        country: data.country,
+        country: countryName,
         source: data.source,
         status: data.status,
       });
@@ -174,33 +216,59 @@ function RouteComponent() {
             {/* Address Information */}
             <FormWrapper title="Physical & Billing Address">
               <div className="grid md:grid-cols-2 gap-4">
-                <SimpleInput
-                  label="Street Address"
-                  placeholder="123 Market Street"
-                  {...methods.register("address")}
-                />
+                <div className="md:col-span-2">
+                  <SimpleInput
+                    label="Street Address"
+                    placeholder="123 Market Street"
+                    {...methods.register("address")}
+                  />
+                </div>
+
+                <LocalSelect
+                  label="Country"
+                  value={selectedCountryCode}
+                  onChange={handleCountryChange}
+                >
+                  <option value="" disabled>
+                    Select Country
+                  </option>
+                  {allCountries.map((c) => (
+                    <option key={c.isoCode} value={c.isoCode}>
+                      {c.flag} {c.name}
+                    </option>
+                  ))}
+                </LocalSelect>
+
+                {availableStates.length > 0 ? (
+                  <LocalSelect
+                    label="State / Province / Region"
+                    {...methods.register("state")}
+                  >
+                    <option value="">Select State / Province</option>
+                    {availableStates.map((s) => (
+                      <option key={s.isoCode || s.name} value={s.name}>
+                        {s.name}
+                      </option>
+                    ))}
+                  </LocalSelect>
+                ) : (
+                  <SimpleInput
+                    label="State / Province / Region"
+                    placeholder="State or Province"
+                    {...methods.register("state")}
+                  />
+                )}
+
                 <SimpleInput
                   label="City"
-                  placeholder="San Francisco"
+                  placeholder="City / Town"
                   {...methods.register("city")}
-                />
-                <SimpleInput
-                  label="State / Province / Region"
-                  placeholder="California"
-                  {...methods.register("state")}
                 />
                 <SimpleInput
                   label="ZIP / Postal Code"
                   placeholder="94103"
                   {...methods.register("zipCode")}
                 />
-                <div className="md:col-span-2">
-                  <SimpleInput
-                    label="Country"
-                    placeholder="United States"
-                    {...methods.register("country")}
-                  />
-                </div>
               </div>
             </FormWrapper>
 
