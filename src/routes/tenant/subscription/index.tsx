@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import { createFileRoute } from "@tanstack/react-router";
+import PaystackPop from "@paystack/inline-js";
+import { getPaystackAccessCode } from "./-checkout";
 import PageHeader from "@/components/Headers/PageHeader";
 import PageLoader from "@/components/layout/PageLoader";
 import SimpleContainer from "@/components/SimpleContainer";
@@ -109,65 +111,51 @@ function RouteComponent() {
         callbackUrl,
       });
 
-      const checkout = res?.data ?? res;
-      const accessCode = checkout?.access_code || checkout?.accessCode;
+      const checkout = res?.data?.data ?? res?.data ?? res;
+      const accessCode = getPaystackAccessCode(checkout);
       const reference = checkout?.reference;
-      const authUrl =
-        checkout?.authorization_url ||
-        checkout?.authorizationUrl ||
-        checkout?.checkoutUrl ||
-        checkout?.paystackUrl ||
-        checkout?.url;
 
       if (reference) rememberReference(reference);
       if (res?.callbackUrlRejected) {
         toast.warning(
-          "The payment server did not accept the return URL. Use Verify payment here if Paystack does not return automatically.",
+          "The payment server did not accept the return URL. If checkout leaves this page, use Verify payment here when you return.",
         );
       }
 
       if (accessCode) {
-        try {
-          const { default: PaystackPop } = await import("@paystack/inline-js");
-          const paystack = new PaystackPop();
-          paystack.resumeTransaction(accessCode, {
-            onSuccess: (transaction) => {
-              const paymentReference =
-                transaction?.reference || transaction?.trxref || reference;
-              if (paymentReference) {
-                const callback = new URL(callbackUrl);
-                callback.searchParams.set("reference", paymentReference);
-                window.location.assign(callback.toString());
-              } else {
-                setCheckoutPlanId(null);
-                toast.error(
-                  "Payment completed, but no reference was returned. Please contact support.",
-                );
-              }
-            },
-            onCancel: () => {
+        const paystack = new PaystackPop();
+        paystack.resumeTransaction(accessCode, {
+          onSuccess: (transaction) => {
+            const paymentReference =
+              transaction?.reference || transaction?.trxref || reference;
+            if (paymentReference) {
+              const callback = new URL(callbackUrl);
+              callback.searchParams.set("reference", paymentReference);
+              window.location.assign(callback.toString());
+            } else {
               setCheckoutPlanId(null);
-              toast.info(
-                reference
-                  ? "Checkout closed. If you completed payment, use Verify payment below."
-                  : "Checkout closed. No payment has been verified.",
+              toast.error(
+                "Payment completed, but no reference was returned. Please contact support.",
               );
-            },
-            onError: (error) => {
-              setCheckoutPlanId(null);
-              toast.error(error?.message || "Unable to open Paystack checkout.");
-            },
-          });
-        } catch (error) {
-          if (!authUrl) throw error;
-          toast.info("Opening Paystack checkout...");
-          window.location.assign(authUrl);
-        }
-      } else if (authUrl) {
-        toast.info("Redirecting to Paystack checkout...");
-        window.location.assign(authUrl);
+            }
+          },
+          onCancel: () => {
+            setCheckoutPlanId(null);
+            toast.info(
+              reference
+                ? "Checkout closed. If you completed payment, use Verify payment below."
+                : "Checkout closed. No payment has been verified.",
+            );
+          },
+          onError: (error) => {
+            setCheckoutPlanId(null);
+            toast.error(error?.message || "Unable to open Paystack checkout.");
+          },
+        });
       } else {
-        throw new Error("Payment checkout details were not returned. Please try again.");
+        throw new Error(
+          "Inline checkout is unavailable. The payment server must return a Paystack access_code or standard checkout URL.",
+        );
       }
     } catch (err: any) {
       setCheckoutPlanId(null);
