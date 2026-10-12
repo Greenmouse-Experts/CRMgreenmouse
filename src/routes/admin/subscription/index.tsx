@@ -46,41 +46,9 @@ const DEFAULT_PLAN_FORM = {
   isActive: true,
 };
 
-const SUGGESTED_FEATURES = [
-  "analytics",
-  "data_export",
-  "financial_reports",
-  "custom_roles",
-  "audit_logs",
-  "bulk_import",
-  "inventory_management",
-  "invoicing",
-  "quotes_estimates",
-  "multi_currency",
-  "white_labeling",
-  "custom_domain",
-  "api_access",
-  "webhooks",
-  "priority_support",
-];
+const SUGGESTED_FEATURES = [];
 
-const FEATURE_LABELS: Record<string, string> = {
-  analytics: "Advanced Analytics",
-  data_export: "CSV & PDF Exports",
-  financial_reports: "Financial Reports",
-  custom_roles: "Custom Staff Roles",
-  audit_logs: "Security Audit Logs",
-  bulk_import: "Bulk Data Import",
-  inventory_management: "Inventory & Stock Alerts",
-  invoicing: "Automated Invoicing",
-  quotes_estimates: "Quotes & Estimates",
-  multi_currency: "Multi-Currency Rates",
-  white_labeling: "White-Label Branding",
-  custom_domain: "Custom Domain",
-  api_access: "REST API Access",
-  webhooks: "Outgoing Webhooks",
-  priority_support: "24/7 Dedicated Support",
-};
+const FEATURE_LABELS: Record<string, string> = {};
 
 function RouteComponent() {
   const [editingPlan, setEditingPlan] = useState<SubscriptionPlan | null>(null);
