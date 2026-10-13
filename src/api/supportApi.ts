@@ -1,9 +1,18 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import apiClient from "./simpleApi";
 
+export type TicketPriority = "low" | "medium" | "high" | "urgent";
+export type TicketStatus = "open" | "in_progress" | "resolved" | "closed";
+
 export interface TicketMessage {
   id: string;
   senderId?: string;
+  sender?: {
+    id?: string;
+    firstName?: string;
+    lastName?: string;
+    email?: string;
+  };
   senderName?: string;
   senderType?: "staff" | "customer" | "admin";
   content: string;
@@ -16,8 +25,8 @@ export interface Ticket {
   ticketNumber?: string;
   subject: string;
   description: string;
-  priority: "low" | "medium" | "high" | "urgent" | string;
-  status: "open" | "in_progress" | "resolved" | "closed" | string;
+  priority: TicketPriority;
+  status: TicketStatus;
   contactId?: string;
   contact?: {
     id: string;
@@ -45,14 +54,32 @@ export interface TicketQueryParams {
   assignedTo?: string;
 }
 
+export type CreateTicketInput = Pick<
+  Ticket,
+  "subject" | "contactId" | "description" | "priority"
+> & { contactId: string; attachments?: string[] };
+export type UpdateTicketInput = { id: string } & Partial<
+  Pick<
+    Ticket,
+    "subject" | "contactId" | "description" | "priority" | "attachments"
+  >
+>;
+
+const unwrap = <T>(value: any): T => value?.data?.data ?? value?.data ?? value;
+
 export const useTickets = (params?: TicketQueryParams) => {
   return useQuery<Ticket[]>({
     queryKey: ["tickets", params],
     queryFn: async () => {
-      const { data } = await apiClient.get<Ticket[]>("/tickets", {
+      const { data } = await apiClient.get("/tickets", {
         params,
       });
-      return data;
+      const tickets = unwrap<unknown>(data);
+      return Array.isArray(tickets)
+        ? tickets
+        : Array.isArray((tickets as any)?.tickets)
+          ? (tickets as any).tickets
+          : [];
     },
   });
 };
@@ -62,8 +89,8 @@ export const useTicket = (id?: string) => {
     queryKey: ["tickets", id],
     queryFn: async () => {
       if (!id) throw new Error("Ticket ID required");
-      const { data } = await apiClient.get<Ticket>(`/tickets/${id}`);
-      return data;
+      const { data } = await apiClient.get(`/tickets/${id}`);
+      return unwrap<Ticket>(data);
     },
     enabled: !!id,
   });
@@ -72,9 +99,9 @@ export const useTicket = (id?: string) => {
 export const useCreateTicket = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (ticket: Partial<Ticket>) => {
-      const { data } = await apiClient.post<Ticket>("/tickets", ticket);
-      return data;
+    mutationFn: async (ticket: CreateTicketInput) => {
+      const { data } = await apiClient.post("/tickets", ticket);
+      return unwrap<Ticket>(data);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["tickets"] });
@@ -85,9 +112,9 @@ export const useCreateTicket = () => {
 export const useUpdateTicket = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async ({ id, ...ticket }: Partial<Ticket> & { id: string }) => {
-      const { data } = await apiClient.patch<Ticket>(`/tickets/${id}`, ticket);
-      return data;
+    mutationFn: async ({ id, ...ticket }: UpdateTicketInput) => {
+      const { data } = await apiClient.patch(`/tickets/${id}`, ticket);
+      return unwrap<Ticket>(data);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["tickets"] });
@@ -111,8 +138,16 @@ export const useDeleteTicket = () => {
 export const useUpdateTicketStatus = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async ({ id, status }: { id: string; status: string }) => {
-      const { data } = await apiClient.patch(`/tickets/${id}/status`, { status });
+    mutationFn: async ({
+      id,
+      status,
+    }: {
+      id: string;
+      status: TicketStatus;
+    }) => {
+      const { data } = await apiClient.patch(`/tickets/${id}/status`, {
+        status,
+      });
       return data;
     },
     onSuccess: () => {
@@ -125,7 +160,9 @@ export const useAssignTicket = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async ({ id, staffId }: { id: string; staffId: string }) => {
-      const { data } = await apiClient.patch(`/tickets/${id}/assign`, { staffId });
+      const { data } = await apiClient.patch(`/tickets/${id}/assign`, {
+        staffId,
+      });
       return data;
     },
     onSuccess: () => {
