@@ -60,7 +60,7 @@ export interface TicketQueryParams {
 export type CreateTicketInput = Pick<
   Ticket,
   "subject" | "contactId" | "description" | "priority"
-> & { contactId: string; attachments?: string[] };
+> & { attachments?: string[] };
 export type UpdateTicketInput = { id: string } & Partial<
   Pick<
     Ticket,

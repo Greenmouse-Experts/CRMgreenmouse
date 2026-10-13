@@ -6,6 +6,7 @@ import {
   useState,
 } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
+import { FormProvider, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { useContacts } from "@/api/crmApi";
 import { uploadTicketAttachments } from "@/api/supportAttachments";
@@ -24,7 +25,14 @@ export interface CreateTicketModalHandle {
   }) => void;
 }
 
-const initialForm = {
+interface TicketFormValues {
+  subject: string;
+  contactId: string;
+  description: string;
+  priority: TicketPriority;
+}
+
+const initialForm: TicketFormValues = {
   subject: "",
   contactId: "",
   description: "",
@@ -38,10 +46,17 @@ const CreateTicketModal = forwardRef<CreateTicketModalHandle>(
     const modalRef = useRef<ModalHandle>(null);
     const contactsQuery = useContacts();
     const createTicket = useCreateTicket();
-    const [form, setForm] = useState(initialForm);
+    const methods = useForm<TicketFormValues>({ defaultValues: initialForm });
+    const {
+      register,
+      reset,
+      handleSubmit,
+      formState: { errors, isSubmitting },
+    } = methods;
     const [company, setCompany] = useState<{ id: string; name: string } | null>(
       null,
     );
+    const [preferredContactId, setPreferredContactId] = useState("");
     const [attachmentFiles, setAttachmentFiles] = useState<File[]>([]);
     const [isUploading, setIsUploading] = useState(false);
     const [pickerKey, setPickerKey] = useState(0);
@@ -68,29 +83,23 @@ const CreateTicketModal = forwardRef<CreateTicketModalHandle>(
               }
             : null,
         );
-        setForm({ ...initialForm, contactId: target?.contactId || "" });
+        setPreferredContactId(target?.contactId || "");
+        reset({ ...initialForm, contactId: target?.contactId || "" });
         setAttachmentFiles([]);
         setPickerKey((key) => key + 1);
         modalRef.current?.open();
       },
     }));
 
-    const submitTicket = async (event: React.FormEvent) => {
-      event.preventDefault();
-      const subject = form.subject.trim();
-      const description = form.description.trim();
-      if (!subject || !description || !form.contactId) {
-        toast.error("Add a subject, contact, and description.");
-        return;
-      }
+    const submitTicket = async (values: TicketFormValues) => {
       try {
         setIsUploading(true);
         const attachments = await uploadTicketAttachments(attachmentFiles);
         const created = await createTicket.mutateAsync({
-          subject,
-          contactId: form.contactId,
-          description,
-          priority: form.priority,
+          subject: values.subject.trim(),
+          ...(values.contactId ? { contactId: values.contactId } : {}),
+          description: values.description.trim(),
+          priority: values.priority,
           attachments,
         });
         toast.success("Ticket created.");
@@ -113,123 +122,115 @@ const CreateTicketModal = forwardRef<CreateTicketModalHandle>(
         ref={modalRef}
         title={company ? `New ticket · ${company.name}` : "New support ticket"}
       >
-        <form onSubmit={submitTicket} className="space-y-4 pt-2">
-          <SimpleInput
-            label="Subject"
-            required
-            value={form.subject}
-            onChange={(event) =>
-              setForm({ ...form, subject: event.target.value })
-            }
-            placeholder="What needs help?"
-          />
-          <LocalSelect
-            label="Contact"
-            required
-            value={form.contactId}
-            disabled={
-              contactsQuery.isPending ||
-              contactsQuery.isError ||
-              isUploading ||
-              createTicket.isPending
-            }
-            onChange={(event) =>
-              setForm({ ...form, contactId: event.target.value })
-            }
+        <FormProvider {...methods}>
+          <form
+            onSubmit={handleSubmit(submitTicket)}
+            className="space-y-4 pt-2"
           >
-            <option value="">
-              {contactsQuery.isPending
-                ? "Loading contacts..."
-                : "Select a contact"}
-            </option>
-            {contacts.map((contact) => (
-              <option key={contact.id} value={contact.id}>
-                {contact.firstName} {contact.lastName} · {contact.email}
+            <SimpleInput
+              label="Subject"
+              required
+              {...register("subject", {
+                required: "Subject is required.",
+                validate: (value) => !!value.trim() || "Subject is required.",
+              })}
+              placeholder="What needs help?"
+            />
+            <LocalSelect
+              label="Contact (optional)"
+              disabled={isUploading || createTicket.isPending}
+              {...register("contactId")}
+            >
+              <option value="">
+                {contactsQuery.isPending
+                  ? "Loading contacts..."
+                  : "No contact linked"}
               </option>
-            ))}
-          </LocalSelect>
-          {contactsQuery.isError && (
-            <p className="text-sm text-error">
-              Contacts could not be loaded. Close this form and try again.
-            </p>
-          )}
-          {!contactsQuery.isPending &&
-            !contactsQuery.isError &&
-            !contacts.length && (
-              <p className="text-sm text-base-content/70">
-                {company
-                  ? `No contacts are linked to ${company.name}. `
-                  : "Create a contact before opening a ticket. "}
-                <Link
-                  to="/tenant/contacts/customers/add"
-                  className="link link-primary"
-                >
-                  Add a contact
-                </Link>
+              {preferredContactId &&
+                !contacts.some(
+                  (contact) => contact.id === preferredContactId,
+                ) && (
+                  <option value={preferredContactId}>Selected contact</option>
+                )}
+              {contacts.map((contact) => (
+                <option key={contact.id} value={contact.id}>
+                  {contact.firstName} {contact.lastName} · {contact.email}
+                </option>
+              ))}
+            </LocalSelect>
+            {contactsQuery.isError && (
+              <p className="text-sm text-error">
+                Contacts could not be loaded. You can still create a ticket
+                without one.
               </p>
             )}
-          <LocalSelect
-            label="Priority"
-            value={form.priority}
-            onChange={(event) =>
-              setForm({
-                ...form,
-                priority: event.target.value as TicketPriority,
-              })
-            }
-          >
-            {priorities.map((priority) => (
-              <option key={priority} value={priority} className="capitalize">
-                {priority}
-              </option>
-            ))}
-          </LocalSelect>
-          <SimpleTextArea
-            label="Description"
-            required
-            rows={5}
-            value={form.description}
-            onChange={(event) =>
-              setForm({ ...form, description: event.target.value })
-            }
-            placeholder="Describe the issue and any relevant context"
-          />
-          <div>
-            <p className="text-sm font-medium">Attachments (optional)</p>
-            <UpdateImages
-              key={pickerKey}
-              setNew={setAttachmentFiles}
-              accept="image/*,application/pdf,video/*"
-              fileMode
+            {!contactsQuery.isPending &&
+              !contactsQuery.isError &&
+              !contacts.length && (
+                <p className="text-sm text-base-content/70">
+                  {company
+                    ? `No contacts are linked to ${company.name}. A ticket without a contact won't be linked to this company. `
+                    : "You can create a ticket without a contact. "}
+                  <Link
+                    to="/tenant/contacts/customers/add"
+                    className="link link-primary"
+                  >
+                    Add a contact
+                  </Link>
+                </p>
+              )}
+            <LocalSelect label="Priority" {...register("priority")}>
+              {priorities.map((priority) => (
+                <option key={priority} value={priority} className="capitalize">
+                  {priority}
+                </option>
+              ))}
+            </LocalSelect>
+            <SimpleTextArea
+              label="Description"
+              required
+              rows={5}
+              {...register("description", {
+                required: "Description is required.",
+                validate: (value) =>
+                  !!value.trim() || "Description is required.",
+              })}
+              placeholder="Describe the issue and any relevant context"
             />
-          </div>
-          <div className="modal-action">
-            <button
-              type="button"
-              className="btn btn-ghost"
-              onClick={() => modalRef.current?.close()}
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              className="btn btn-primary"
-              disabled={
-                createTicket.isPending ||
-                isUploading ||
-                contactsQuery.isPending ||
-                contactsQuery.isError ||
-                !contacts.length
-              }
-            >
-              {isUploading
-                ? "Uploading..."
-                : createTicket.isPending
-                  ? "Creating..."
-                  : "Create ticket"}
-            </button>
-          </div>
-        </form>
+            {errors.description && (
+              <p className="text-sm text-error">{errors.description.message}</p>
+            )}
+            <div>
+              <p className="text-sm font-medium">Attachments (optional)</p>
+              <UpdateImages
+                key={pickerKey}
+                setNew={setAttachmentFiles}
+                accept="image/*,application/pdf,video/*"
+                fileMode
+              />
+            </div>
+            <div className="modal-action">
+              <button
+                type="button"
+                className="btn btn-ghost"
+                onClick={() => modalRef.current?.close()}
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                className="btn btn-primary"
+                disabled={createTicket.isPending || isUploading || isSubmitting}
+              >
+                {isUploading
+                  ? "Uploading..."
+                  : createTicket.isPending
+                    ? "Creating..."
+                    : "Create ticket"}
+              </button>
+            </div>
+          </form>
+        </FormProvider>
       </Modal>
     );
   },
