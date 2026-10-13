@@ -17,6 +17,7 @@ import {
   useAssignTicket,
   useReplyTicketMessage,
   useDeleteTicket,
+  useEscalateTicket,
   type Ticket,
   type TicketPriority,
   type TicketStatus,
@@ -68,6 +69,7 @@ function RouteComponent() {
   const assignTicket = useAssignTicket();
   const reply = useReplyTicketMessage();
   const deleteTicket = useDeleteTicket();
+  const escalateTicket = useEscalateTicket();
   const editModalRef = useRef<ModalHandle>(null);
   const [edit, setEdit] = useState({
     subject: "",
@@ -78,7 +80,12 @@ function RouteComponent() {
   });
   const [replyText, setReplyText] = useState("");
   const [replyAttachments, setReplyAttachments] = useState("");
+  const [escalationReason, setEscalationReason] = useState("");
+  const [sharedWithPlatform, setSharedWithPlatform] = useState(false);
   const ticket = ticketQuery.data;
+  const visibleMessages =
+    ticket?.messages?.filter((message) => message.visibility !== "private") ??
+    [];
 
   const openEdit = (item: Ticket) => {
     setEdit({
@@ -173,6 +180,24 @@ function RouteComponent() {
     }
   };
 
+  const escalate = async (event: React.FormEvent) => {
+    event.preventDefault();
+    if (!escalationReason.trim()) {
+      toast.error("Explain why platform support is needed.");
+      return;
+    }
+    try {
+      await escalateTicket.mutateAsync({ id, reason: escalationReason.trim() });
+      setSharedWithPlatform(true);
+      setEscalationReason("");
+      toast.success("Ticket shared with platform support.");
+    } catch (error: any) {
+      toast.error(
+        error?.response?.data?.message || "Could not escalate ticket.",
+      );
+    }
+  };
+
   return (
     <section className="space-y-5">
       <div>
@@ -219,25 +244,27 @@ function RouteComponent() {
                     <MessageSquare className="size-5 text-primary" />
                     <h2 className="font-semibold">Conversation</h2>
                     <span className="badge badge-ghost badge-sm ml-auto">
-                      {ticket.messages?.length || 0}
+                      {visibleMessages.length}
                     </span>
                   </div>
-                  {!ticket.messages?.length ? (
+                  {!visibleMessages.length ? (
                     <p className="px-5 py-10 text-center text-sm text-base-content/60">
                       No replies yet. Send the first update below.
                     </p>
                   ) : (
                     <ol className="divide-y divide-base-200">
-                      {[...ticket.messages]
+                      {[...visibleMessages]
                         .sort((a, b) => a.createdAt.localeCompare(b.createdAt))
                         .map((message) => (
                           <li key={message.id} className="p-5">
                             <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm">
                               <span className="font-semibold">
-                              {message.senderName ||
-                                (message.sender ? nameOf(message.sender) : null) ||
-                                message.senderType ||
-                                "Support"}
+                                {message.senderName ||
+                                  (message.sender
+                                    ? nameOf(message.sender)
+                                    : null) ||
+                                  message.senderType ||
+                                  "Support"}
                               </span>
                               <span className="text-xs text-base-content/50">
                                 {dateTime(message.createdAt)}
@@ -367,6 +394,49 @@ function RouteComponent() {
                     Last updated
                   </p>
                   <p className="text-sm">{dateTime(ticket.updatedAt)}</p>
+                </div>
+                <div className="border-t border-base-200 pt-4 space-y-3">
+                  <h3 className="text-sm font-semibold">Platform support</h3>
+                  {sharedWithPlatform ||
+                  ticket.escalated ||
+                  ticket.escalation ? (
+                    <p className="text-sm text-base-content/70">
+                      This ticket is shared with platform support.
+                    </p>
+                  ) : (
+                    <form onSubmit={escalate} className="space-y-2">
+                      <p className="text-xs text-base-content/60">
+                        Share this ticket and its thread with platform support
+                        when your team needs help.
+                      </p>
+                      <label
+                        htmlFor="tenant-escalation-reason"
+                        className="text-xs font-medium"
+                      >
+                        Reason
+                      </label>
+                      <textarea
+                        id="tenant-escalation-reason"
+                        className="textarea textarea-bordered w-full"
+                        rows={3}
+                        required
+                        value={escalationReason}
+                        onChange={(event) =>
+                          setEscalationReason(event.target.value)
+                        }
+                        placeholder="Why is platform support needed?"
+                      />
+                      <button
+                        type="submit"
+                        className="btn btn-outline btn-sm w-full"
+                        disabled={escalateTicket.isPending}
+                      >
+                        {escalateTicket.isPending
+                          ? "Sharing..."
+                          : "Share with platform support"}
+                      </button>
+                    </form>
+                  )}
                 </div>
               </aside>
             </div>

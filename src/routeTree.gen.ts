@@ -24,6 +24,7 @@ import { Route as AuthRegisterRouteRouteImport } from './routes/auth/register/ro
 import { Route as AdminSettingsRouteRouteImport } from './routes/admin/settings/route'
 import { Route as TenantUsersIndexRouteImport } from './routes/tenant/users/index'
 import { Route as TenantTransactionsIndexRouteImport } from './routes/tenant/transactions/index'
+import { Route as TenantSupportIndexRouteImport } from './routes/tenant/support/index'
 import { Route as TenantSubscriptionIndexRouteImport } from './routes/tenant/subscription/index'
 import { Route as TenantSettingsIndexRouteImport } from './routes/tenant/settings/index'
 import { Route as TenantProductsIndexRouteImport } from './routes/tenant/products/index'
@@ -36,6 +37,7 @@ import { Route as AuthAdminIndexRouteImport } from './routes/auth/admin/index'
 import { Route as AdminUsersIndexRouteImport } from './routes/admin/users/index'
 import { Route as AdminTransactionsIndexRouteImport } from './routes/admin/transactions/index'
 import { Route as AdminTenantsIndexRouteImport } from './routes/admin/tenants/index'
+import { Route as AdminSupportIndexRouteImport } from './routes/admin/support/index'
 import { Route as AdminSubscriptionIndexRouteImport } from './routes/admin/subscription/index'
 import { Route as AdminSettingsIndexRouteImport } from './routes/admin/settings/index'
 import { Route as AdminProductsIndexRouteImport } from './routes/admin/products/index'
@@ -43,6 +45,7 @@ import { Route as AdminOrdersIndexRouteImport } from './routes/admin/orders/inde
 import { Route as AuthForgotPasswordNewPasswordRouteImport } from './routes/auth/forgot-password/new-password'
 import { Route as TenantUsersRolesIndexRouteImport } from './routes/tenant/users/roles/index'
 import { Route as TenantUsersAddIndexRouteImport } from './routes/tenant/users/add/index'
+import { Route as TenantSupportIdIndexRouteImport } from './routes/tenant/support/$id/index'
 import { Route as TenantSubscriptionCallbackIndexRouteImport } from './routes/tenant/subscription/callback/index'
 import { Route as TenantSettingsThemeIndexRouteImport } from './routes/tenant/settings/theme/index'
 import { Route as TenantSettingsSecurityIndexRouteImport } from './routes/tenant/settings/security/index'
@@ -61,6 +64,7 @@ import { Route as TenantAccountsInvoicesIndexRouteImport } from './routes/tenant
 import { Route as AuthRegisterOnBoardingIndexRouteImport } from './routes/auth/register/on-boarding/index'
 import { Route as AdminUsersRolesIndexRouteImport } from './routes/admin/users/roles/index'
 import { Route as AdminUsersAddIndexRouteImport } from './routes/admin/users/add/index'
+import { Route as AdminSupportIdIndexRouteImport } from './routes/admin/support/$id/index'
 import { Route as AdminSubscriptionFeaturesIndexRouteImport } from './routes/admin/subscription/features.index'
 import { Route as AdminSettingsThemeIndexRouteImport } from './routes/admin/settings/theme/index'
 import { Route as AdminSettingsSecurityIndexRouteImport } from './routes/admin/settings/security/index'
@@ -168,6 +172,11 @@ const TenantTransactionsIndexRoute = TenantTransactionsIndexRouteImport.update({
   path: '/transactions/',
   getParentRoute: () => TenantRouteRoute,
 } as any)
+const TenantSupportIndexRoute = TenantSupportIndexRouteImport.update({
+  id: '/support/',
+  path: '/support/',
+  getParentRoute: () => TenantRouteRoute,
+} as any)
 const TenantSubscriptionIndexRoute = TenantSubscriptionIndexRouteImport.update({
   id: '/subscription/',
   path: '/subscription/',
@@ -228,6 +237,11 @@ const AdminTenantsIndexRoute = AdminTenantsIndexRouteImport.update({
   path: '/tenants/',
   getParentRoute: () => AdminRouteRoute,
 } as any)
+const AdminSupportIndexRoute = AdminSupportIndexRouteImport.update({
+  id: '/support/',
+  path: '/support/',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
 const AdminSubscriptionIndexRoute = AdminSubscriptionIndexRouteImport.update({
   id: '/subscription/',
   path: '/subscription/',
@@ -262,6 +276,11 @@ const TenantUsersRolesIndexRoute = TenantUsersRolesIndexRouteImport.update({
 const TenantUsersAddIndexRoute = TenantUsersAddIndexRouteImport.update({
   id: '/users/add/',
   path: '/users/add/',
+  getParentRoute: () => TenantRouteRoute,
+} as any)
+const TenantSupportIdIndexRoute = TenantSupportIdIndexRouteImport.update({
+  id: '/support/$id/',
+  path: '/support/$id/',
   getParentRoute: () => TenantRouteRoute,
 } as any)
 const TenantSubscriptionCallbackIndexRoute =
@@ -367,6 +386,11 @@ const AdminUsersRolesIndexRoute = AdminUsersRolesIndexRouteImport.update({
 const AdminUsersAddIndexRoute = AdminUsersAddIndexRouteImport.update({
   id: '/users/add/',
   path: '/users/add/',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const AdminSupportIdIndexRoute = AdminSupportIdIndexRouteImport.update({
+  id: '/support/$id/',
+  path: '/support/$id/',
   getParentRoute: () => AdminRouteRoute,
 } as any)
 const AdminSubscriptionFeaturesIndexRoute =
@@ -572,6 +596,7 @@ export interface FileRoutesByFullPath {
   '/admin/products': typeof AdminProductsIndexRoute
   '/admin/settings/': typeof AdminSettingsIndexRoute
   '/admin/subscription': typeof AdminSubscriptionIndexRoute
+  '/admin/support': typeof AdminSupportIndexRoute
   '/admin/tenants': typeof AdminTenantsIndexRoute
   '/admin/transactions': typeof AdminTransactionsIndexRoute
   '/admin/users': typeof AdminUsersIndexRoute
@@ -584,6 +609,7 @@ export interface FileRoutesByFullPath {
   '/tenant/products': typeof TenantProductsIndexRoute
   '/tenant/settings/': typeof TenantSettingsIndexRoute
   '/tenant/subscription': typeof TenantSubscriptionIndexRoute
+  '/tenant/support': typeof TenantSupportIndexRoute
   '/tenant/transactions': typeof TenantTransactionsIndexRoute
   '/tenant/users': typeof TenantUsersIndexRoute
   '/admin/accounts/Invoices': typeof AdminAccountsInvoicesIndexRoute
@@ -601,6 +627,7 @@ export interface FileRoutesByFullPath {
   '/admin/settings/security': typeof AdminSettingsSecurityIndexRoute
   '/admin/settings/theme': typeof AdminSettingsThemeIndexRoute
   '/admin/subscription/features': typeof AdminSubscriptionFeaturesIndexRoute
+  '/admin/support/$id': typeof AdminSupportIdIndexRoute
   '/admin/users/add': typeof AdminUsersAddIndexRoute
   '/admin/users/roles': typeof AdminUsersRolesIndexRoute
   '/auth/register/on-boarding': typeof AuthRegisterOnBoardingIndexRoute
@@ -619,6 +646,7 @@ export interface FileRoutesByFullPath {
   '/tenant/settings/security': typeof TenantSettingsSecurityIndexRoute
   '/tenant/settings/theme': typeof TenantSettingsThemeIndexRoute
   '/tenant/subscription/callback': typeof TenantSubscriptionCallbackIndexRoute
+  '/tenant/support/$id': typeof TenantSupportIdIndexRoute
   '/tenant/users/add': typeof TenantUsersAddIndexRoute
   '/tenant/users/roles': typeof TenantUsersRolesIndexRoute
   '/tenant/accounts/Invoices/$id/edit': typeof TenantAccountsInvoicesIdEditRoute
@@ -650,6 +678,7 @@ export interface FileRoutesByTo {
   '/admin/products': typeof AdminProductsIndexRoute
   '/admin/settings': typeof AdminSettingsIndexRoute
   '/admin/subscription': typeof AdminSubscriptionIndexRoute
+  '/admin/support': typeof AdminSupportIndexRoute
   '/admin/tenants': typeof AdminTenantsIndexRoute
   '/admin/transactions': typeof AdminTransactionsIndexRoute
   '/admin/users': typeof AdminUsersIndexRoute
@@ -662,6 +691,7 @@ export interface FileRoutesByTo {
   '/tenant/products': typeof TenantProductsIndexRoute
   '/tenant/settings': typeof TenantSettingsIndexRoute
   '/tenant/subscription': typeof TenantSubscriptionIndexRoute
+  '/tenant/support': typeof TenantSupportIndexRoute
   '/tenant/transactions': typeof TenantTransactionsIndexRoute
   '/tenant/users': typeof TenantUsersIndexRoute
   '/admin/accounts/Invoices': typeof AdminAccountsInvoicesIndexRoute
@@ -679,6 +709,7 @@ export interface FileRoutesByTo {
   '/admin/settings/security': typeof AdminSettingsSecurityIndexRoute
   '/admin/settings/theme': typeof AdminSettingsThemeIndexRoute
   '/admin/subscription/features': typeof AdminSubscriptionFeaturesIndexRoute
+  '/admin/support/$id': typeof AdminSupportIdIndexRoute
   '/admin/users/add': typeof AdminUsersAddIndexRoute
   '/admin/users/roles': typeof AdminUsersRolesIndexRoute
   '/auth/register/on-boarding': typeof AuthRegisterOnBoardingIndexRoute
@@ -697,6 +728,7 @@ export interface FileRoutesByTo {
   '/tenant/settings/security': typeof TenantSettingsSecurityIndexRoute
   '/tenant/settings/theme': typeof TenantSettingsThemeIndexRoute
   '/tenant/subscription/callback': typeof TenantSubscriptionCallbackIndexRoute
+  '/tenant/support/$id': typeof TenantSupportIdIndexRoute
   '/tenant/users/add': typeof TenantUsersAddIndexRoute
   '/tenant/users/roles': typeof TenantUsersRolesIndexRoute
   '/tenant/accounts/Invoices/$id/edit': typeof TenantAccountsInvoicesIdEditRoute
@@ -736,6 +768,7 @@ export interface FileRoutesById {
   '/admin/products/': typeof AdminProductsIndexRoute
   '/admin/settings/': typeof AdminSettingsIndexRoute
   '/admin/subscription/': typeof AdminSubscriptionIndexRoute
+  '/admin/support/': typeof AdminSupportIndexRoute
   '/admin/tenants/': typeof AdminTenantsIndexRoute
   '/admin/transactions/': typeof AdminTransactionsIndexRoute
   '/admin/users/': typeof AdminUsersIndexRoute
@@ -748,6 +781,7 @@ export interface FileRoutesById {
   '/tenant/products/': typeof TenantProductsIndexRoute
   '/tenant/settings/': typeof TenantSettingsIndexRoute
   '/tenant/subscription/': typeof TenantSubscriptionIndexRoute
+  '/tenant/support/': typeof TenantSupportIndexRoute
   '/tenant/transactions/': typeof TenantTransactionsIndexRoute
   '/tenant/users/': typeof TenantUsersIndexRoute
   '/admin/accounts/Invoices/': typeof AdminAccountsInvoicesIndexRoute
@@ -765,6 +799,7 @@ export interface FileRoutesById {
   '/admin/settings/security/': typeof AdminSettingsSecurityIndexRoute
   '/admin/settings/theme/': typeof AdminSettingsThemeIndexRoute
   '/admin/subscription/features/': typeof AdminSubscriptionFeaturesIndexRoute
+  '/admin/support/$id/': typeof AdminSupportIdIndexRoute
   '/admin/users/add/': typeof AdminUsersAddIndexRoute
   '/admin/users/roles/': typeof AdminUsersRolesIndexRoute
   '/auth/register/on-boarding/': typeof AuthRegisterOnBoardingIndexRoute
@@ -783,6 +818,7 @@ export interface FileRoutesById {
   '/tenant/settings/security/': typeof TenantSettingsSecurityIndexRoute
   '/tenant/settings/theme/': typeof TenantSettingsThemeIndexRoute
   '/tenant/subscription/callback/': typeof TenantSubscriptionCallbackIndexRoute
+  '/tenant/support/$id/': typeof TenantSupportIdIndexRoute
   '/tenant/users/add/': typeof TenantUsersAddIndexRoute
   '/tenant/users/roles/': typeof TenantUsersRolesIndexRoute
   '/tenant/accounts/Invoices/$id/edit': typeof TenantAccountsInvoicesIdEditRoute
@@ -823,6 +859,7 @@ export interface FileRouteTypes {
     | '/admin/products'
     | '/admin/settings/'
     | '/admin/subscription'
+    | '/admin/support'
     | '/admin/tenants'
     | '/admin/transactions'
     | '/admin/users'
@@ -835,6 +872,7 @@ export interface FileRouteTypes {
     | '/tenant/products'
     | '/tenant/settings/'
     | '/tenant/subscription'
+    | '/tenant/support'
     | '/tenant/transactions'
     | '/tenant/users'
     | '/admin/accounts/Invoices'
@@ -852,6 +890,7 @@ export interface FileRouteTypes {
     | '/admin/settings/security'
     | '/admin/settings/theme'
     | '/admin/subscription/features'
+    | '/admin/support/$id'
     | '/admin/users/add'
     | '/admin/users/roles'
     | '/auth/register/on-boarding'
@@ -870,6 +909,7 @@ export interface FileRouteTypes {
     | '/tenant/settings/security'
     | '/tenant/settings/theme'
     | '/tenant/subscription/callback'
+    | '/tenant/support/$id'
     | '/tenant/users/add'
     | '/tenant/users/roles'
     | '/tenant/accounts/Invoices/$id/edit'
@@ -901,6 +941,7 @@ export interface FileRouteTypes {
     | '/admin/products'
     | '/admin/settings'
     | '/admin/subscription'
+    | '/admin/support'
     | '/admin/tenants'
     | '/admin/transactions'
     | '/admin/users'
@@ -913,6 +954,7 @@ export interface FileRouteTypes {
     | '/tenant/products'
     | '/tenant/settings'
     | '/tenant/subscription'
+    | '/tenant/support'
     | '/tenant/transactions'
     | '/tenant/users'
     | '/admin/accounts/Invoices'
@@ -930,6 +972,7 @@ export interface FileRouteTypes {
     | '/admin/settings/security'
     | '/admin/settings/theme'
     | '/admin/subscription/features'
+    | '/admin/support/$id'
     | '/admin/users/add'
     | '/admin/users/roles'
     | '/auth/register/on-boarding'
@@ -948,6 +991,7 @@ export interface FileRouteTypes {
     | '/tenant/settings/security'
     | '/tenant/settings/theme'
     | '/tenant/subscription/callback'
+    | '/tenant/support/$id'
     | '/tenant/users/add'
     | '/tenant/users/roles'
     | '/tenant/accounts/Invoices/$id/edit'
@@ -986,6 +1030,7 @@ export interface FileRouteTypes {
     | '/admin/products/'
     | '/admin/settings/'
     | '/admin/subscription/'
+    | '/admin/support/'
     | '/admin/tenants/'
     | '/admin/transactions/'
     | '/admin/users/'
@@ -998,6 +1043,7 @@ export interface FileRouteTypes {
     | '/tenant/products/'
     | '/tenant/settings/'
     | '/tenant/subscription/'
+    | '/tenant/support/'
     | '/tenant/transactions/'
     | '/tenant/users/'
     | '/admin/accounts/Invoices/'
@@ -1015,6 +1061,7 @@ export interface FileRouteTypes {
     | '/admin/settings/security/'
     | '/admin/settings/theme/'
     | '/admin/subscription/features/'
+    | '/admin/support/$id/'
     | '/admin/users/add/'
     | '/admin/users/roles/'
     | '/auth/register/on-boarding/'
@@ -1033,6 +1080,7 @@ export interface FileRouteTypes {
     | '/tenant/settings/security/'
     | '/tenant/settings/theme/'
     | '/tenant/subscription/callback/'
+    | '/tenant/support/$id/'
     | '/tenant/users/add/'
     | '/tenant/users/roles/'
     | '/tenant/accounts/Invoices/$id/edit'
@@ -1174,6 +1222,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TenantTransactionsIndexRouteImport
       parentRoute: typeof TenantRouteRoute
     }
+    '/tenant/support/': {
+      id: '/tenant/support/'
+      path: '/support'
+      fullPath: '/tenant/support'
+      preLoaderRoute: typeof TenantSupportIndexRouteImport
+      parentRoute: typeof TenantRouteRoute
+    }
     '/tenant/subscription/': {
       id: '/tenant/subscription/'
       path: '/subscription'
@@ -1258,6 +1313,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminTenantsIndexRouteImport
       parentRoute: typeof AdminRouteRoute
     }
+    '/admin/support/': {
+      id: '/admin/support/'
+      path: '/support'
+      fullPath: '/admin/support'
+      preLoaderRoute: typeof AdminSupportIndexRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
     '/admin/subscription/': {
       id: '/admin/subscription/'
       path: '/subscription'
@@ -1305,6 +1367,13 @@ declare module '@tanstack/react-router' {
       path: '/users/add'
       fullPath: '/tenant/users/add'
       preLoaderRoute: typeof TenantUsersAddIndexRouteImport
+      parentRoute: typeof TenantRouteRoute
+    }
+    '/tenant/support/$id/': {
+      id: '/tenant/support/$id/'
+      path: '/support/$id'
+      fullPath: '/tenant/support/$id'
+      preLoaderRoute: typeof TenantSupportIdIndexRouteImport
       parentRoute: typeof TenantRouteRoute
     }
     '/tenant/subscription/callback/': {
@@ -1431,6 +1500,13 @@ declare module '@tanstack/react-router' {
       path: '/users/add'
       fullPath: '/admin/users/add'
       preLoaderRoute: typeof AdminUsersAddIndexRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
+    '/admin/support/$id/': {
+      id: '/admin/support/$id/'
+      path: '/support/$id'
+      fullPath: '/admin/support/$id'
+      preLoaderRoute: typeof AdminSupportIdIndexRouteImport
       parentRoute: typeof AdminRouteRoute
     }
     '/admin/subscription/features/': {
@@ -1676,6 +1752,7 @@ interface AdminRouteRouteChildren {
   AdminOrdersIndexRoute: typeof AdminOrdersIndexRoute
   AdminProductsIndexRoute: typeof AdminProductsIndexRoute
   AdminSubscriptionIndexRoute: typeof AdminSubscriptionIndexRoute
+  AdminSupportIndexRoute: typeof AdminSupportIndexRoute
   AdminTenantsIndexRoute: typeof AdminTenantsIndexRoute
   AdminTransactionsIndexRoute: typeof AdminTransactionsIndexRoute
   AdminUsersIndexRoute: typeof AdminUsersIndexRoute
@@ -1691,6 +1768,7 @@ interface AdminRouteRouteChildren {
   AdminProductsCategoriesIndexRoute: typeof AdminProductsCategoriesIndexRoute
   AdminProductsServiceIndexRoute: typeof AdminProductsServiceIndexRoute
   AdminSubscriptionFeaturesIndexRoute: typeof AdminSubscriptionFeaturesIndexRoute
+  AdminSupportIdIndexRoute: typeof AdminSupportIdIndexRoute
   AdminUsersAddIndexRoute: typeof AdminUsersAddIndexRoute
   AdminUsersRolesIndexRoute: typeof AdminUsersRolesIndexRoute
   AdminAccountsInvoicesIdIndexRoute: typeof AdminAccountsInvoicesIdIndexRoute
@@ -1708,6 +1786,7 @@ const AdminRouteRouteChildren: AdminRouteRouteChildren = {
   AdminOrdersIndexRoute: AdminOrdersIndexRoute,
   AdminProductsIndexRoute: AdminProductsIndexRoute,
   AdminSubscriptionIndexRoute: AdminSubscriptionIndexRoute,
+  AdminSupportIndexRoute: AdminSupportIndexRoute,
   AdminTenantsIndexRoute: AdminTenantsIndexRoute,
   AdminTransactionsIndexRoute: AdminTransactionsIndexRoute,
   AdminUsersIndexRoute: AdminUsersIndexRoute,
@@ -1723,6 +1802,7 @@ const AdminRouteRouteChildren: AdminRouteRouteChildren = {
   AdminProductsCategoriesIndexRoute: AdminProductsCategoriesIndexRoute,
   AdminProductsServiceIndexRoute: AdminProductsServiceIndexRoute,
   AdminSubscriptionFeaturesIndexRoute: AdminSubscriptionFeaturesIndexRoute,
+  AdminSupportIdIndexRoute: AdminSupportIdIndexRoute,
   AdminUsersAddIndexRoute: AdminUsersAddIndexRoute,
   AdminUsersRolesIndexRoute: AdminUsersRolesIndexRoute,
   AdminAccountsInvoicesIdIndexRoute: AdminAccountsInvoicesIdIndexRoute,
@@ -1762,6 +1842,7 @@ interface TenantRouteRouteChildren {
   TenantOrdersIndexRoute: typeof TenantOrdersIndexRoute
   TenantProductsIndexRoute: typeof TenantProductsIndexRoute
   TenantSubscriptionIndexRoute: typeof TenantSubscriptionIndexRoute
+  TenantSupportIndexRoute: typeof TenantSupportIndexRoute
   TenantTransactionsIndexRoute: typeof TenantTransactionsIndexRoute
   TenantUsersIndexRoute: typeof TenantUsersIndexRoute
   TenantAccountsInvoicesIndexRoute: typeof TenantAccountsInvoicesIndexRoute
@@ -1776,6 +1857,7 @@ interface TenantRouteRouteChildren {
   TenantProductsCategoriesIndexRoute: typeof TenantProductsCategoriesIndexRoute
   TenantProductsServiceIndexRoute: typeof TenantProductsServiceIndexRoute
   TenantSubscriptionCallbackIndexRoute: typeof TenantSubscriptionCallbackIndexRoute
+  TenantSupportIdIndexRoute: typeof TenantSupportIdIndexRoute
   TenantUsersAddIndexRoute: typeof TenantUsersAddIndexRoute
   TenantUsersRolesIndexRoute: typeof TenantUsersRolesIndexRoute
   TenantAccountsInvoicesIdEditRoute: typeof TenantAccountsInvoicesIdEditRoute
@@ -1795,6 +1877,7 @@ const TenantRouteRouteChildren: TenantRouteRouteChildren = {
   TenantOrdersIndexRoute: TenantOrdersIndexRoute,
   TenantProductsIndexRoute: TenantProductsIndexRoute,
   TenantSubscriptionIndexRoute: TenantSubscriptionIndexRoute,
+  TenantSupportIndexRoute: TenantSupportIndexRoute,
   TenantTransactionsIndexRoute: TenantTransactionsIndexRoute,
   TenantUsersIndexRoute: TenantUsersIndexRoute,
   TenantAccountsInvoicesIndexRoute: TenantAccountsInvoicesIndexRoute,
@@ -1810,6 +1893,7 @@ const TenantRouteRouteChildren: TenantRouteRouteChildren = {
   TenantProductsCategoriesIndexRoute: TenantProductsCategoriesIndexRoute,
   TenantProductsServiceIndexRoute: TenantProductsServiceIndexRoute,
   TenantSubscriptionCallbackIndexRoute: TenantSubscriptionCallbackIndexRoute,
+  TenantSupportIdIndexRoute: TenantSupportIdIndexRoute,
   TenantUsersAddIndexRoute: TenantUsersAddIndexRoute,
   TenantUsersRolesIndexRoute: TenantUsersRolesIndexRoute,
   TenantAccountsInvoicesIdEditRoute: TenantAccountsInvoicesIdEditRoute,

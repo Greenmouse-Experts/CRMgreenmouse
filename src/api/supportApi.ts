@@ -15,6 +15,7 @@ export interface TicketMessage {
   };
   senderName?: string;
   senderType?: "staff" | "customer" | "admin";
+  visibility?: "public" | "private";
   content: string;
   attachments?: string[];
   createdAt: string;
@@ -41,6 +42,8 @@ export interface Ticket {
     lastName: string;
     email: string;
   };
+  escalated?: boolean;
+  escalation?: { reason?: string; createdAt?: string } | null;
   attachments?: string[];
   messages?: TicketMessage[];
   createdAt?: string;
@@ -193,5 +196,18 @@ export const useReplyTicketMessage = () => {
       queryClient.invalidateQueries({ queryKey: ["tickets", variables.id] });
       queryClient.invalidateQueries({ queryKey: ["tickets"] });
     },
+  });
+};
+
+export const useEscalateTicket = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ id, reason }: { id: string; reason: string }) => {
+      const { data } = await apiClient.post(`/tickets/${id}/escalate`, {
+        reason,
+      });
+      return data;
+    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["tickets"] }),
   });
 };
