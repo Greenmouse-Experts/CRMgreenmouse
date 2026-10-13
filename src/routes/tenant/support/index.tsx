@@ -1,10 +1,7 @@
 import { useMemo, useRef, useState } from "react";
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { Inbox, Plus, Search, ArrowUpRight, CircleHelp } from "lucide-react";
-import { toast } from "sonner";
-import { useContacts } from "@/api/crmApi";
 import {
-  useCreateTicket,
   useTickets,
   type Ticket,
   type TicketPriority,
@@ -12,10 +9,9 @@ import {
 } from "@/api/supportApi";
 import PageHeader from "@/components/Headers/PageHeader";
 import PageLoader from "@/components/layout/PageLoader";
-import Modal, { type ModalHandle } from "@/components/DialogModal";
-import SimpleInput from "@/components/inputs/SimpleInput";
-import SimpleTextArea from "@/components/inputs/SimpleTextArea";
-import LocalSelect from "@/components/inputs/LocalSelect";
+import CreateTicketModal, {
+  type CreateTicketModalHandle,
+} from "@/components/support/CreateTicketModal";
 
 export const Route = createFileRoute("/tenant/support/")({
   component: RouteComponent,
@@ -35,13 +31,6 @@ const priorities: { value: TicketPriority | "all"; label: string }[] = [
   { value: "high", label: "High" },
   { value: "urgent", label: "Urgent" },
 ];
-const initialForm = {
-  subject: "",
-  contactId: "",
-  description: "",
-  priority: "medium" as TicketPriority,
-  attachments: "",
-};
 const contactName = (contact?: Ticket["contact"]) =>
   contact
     ? `${contact.firstName || ""} ${contact.lastName || ""}`.trim() ||
@@ -50,15 +39,12 @@ const contactName = (contact?: Ticket["contact"]) =>
 const displayStatus = (status: string) => status.replaceAll("_", " ");
 
 function RouteComponent() {
-  const navigate = useNavigate();
   const ticketsQuery = useTickets();
-  const contactsQuery = useContacts();
-  const createTicket = useCreateTicket();
-  const modalRef = useRef<ModalHandle>(null);
+  const modalRef = useRef<CreateTicketModalHandle>(null);
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState<TicketStatus | "all">("all");
   const [priority, setPriority] = useState<TicketPriority | "all">("all");
-  const [form, setForm] = useState(initialForm);
+  const openCreate = () => modalRef.current?.open();
 
   const tickets = useMemo(() => {
     const term = search.trim().toLowerCase();
@@ -77,34 +63,6 @@ function RouteComponent() {
       .sort((a, b) => (b.createdAt || "").localeCompare(a.createdAt || ""));
   }, [ticketsQuery.data, search, status, priority]);
 
-  const submitTicket = async (event: React.FormEvent) => {
-    event.preventDefault();
-    const subject = form.subject.trim();
-    const description = form.description.trim();
-    if (!subject || !description || !form.contactId) {
-      toast.error("Add a subject, contact, and description.");
-      return;
-    }
-    try {
-      const created = await createTicket.mutateAsync({
-        subject,
-        contactId: form.contactId,
-        description,
-        priority: form.priority,
-        attachments: form.attachments
-          .split(/\n/)
-          .map((url) => url.trim())
-          .filter(Boolean),
-      });
-      toast.success("Ticket created.");
-      modalRef.current?.close();
-      if (created?.id)
-        navigate({ to: "/tenant/support/$id", params: { id: created.id } });
-    } catch (error: any) {
-      toast.error(error?.response?.data?.message || "Could not create ticket.");
-    }
-  };
-
   return (
     <section className="space-y-5">
       <PageHeader
@@ -114,10 +72,7 @@ function RouteComponent() {
         <button
           type="button"
           className="btn btn-primary btn-sm"
-          onClick={() => {
-            setForm(initialForm);
-            modalRef.current?.open();
-          }}
+          onClick={openCreate}
         >
           <Plus className="size-4" /> New ticket
         </button>
@@ -191,7 +146,7 @@ function RouteComponent() {
                 <button
                   type="button"
                   className="btn btn-primary btn-sm mt-2"
-                  onClick={() => modalRef.current?.open()}
+                  onClick={openCreate}
                 >
                   Create ticket
                 </button>
@@ -253,109 +208,7 @@ function RouteComponent() {
         </PageLoader>
       </div>
 
-      <Modal ref={modalRef} title="New support ticket">
-        <form onSubmit={submitTicket} className="space-y-4 pt-2">
-          <SimpleInput
-            label="Subject"
-            required
-            value={form.subject}
-            onChange={(event) =>
-              setForm({ ...form, subject: event.target.value })
-            }
-            placeholder="What needs help?"
-          />
-          <LocalSelect
-            label="Contact"
-            required
-            value={form.contactId}
-            disabled={contactsQuery.isPending || contactsQuery.isError}
-            onChange={(event) =>
-              setForm({ ...form, contactId: event.target.value })
-            }
-          >
-            <option value="">
-              {contactsQuery.isPending
-                ? "Loading contacts..."
-                : "Select a contact"}
-            </option>
-            {contactsQuery.data?.map((contact) => (
-              <option key={contact.id} value={contact.id}>
-                {contact.firstName} {contact.lastName} · {contact.email}
-              </option>
-            ))}
-          </LocalSelect>
-          {contactsQuery.isError && (
-            <p className="text-sm text-error">
-              Contacts could not be loaded. Close this form and try again.
-            </p>
-          )}
-          {!contactsQuery.isPending &&
-            !contactsQuery.isError &&
-            !contactsQuery.data?.length && (
-              <p className="text-sm text-base-content/70">
-                Create a contact before opening a ticket.
-              </p>
-            )}
-          <LocalSelect
-            label="Priority"
-            value={form.priority}
-            onChange={(event) =>
-              setForm({
-                ...form,
-                priority: event.target.value as TicketPriority,
-              })
-            }
-          >
-            {priorities
-              .filter((item) => item.value !== "all")
-              .map((item) => (
-                <option key={item.value} value={item.value}>
-                  {item.label}
-                </option>
-              ))}
-          </LocalSelect>
-          <SimpleTextArea
-            label="Description"
-            required
-            rows={5}
-            value={form.description}
-            onChange={(event) =>
-              setForm({ ...form, description: event.target.value })
-            }
-            placeholder="Describe the issue and any relevant context"
-          />
-          <SimpleTextArea
-            label="Attachment URLs (optional, one per line)"
-            rows={2}
-            value={form.attachments}
-            onChange={(event) =>
-              setForm({ ...form, attachments: event.target.value })
-            }
-            placeholder="https://..."
-          />
-          <div className="modal-action">
-            <button
-              type="button"
-              className="btn btn-ghost"
-              onClick={() => modalRef.current?.close()}
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              className="btn btn-primary"
-              disabled={
-                createTicket.isPending ||
-                contactsQuery.isPending ||
-                contactsQuery.isError ||
-                !contactsQuery.data?.length
-              }
-            >
-              {createTicket.isPending ? "Creating..." : "Create ticket"}
-            </button>
-          </div>
-        </form>
-      </Modal>
+      <CreateTicketModal ref={modalRef} />
     </section>
   );
 }

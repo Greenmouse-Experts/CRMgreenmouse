@@ -6,6 +6,9 @@ import CustomTable from "@/components/tables/CustomTable";
 import type { Actions } from "@/components/tables/pop-up";
 import CompanySummary from "./-components/CompanySummary";
 import Modal, { type ModalHandle } from "@/components/DialogModal";
+import CreateTicketModal, {
+  type CreateTicketModalHandle,
+} from "@/components/support/CreateTicketModal";
 import PageHeader from "@/components/Headers/PageHeader";
 import PageLoader from "@/components/layout/PageLoader";
 import { useSearch } from "@/stores/data";
@@ -20,6 +23,7 @@ import {
   MapPin,
   Eye,
   Trash2,
+  LifeBuoy,
 } from "lucide-react";
 
 export const Route = createFileRoute("/tenant/contacts/companies/")({
@@ -32,6 +36,7 @@ function RouteComponent() {
   const searchProps = useSearch();
 
   const detailsModalRef = useRef<ModalHandle>(null);
+  const ticketModalRef = useRef<CreateTicketModalHandle>(null);
   const [selectedCompany, setSelectedCompany] = useState<Company | null>(null);
 
   const companies = query.data || [];
@@ -134,6 +139,20 @@ function RouteComponent() {
   ];
 
   const actions: Actions<Company>[] = [
+    {
+      key: "ticket",
+      label: "Create Ticket",
+      render: () => (
+        <span className="flex items-center gap-2">
+          <LifeBuoy className="size-4" /> Create Ticket
+        </span>
+      ),
+      action: (item: Company) =>
+        ticketModalRef.current?.open({
+          companyId: item.id,
+          companyName: item.name,
+        }),
+    },
     {
       key: "view",
       label: "View Details",
@@ -307,6 +326,7 @@ function RouteComponent() {
           </div>
         )}
       </Modal>
+      <CreateTicketModal ref={ticketModalRef} />
     </>
   );
 }

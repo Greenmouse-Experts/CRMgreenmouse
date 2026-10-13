@@ -19,8 +19,12 @@ import CustomerSummary from "./-components/CustomerSum";
 import PageHeader from "@/components/Headers/PageHeader";
 import PageLoader from "@/components/layout/PageLoader";
 import Modal, { type ModalHandle } from "@/components/DialogModal";
+import CreateTicketModal, {
+  type CreateTicketModalHandle,
+} from "@/components/support/CreateTicketModal";
 import { useContacts, useDeleteContact, type Contact } from "@/api/crmApi";
 import { toast } from "sonner";
+import { LifeBuoy } from "lucide-react";
 
 export const Route = createFileRoute("/tenant/contacts/customers/")({
   component: RouteComponent,
@@ -32,6 +36,7 @@ function RouteComponent() {
   const searchProps = useSearch();
 
   const detailsModalRef = useRef<ModalHandle>(null);
+  const ticketModalRef = useRef<CreateTicketModalHandle>(null);
   const [selectedContact, setSelectedContact] = useState<Contact | null>(null);
 
   const contacts = query.data || [];
@@ -138,6 +143,17 @@ function RouteComponent() {
   ];
 
   const actions: Actions<Contact>[] = [
+    {
+      key: "ticket",
+      label: "Create Ticket",
+      render: () => (
+        <span className="flex items-center gap-2">
+          <LifeBuoy className="size-4" /> Create Ticket
+        </span>
+      ),
+      action: (item: Contact) =>
+        ticketModalRef.current?.open({ contactId: item.id }),
+    },
     {
       key: "view",
       label: "View Details",
@@ -295,6 +311,7 @@ function RouteComponent() {
           </div>
         )}
       </Modal>
+      <CreateTicketModal ref={ticketModalRef} />
     </>
   );
 }

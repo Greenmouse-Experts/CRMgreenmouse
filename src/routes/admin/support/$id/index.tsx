@@ -10,6 +10,7 @@ import {
   ShieldCheck,
 } from "lucide-react";
 import { toast } from "sonner";
+import { uploadTicketAttachments } from "@/api/supportAttachments";
 import { useStaffs } from "@/api/adminApi";
 import {
   useAdminTicket,
@@ -23,6 +24,7 @@ import type { TicketPriority, TicketStatus } from "@/api/supportApi";
 import PageHeader from "@/components/Headers/PageHeader";
 import PageLoader from "@/components/layout/PageLoader";
 import SimpleTextArea from "@/components/inputs/SimpleTextArea";
+import UpdateImages from "@/components/images/UpdateImages";
 
 export const Route = createFileRoute("/admin/support/$id/")({
   component: RouteComponent,
@@ -60,7 +62,9 @@ function RouteComponent() {
   const replyMutation = useAdminTicketReply();
   const removeEscalationMutation = useAdminTicketRemoveEscalation();
   const [content, setContent] = useState("");
-  const [attachments, setAttachments] = useState("");
+  const [attachmentFiles, setAttachmentFiles] = useState<File[]>([]);
+  const [isUploading, setIsUploading] = useState(false);
+  const [pickerKey, setPickerKey] = useState(0);
   const [visibility, setVisibility] = useState<"public" | "private">("public");
   const ticket = ticketQuery.data;
 
@@ -97,22 +101,28 @@ function RouteComponent() {
       return;
     }
     try {
+      setIsUploading(true);
+      const attachments = await uploadTicketAttachments(attachmentFiles);
       await replyMutation.mutateAsync({
         id,
         content: content.trim(),
         visibility,
-        attachments: attachments
-          .split(/\n/)
-          .map((url) => url.trim())
-          .filter(Boolean),
+        attachments,
       });
       setContent("");
-      setAttachments("");
+      setAttachmentFiles([]);
+      setPickerKey((key) => key + 1);
       toast.success(
         visibility === "private" ? "Private note added." : "Public reply sent.",
       );
     } catch (error: any) {
-      toast.error(error?.response?.data?.message || "Could not send message.");
+      toast.error(
+        error?.response?.data?.message ||
+          error?.message ||
+          "Could not send message.",
+      );
+    } finally {
+      setIsUploading(false);
     }
   };
   const removeEscalation = async () => {
@@ -246,25 +256,31 @@ function RouteComponent() {
                         : "Write an update for the tenant..."
                     }
                   />
-                  <SimpleTextArea
-                    label="Attachment URLs (optional, one per line)"
-                    rows={2}
-                    value={attachments}
-                    onChange={(event) => setAttachments(event.target.value)}
-                    placeholder="https://..."
-                  />
+                  <div>
+                    <p className="text-sm font-medium">
+                      Attachments (optional)
+                    </p>
+                    <UpdateImages
+                      key={pickerKey}
+                      setNew={setAttachmentFiles}
+                      accept="image/*,application/pdf,video/*"
+                      fileMode
+                    />
+                  </div>
                   <div className="flex justify-end">
                     <button
                       type="submit"
                       className="btn btn-primary"
-                      disabled={replyMutation.isPending}
+                      disabled={replyMutation.isPending || isUploading}
                     >
                       <Send className="size-4" />{" "}
-                      {replyMutation.isPending
-                        ? "Sending..."
-                        : visibility === "private"
-                          ? "Add private note"
-                          : "Send public reply"}
+                      {isUploading
+                        ? "Uploading..."
+                        : replyMutation.isPending
+                          ? "Sending..."
+                          : visibility === "private"
+                            ? "Add private note"
+                            : "Send public reply"}
                     </button>
                   </div>
                 </form>

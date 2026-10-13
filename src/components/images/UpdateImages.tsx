@@ -1,24 +1,29 @@
-import { XCircle, UploadCloud } from "lucide-react";
+import { FileText, XCircle, UploadCloud } from "lucide-react";
 import { useEffect, useState, useId } from "react";
 
 interface UpdateImagesProps {
   images?: { url: string; path: string }[];
-  setNew: (item: any) => any;
-  setPrev?: (item: any) => any;
+  setNew: (files: File[]) => void;
+  setPrev?: (images: { url: string; path: string }[]) => void;
+  accept?: string;
+  fileMode?: boolean;
 }
 
+const emptyImages: { url: string; path: string }[] = [];
+
 export default function UpdateImages({
-  images = [],
+  images = emptyImages,
   setNew,
   setPrev,
+  accept = "image/*",
+  fileMode = false,
 }: UpdateImagesProps) {
   const inputId = useId();
-  const [prevImages, setPrevImages] = useState<{ url: string; path: string }[]>(
-    images || [],
-  );
+  const [prevImages, setPrevImages] =
+    useState<{ url: string; path: string }[]>(images);
 
   useEffect(() => {
-    setPrevImages(images || []);
+    setPrevImages(images);
   }, [images]);
 
   const [newImages, setNewImages] = useState<File[]>([]);
@@ -30,6 +35,7 @@ export default function UpdateImages({
       const updated = [...newImages, ...added];
       setNewImages(updated);
       setNew(updated);
+      e.target.value = "";
     }
   };
 
@@ -54,7 +60,7 @@ export default function UpdateImages({
         <div className="min-w-0 w-full h-32 flex flex-col justify-center items-center border-2 border-dashed border-base-300 rounded-xl p-2 hover:border-primary transition-colors duration-200 bg-base-200/20">
           <input
             type="file"
-            accept="image/*"
+            accept={accept}
             className="hidden"
             id={inputId}
             onChange={handleFileChange}
@@ -66,10 +72,10 @@ export default function UpdateImages({
           >
             <UploadCloud className="h-7 w-7 text-primary/70 mb-1" />
             <span className="text-xs font-semibold text-base-content leading-tight">
-              Upload Images
+              {fileMode ? "Add attachments" : "Upload Images"}
             </span>
             <span className="text-[10px] text-base-content/50 mt-0.5">
-              Click or drag
+              {fileMode ? "Images, PDFs, or videos" : "Click or drag"}
             </span>
           </label>
         </div>
@@ -80,11 +86,25 @@ export default function UpdateImages({
             key={image.path || index}
             className="relative min-w-0 w-full h-32 rounded-xl overflow-hidden border border-base-200 shadow-sm group bg-base-200/40"
           >
-            <img
-              className="size-full object-cover"
-              src={image.url}
-              alt={`Existing image ${index + 1}`}
-            />
+            {fileMode ? (
+              <a
+                href={image.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex size-full flex-col items-center justify-center gap-2 p-3 text-center hover:text-primary"
+              >
+                <FileText className="size-7" aria-hidden="true" />
+                <span className="w-full truncate text-xs">
+                  Attachment {index + 1}
+                </span>
+              </a>
+            ) : (
+              <img
+                className="size-full object-cover"
+                src={image.url}
+                alt={`Existing image ${index + 1}`}
+              />
+            )}
             <button
               type="button"
               className="btn btn-circle btn-error btn-xs absolute right-1.5 top-1.5 shadow z-10 opacity-90 hover:opacity-100 transition-opacity"
@@ -102,11 +122,20 @@ export default function UpdateImages({
             key={`${image.name}-${index}`}
             className="relative min-w-0 w-full h-32 rounded-xl overflow-hidden border border-base-200 shadow-sm group bg-base-200/40"
           >
-            <img
-              className="size-full object-cover"
-              src={URL.createObjectURL(image)}
-              alt={`New image ${index + 1}`}
-            />
+            {fileMode ? (
+              <div className="flex size-full flex-col items-center justify-center gap-2 p-3 text-center">
+                <FileText className="size-7 text-primary" aria-hidden="true" />
+                <span className="w-full truncate text-xs" title={image.name}>
+                  {image.name}
+                </span>
+              </div>
+            ) : (
+              <img
+                className="size-full object-cover"
+                src={URL.createObjectURL(image)}
+                alt={`New image ${index + 1}`}
+              />
+            )}
             <button
               type="button"
               className="btn btn-circle btn-error btn-xs absolute right-1.5 top-1.5 shadow z-10 opacity-90 hover:opacity-100 transition-opacity"

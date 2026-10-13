@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import {
   ArrowLeft,
@@ -24,12 +24,14 @@ import {
 } from "@/api/supportApi";
 import { useStaffs } from "@/api/tenantApi";
 import { useContacts } from "@/api/crmApi";
+import { uploadTicketAttachments } from "@/api/supportAttachments";
 import PageHeader from "@/components/Headers/PageHeader";
 import PageLoader from "@/components/layout/PageLoader";
 import Modal, { type ModalHandle } from "@/components/DialogModal";
 import SimpleInput from "@/components/inputs/SimpleInput";
 import SimpleTextArea from "@/components/inputs/SimpleTextArea";
 import LocalSelect from "@/components/inputs/LocalSelect";
+import UpdateImages from "@/components/images/UpdateImages";
 
 export const Route = createFileRoute("/tenant/support/$id/")({
   component: RouteComponent,
@@ -76,10 +78,19 @@ function RouteComponent() {
     contactId: "",
     description: "",
     priority: "medium" as TicketPriority,
-    attachments: "",
   });
   const [replyText, setReplyText] = useState("");
-  const [replyAttachments, setReplyAttachments] = useState("");
+  const [replyFiles, setReplyFiles] = useState<File[]>([]);
+  const [editFiles, setEditFiles] = useState<File[]>([]);
+  const [existingAttachments, setExistingAttachments] = useState<string[]>([]);
+  const [isUploadingReply, setIsUploadingReply] = useState(false);
+  const [isUploadingEdit, setIsUploadingEdit] = useState(false);
+  const [replyPickerKey, setReplyPickerKey] = useState(0);
+  const [editPickerKey, setEditPickerKey] = useState(0);
+  const editImages = useMemo(
+    () => existingAttachments.map((url) => ({ url, path: url })),
+    [existingAttachments],
+  );
   const [escalationReason, setEscalationReason] = useState("");
   const [sharedWithPlatform, setSharedWithPlatform] = useState(false);
   const ticket = ticketQuery.data;
@@ -93,8 +104,10 @@ function RouteComponent() {
       contactId: item.contactId || "",
       description: item.description,
       priority: item.priority,
-      attachments: item.attachments?.join("\n") || "",
     });
+    setExistingAttachments(item.attachments || []);
+    setEditFiles([]);
+    setEditPickerKey((key) => key + 1);
     editModalRef.current?.open();
   };
 
@@ -102,21 +115,26 @@ function RouteComponent() {
     event.preventDefault();
     if (!ticket || !edit.subject.trim() || !edit.description.trim()) return;
     try {
+      setIsUploadingEdit(true);
+      const uploaded = await uploadTicketAttachments(editFiles);
       await updateTicket.mutateAsync({
         id: ticket.id,
         subject: edit.subject.trim(),
         description: edit.description.trim(),
         priority: edit.priority,
         contactId: edit.contactId || undefined,
-        attachments: edit.attachments
-          .split(/\n/)
-          .map((url) => url.trim())
-          .filter(Boolean),
+        attachments: [...existingAttachments, ...uploaded],
       });
       toast.success("Ticket updated.");
       editModalRef.current?.close();
     } catch (error: any) {
-      toast.error(error?.response?.data?.message || "Could not update ticket.");
+      toast.error(
+        error?.response?.data?.message ||
+          error?.message ||
+          "Could not update ticket.",
+      );
+    } finally {
+      setIsUploadingEdit(false);
     }
   };
 
@@ -147,19 +165,25 @@ function RouteComponent() {
       return;
     }
     try {
+      setIsUploadingReply(true);
+      const attachments = await uploadTicketAttachments(replyFiles);
       await reply.mutateAsync({
         id,
         content,
-        attachments: replyAttachments
-          .split(/\n/)
-          .map((url) => url.trim())
-          .filter(Boolean),
+        attachments,
       });
       setReplyText("");
-      setReplyAttachments("");
+      setReplyFiles([]);
+      setReplyPickerKey((key) => key + 1);
       toast.success("Reply added.");
     } catch (error: any) {
-      toast.error(error?.response?.data?.message || "Could not send reply.");
+      toast.error(
+        error?.response?.data?.message ||
+          error?.message ||
+          "Could not send reply.",
+      );
+    } finally {
+      setIsUploadingReply(false);
     }
   };
 
@@ -292,23 +316,29 @@ function RouteComponent() {
                     onChange={(event) => setReplyText(event.target.value)}
                     placeholder="Write an update for this ticket..."
                   />
-                  <SimpleTextArea
-                    label="Attachment URLs (optional, one per line)"
-                    rows={2}
-                    value={replyAttachments}
-                    onChange={(event) =>
-                      setReplyAttachments(event.target.value)
-                    }
-                    placeholder="https://..."
-                  />
+                  <div>
+                    <p className="text-sm font-medium">
+                      Attachments (optional)
+                    </p>
+                    <UpdateImages
+                      key={replyPickerKey}
+                      setNew={setReplyFiles}
+                      accept="image/*,application/pdf,video/*"
+                      fileMode
+                    />
+                  </div>
                   <div className="flex justify-end">
                     <button
                       className="btn btn-primary"
                       type="submit"
-                      disabled={reply.isPending}
+                      disabled={reply.isPending || isUploadingReply}
                     >
                       <Send className="size-4" />{" "}
-                      {reply.isPending ? "Sending..." : "Send reply"}
+                      {isUploadingReply
+                        ? "Uploading..."
+                        : reply.isPending
+                          ? "Sending..."
+                          : "Send reply"}
                     </button>
                   </div>
                 </form>
@@ -494,14 +524,19 @@ function RouteComponent() {
               setEdit({ ...edit, description: event.target.value })
             }
           />
-          <SimpleTextArea
-            label="Attachment URLs (optional, one per line)"
-            rows={2}
-            value={edit.attachments}
-            onChange={(event) =>
-              setEdit({ ...edit, attachments: event.target.value })
-            }
-          />
+          <div>
+            <p className="text-sm font-medium">Attachments (optional)</p>
+            <UpdateImages
+              key={editPickerKey}
+              images={editImages}
+              setNew={setEditFiles}
+              setPrev={(images) =>
+                setExistingAttachments(images.map((image) => image.url))
+              }
+              accept="image/*,application/pdf,video/*"
+              fileMode
+            />
+          </div>
           <div className="modal-action">
             <button
               type="button"
@@ -513,9 +548,13 @@ function RouteComponent() {
             <button
               type="submit"
               className="btn btn-primary"
-              disabled={updateTicket.isPending}
+              disabled={updateTicket.isPending || isUploadingEdit}
             >
-              {updateTicket.isPending ? "Saving..." : "Save changes"}
+              {isUploadingEdit
+                ? "Uploading..."
+                : updateTicket.isPending
+                  ? "Saving..."
+                  : "Save changes"}
             </button>
           </div>
         </form>
