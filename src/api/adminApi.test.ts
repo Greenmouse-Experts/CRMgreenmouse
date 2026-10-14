@@ -1,5 +1,40 @@
 import { describe, expect, it } from "vitest";
-import { parseTenantRevenueTrend } from "./adminApi";
+import { parseAdminRevenueTrend, parseTenantRevenueTrend } from "./adminApi";
+
+describe("parseAdminRevenueTrend", () => {
+  it("reads the contracted MRR movement response", () => {
+    expect(
+      parseAdminRevenueTrend({
+        trend: [
+          { month: "2025-11", added: 0, lost: 0, net: 0 },
+          { month: "2026-06", added: 50000, lost: 0, net: 50000 },
+          { month: "2026-09", added: 29166.67, lost: 0, net: 29166.67 },
+        ],
+        note: "Contracted MRR movement, not collected cash.",
+      }),
+    ).toEqual({
+      trend: [
+        { month: "2025-11", added: 0, lost: 0, net: 0 },
+        { month: "2026-06", added: 50000, lost: 0, net: 50000 },
+        { month: "2026-09", added: 29166.67, lost: 0, net: 29166.67 },
+      ],
+      note: "Contracted MRR movement, not collected cash.",
+    });
+  });
+
+  it("reads an API envelope and rejects unrelated report rows", () => {
+    expect(
+      parseAdminRevenueTrend({
+        data: { trend: [{ month: "2026-10", added: 10, lost: 2, net: 8 }] },
+      }).trend,
+    ).toEqual([{ month: "2026-10", added: 10, lost: 2, net: 8 }]);
+    expect(() =>
+      parseAdminRevenueTrend({
+        trend: [{ month: "2026-10", invoiced: 10, received: 8 }],
+      }),
+    ).toThrow("Revenue trend format is not supported.");
+  });
+});
 
 describe("parseTenantRevenueTrend", () => {
   it("reads monthly records inside an API envelope", () => {

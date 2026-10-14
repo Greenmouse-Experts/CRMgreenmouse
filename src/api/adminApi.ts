@@ -43,7 +43,9 @@ export const useDashboardStats = () => {
   return useQuery<DashboardStats>({
     queryKey: ["dashboard", "stats"],
     queryFn: async () => {
-      const { data } = await apiClient.get<DashboardStats>("/admins/dashboard/stats");
+      const { data } = await apiClient.get<DashboardStats>(
+        "/admins/dashboard/stats",
+      );
       return data;
     },
   });
@@ -53,8 +55,9 @@ export const useDashboardBalance = () => {
   return useQuery<DashboardBalance>({
     queryKey: ["dashboard", "balance"],
     queryFn: async () => {
-      const { data } =
-        await apiClient.get<DashboardBalance>("/admins/dashboard/balance");
+      const { data } = await apiClient.get<DashboardBalance>(
+        "/admins/dashboard/balance",
+      );
       return data;
     },
   });
@@ -162,7 +165,9 @@ export const useAdminTenantStats = () => {
   return useQuery<TenantStats>({
     queryKey: ["admin", "tenants", "stats"],
     queryFn: async () => {
-      const { data } = await apiClient.get<TenantStats>("/admins/tenants/stats");
+      const { data } = await apiClient.get<TenantStats>(
+        "/admins/tenants/stats",
+      );
       return data;
     },
   });
@@ -337,7 +342,9 @@ export const useAdminSubscriptionFeatures = () => {
   return useQuery<any>({
     queryKey: ["admin", "subscriptions", "features"],
     queryFn: async () => {
-      const { data } = await apiClient.get<any>("/admins/subscriptions/features");
+      const { data } = await apiClient.get<any>(
+        "/admins/subscriptions/features",
+      );
       if (Array.isArray(data)) {
         return data;
       }
@@ -401,7 +408,10 @@ export const useChangeAdminPassword = () => {
       newPassword: string;
       confirmNewPassword: string;
     }) => {
-      const { data } = await apiClient.patch("/admins/change-password", payload);
+      const { data } = await apiClient.patch(
+        "/admins/change-password",
+        payload,
+      );
       return data;
     },
   });
@@ -615,7 +625,9 @@ export const useUpdateRole = () => {
       });
       if (permissions) {
         try {
-          await apiClient.patch(`/admins/roles/${id}/permissions`, { permissions });
+          await apiClient.patch(`/admins/roles/${id}/permissions`, {
+            permissions,
+          });
         } catch {
           // ignore if already handled
         }
@@ -638,9 +650,12 @@ export const useAssignRolePermissions = () => {
       id: string;
       permissions: string[];
     }) => {
-      const { data } = await apiClient.patch<any>(`/admins/roles/${id}/permissions`, {
-        permissions,
-      });
+      const { data } = await apiClient.patch<any>(
+        `/admins/roles/${id}/permissions`,
+        {
+          permissions,
+        },
+      );
       return data?.data || data;
     },
     onSuccess: () => {
@@ -725,9 +740,14 @@ export interface PlatformOverviewSummary {
 
 export interface RevenueTrendPoint {
   month: string;
-  mrrAdded: number;
-  mrrLost: number;
-  netMrr: number;
+  added: number;
+  lost: number;
+  net: number;
+}
+
+export interface RevenueTrend {
+  trend: RevenueTrendPoint[];
+  note?: string;
 }
 
 export interface PlanDistributionItem {
@@ -762,14 +782,44 @@ export const useAdminPlatformOverview = () => {
   });
 };
 
+export function parseAdminRevenueTrend(response: unknown): RevenueTrend {
+  const outer = asObject(response);
+  const payload = asObject(outer?.data) ?? outer;
+  if (!payload || !Array.isArray(payload.trend)) {
+    throw new Error("Revenue trend format is not supported.");
+  }
+
+  const trend = payload.trend.map((row): RevenueTrendPoint => {
+    const point = asObject(row);
+    const added = amount(point?.added);
+    const lost = amount(point?.lost);
+    const net = amount(point?.net);
+    if (
+      typeof point?.month !== "string" ||
+      !/^\d{4}-(0[1-9]|1[0-2])$/.test(point.month) ||
+      added === null ||
+      lost === null ||
+      net === null
+    ) {
+      throw new Error("Revenue trend format is not supported.");
+    }
+    return { month: point.month, added, lost, net };
+  });
+
+  return {
+    trend,
+    ...(typeof payload.note === "string" ? { note: payload.note } : {}),
+  };
+}
+
 export const useAdminRevenueTrend = () => {
-  return useQuery<RevenueTrendPoint[]>({
+  return useQuery<RevenueTrend>({
     queryKey: ["admin", "overview", "revenue-trend"],
     queryFn: async () => {
-      const { data } = await apiClient.get<any>("/admins/overview/revenue-trend");
-      if (Array.isArray(data)) return data;
-      if (Array.isArray(data?.data)) return data.data;
-      return [];
+      const { data } = await apiClient.get<unknown>(
+        "/admins/overview/revenue-trend",
+      );
+      return parseAdminRevenueTrend(data);
     },
   });
 };
@@ -898,7 +948,9 @@ export const useAdminPlanDistribution = () => {
   return useQuery<PlanDistributionItem[]>({
     queryKey: ["admin", "overview", "plan-distribution"],
     queryFn: async () => {
-      const { data } = await apiClient.get<any>("/admins/overview/plan-distribution");
+      const { data } = await apiClient.get<any>(
+        "/admins/overview/plan-distribution",
+      );
       if (Array.isArray(data)) return data;
       if (Array.isArray(data?.data)) return data.data;
       return [];
@@ -910,7 +962,9 @@ export const useAdminTrialFunnel = () => {
   return useQuery<TrialFunnelData>({
     queryKey: ["admin", "overview", "trial-funnel"],
     queryFn: async () => {
-      const { data } = await apiClient.get<any>("/admins/overview/trial-funnel");
+      const { data } = await apiClient.get<any>(
+        "/admins/overview/trial-funnel",
+      );
       return data?.data || data;
     },
   });
@@ -933,7 +987,9 @@ export const useAdminTenantHistory = (tenantId?: string) => {
     queryKey: ["admin", "tenants", tenantId, "history"],
     queryFn: async () => {
       if (!tenantId) throw new Error("Tenant ID required");
-      const { data } = await apiClient.get<any>(`/admins/tenants/${tenantId}/history`);
+      const { data } = await apiClient.get<any>(
+        `/admins/tenants/${tenantId}/history`,
+      );
       if (Array.isArray(data)) return data;
       if (Array.isArray(data?.data)) return data.data;
       return [];
@@ -947,7 +1003,9 @@ export const useAdminTenantLoginActivity = (tenantId?: string) => {
     queryKey: ["admin", "tenants", tenantId, "login-activity"],
     queryFn: async () => {
       if (!tenantId) throw new Error("Tenant ID required");
-      const { data } = await apiClient.get<any>(`/admins/tenants/${tenantId}/login-activity`);
+      const { data } = await apiClient.get<any>(
+        `/admins/tenants/${tenantId}/login-activity`,
+      );
       if (Array.isArray(data)) return data;
       if (Array.isArray(data?.data)) return data.data;
       return [];
@@ -961,7 +1019,9 @@ export const useAdminTenantOnboarding = (tenantId?: string) => {
     queryKey: ["admin", "tenants", tenantId, "onboarding"],
     queryFn: async () => {
       if (!tenantId) throw new Error("Tenant ID required");
-      const { data } = await apiClient.get<any>(`/admins/tenants/${tenantId}/onboarding`);
+      const { data } = await apiClient.get<any>(
+        `/admins/tenants/${tenantId}/onboarding`,
+      );
       return data?.data || data;
     },
     enabled: !!tenantId,
@@ -973,7 +1033,9 @@ export const useAdminTenantReminders = (tenantId?: string) => {
     queryKey: ["admin", "tenants", tenantId, "reminders"],
     queryFn: async () => {
       if (!tenantId) throw new Error("Tenant ID required");
-      const { data } = await apiClient.get<any>(`/admins/tenants/${tenantId}/reminders`);
+      const { data } = await apiClient.get<any>(
+        `/admins/tenants/${tenantId}/reminders`,
+      );
       return data?.data || data;
     },
     enabled: !!tenantId,
@@ -1076,7 +1138,9 @@ export const useAdminCrossCompanies = (params?: any) => {
   return useQuery<any[]>({
     queryKey: ["admin", "cross", "companies", params],
     queryFn: async () => {
-      const { data } = await apiClient.get<any>("/admins/companies", { params });
+      const { data } = await apiClient.get<any>("/admins/companies", {
+        params,
+      });
       if (Array.isArray(data)) return data;
       if (Array.isArray(data?.data)) return data.data;
       return [];
@@ -1149,7 +1213,9 @@ export const useAdminCrossInvoicePayments = (invoiceId?: string) => {
     queryKey: ["admin", "cross", "invoices", invoiceId, "payments"],
     queryFn: async () => {
       if (!invoiceId) throw new Error("Invoice ID required");
-      const { data } = await apiClient.get<any>(`/admins/invoices/${invoiceId}/payments`);
+      const { data } = await apiClient.get<any>(
+        `/admins/invoices/${invoiceId}/payments`,
+      );
       if (Array.isArray(data)) return data;
       if (Array.isArray(data?.data)) return data.data;
       return [];
@@ -1163,7 +1229,9 @@ export const useAdminCrossInvoiceReceipts = (invoiceId?: string) => {
     queryKey: ["admin", "cross", "invoices", invoiceId, "receipts"],
     queryFn: async () => {
       if (!invoiceId) throw new Error("Invoice ID required");
-      const { data } = await apiClient.get<any>(`/admins/invoices/${invoiceId}/receipts`);
+      const { data } = await apiClient.get<any>(
+        `/admins/invoices/${invoiceId}/receipts`,
+      );
       if (Array.isArray(data)) return data;
       if (Array.isArray(data?.data)) return data.data;
       return [];
@@ -1272,7 +1340,9 @@ export const useAdminCrossPipelines = (params?: any) => {
   return useQuery<any[]>({
     queryKey: ["admin", "cross", "pipelines", params],
     queryFn: async () => {
-      const { data } = await apiClient.get<any>("/admins/pipelines", { params });
+      const { data } = await apiClient.get<any>("/admins/pipelines", {
+        params,
+      });
       if (Array.isArray(data)) return data;
       if (Array.isArray(data?.data)) return data.data;
       return [];
@@ -1296,7 +1366,9 @@ export const useAdminCrossNotifications = (params?: any) => {
   return useQuery<any[]>({
     queryKey: ["admin", "cross", "notifications", params],
     queryFn: async () => {
-      const { data } = await apiClient.get<any>("/admins/notifications", { params });
+      const { data } = await apiClient.get<any>("/admins/notifications", {
+        params,
+      });
       if (Array.isArray(data)) return data;
       if (Array.isArray(data?.data)) return data.data;
       return [];
@@ -1308,10 +1380,15 @@ export const useAdminCrossUnreadNotificationsCount = (tenantId?: string) => {
   return useQuery<number>({
     queryKey: ["admin", "cross", "notifications", "unread-count", tenantId],
     queryFn: async () => {
-      const { data } = await apiClient.get<any>("/admins/notifications/unread-count", {
-        params: tenantId ? { tenantId } : undefined,
-      });
-      return typeof data?.unreadCount === "number" ? data.unreadCount : Number(data?.data ?? data ?? 0);
+      const { data } = await apiClient.get<any>(
+        "/admins/notifications/unread-count",
+        {
+          params: tenantId ? { tenantId } : undefined,
+        },
+      );
+      return typeof data?.unreadCount === "number"
+        ? data.unreadCount
+        : Number(data?.data ?? data ?? 0);
     },
   });
 };
@@ -1320,7 +1397,9 @@ export const useAdminCrossImportJobs = (params?: any) => {
   return useQuery<any[]>({
     queryKey: ["admin", "cross", "import", "jobs", params],
     queryFn: async () => {
-      const { data } = await apiClient.get<any>("/admins/import/jobs", { params });
+      const { data } = await apiClient.get<any>("/admins/import/jobs", {
+        params,
+      });
       if (Array.isArray(data)) return data;
       if (Array.isArray(data?.data)) return data.data;
       return [];
@@ -1387,7 +1466,6 @@ export const useAdminCrossService = (id?: string) => {
     enabled: !!id,
   });
 };
-
 
 export const useAdminCrossCategories = () => {
   return useQuery<any[]>({
