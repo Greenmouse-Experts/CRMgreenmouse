@@ -1,17 +1,10 @@
 import { createFileRoute, Outlet } from "@tanstack/react-router";
 import {
   LayoutDashboard,
-  Package,
-  ReceiptText,
   Settings,
-  ShoppingCart,
-  CreditCard,
-  Shirt,
   Tag,
   CheckCircle,
   Users,
-  QuoteIcon,
-  List,
   Building2,
   Layers,
   Sparkles,

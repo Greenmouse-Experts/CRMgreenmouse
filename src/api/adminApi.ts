@@ -146,8 +146,14 @@ export const useAdminTenants = (params?: TenantFilterParams) => {
       const url = queryString
         ? `/admins/tenants?${queryString}`
         : "/admins/tenants";
-      const { data } = await apiClient.get<Tenant[]>(url);
-      return data;
+      const { data } = await apiClient.get<unknown>(url);
+      if (Array.isArray(data)) return data as Tenant[];
+      const payload = asObject(data)?.data ?? data;
+      if (Array.isArray(payload)) return payload as Tenant[];
+      const nested = asObject(payload);
+      if (Array.isArray(nested?.data)) return nested.data as Tenant[];
+      if (Array.isArray(nested?.tenants)) return nested.tenants as Tenant[];
+      throw new Error("Tenant list format is not supported.");
     },
   });
 };
@@ -764,6 +770,126 @@ export const useAdminRevenueTrend = () => {
       if (Array.isArray(data)) return data;
       if (Array.isArray(data?.data)) return data.data;
       return [];
+    },
+  });
+};
+
+export interface TenantRevenueMonth {
+  month: string;
+  invoiced: number;
+  received: number;
+}
+
+export interface TenantRevenueTrend {
+  months: TenantRevenueMonth[];
+  outstandingTotal?: number;
+  currency?: string;
+}
+
+const asObject = (value: unknown): Record<string, unknown> | null =>
+  value !== null && typeof value === "object" && !Array.isArray(value)
+    ? (value as Record<string, unknown>)
+    : null;
+
+const amount = (value: unknown): number | null => {
+  if (value === null || value === undefined || value === "") return null;
+  const parsed = Number(value);
+  return Number.isFinite(parsed) ? parsed : null;
+};
+
+const firstAmount = (record: Record<string, unknown>, keys: string[]) => {
+  for (const key of keys) {
+    const parsed = amount(record[key]);
+    if (parsed !== null) return parsed;
+  }
+  return null;
+};
+
+export function parseTenantRevenueTrend(response: unknown): TenantRevenueTrend {
+  let payload: unknown = response;
+  for (let depth = 0; depth < 3; depth += 1) {
+    const object = asObject(payload);
+    if (!object || object.data === undefined) break;
+    payload = object.data;
+  }
+
+  const report = asObject(payload);
+  const rows = Array.isArray(payload)
+    ? payload
+    : [report?.monthly, report?.trend, report?.points, report?.months].find(
+        Array.isArray,
+      );
+
+  if (!rows) throw new Error("Revenue report format is not supported.");
+
+  const months = rows.map((row, index): TenantRevenueMonth => {
+    const item = asObject(row);
+    const parallelMonths = Array.isArray(report?.months) ? report.months : [];
+    const month =
+      item?.month ??
+      item?.label ??
+      item?.period ??
+      item?.name ??
+      parallelMonths[index];
+    const invoiced = item
+      ? firstAmount(item, [
+          "invoiced",
+          "invoicedAmount",
+          "totalInvoiced",
+          "invoiceTotal",
+        ])
+      : amount(
+          Array.isArray(report?.invoiced) ? report.invoiced[index] : undefined,
+        );
+    const received = item
+      ? firstAmount(item, [
+          "received",
+          "receivedAmount",
+          "totalReceived",
+          "paid",
+        ])
+      : amount(
+          Array.isArray(report?.received) ? report.received[index] : undefined,
+        );
+
+    if (month === undefined || (invoiced === null && received === null)) {
+      throw new Error("Revenue report format is not supported.");
+    }
+    return {
+      month: String(month),
+      invoiced: invoiced ?? 0,
+      received: received ?? 0,
+    };
+  });
+
+  const outstandingTotal = report
+    ? firstAmount(report, [
+        "outstandingTotal",
+        "totalOutstanding",
+        "outstanding",
+      ])
+    : null;
+  return {
+    months,
+    ...(outstandingTotal !== null ? { outstandingTotal } : {}),
+    ...(typeof report?.currency === "string"
+      ? { currency: report.currency }
+      : {}),
+  };
+}
+
+export const useAdminTenantRevenueTrend = (tenantId: string, year: number) => {
+  return useQuery<TenantRevenueTrend>({
+    queryKey: ["admin", "reports", "revenue-trend", tenantId, year],
+    enabled: Boolean(tenantId),
+    queryFn: async () => {
+      const { data } = await apiClient.get<unknown>(
+        "/admins/reports/revenue-trend",
+        {
+          params: { tenantId, year },
+        },
+      );
+      return parseTenantRevenueTrend(data);
     },
   });
 };
