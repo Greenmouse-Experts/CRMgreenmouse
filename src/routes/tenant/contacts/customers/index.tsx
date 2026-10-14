@@ -123,7 +123,7 @@ function RouteComponent() {
               : "badge-ghost";
         return (
           <span
-            className={`badge badge-sm uppercase font-semibold text-[10px] ${badgeClass}`}
+            className={`ring badge badge-sm uppercase font-semibold text-[10px] ${badgeClass}`}
           >
             {status || "Active"}
           </span>
