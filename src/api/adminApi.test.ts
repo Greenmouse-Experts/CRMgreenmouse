@@ -1,5 +1,26 @@
 import { describe, expect, it } from "vitest";
-import { parseAdminRevenueTrend, parseTenantRevenueTrend } from "./adminApi";
+import {
+  parseAdminRevenueTrend,
+  parseTenantRevenueTrend,
+  tenantRelatedRows,
+} from "./adminApi";
+
+describe("tenantRelatedRows", () => {
+  it("reads paginated history and login activity inside API envelopes", () => {
+    expect(
+      tenantRelatedRows({
+        data: { data: { items: [{ id: "change-1", action: "upgraded" }] } },
+      }),
+    ).toEqual([{ id: "change-1", action: "upgraded" }]);
+    expect(tenantRelatedRows({ data: { activity: [] } })).toEqual([]);
+  });
+
+  it("reports unsupported responses instead of showing a false empty state", () => {
+    expect(() => tenantRelatedRows({ data: { total: 4 } })).toThrow(
+      "Tenant activity format is not supported.",
+    );
+  });
+});
 
 describe("parseAdminRevenueTrend", () => {
   it("reads the contracted MRR movement response", () => {

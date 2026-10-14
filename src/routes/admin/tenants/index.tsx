@@ -1,5 +1,5 @@
 import { useState, useRef } from "react";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import {
   useAdminTenants,
   useAdminTenantStats,
@@ -26,6 +26,7 @@ export const Route = createFileRoute("/admin/tenants/")({
 });
 
 function RouteComponent() {
+  const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [subFilter, setSubFilter] = useState("all");
@@ -45,7 +46,6 @@ function RouteComponent() {
   const toggleStatus = useToggleTenantStatus();
   const assignSubscription = useAssignTenantSubscription();
 
-  const detailsModalRef = useRef<ModalHandle>(null);
   const planModalRef = useRef<ModalHandle>(null);
 
   const handleToggleStatus = async (tenant: Tenant) => {
@@ -104,9 +104,13 @@ function RouteComponent() {
             <Building2 className="size-5" />
           </div>
           <div>
-            <div className="font-semibold text-base-content leading-tight">
+            <Link
+              to="/admin/tenants/$id"
+              params={{ id: item.id }}
+              className="font-semibold text-base-content leading-tight hover:text-primary hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+            >
               {item.companyName || "Unnamed Business"}
-            </div>
+            </Link>
             <div className="text-sm text-base-content/60">{item.email}</div>
           </div>
         </div>
@@ -191,8 +195,7 @@ function RouteComponent() {
       key: "view-details",
       label: "View Details",
       action: (item: Tenant) => {
-        setSelectedTenant(item);
-        detailsModalRef.current?.open();
+        navigate({ to: "/admin/tenants/$id", params: { id: item.id } });
       },
     },
     {
@@ -298,68 +301,6 @@ function RouteComponent() {
           )}
         </PageLoader>
       </SimpleContainer>
-
-      {/* Details Modal */}
-      <Modal
-        ref={detailsModalRef}
-        title="Tenant Account Details"
-        actions={
-          <button
-            type="button"
-            onClick={() => detailsModalRef.current?.close()}
-            className="btn btn-sm btn-ghost"
-          >
-            Close
-          </button>
-        }
-      >
-        {selectedTenant && (
-          <div className="space-y-4">
-            <div className="p-4 rounded-xl bg-base-200/50 space-y-3">
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-semibold text-base-content/60">Company Name</span>
-                <span className="font-semibold text-base-content">{selectedTenant.companyName}</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-semibold text-base-content/60">Email</span>
-                <span className="text-sm">{selectedTenant.email}</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-semibold text-base-content/60">Phone</span>
-                <span className="text-sm">{selectedTenant.phoneNumber || "Not provided"}</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-semibold text-base-content/60">Account Status</span>
-                <span
-                  className={`badge badge-md ${
-                    selectedTenant.status === "active" ? "badge-success" : "badge-error"
-                  }`}
-                >
-                  {selectedTenant.status}
-                </span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-semibold text-base-content/60">Subscription</span>
-                <span className="badge badge-md badge-warning">{selectedTenant.subscriptionStatus}</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-semibold text-base-content/60">Email Verified</span>
-                <span className="text-sm">{selectedTenant.isEmailVerified ? "Yes" : "No"}</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-semibold text-base-content/60">Onboarded</span>
-                <span className="text-sm">{selectedTenant.isOnboarded ? "Completed" : "Pending"}</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-semibold text-base-content/60">Tenant ID</span>
-                <span className="text-sm font-mono bg-base-100 px-2 py-0.5 rounded border border-base-300">
-                  {selectedTenant.id}
-                </span>
-              </div>
-            </div>
-          </div>
-        )}
-      </Modal>
 
       {/* Assign Subscription Modal */}
       <Modal

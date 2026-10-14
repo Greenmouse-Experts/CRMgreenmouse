@@ -178,8 +178,13 @@ export const useAdminTenant = (id?: string) => {
     queryKey: ["admin", "tenants", id],
     queryFn: async () => {
       if (!id) throw new Error("Tenant ID required");
-      const { data } = await apiClient.get<Tenant>(`/admins/tenants/${id}`);
-      return data;
+      const { data } = await apiClient.get<unknown>(`/admins/tenants/${id}`);
+      const payload = unwrapTenantPayload(data);
+      const tenant = asObject(payload)?.tenant ?? payload;
+      if (!asObject(tenant)?.id) {
+        throw new Error("Tenant detail format is not supported.");
+      }
+      return tenant as Tenant;
     },
     enabled: !!id,
   });
@@ -982,61 +987,83 @@ export const useAdminEngagement = () => {
 
 // ==================== TENANT DEEP DIVES ====================
 
+function unwrapTenantPayload(value: unknown): unknown {
+  let payload = value;
+  for (let depth = 0; depth < 3; depth += 1) {
+    const nested = asObject(payload);
+    if (!nested || nested.data === undefined) break;
+    payload = nested.data;
+  }
+  return payload;
+}
+
+export function tenantRelatedRows(response: unknown): Record<string, unknown>[] {
+  const payload = unwrapTenantPayload(response);
+  const object = asObject(payload);
+  const rows = Array.isArray(payload)
+    ? payload
+    : [object?.items, object?.history, object?.activity, object?.records, object?.results].find(Array.isArray);
+  if (!rows) throw new Error("Tenant activity format is not supported.");
+  if (!rows.every(isTenantRecord)) {
+    throw new Error("Tenant activity format is not supported.");
+  }
+  return rows;
+}
+
+const isTenantRecord = (value: unknown): value is Record<string, unknown> =>
+  asObject(value) !== null;
+
 export const useAdminTenantHistory = (tenantId?: string) => {
-  return useQuery<any[]>({
+  return useQuery<Record<string, unknown>[]>({
     queryKey: ["admin", "tenants", tenantId, "history"],
     queryFn: async () => {
       if (!tenantId) throw new Error("Tenant ID required");
-      const { data } = await apiClient.get<any>(
+      const { data } = await apiClient.get<unknown>(
         `/admins/tenants/${tenantId}/history`,
       );
-      if (Array.isArray(data)) return data;
-      if (Array.isArray(data?.data)) return data.data;
-      return [];
+      return tenantRelatedRows(data);
     },
     enabled: !!tenantId,
   });
 };
 
 export const useAdminTenantLoginActivity = (tenantId?: string) => {
-  return useQuery<any[]>({
+  return useQuery<Record<string, unknown>[]>({
     queryKey: ["admin", "tenants", tenantId, "login-activity"],
     queryFn: async () => {
       if (!tenantId) throw new Error("Tenant ID required");
-      const { data } = await apiClient.get<any>(
+      const { data } = await apiClient.get<unknown>(
         `/admins/tenants/${tenantId}/login-activity`,
       );
-      if (Array.isArray(data)) return data;
-      if (Array.isArray(data?.data)) return data.data;
-      return [];
+      return tenantRelatedRows(data);
     },
     enabled: !!tenantId,
   });
 };
 
 export const useAdminTenantOnboarding = (tenantId?: string) => {
-  return useQuery<any>({
+  return useQuery<unknown>({
     queryKey: ["admin", "tenants", tenantId, "onboarding"],
     queryFn: async () => {
       if (!tenantId) throw new Error("Tenant ID required");
-      const { data } = await apiClient.get<any>(
+      const { data } = await apiClient.get<unknown>(
         `/admins/tenants/${tenantId}/onboarding`,
       );
-      return data?.data || data;
+      return unwrapTenantPayload(data);
     },
     enabled: !!tenantId,
   });
 };
 
 export const useAdminTenantReminders = (tenantId?: string) => {
-  return useQuery<any>({
+  return useQuery<unknown>({
     queryKey: ["admin", "tenants", tenantId, "reminders"],
     queryFn: async () => {
       if (!tenantId) throw new Error("Tenant ID required");
-      const { data } = await apiClient.get<any>(
+      const { data } = await apiClient.get<unknown>(
         `/admins/tenants/${tenantId}/reminders`,
       );
-      return data?.data || data;
+      return unwrapTenantPayload(data);
     },
     enabled: !!tenantId,
   });
