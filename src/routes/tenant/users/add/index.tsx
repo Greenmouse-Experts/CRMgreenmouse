@@ -8,7 +8,7 @@ import SelectImage from "@/components/images/SelectImage";
 import SimpleTitle from "@/components/SimpleTitle";
 import LocalSelect from "@/components/inputs/LocalSelect";
 import { useCreateStaff, useRoles } from "@/api/tenantApi";
-import { useUploadImage } from "@/api/imageApi";
+import { useUploadImage, uploadedFileUrl } from "@/api/imageApi";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/tenant/users/add/")({
@@ -49,7 +49,7 @@ function RouteComponent() {
       if (image) {
         try {
           const uploadRes = await uploadImage.mutateAsync(image);
-          profilePicUrl = uploadRes?.data?.url;
+          profilePicUrl = uploadedFileUrl(uploadRes);
         } catch {
           // If upload fails, proceed without image
         }

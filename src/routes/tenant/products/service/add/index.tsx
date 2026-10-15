@@ -9,7 +9,7 @@ import SimpleTextArea from "@/components/inputs/SimpleTextArea";
 import LocalSelect from "@/components/inputs/LocalSelect";
 import { useCreateService } from "@/api/catalogApi";
 import { useCategories } from "@/api/crmApi";
-import { useUploadImage } from "@/api/imageApi";
+import { useUploadImage, uploadedFileUrl } from "@/api/imageApi";
 import { toast } from "sonner";
 
 interface ServiceFormFields {
@@ -48,7 +48,7 @@ function RouteComponent() {
       if (image) {
         try {
           const uploadRes = await uploadImage.mutateAsync(image);
-          imageUrl = uploadRes?.data?.url;
+          imageUrl = uploadedFileUrl(uploadRes);
         } catch {
           // If image upload fails, proceed without it
         }
