@@ -1,24 +1,25 @@
-import { PenSquare } from "lucide-react";
+import { Building2, MapPin } from "lucide-react";
+import type { TenantProfile } from "@/api/tenantApi";
 
-export default function UserInfo() {
+export default function UserInfo({ profile }: { profile: TenantProfile }) {
+  const location = [profile.companyCity, profile.companyState, profile.companyCountry]
+    .filter(Boolean)
+    .join(", ");
+
   return (
-    <div className="flex items-center ">
-      <div className="flex-1 flex gap-4 items-center">
-        <div className="avatar placeholder">
-          <div className="bg-neutral-focus text-neutral-content rounded-full w-20">
-            <img src="https://github.com/shadcn.png" alt="" />
-          </div>
-        </div>
-        <div className="space-y-1">
-          <h2 className="text-xl font-semibold">Rafiqur Rahman</h2>
-          <span className="text-base-content/70">Team Manager</span>
-          <p className="text-sm text-base-content/50">Leeds, United Kingdom</p>
-        </div>
+    <div className="flex items-center gap-4 rounded-box bg-base-100 p-5 shadow-sm">
+      <div className="flex size-14 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
+        <Building2 className="size-7" aria-hidden="true" />
       </div>
-      <button className="btn btn-ghost btn-sm">
-        Edit
-        <PenSquare className="w-4 h-4" />
-      </button>
+      <div className="min-w-0">
+        <h1 className="truncate text-xl font-semibold">{profile.companyName || "Company profile"}</h1>
+        <p className="truncate text-sm text-base-content/70">{profile.email}</p>
+        {location && (
+          <p className="mt-1 flex items-center gap-1 text-sm text-base-content/70">
+            <MapPin className="size-4 shrink-0" aria-hidden="true" /> {location}
+          </p>
+        )}
+      </div>
     </div>
   );
 }

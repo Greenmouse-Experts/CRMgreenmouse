@@ -1,5 +1,11 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import apiClient from "./simpleApi";
+import {
+  get_profile_value,
+  get_user_value,
+  set_profile_value,
+  set_user_value,
+} from "@/store/authStore";
 
 // ==================== TENANT PROFILE & ONBOARDING ====================
 
@@ -9,7 +15,26 @@ export interface TenantProfile {
   companyName: string;
   userType: "tenant" | string;
   isOnboarded: boolean;
+  phoneNumber?: string;
+  companyWebsite?: string;
+  companyAddress?: string;
+  companyCity?: string;
+  companyState?: string;
+  companyCountry?: string;
 }
+
+export type TenantProfileUpdate = Partial<
+  Pick<
+    TenantProfile,
+    | "companyName"
+    | "phoneNumber"
+    | "companyWebsite"
+    | "companyAddress"
+    | "companyCity"
+    | "companyState"
+    | "companyCountry"
+  >
+>;
 
 export interface TenantOnboardingData {
   id?: string;
@@ -57,6 +82,44 @@ export const useTenantMe = () => {
     queryFn: async () => {
       const { data } = await apiClient.get<TenantProfile>("/tenant/auth/me");
       return data;
+    },
+  });
+};
+
+export const useUpdateTenantProfile = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (updates: TenantProfileUpdate) => {
+      const { data } = await apiClient.patch<TenantProfile | { data: TenantProfile }>(
+        "/tenant/auth/profile",
+        updates,
+      );
+      return "data" in data ? data.data : data;
+    },
+    onSuccess: (profile, updates) => {
+      queryClient.setQueryData<TenantProfile>(["tenant", "me"], (previous) =>
+        previous ? { ...previous, ...updates, ...profile } : profile,
+      );
+      const name = updates.companyName || profile.companyName;
+      if (name) {
+        const storedProfile = get_profile_value();
+        if (storedProfile) set_profile_value({ ...storedProfile, companyName: name });
+      }
+      const user = get_user_value();
+      if (user) {
+        set_user_value({
+          ...user,
+          user: {
+            ...user.user,
+            ...(name ? { companyName: name } : {}),
+            ...(updates.phoneNumber !== undefined
+              ? { phoneNumber: updates.phoneNumber }
+              : {}),
+          },
+        });
+      }
+      queryClient.invalidateQueries({ queryKey: ["tenant", "me"] });
+      queryClient.invalidateQueries({ queryKey: ["tenant", "onboarding"] });
     },
   });
 };
