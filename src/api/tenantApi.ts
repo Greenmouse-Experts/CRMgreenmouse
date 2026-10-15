@@ -516,14 +516,19 @@ export interface TenantCurrentSubscription {
   planId?: string;
   planName?: string;
   status?: string;
+  subscriptionStatus?: string;
   billingCycle?: "monthly" | "yearly" | string;
+  trialEndsAt?: string | null;
   currentPeriodStart?: string;
   currentPeriodEnd?: string;
   cancelAtPeriodEnd?: boolean;
   plan?: {
     id: string;
     name: string;
-    price: number;
+    description?: string;
+    price?: number;
+    priceMonthly?: number;
+    priceYearly?: number;
     billingCycle?: string;
     features?: string[];
     [key: string]: any;

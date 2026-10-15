@@ -33,7 +33,9 @@ function RouteComponent() {
 
   const [selectedTenant, setSelectedTenant] = useState<Tenant | null>(null);
   const [selectedPlanId, setSelectedPlanId] = useState("");
-  const [billingCycle, setBillingCycle] = useState<"monthly" | "yearly">("monthly");
+  const [billingCycle, setBillingCycle] = useState<"monthly" | "yearly">(
+    "monthly",
+  );
 
   const statsQuery = useAdminTenantStats();
   const tenantsQuery = useAdminTenants({
@@ -61,10 +63,12 @@ function RouteComponent() {
       toast.success(
         isSuspending
           ? `Tenant "${tenant.companyName}" suspended.`
-          : `Tenant "${tenant.companyName}" activated.`
+          : `Tenant "${tenant.companyName}" activated.`,
       );
     } catch (err: any) {
-      toast.error(err.response?.data?.message || "Failed to update tenant status.");
+      toast.error(
+        err.response?.data?.message || "Failed to update tenant status.",
+      );
     }
   };
 
@@ -90,7 +94,9 @@ function RouteComponent() {
       toast.success(`Plan updated for "${selectedTenant.companyName}"`);
       planModalRef.current?.close();
     } catch (err: any) {
-      toast.error(err.response?.data?.message || "Failed to update subscription plan.");
+      toast.error(
+        err.response?.data?.message || "Failed to update subscription plan.",
+      );
     }
   };
 
@@ -129,6 +135,7 @@ function RouteComponent() {
       render: (value: string, item: Tenant) => {
         const isTrial = value === "trial";
         const isActive = value === "active";
+        // return <>{value}</>;
         return (
           <div className="flex flex-col gap-0.5">
             <span
@@ -209,7 +216,13 @@ function RouteComponent() {
       key: "toggle-status",
       label: "Toggle Status",
       render: (item: Tenant) => (
-        <span className={item.status === "active" ? "text-error font-medium" : "text-success font-medium"}>
+        <span
+          className={
+            item.status === "active"
+              ? "text-error font-medium"
+              : "text-success font-medium"
+          }
+        >
           {item.status === "active" ? "Suspend Tenant" : "Activate Tenant"}
         </span>
       ),
@@ -330,13 +343,18 @@ function RouteComponent() {
           <div className="space-y-4">
             <p className="text-sm text-base-content/70">
               Update the subscription tier and billing cycle for{" "}
-              <strong className="text-base-content">{selectedTenant.companyName}</strong>.
+              <strong className="text-base-content">
+                {selectedTenant.companyName}
+              </strong>
+              .
             </p>
 
             <div className="space-y-3">
               <div>
                 <label className="label">
-                  <span className="label-text font-semibold">Select Subscription Plan</span>
+                  <span className="label-text font-semibold">
+                    Select Subscription Plan
+                  </span>
                 </label>
                 <select
                   value={selectedPlanId}
@@ -346,7 +364,8 @@ function RouteComponent() {
                   <option value="">-- Choose a Plan --</option>
                   {plansData?.data.map((plan) => (
                     <option key={plan.id} value={plan.id}>
-                      {plan.name} — ${plan.priceMonthly}/mo (Yearly: ${plan.priceYearly})
+                      {plan.name} — ${plan.priceMonthly}/mo (Yearly: $
+                      {plan.priceYearly})
                     </option>
                   ))}
                 </select>
@@ -354,7 +373,9 @@ function RouteComponent() {
 
               <div>
                 <label className="label">
-                  <span className="label-text font-semibold">Billing Cycle</span>
+                  <span className="label-text font-semibold">
+                    Billing Cycle
+                  </span>
                 </label>
                 <div className="grid grid-cols-2 gap-3">
                   <button

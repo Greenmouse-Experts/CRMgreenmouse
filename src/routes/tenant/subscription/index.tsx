@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import PaystackPop from "@paystack/inline-js";
 import { getPaystackAccessCode } from "./-checkout";
+import { priceForCycle } from "./-pricing";
 import PageHeader from "@/components/Headers/PageHeader";
 import PageLoader from "@/components/layout/PageLoader";
 import SimpleContainer from "@/components/SimpleContainer";
@@ -28,6 +29,7 @@ import {
   XCircle,
   Layers,
 } from "lucide-react";
+import QueryCompLayout from "@/components/layout/QueryCompLayout";
 
 export const Route = createFileRoute("/tenant/subscription/")({
   component: RouteComponent,
@@ -35,18 +37,26 @@ export const Route = createFileRoute("/tenant/subscription/")({
 
 const PENDING_PAYMENT_KEY = "tenant-subscription-pending-reference";
 
+const formatDate = (value?: string | null) => {
+  if (!value) return "—";
+  const parsed = new Date(value);
+  return Number.isNaN(parsed.getTime()) ? "—" : parsed.toLocaleDateString();
+};
+
 function RouteComponent() {
-  const [billingCycle, setBillingCycle] = useState<"monthly" | "yearly">(
-    "monthly",
-  );
+  const [billingCycleSelection, setBillingCycleSelection] = useState<
+    "monthly" | "yearly" | null
+  >(null);
   const [checkoutPlanId, setCheckoutPlanId] = useState<string | null>(null);
-  const [pendingReference, setPendingReference] = useState<string | null>(() => {
-    try {
-      return sessionStorage.getItem(PENDING_PAYMENT_KEY);
-    } catch {
-      return null;
-    }
-  });
+  const [pendingReference, setPendingReference] = useState<string | null>(
+    () => {
+      try {
+        return sessionStorage.getItem(PENDING_PAYMENT_KEY);
+      } catch {
+        return null;
+      }
+    },
+  );
 
   const currentQuery = useTenantSubscriptionCurrent();
   const plansQuery = useTenantSubscriptionPlans();
@@ -57,6 +67,9 @@ function RouteComponent() {
   const cancelMutation = useTenantSubscriptionCancel();
 
   const currentSub = currentQuery.data;
+  const billingCycle =
+    billingCycleSelection ??
+    (currentSub?.billingCycle === "yearly" ? "yearly" : "monthly");
   const plans = plansQuery.data || [];
   const history = historyQuery.data || [];
 
@@ -186,16 +199,14 @@ function RouteComponent() {
   const handleCancel = async () => {
     if (
       !window.confirm(
-        "Are you sure you want to cancel your subscription? Your workspace will remain active until the end of the current billing cycle.",
+        "Are you sure you want to cancel your subscription?",
       )
     ) {
       return;
     }
     try {
       await cancelMutation.mutateAsync();
-      toast.success(
-        "Subscription cancelled. Access will remain active until the billing period ends.",
-      );
+      toast.success("Subscription cancelled.");
     } catch (err: any) {
       toast.error(
         err?.response?.data?.message || "Failed to cancel subscription.",
@@ -204,7 +215,7 @@ function RouteComponent() {
   };
 
   const formatCurrency = (amount?: number) => {
-    if (amount === undefined || amount === null) return "₦0";
+    if (amount === undefined || amount === null) return "—";
     return new Intl.NumberFormat(undefined, {
       style: "currency",
       currency: "NGN",
@@ -273,6 +284,20 @@ function RouteComponent() {
   ];
 
   const currentPlanId = currentSub?.planId || currentSub?.plan?.id;
+  const subscriptionStatus =
+    currentSub?.subscriptionStatus || currentSub?.status || "unknown";
+  const currentPlan =
+    currentSub?.plan || plans.find((plan) => plan.id === currentPlanId);
+  const currentBillingCycle =
+    currentSub?.billingCycle === "yearly" ? "yearly" : "monthly";
+  const currentPlanPrice =
+    priceForCycle(currentSub?.plan, currentBillingCycle) ?? currentSub?.price;
+  const statusBadgeClass =
+    subscriptionStatus === "active"
+      ? "badge-success"
+      : subscriptionStatus === "trial"
+        ? "badge-warning"
+        : "badge-ghost";
 
   return (
     <div className="space-y-6">
@@ -282,7 +307,10 @@ function RouteComponent() {
       />
 
       {pendingVerificationUrl && (
-        <div role="status" className="alert flex flex-wrap items-center justify-between gap-3 border border-base-300 bg-base-100 text-base-content">
+        <div
+          role="status"
+          className="alert flex flex-wrap items-center justify-between gap-3 border border-base-300 bg-base-100 text-base-content"
+        >
           <div className="min-w-0 space-y-1">
             <p className="font-medium">Waiting for payment confirmation</p>
             <p className="text-sm text-base-content/70">
@@ -305,115 +333,129 @@ function RouteComponent() {
         </div>
       )}
 
-      <PageLoader query={currentQuery}>
+      <QueryCompLayout query={currentQuery}>
         {/* Current Subscription Card */}
-        {currentSub && (
-          <div className="card bg-base-100 shadow-md border border-base-200 overflow-hidden">
-            <div className="bg-gradient-to-r from-primary/10 via-base-100 to-base-100 p-6 border-b border-base-200 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-              <div className="space-y-1">
-                <div className="flex items-center gap-2">
-                  <span className="badge badge-primary uppercase text-[10px] font-semibold tracking-wider">
-                    Current Active Plan
-                  </span>
-                  {currentSub.cancelAtPeriodEnd && (
-                    <span className="badge badge-warning text-[10px] font-semibold gap-1">
-                      <AlertCircle className="size-3" /> Cancels at period end
-                    </span>
-                  )}
-                </div>
-                <h2 className="text-2xl font-semibold text-base-content flex items-center gap-2">
-                  {currentSub.planName ||
-                    currentSub.plan?.name ||
-                    "Standard Plan"}
-                  <ShieldCheck className="size-6 text-primary" />
-                </h2>
-                <p className="text-sm text-base-content/70 flex items-center gap-3">
-                  <span className="capitalize font-semibold text-base-content">
-                    {currentSub.billingCycle || "Monthly"} Billing
-                  </span>
-                  <span>•</span>
-                  <span>
-                    Status:{" "}
-                    <span className="font-semibold uppercase text-success">
-                      {currentSub.status || "Active"}
-                    </span>
-                  </span>
-                </p>
-              </div>
+        {() => {
+          return (
+            <>
+              {currentSub && (
+                <div className="card bg-base-100 shadow-md border border-base-200 overflow-hidden">
+                  <div className="bg-gradient-to-r from-primary/10 via-base-100 to-base-100 p-6 border-b border-base-200 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-2">
+                        <span className={`badge uppercase text-[10px] font-semibold tracking-wider ${statusBadgeClass}`}>
+                          {subscriptionStatus === "trial" ? "Trial plan" : "Current plan"}
+                        </span>
+                        {currentSub.cancelAtPeriodEnd && (
+                          <span className="badge badge-warning text-[10px] font-semibold gap-1">
+                            <AlertCircle className="size-3" /> Cancels at period
+                            end
+                          </span>
+                        )}
+                      </div>
+                      <h2 className="text-2xl font-semibold text-base-content flex items-center gap-2">
+                        {currentSub.planName ||
+                          currentSub.plan?.name ||
+                          "Standard Plan"}
+                        <ShieldCheck className="size-6 text-primary" />
+                      </h2>
+                      {currentSub.plan?.description && (
+                        <p className="text-sm text-base-content/70">
+                          {currentSub.plan.description}
+                        </p>
+                      )}
+                      <p className="text-sm text-base-content/70 flex items-center gap-3">
+                        <span className="capitalize font-semibold text-base-content">
+                          {currentSub.billingCycle || "Monthly"} Billing
+                        </span>
+                        <span>•</span>
+                        <span>
+                          Status:{" "}
+                          <span className="font-semibold capitalize text-base-content">
+                            {subscriptionStatus}
+                          </span>
+                        </span>
+                      </p>
+                    </div>
 
-              <div className="flex flex-wrap items-center gap-3">
-                {currentSub.status !== "cancelled" &&
-                  !currentSub.cancelAtPeriodEnd && (
-                    <button
-                      onClick={handleCancel}
-                      disabled={cancelMutation.isPending}
-                      className="btn btn-sm btn-outline btn-error gap-1"
-                    >
-                      <XCircle className="size-4" /> Cancel Subscription
-                    </button>
-                  )}
-                <button
-                  onClick={() => currentQuery.refetch()}
-                  className="btn btn-sm btn-ghost gap-1"
-                >
-                  <RefreshCw className="size-4" /> Refresh
-                </button>
-              </div>
-            </div>
+                    <div className="flex flex-wrap items-center gap-3">
+                      {subscriptionStatus !== "cancelled" &&
+                        subscriptionStatus !== "expired" &&
+                        !currentSub.cancelAtPeriodEnd && (
+                          <button
+                            onClick={handleCancel}
+                            disabled={cancelMutation.isPending}
+                            className="btn btn-sm btn-outline btn-error gap-1"
+                          >
+                            <XCircle className="size-4" /> Cancel Subscription
+                          </button>
+                        )}
+                      <button
+                        onClick={() => currentQuery.refetch()}
+                        className="btn btn-sm btn-ghost gap-1"
+                      >
+                        <RefreshCw className="size-4" /> Refresh
+                      </button>
+                    </div>
+                  </div>
 
-            <div className="p-6 grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm bg-base-100">
-              <div className="flex items-center gap-3 p-3 rounded-xl bg-base-200/50">
-                <div className="size-10 rounded-lg bg-primary/10 text-primary grid place-items-center">
-                  <CreditCard className="size-5" />
-                </div>
-                <div>
-                  <p className="text-xs text-base-content/60">Plan Price</p>
-                  <p className="font-semibold text-base text-base-content">
-                    {formatCurrency(currentSub.plan?.price || currentSub.price)}
-                    <span className="text-xs font-normal text-base-content/60">
-                      /{currentSub.billingCycle === "yearly" ? "yr" : "mo"}
-                    </span>
-                  </p>
-                </div>
-              </div>
+                  <div className="p-6 grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm bg-base-100">
+                    <div className="flex items-center gap-3 p-3 rounded-xl bg-base-200/50">
+                      <div className="size-10 rounded-lg bg-primary/10 text-primary grid place-items-center">
+                        <CreditCard className="size-5" />
+                      </div>
+                      <div>
+                        <p className="text-xs text-base-content/60">
+                          Plan Price
+                        </p>
+                        <p className="font-semibold text-base text-base-content">
+                          {formatCurrency(currentPlanPrice)}
+                          <span className="text-xs font-normal text-base-content/60">
+                            /
+                            {currentBillingCycle === "yearly" ? "yr" : "mo"}
+                          </span>
+                        </p>
+                      </div>
+                    </div>
 
-              <div className="flex items-center gap-3 p-3 rounded-xl bg-base-200/50">
-                <div className="size-10 rounded-lg bg-info/10 text-info grid place-items-center">
-                  <Calendar className="size-5" />
-                </div>
-                <div>
-                  <p className="text-xs text-base-content/60">Period Start</p>
-                  <p className="font-semibold text-base-content">
-                    {currentSub.currentPeriodStart
-                      ? new Date(
-                          currentSub.currentPeriodStart,
-                        ).toLocaleDateString()
-                      : "—"}
-                  </p>
-                </div>
-              </div>
+                    {currentSub.currentPeriodStart && (
+                      <div className="flex items-center gap-3 p-3 rounded-xl bg-base-200/50">
+                        <div className="size-10 rounded-lg bg-info/10 text-info grid place-items-center">
+                          <Calendar className="size-5" />
+                        </div>
+                        <div>
+                          <p className="text-xs text-base-content/60">Period Start</p>
+                          <p className="font-semibold text-base-content">
+                            {formatDate(currentSub.currentPeriodStart)}
+                          </p>
+                        </div>
+                      </div>
+                    )}
 
-              <div className="flex items-center gap-3 p-3 rounded-xl bg-base-200/50">
-                <div className="size-10 rounded-lg bg-success/10 text-success grid place-items-center">
-                  <Clock className="size-5" />
+                    <div className="flex items-center gap-3 p-3 rounded-xl bg-base-200/50">
+                      <div className="size-10 rounded-lg bg-success/10 text-success grid place-items-center">
+                        <Clock className="size-5" />
+                      </div>
+                      <div>
+                        <p className="text-xs text-base-content/60">
+                          {subscriptionStatus === "trial" ? "Trial Ends" : "Renews / Expiration"}
+                        </p>
+                        <p className="font-semibold text-base-content">
+                          {formatDate(
+                            subscriptionStatus === "trial"
+                              ? currentSub.trialEndsAt || currentSub.currentPeriodEnd
+                              : currentSub.currentPeriodEnd,
+                          )}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-                <div>
-                  <p className="text-xs text-base-content/60">
-                    Renews / Expiration
-                  </p>
-                  <p className="font-semibold text-base-content">
-                    {currentSub.currentPeriodEnd
-                      ? new Date(
-                          currentSub.currentPeriodEnd,
-                        ).toLocaleDateString()
-                      : "—"}
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-      </PageLoader>
+              )}
+            </>
+          );
+        }}
+      </QueryCompLayout>
 
       {/* Subscription Plans Selection Grid */}
       <section className="space-y-6">
@@ -433,7 +475,7 @@ function RouteComponent() {
           <div className="flex items-center gap-3 bg-base-200/60 p-1.5 rounded-xl border border-base-200 self-start sm:self-auto">
             <button
               type="button"
-              onClick={() => setBillingCycle("monthly")}
+              onClick={() => setBillingCycleSelection("monthly")}
               className={`px-4 py-1.5 text-xs font-semibold rounded-lg transition-all ${
                 billingCycle === "monthly"
                   ? "bg-base-100 text-primary shadow"
@@ -444,7 +486,7 @@ function RouteComponent() {
             </button>
             <button
               type="button"
-              onClick={() => setBillingCycle("yearly")}
+              onClick={() => setBillingCycleSelection("yearly")}
               className={`px-4 py-1.5 text-xs font-semibold rounded-lg transition-all flex items-center gap-1 ${
                 billingCycle === "yearly"
                   ? "bg-base-100 text-primary shadow"
@@ -474,15 +516,12 @@ function RouteComponent() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {plans.map((plan: any) => {
                 const isCurrent = currentPlanId === plan.id;
-                const price =
-                  billingCycle === "yearly"
-                    ? (plan.priceYearly ?? plan.price ?? 0)
-                    : (plan.priceMonthly ?? plan.price ?? 0);
-
+                const price = priceForCycle(plan, billingCycle);
+                const comparisonPrice = priceForCycle(currentPlan, billingCycle);
                 const isHigher =
-                  currentSub?.plan?.price !== undefined
-                    ? price > currentSub.plan.price
-                    : true;
+                  price === undefined ||
+                  comparisonPrice === undefined ||
+                  price > comparisonPrice;
 
                 return (
                   <div
@@ -496,7 +535,7 @@ function RouteComponent() {
                     <div className="card-body p-6 space-y-4">
                       {isCurrent && (
                         <div className="badge badge-primary font-semibold text-[10px] uppercase tracking-wider self-start">
-                          Your Active Plan
+                          {subscriptionStatus === "trial" ? "Your Trial Plan" : "Your Current Plan"}
                         </div>
                       )}
 
