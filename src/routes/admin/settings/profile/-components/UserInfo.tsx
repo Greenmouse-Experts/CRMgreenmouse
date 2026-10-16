@@ -1,13 +1,24 @@
 import { type AdminProfile } from "@/api/adminApi";
-import { ShieldCheck, Mail, Phone, Calendar } from "lucide-react";
+import { ShieldCheck, Mail, Phone, Calendar, Camera } from "lucide-react";
 
-export default function UserInfo({ profile }: { profile: AdminProfile }) {
+export default function UserInfo({
+  profile,
+  onPhotoClick,
+}: {
+  profile: AdminProfile;
+  onPhotoClick: () => void;
+}) {
   const displayName = `${profile.firstName} ${profile.lastName}`;
 
   return (
     <div className="card bg-base-100 p-6 border border-base-200">
       <div className="flex flex-col sm:flex-row items-center sm:items-start gap-5">
-        <div className="avatar">
+        <button
+          type="button"
+          onClick={onPhotoClick}
+          aria-label="Change profile picture"
+          className="group avatar relative focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary"
+        >
           <div className="w-20 h-20 rounded-2xl bg-primary text-primary-content flex items-center justify-center text-2xl font-semibold shadow-md ring ring-primary/20 ring-offset-2 ring-offset-base-100">
             {profile.profilePic ? (
               <img
@@ -19,7 +30,10 @@ export default function UserInfo({ profile }: { profile: AdminProfile }) {
               <span>{displayName.charAt(0).toUpperCase()}</span>
             )}
           </div>
-        </div>
+          <span className="absolute -bottom-2 -right-2 flex size-7 items-center justify-center rounded-full bg-primary text-primary-content shadow-sm transition-transform group-hover:scale-110">
+            <Camera className="size-4" aria-hidden="true" />
+          </span>
+        </button>
 
         <div className="space-y-2 text-center sm:text-left flex-1">
           <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2">

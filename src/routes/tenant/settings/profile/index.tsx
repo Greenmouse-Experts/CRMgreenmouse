@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -11,6 +11,8 @@ import {
 } from "@/api/tenantApi";
 import { uploadImage, uploadedFileUrl } from "@/api/imageApi";
 import { get_user_value } from "@/store/authStore";
+import Modal, { type ModalHandle } from "@/components/DialogModal";
+import ImageUpload from "@/components/images/ImageUpload";
 import UserInfo from "./-components/UserInfo";
 import PersonalInfo from "./-components/PersonalInfo";
 import AddressInfo from "./-components/AddressInfo";
@@ -24,8 +26,8 @@ function RouteComponent() {
   const onboardingQuery = useTenantOnboarding();
   const updateProfile = useUpdateTenantProfile();
   const saveOnboarding = useSaveTenantOnboarding();
-  const [logoFile, setLogoFile] = useState<File | null>(null);
-  const [logoPreview, setLogoPreview] = useState<string>();
+  const logoModalRef = useRef<ModalHandle>(null);
+  const [logoFile, setLogoFile] = useState<File>();
   const [isUploadingLogo, setIsUploadingLogo] = useState(false);
   const profile = profileQuery.data;
   const onboarding = onboardingQuery.data;
@@ -56,16 +58,6 @@ function RouteComponent() {
     reset(defaults, { keepDirtyValues: true });
   }, [defaults, reset]);
 
-  useEffect(() => {
-    if (!logoFile) {
-      setLogoPreview(undefined);
-      return;
-    }
-    const url = URL.createObjectURL(logoFile);
-    setLogoPreview(url);
-    return () => URL.revokeObjectURL(url);
-  }, [logoFile]);
-
   const saveLogo = async () => {
     if (!logoFile) return;
     try {
@@ -73,7 +65,8 @@ function RouteComponent() {
       const logo = uploadedFileUrl(await uploadImage(logoFile));
       if (!logo) throw new Error("The image upload did not return a URL.");
       await saveOnboarding.mutateAsync({ logo });
-      setLogoFile(null);
+      setLogoFile(undefined);
+      logoModalRef.current?.close();
       toast.success("Company logo updated.");
     } catch (error: any) {
       toast.error(
@@ -135,44 +128,35 @@ function RouteComponent() {
     <div className="mx-auto max-w-4xl space-y-4 pb-8">
       <UserInfo
         profile={{ ...profile, ...defaults }}
-        logo={logoPreview || onboarding?.logo}
+        logo={onboarding?.logo}
+        onLogoClick={() => {
+          setLogoFile(undefined);
+          logoModalRef.current?.open();
+        }}
       />
-      <section
-        className="space-y-4 rounded-box bg-base-100 p-5 shadow-sm"
-        aria-labelledby="company-logo-title"
-      >
-        <div>
-          <h2 id="company-logo-title" className="text-lg font-semibold">
-            Company logo
-          </h2>
-          <p className="text-sm text-base-content/70">
-            Choose an image to display on your company profile.
-          </p>
-        </div>
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
-          <label className="block flex-1 space-y-1.5">
-            <span className="text-sm font-medium">Logo image</span>
-            <input
-              key={logoFile?.name ?? "empty"}
-              type="file"
-              accept="image/*"
-              className="file-input file-input-bordered w-full"
-              disabled={isUploadingLogo}
-              onChange={(event) => {
-                const file = event.target.files?.[0];
-                if (!file) return;
-                if (
-                  !file.type.startsWith("image/") ||
-                  file.size > 5 * 1024 * 1024
-                ) {
-                  toast.error("Choose an image smaller than 5 MB.");
-                  event.currentTarget.value = "";
-                  return;
-                }
-                setLogoFile(file);
-              }}
-            />
-          </label>
+      <Modal ref={logoModalRef} title="Company logo">
+        <p className="mb-4 text-sm text-base-content/70">
+          Choose an image to display on your company profile.
+        </p>
+        <ImageUpload
+          image={
+            onboarding?.logo
+              ? { url: onboarding.logo, path: onboarding.logo }
+              : undefined
+          }
+          setNew={setLogoFile}
+          disabled={isUploadingLogo}
+          fit="contain"
+        />
+        <div className="mt-6 flex justify-end gap-2">
+          <button
+            type="button"
+            className="btn btn-ghost"
+            disabled={isUploadingLogo}
+            onClick={() => logoModalRef.current?.close()}
+          >
+            Cancel
+          </button>
           <button
             type="button"
             className="btn btn-primary"
@@ -181,18 +165,8 @@ function RouteComponent() {
           >
             {isUploadingLogo ? "Saving logo..." : "Save logo"}
           </button>
-          {logoFile && (
-            <button
-              type="button"
-              className="btn btn-ghost"
-              disabled={isUploadingLogo}
-              onClick={() => setLogoFile(null)}
-            >
-              Cancel
-            </button>
-          )}
         </div>
-      </section>
+      </Modal>
       {onboardingQuery.isError && (
         <div className="alert alert-warning text-sm" role="alert">
           Some existing business details could not be loaded. Only fields you

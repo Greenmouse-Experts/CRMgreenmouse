@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import {
   useAdminProfile,
@@ -7,6 +7,8 @@ import {
 } from "@/api/adminApi";
 import { uploadImage, uploadedFileUrl } from "@/api/imageApi";
 import PageLoader from "@/components/layout/PageLoader";
+import Modal, { type ModalHandle } from "@/components/DialogModal";
+import ImageUpload from "@/components/images/ImageUpload";
 import UserInfo from "./-components/UserInfo";
 import { toast } from "sonner";
 import { User, Mail, Phone, MapPin, FileText, Save, Edit3 } from "lucide-react";
@@ -30,8 +32,8 @@ function RouteComponent() {
 function ProfileContent({ profile }: { profile: AdminProfile }) {
   const updateProfile = useUpdateAdminProfile();
   const [isEditing, setIsEditing] = useState(false);
-  const [photoFile, setPhotoFile] = useState<File | null>(null);
-  const [photoPreview, setPhotoPreview] = useState<string>();
+  const photoModalRef = useRef<ModalHandle>(null);
+  const [photoFile, setPhotoFile] = useState<File>();
   const [isUploadingPhoto, setIsUploadingPhoto] = useState(false);
   const [form, setForm] = useState({
     firstName: profile.firstName || "",
@@ -46,6 +48,7 @@ function ProfileContent({ profile }: { profile: AdminProfile }) {
   });
 
   useEffect(() => {
+    if (isEditing) return;
     setForm({
       firstName: profile.firstName || "",
       lastName: profile.lastName || "",
@@ -57,40 +60,38 @@ function ProfileContent({ profile }: { profile: AdminProfile }) {
       postalCode: profile.postalCode || "",
       taxId: profile.taxId || "",
     });
-  }, [profile]);
-
-  useEffect(() => {
-    if (!photoFile) {
-      setPhotoPreview(undefined);
-      return;
-    }
-    const url = URL.createObjectURL(photoFile);
-    setPhotoPreview(url);
-    return () => URL.revokeObjectURL(url);
-  }, [photoFile]);
+  }, [profile, isEditing]);
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      setIsUploadingPhoto(true);
-      let profilePic: string | undefined;
-      if (photoFile) {
-        profilePic = uploadedFileUrl(await uploadImage(photoFile));
-        if (!profilePic)
-          throw new Error("The image upload did not return a URL.");
-      }
-      await updateProfile.mutateAsync({
-        ...form,
-        ...(profilePic ? { profilePic } : {}),
-      });
+      await updateProfile.mutateAsync(form);
       toast.success("Profile updated successfully");
-      setPhotoFile(null);
       setIsEditing(false);
     } catch (err: any) {
       toast.error(
         err?.response?.data?.message ||
           err?.message ||
           "Failed to update profile",
+      );
+    }
+  };
+
+  const savePhoto = async () => {
+    if (!photoFile) return;
+    try {
+      setIsUploadingPhoto(true);
+      const profilePic = uploadedFileUrl(await uploadImage(photoFile));
+      if (!profilePic) throw new Error("The image upload did not return a URL.");
+      await updateProfile.mutateAsync({ profilePic });
+      setPhotoFile(undefined);
+      photoModalRef.current?.close();
+      toast.success("Profile picture updated.");
+    } catch (error: any) {
+      toast.error(
+        error?.response?.data?.message ||
+          error?.message ||
+          "Could not update the profile picture.",
       );
     } finally {
       setIsUploadingPhoto(false);
@@ -100,10 +101,46 @@ function ProfileContent({ profile }: { profile: AdminProfile }) {
   return (
     <div className="space-y-6">
       <UserInfo
-        profile={
-          photoPreview ? { ...profile, profilePic: photoPreview } : profile
-        }
+        profile={profile}
+        onPhotoClick={() => {
+          setPhotoFile(undefined);
+          photoModalRef.current?.open();
+        }}
       />
+
+      <Modal ref={photoModalRef} title="Profile picture">
+        <p className="mb-4 text-sm text-base-content/70">
+          Choose an image for your administrator profile.
+        </p>
+        <ImageUpload
+          image={
+            profile.profilePic
+              ? { url: profile.profilePic, path: profile.profilePic }
+              : undefined
+          }
+          setNew={setPhotoFile}
+          disabled={isUploadingPhoto}
+          fit="cover"
+        />
+        <div className="mt-6 flex justify-end gap-2">
+          <button
+            type="button"
+            className="btn btn-ghost"
+            disabled={isUploadingPhoto}
+            onClick={() => photoModalRef.current?.close()}
+          >
+            Cancel
+          </button>
+          <button
+            type="button"
+            className="btn btn-primary"
+            disabled={!photoFile || isUploadingPhoto || updateProfile.isPending}
+            onClick={savePhoto}
+          >
+            {isUploadingPhoto ? "Saving picture..." : "Save picture"}
+          </button>
+        </div>
+      </Modal>
 
       <form
         onSubmit={handleSave}
@@ -133,7 +170,6 @@ function ProfileContent({ profile }: { profile: AdminProfile }) {
                   postalCode: profile.postalCode || "",
                   taxId: profile.taxId || "",
                 });
-                setPhotoFile(null);
               }
               setIsEditing(!isEditing);
             }}
@@ -144,35 +180,6 @@ function ProfileContent({ profile }: { profile: AdminProfile }) {
             {isEditing ? "Cancel" : "Edit Details"}
           </button>
         </div>
-
-        {isEditing && (
-          <label className="block space-y-1.5">
-            <span className="text-sm font-medium">Profile picture</span>
-            <input
-              key={photoFile?.name ?? "empty"}
-              type="file"
-              accept="image/*"
-              className="file-input file-input-bordered w-full max-w-sm"
-              disabled={isUploadingPhoto || updateProfile.isPending}
-              onChange={(event) => {
-                const file = event.target.files?.[0];
-                if (!file) return;
-                if (
-                  !file.type.startsWith("image/") ||
-                  file.size > 5 * 1024 * 1024
-                ) {
-                  toast.error("Choose an image smaller than 5 MB.");
-                  event.currentTarget.value = "";
-                  return;
-                }
-                setPhotoFile(file);
-              }}
-            />
-            <span className="block text-xs text-base-content/70">
-              Preview above. Save profile to apply the picture.
-            </span>
-          </label>
-        )}
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
