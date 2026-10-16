@@ -1,6 +1,7 @@
 import { atomWithStorage } from "jotai/utils";
 import { useAtom } from "jotai/react";
 import { getDefaultStore } from "jotai/vanilla";
+import { setProfileFavicon } from "@/utils/favicon";
 interface UserData {
   id: string;
   email: string;
@@ -95,6 +96,7 @@ export const clear_user = () => {
   const store = getDefaultStore();
   store.set(user_atom, null);
   store.set(profile_atom, null);
+  setProfileFavicon(null);
   if (typeof window !== "undefined") {
     localStorage.removeItem("user");
     localStorage.removeItem("profile");
@@ -103,6 +105,13 @@ export const clear_user = () => {
 
 export const set_user_value = (user: AuthUser) => {
   const store = getDefaultStore();
+  const previous = store.get(user_atom);
+  if (
+    previous?.user.id !== user.user.id ||
+    previous?.user.userType !== user.user.userType
+  ) {
+    setProfileFavicon(null);
+  }
   store.set(user_atom, user);
 };
 

@@ -13,8 +13,9 @@ import { useNavigate } from "@tanstack/react-router";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 import SimpleInput from "@/components/inputs/SimpleInput";
-import { new_url } from "@/client/api";
+import apiClient, { new_url } from "@/client/api";
 import { set_user_value } from "@/store/authStore";
+import { setProfileFavicon } from "@/utils/favicon";
 import axios from "axios";
 
 interface LoginProps {
@@ -38,36 +39,13 @@ function RouteComponent() {
       // res is { accessToken, refreshToken, user }
       set_user_value(res);
       toast.success("Login successful");
-      return nav({
-        to: "/admin",
-      });
-      // try {
-      //   const profileRes = await apiClient
-      //     .get("/tenant/auth/me")
-      //     .then((r) => r.data);
-      //   const profileData = profileRes.data ?? profileRes;
-
-      //   if (profileData) {
-      //     // Store detailed profile in auth store
-      //     set_profile_value(profileData);
-
-      //     updateFormData({
-      //       _id: profileData.sub,
-      //       email: profileData.email,
-      //       companyName: profileData.companyName,
-      //       isOnboarded: profileData.isOnboarded,
-      //     });
-
-      //     if (!profileData.isOnboarded) {
-      //       nav({ to: "/auth/register/on-boarding" });
-      //       return;
-      //     }
-      //   }
-      //   nav({ to: "/tenant" });
-      // } catch (err) {
-      //   console.error("Failed to fetch profile", err);
-      //   // nav({ to: "/tenant" });
-      // }
+      try {
+        const { data } = await apiClient.get("/admins/profile");
+        setProfileFavicon((data?.data ?? data)?.profilePic);
+      } catch (err) {
+        console.error("Failed to fetch profile picture", err);
+      }
+      return nav({ to: "/admin" });
     },
     onError: (err: any) => {
       const message =

@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import apiClient from "./simpleApi";
+import { setProfileFavicon } from "@/utils/favicon";
 
 // ==================== DASHBOARD TYPES & HOOKS ====================
 
@@ -385,6 +386,7 @@ export const useAdminProfile = () => {
     queryKey: ["admin", "profile"],
     queryFn: async () => {
       const { data } = await apiClient.get<AdminProfile>("/admins/profile");
+      setProfileFavicon(data.profilePic);
       return data;
     },
   });
@@ -401,6 +403,7 @@ export const useUpdateAdminProfile = () => {
       return data;
     },
     onSuccess: (_, updates) => {
+      if ("profilePic" in updates) setProfileFavicon(updates.profilePic);
       queryClient.setQueryData<AdminProfile>(
         ["admin", "profile"],
         (previous) => (previous ? { ...previous, ...updates } : previous),

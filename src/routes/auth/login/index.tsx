@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import SimpleInput from "@/components/inputs/SimpleInput";
 import apiClient, { new_url } from "@/client/api";
 import { set_user_value, set_profile_value } from "@/store/authStore";
+import { setProfileFavicon } from "@/utils/favicon";
 import axios from "axios";
 
 export const Route = createFileRoute("/auth/login/")({
@@ -39,6 +40,7 @@ function RouteComponent() {
       set_user_value(res);
       toast.success("Login successful");
 
+      let needsOnboarding = false;
       try {
         const profileRes = await apiClient
           .get("/tenant/auth/me")
@@ -49,16 +51,22 @@ function RouteComponent() {
           // Store detailed profile in auth store
           set_profile_value(profileData);
 
-          if (!profileData.isOnboarded) {
-            nav({ to: "/auth/register/on-boarding" });
-            return;
-          }
+          needsOnboarding = !profileData.isOnboarded;
         }
-        nav({ to: "/tenant" });
       } catch (err) {
         console.error("Failed to fetch profile", err);
-        // nav({ to: "/tenant" });
       }
+
+      try {
+        const { data } = await apiClient.get("/tenant/onboarding");
+        setProfileFavicon((data?.data ?? data)?.logo);
+      } catch (err) {
+        console.error("Failed to fetch company logo", err);
+      }
+
+      nav({
+        to: needsOnboarding ? "/auth/register/on-boarding" : "/tenant",
+      });
     },
     onError: (err: any) => {
       const message =

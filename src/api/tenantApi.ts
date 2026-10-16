@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import apiClient from "./simpleApi";
+import { setProfileFavicon } from "@/utils/favicon";
 import {
   get_profile_value,
   get_user_value,
@@ -129,7 +130,9 @@ export const useTenantOnboarding = () => {
     queryKey: ["tenant", "onboarding"],
     queryFn: async () => {
       const { data } = await apiClient.get<any>("/tenant/onboarding");
-      return data?.data ?? data;
+      const onboarding = data?.data ?? data;
+      setProfileFavicon(onboarding?.logo);
+      return onboarding;
     },
   });
 };
@@ -145,6 +148,7 @@ export const useSaveTenantOnboarding = () => {
       return data?.data ?? data;
     },
     onSuccess: (_, updates) => {
+      if ("logo" in updates) setProfileFavicon(updates.logo);
       queryClient.setQueryData<TenantOnboardingData>(
         ["tenant", "onboarding"],
         (previous) => (previous ? { ...previous, ...updates } : previous),

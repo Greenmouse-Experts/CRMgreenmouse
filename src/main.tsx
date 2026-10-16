@@ -8,6 +8,9 @@ import "./styles.css";
 
 import "./index.css";
 import reportWebVitals from "./reportWebVitals.ts";
+import { restoreProfileFavicon } from "./utils/favicon";
+
+restoreProfileFavicon();
 
 // Create a new router instance
 const router = createRouter({
