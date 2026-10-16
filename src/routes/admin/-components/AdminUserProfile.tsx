@@ -34,9 +34,18 @@ export default function AdminUserProfile() {
         <button
           tabIndex={0}
           className="btn btn-circle avatar ring ring-primary/20 ring-offset-2 ring-offset-base-100"
+          aria-label="Open admin profile menu"
         >
-          <div className="w-9 rounded-full bg-primary text-primary-content flex items-center justify-center font-semibold">
-            {displayName.charAt(0).toUpperCase()}
+          <div className="w-9 overflow-hidden rounded-full bg-primary text-primary-content flex items-center justify-center font-semibold">
+            {profile?.profilePic ? (
+              <img
+                src={profile.profilePic}
+                alt=""
+                className="size-full object-cover"
+              />
+            ) : (
+              displayName.charAt(0).toUpperCase()
+            )}
           </div>
         </button>
         <ul

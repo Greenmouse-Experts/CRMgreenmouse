@@ -90,10 +90,9 @@ export const useUpdateTenantProfile = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (updates: TenantProfileUpdate) => {
-      const { data } = await apiClient.patch<TenantProfile | { data: TenantProfile }>(
-        "/tenant/auth/profile",
-        updates,
-      );
+      const { data } = await apiClient.patch<
+        TenantProfile | { data: TenantProfile }
+      >("/tenant/auth/profile", updates);
       return "data" in data ? data.data : data;
     },
     onSuccess: (profile, updates) => {
@@ -103,7 +102,8 @@ export const useUpdateTenantProfile = () => {
       const name = updates.companyName || profile.companyName;
       if (name) {
         const storedProfile = get_profile_value();
-        if (storedProfile) set_profile_value({ ...storedProfile, companyName: name });
+        if (storedProfile)
+          set_profile_value({ ...storedProfile, companyName: name });
       }
       const user = get_user_value();
       if (user) {
@@ -144,7 +144,11 @@ export const useSaveTenantOnboarding = () => {
       );
       return data?.data ?? data;
     },
-    onSuccess: () => {
+    onSuccess: (_, updates) => {
+      queryClient.setQueryData<TenantOnboardingData>(
+        ["tenant", "onboarding"],
+        (previous) => (previous ? { ...previous, ...updates } : previous),
+      );
       queryClient.invalidateQueries({ queryKey: ["tenant", "onboarding"] });
       queryClient.invalidateQueries({ queryKey: ["tenant", "me"] });
     },

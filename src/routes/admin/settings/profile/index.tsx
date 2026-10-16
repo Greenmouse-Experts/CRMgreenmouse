@@ -1,6 +1,11 @@
 import { useState, useEffect } from "react";
 import { createFileRoute } from "@tanstack/react-router";
-import { useAdminProfile, useUpdateAdminProfile, type AdminProfile } from "@/api/adminApi";
+import {
+  useAdminProfile,
+  useUpdateAdminProfile,
+  type AdminProfile,
+} from "@/api/adminApi";
+import { uploadImage, uploadedFileUrl } from "@/api/imageApi";
 import PageLoader from "@/components/layout/PageLoader";
 import UserInfo from "./-components/UserInfo";
 import { toast } from "sonner";
@@ -25,6 +30,9 @@ function RouteComponent() {
 function ProfileContent({ profile }: { profile: AdminProfile }) {
   const updateProfile = useUpdateAdminProfile();
   const [isEditing, setIsEditing] = useState(false);
+  const [photoFile, setPhotoFile] = useState<File | null>(null);
+  const [photoPreview, setPhotoPreview] = useState<string>();
+  const [isUploadingPhoto, setIsUploadingPhoto] = useState(false);
   const [form, setForm] = useState({
     firstName: profile.firstName || "",
     lastName: profile.lastName || "",
@@ -51,38 +59,120 @@ function ProfileContent({ profile }: { profile: AdminProfile }) {
     });
   }, [profile]);
 
+  useEffect(() => {
+    if (!photoFile) {
+      setPhotoPreview(undefined);
+      return;
+    }
+    const url = URL.createObjectURL(photoFile);
+    setPhotoPreview(url);
+    return () => URL.revokeObjectURL(url);
+  }, [photoFile]);
+
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await updateProfile.mutateAsync(form);
+      setIsUploadingPhoto(true);
+      let profilePic: string | undefined;
+      if (photoFile) {
+        profilePic = uploadedFileUrl(await uploadImage(photoFile));
+        if (!profilePic)
+          throw new Error("The image upload did not return a URL.");
+      }
+      await updateProfile.mutateAsync({
+        ...form,
+        ...(profilePic ? { profilePic } : {}),
+      });
       toast.success("Profile updated successfully");
+      setPhotoFile(null);
       setIsEditing(false);
     } catch (err: any) {
-      toast.error(err.response?.data?.message || "Failed to update profile");
+      toast.error(
+        err?.response?.data?.message ||
+          err?.message ||
+          "Failed to update profile",
+      );
+    } finally {
+      setIsUploadingPhoto(false);
     }
   };
 
   return (
     <div className="space-y-6">
-      <UserInfo profile={profile} />
+      <UserInfo
+        profile={
+          photoPreview ? { ...profile, profilePic: photoPreview } : profile
+        }
+      />
 
-      <form onSubmit={handleSave} className="card bg-base-100 p-6 border border-base-200 space-y-6">
+      <form
+        onSubmit={handleSave}
+        className="card bg-base-100 p-6 border border-base-200 space-y-6"
+      >
         <div className="flex items-center justify-between border-b border-base-200 pb-4">
           <div>
-            <h3 className="text-lg font-semibold text-base-content">Profile & Organization Details</h3>
+            <h3 className="text-lg font-semibold text-base-content">
+              Profile & Organization Details
+            </h3>
             <p className="text-xs text-base-content/60">
               Manage personal and administrative contact details.
             </p>
           </div>
           <button
             type="button"
-            onClick={() => setIsEditing(!isEditing)}
+            onClick={() => {
+              if (isEditing) {
+                setForm({
+                  firstName: profile.firstName || "",
+                  lastName: profile.lastName || "",
+                  email: profile.email || "",
+                  phoneNumber: profile.phoneNumber || "",
+                  bio: profile.bio || "",
+                  country: profile.country || "",
+                  cityState: profile.cityState || "",
+                  postalCode: profile.postalCode || "",
+                  taxId: profile.taxId || "",
+                });
+                setPhotoFile(null);
+              }
+              setIsEditing(!isEditing);
+            }}
+            disabled={updateProfile.isPending || isUploadingPhoto}
             className={`btn btn-sm ${isEditing ? "btn-ghost" : "btn-primary btn-outline"}`}
           >
             <Edit3 className="size-4" />
             {isEditing ? "Cancel" : "Edit Details"}
           </button>
         </div>
+
+        {isEditing && (
+          <label className="block space-y-1.5">
+            <span className="text-sm font-medium">Profile picture</span>
+            <input
+              key={photoFile?.name ?? "empty"}
+              type="file"
+              accept="image/*"
+              className="file-input file-input-bordered w-full max-w-sm"
+              disabled={isUploadingPhoto || updateProfile.isPending}
+              onChange={(event) => {
+                const file = event.target.files?.[0];
+                if (!file) return;
+                if (
+                  !file.type.startsWith("image/") ||
+                  file.size > 5 * 1024 * 1024
+                ) {
+                  toast.error("Choose an image smaller than 5 MB.");
+                  event.currentTarget.value = "";
+                  return;
+                }
+                setPhotoFile(file);
+              }}
+            />
+            <span className="block text-xs text-base-content/70">
+              Preview above. Save profile to apply the picture.
+            </span>
+          </label>
+        )}
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
@@ -143,7 +233,9 @@ function ProfileContent({ profile }: { profile: AdminProfile }) {
               type="text"
               disabled={!isEditing}
               value={form.phoneNumber}
-              onChange={(e) => setForm({ ...form, phoneNumber: e.target.value })}
+              onChange={(e) =>
+                setForm({ ...form, phoneNumber: e.target.value })
+              }
               className="input input-sm input-bordered w-full"
             />
           </div>
@@ -151,7 +243,8 @@ function ProfileContent({ profile }: { profile: AdminProfile }) {
           <div className="sm:col-span-2">
             <label className="label">
               <span className="label-text font-semibold flex items-center gap-1.5">
-                <FileText className="size-3.5 text-base-content/60" /> Bio / Title
+                <FileText className="size-3.5 text-base-content/60" /> Bio /
+                Title
               </span>
             </label>
             <input
@@ -181,7 +274,8 @@ function ProfileContent({ profile }: { profile: AdminProfile }) {
           <div>
             <label className="label">
               <span className="label-text font-semibold flex items-center gap-1.5">
-                <MapPin className="size-3.5 text-base-content/60" /> City / State
+                <MapPin className="size-3.5 text-base-content/60" /> City /
+                State
               </span>
             </label>
             <input
@@ -224,11 +318,13 @@ function ProfileContent({ profile }: { profile: AdminProfile }) {
           <div className="flex justify-end pt-4 border-t border-base-200">
             <button
               type="submit"
-              disabled={updateProfile.isPending}
+              disabled={updateProfile.isPending || isUploadingPhoto}
               className="btn btn-primary btn-sm gap-2"
             >
               <Save className="size-4" />
-              {updateProfile.isPending ? "Saving..." : "Save Profile"}
+              {updateProfile.isPending || isUploadingPhoto
+                ? "Saving..."
+                : "Save Profile"}
             </button>
           </div>
         )}

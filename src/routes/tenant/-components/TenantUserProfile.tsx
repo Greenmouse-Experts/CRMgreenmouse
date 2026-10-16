@@ -1,11 +1,13 @@
 import { useProfile } from "@/store/authStore";
 import { useLogout } from "@/helpers/auth";
 import { Link } from "@tanstack/react-router";
-import { LogOut, Settings, UserCircle } from "lucide-react";
+import { Building2, LogOut, Settings, UserCircle } from "lucide-react";
 import logoutApi from "@/client/logout";
+import { useTenantOnboarding } from "@/api/tenantApi";
 
 export default function TenantUserProfile() {
   const [profile] = useProfile();
+  const { data: onboarding } = useTenantOnboarding();
   const { logout } = useLogout(logoutApi);
 
   return (
@@ -20,12 +22,19 @@ export default function TenantUserProfile() {
       </div>
       <div className="dropdown dropdown-end">
         <div className="flex gap-2 items-center">
-          <button className="btn btn-circle size-8 ring ring-primary/20 p-0 overflow-hidden">
-            <img
-              src="https://github.com/shadcn.png"
-              className="w-full h-full object-cover"
-              alt="User avatar"
-            />
+          <button
+            className="btn btn-circle size-8 ring ring-primary/20 p-0 overflow-hidden"
+            aria-label="Open profile menu"
+          >
+            {onboarding?.logo ? (
+              <img
+                src={onboarding.logo}
+                className="size-full object-contain"
+                alt="Company logo"
+              />
+            ) : (
+              <Building2 className="size-4" aria-hidden="true" />
+            )}
           </button>
         </div>
         <ul className="dropdown-content rounded-box bg-base-100 shadow-xl border border-base-200 min-w-[200px] w-auto menu m-1 p-2 gap-1 z-50">

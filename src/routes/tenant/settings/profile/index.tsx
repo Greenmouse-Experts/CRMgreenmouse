@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -6,8 +6,10 @@ import {
   useTenantMe,
   useTenantOnboarding,
   useUpdateTenantProfile,
+  useSaveTenantOnboarding,
   type TenantProfileUpdate,
 } from "@/api/tenantApi";
+import { uploadImage, uploadedFileUrl } from "@/api/imageApi";
 import { get_user_value } from "@/store/authStore";
 import UserInfo from "./-components/UserInfo";
 import PersonalInfo from "./-components/PersonalInfo";
@@ -21,17 +23,25 @@ function RouteComponent() {
   const profileQuery = useTenantMe();
   const onboardingQuery = useTenantOnboarding();
   const updateProfile = useUpdateTenantProfile();
+  const saveOnboarding = useSaveTenantOnboarding();
+  const [logoFile, setLogoFile] = useState<File | null>(null);
+  const [logoPreview, setLogoPreview] = useState<string>();
+  const [isUploadingLogo, setIsUploadingLogo] = useState(false);
   const profile = profileQuery.data;
   const onboarding = onboardingQuery.data;
   const defaults = useMemo<TenantProfileUpdate>(
     () => ({
       companyName: profile?.companyName ?? "",
-      phoneNumber: profile?.phoneNumber ?? get_user_value()?.user.phoneNumber ?? "",
-      companyWebsite: profile?.companyWebsite ?? onboarding?.companyWebsite ?? "",
-      companyAddress: profile?.companyAddress ?? onboarding?.companyAddress ?? "",
+      phoneNumber:
+        profile?.phoneNumber ?? get_user_value()?.user.phoneNumber ?? "",
+      companyWebsite:
+        profile?.companyWebsite ?? onboarding?.companyWebsite ?? "",
+      companyAddress:
+        profile?.companyAddress ?? onboarding?.companyAddress ?? "",
       companyCity: profile?.companyCity ?? onboarding?.companyCity ?? "",
       companyState: profile?.companyState ?? onboarding?.companyState ?? "",
-      companyCountry: profile?.companyCountry ?? onboarding?.companyCountry ?? "",
+      companyCountry:
+        profile?.companyCountry ?? onboarding?.companyCountry ?? "",
     }),
     [profile, onboarding],
   );
@@ -45,6 +55,36 @@ function RouteComponent() {
   useEffect(() => {
     reset(defaults, { keepDirtyValues: true });
   }, [defaults, reset]);
+
+  useEffect(() => {
+    if (!logoFile) {
+      setLogoPreview(undefined);
+      return;
+    }
+    const url = URL.createObjectURL(logoFile);
+    setLogoPreview(url);
+    return () => URL.revokeObjectURL(url);
+  }, [logoFile]);
+
+  const saveLogo = async () => {
+    if (!logoFile) return;
+    try {
+      setIsUploadingLogo(true);
+      const logo = uploadedFileUrl(await uploadImage(logoFile));
+      if (!logo) throw new Error("The image upload did not return a URL.");
+      await saveOnboarding.mutateAsync({ logo });
+      setLogoFile(null);
+      toast.success("Company logo updated.");
+    } catch (error: any) {
+      toast.error(
+        error?.response?.data?.message ||
+          error?.message ||
+          "Could not update the company logo.",
+      );
+    } finally {
+      setIsUploadingLogo(false);
+    }
+  };
 
   const save = handleSubmit(async (values) => {
     const updates = Object.fromEntries(
@@ -60,7 +100,10 @@ function RouteComponent() {
       reset({ ...values, ...updates });
       toast.success("Profile updated.");
     } catch (error: any) {
-      toast.error(error?.response?.data?.message || "Could not update your profile. Try again.");
+      toast.error(
+        error?.response?.data?.message ||
+          "Could not update your profile. Try again.",
+      );
     }
   });
 
@@ -77,7 +120,11 @@ function RouteComponent() {
     return (
       <div className="rounded-box bg-base-100 p-6" role="alert">
         <p className="font-medium">Your profile could not be loaded.</p>
-        <button type="button" className="btn btn-outline btn-sm mt-4" onClick={() => profileQuery.refetch()}>
+        <button
+          type="button"
+          className="btn btn-outline btn-sm mt-4"
+          onClick={() => profileQuery.refetch()}
+        >
           Try again
         </button>
       </div>
@@ -86,21 +133,101 @@ function RouteComponent() {
 
   return (
     <div className="mx-auto max-w-4xl space-y-4 pb-8">
-      <UserInfo profile={{ ...profile, ...defaults }} />
+      <UserInfo
+        profile={{ ...profile, ...defaults }}
+        logo={logoPreview || onboarding?.logo}
+      />
+      <section
+        className="space-y-4 rounded-box bg-base-100 p-5 shadow-sm"
+        aria-labelledby="company-logo-title"
+      >
+        <div>
+          <h2 id="company-logo-title" className="text-lg font-semibold">
+            Company logo
+          </h2>
+          <p className="text-sm text-base-content/70">
+            Choose an image to display on your company profile.
+          </p>
+        </div>
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
+          <label className="block flex-1 space-y-1.5">
+            <span className="text-sm font-medium">Logo image</span>
+            <input
+              key={logoFile?.name ?? "empty"}
+              type="file"
+              accept="image/*"
+              className="file-input file-input-bordered w-full"
+              disabled={isUploadingLogo}
+              onChange={(event) => {
+                const file = event.target.files?.[0];
+                if (!file) return;
+                if (
+                  !file.type.startsWith("image/") ||
+                  file.size > 5 * 1024 * 1024
+                ) {
+                  toast.error("Choose an image smaller than 5 MB.");
+                  event.currentTarget.value = "";
+                  return;
+                }
+                setLogoFile(file);
+              }}
+            />
+          </label>
+          <button
+            type="button"
+            className="btn btn-primary"
+            disabled={!logoFile || isUploadingLogo}
+            onClick={saveLogo}
+          >
+            {isUploadingLogo ? "Saving logo..." : "Save logo"}
+          </button>
+          {logoFile && (
+            <button
+              type="button"
+              className="btn btn-ghost"
+              disabled={isUploadingLogo}
+              onClick={() => setLogoFile(null)}
+            >
+              Cancel
+            </button>
+          )}
+        </div>
+      </section>
       {onboardingQuery.isError && (
         <div className="alert alert-warning text-sm" role="alert">
-          Some existing business details could not be loaded. Only fields you change will be saved.
-          <button type="button" className="btn btn-ghost btn-sm" onClick={() => onboardingQuery.refetch()}>Retry</button>
+          Some existing business details could not be loaded. Only fields you
+          change will be saved.
+          <button
+            type="button"
+            className="btn btn-ghost btn-sm"
+            onClick={() => onboardingQuery.refetch()}
+          >
+            Retry
+          </button>
         </div>
       )}
       <form onSubmit={save} className="space-y-4">
-        <PersonalInfo email={profile.email} register={register} errors={errors} disabled={updateProfile.isPending} />
+        <PersonalInfo
+          email={profile.email}
+          register={register}
+          errors={errors}
+          disabled={updateProfile.isPending}
+        />
         <AddressInfo register={register} disabled={updateProfile.isPending} />
         <div className="flex justify-end gap-2">
-          <button type="button" className="btn btn-ghost" disabled={!isDirty || updateProfile.isPending} onClick={() => reset(defaults)}>
+          <button
+            type="button"
+            className="btn btn-ghost"
+            disabled={!isDirty || updateProfile.isPending}
+            onClick={() => reset(defaults)}
+          >
             Cancel
           </button>
-          <button type="submit" className="btn btn-primary" disabled={!isDirty || updateProfile.isPending}>
+          <button
+            type="submit"
+            className="btn btn-primary"
+            disabled={!isDirty || updateProfile.isPending}
+          >
             {updateProfile.isPending ? "Saving..." : "Save changes"}
           </button>
         </div>
