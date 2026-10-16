@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import apiClient from "./simpleApi";
+import { normalizeTicketModules, type TicketModuleOption } from "./supportApi";
 import type { Ticket, TicketPriority, TicketStatus } from "./supportApi";
 
 export interface AdminTicket extends Ticket {
@@ -33,6 +34,15 @@ export interface AdminTicketQueryParams {
 const unwrap = <T>(value: any): T => value?.data?.data ?? value?.data ?? value;
 const invalidate = (queryClient: ReturnType<typeof useQueryClient>) =>
   queryClient.invalidateQueries({ queryKey: ["admin", "tickets"] });
+
+export const useAdminTicketModules = () =>
+  useQuery<TicketModuleOption[]>({
+    queryKey: ["admin", "ticket-modules"],
+    queryFn: async () => {
+      const { data } = await apiClient.get("/admins/tickets/modules");
+      return normalizeTicketModules(unwrap<unknown>(data));
+    },
+  });
 
 export const useAdminTickets = (params?: AdminTicketQueryParams) =>
   useQuery<AdminTicket[]>({

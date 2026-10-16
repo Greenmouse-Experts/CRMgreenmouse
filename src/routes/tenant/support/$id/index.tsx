@@ -18,6 +18,8 @@ import {
   useReplyTicketMessage,
   useDeleteTicket,
   useEscalateTicket,
+  useTicketModules,
+  ticketModuleLabel,
   type Ticket,
   type TicketPriority,
   type TicketStatus,
@@ -66,6 +68,7 @@ function RouteComponent() {
   const ticketQuery = useTicket(id);
   const staffsQuery = useStaffs();
   const contactsQuery = useContacts();
+  const modulesQuery = useTicketModules();
   const updateTicket = useUpdateTicket();
   const updateStatus = useUpdateTicketStatus();
   const assignTicket = useAssignTicket();
@@ -78,6 +81,7 @@ function RouteComponent() {
     contactId: "",
     description: "",
     priority: "medium" as TicketPriority,
+    module: "",
   });
   const [replyText, setReplyText] = useState("");
   const [replyFiles, setReplyFiles] = useState<File[]>([]);
@@ -104,6 +108,7 @@ function RouteComponent() {
       contactId: item.contactId || "",
       description: item.description,
       priority: item.priority,
+      module: item.module || "",
     });
     setExistingAttachments(item.attachments || []);
     setEditFiles([]);
@@ -122,6 +127,7 @@ function RouteComponent() {
         subject: edit.subject.trim(),
         description: edit.description.trim(),
         priority: edit.priority,
+        ...(edit.module ? { module: edit.module } : {}),
         contactId: edit.contactId || undefined,
         attachments: [...existingAttachments, ...uploaded],
       });
@@ -380,6 +386,16 @@ function RouteComponent() {
                 </div>
                 <div>
                   <p className="mb-1 text-xs font-medium text-base-content/60">
+                    Module
+                  </p>
+                  <p className="text-sm">
+                    {ticket.module
+                      ? ticketModuleLabel(ticket.module)
+                      : "Not set"}
+                  </p>
+                </div>
+                <div>
+                  <p className="mb-1 text-xs font-medium text-base-content/60">
                     Assigned to
                   </p>
                   <select
@@ -515,6 +531,47 @@ function RouteComponent() {
               </option>
             ))}
           </LocalSelect>
+          <LocalSelect
+            label="Module"
+            value={edit.module}
+            disabled={
+              modulesQuery.isPending ||
+              modulesQuery.isError ||
+              !modulesQuery.data?.length
+            }
+            onChange={(event) =>
+              setEdit({ ...edit, module: event.target.value })
+            }
+          >
+            <option value="">
+              {modulesQuery.isPending ? "Loading modules..." : "No module set"}
+            </option>
+            {edit.module &&
+              !modulesQuery.data?.some(
+                (module) => module.value === edit.module,
+              ) && (
+                <option value={edit.module}>
+                  {ticketModuleLabel(edit.module)}
+                </option>
+              )}
+            {modulesQuery.data?.map((module) => (
+              <option key={module.value} value={module.value}>
+                {module.label}
+              </option>
+            ))}
+          </LocalSelect>
+          {modulesQuery.isError && (
+            <p className="text-sm text-error">
+              Modules could not be loaded.{" "}
+              <button
+                type="button"
+                className="link link-primary"
+                onClick={() => modulesQuery.refetch()}
+              >
+                Try again
+              </button>
+            </p>
+          )}
           <SimpleTextArea
             label="Description"
             required

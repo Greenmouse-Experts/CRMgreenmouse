@@ -3,6 +3,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { Inbox, Plus, Search, ArrowUpRight, CircleHelp } from "lucide-react";
 import {
   useTickets,
+  ticketModuleLabel,
   type Ticket,
   type TicketPriority,
   type TicketStatus,
@@ -44,7 +45,20 @@ function RouteComponent() {
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState<TicketStatus | "all">("all");
   const [priority, setPriority] = useState<TicketPriority | "all">("all");
+  const [module, setModule] = useState("all");
   const openCreate = () => modalRef.current?.open();
+
+  const modules = useMemo(
+    () =>
+      [
+        ...new Set(
+          (ticketsQuery.data ?? [])
+            .map((ticket) => ticket.module)
+            .filter((value): value is string => !!value),
+        ),
+      ].sort(),
+    [ticketsQuery.data],
+  );
 
   const tickets = useMemo(() => {
     const term = search.trim().toLowerCase();
@@ -52,16 +66,18 @@ function RouteComponent() {
       .filter((ticket) => {
         if (status !== "all" && ticket.status !== status) return false;
         if (priority !== "all" && ticket.priority !== priority) return false;
+        if (module !== "all" && ticket.module !== module) return false;
         if (!term) return true;
         return [
           ticket.subject,
           ticket.ticketNumber,
           ticket.description,
+          ticket.module ? ticketModuleLabel(ticket.module) : "",
           contactName(ticket.contact),
         ].some((value) => value?.toLowerCase().includes(term));
       })
       .sort((a, b) => (b.createdAt || "").localeCompare(a.createdAt || ""));
-  }, [ticketsQuery.data, search, status, priority]);
+  }, [ticketsQuery.data, search, status, priority, module]);
 
   return (
     <section className="space-y-5">
@@ -95,6 +111,21 @@ function RouteComponent() {
             />
           </label>
           <div className="flex flex-col gap-2 sm:ml-auto sm:flex-row">
+            {!!modules.length && (
+              <select
+                className="select select-bordered w-full sm:w-40"
+                aria-label="Filter by module"
+                value={module}
+                onChange={(event) => setModule(event.target.value)}
+              >
+                <option value="all">All modules</option>
+                {modules.map((value) => (
+                  <option key={value} value={value}>
+                    {ticketModuleLabel(value)}
+                  </option>
+                ))}
+              </select>
+            )}
             <select
               className="select select-bordered w-full sm:w-40"
               aria-label="Filter by status"
@@ -139,7 +170,7 @@ function RouteComponent() {
               </h2>
               <p className="text-sm text-base-content/60">
                 {ticketsQuery.data?.length
-                  ? "Try another search, status, or priority."
+                  ? "Try another search, module, status, or priority."
                   : "Create a ticket to start a customer support thread."}
               </p>
               {!ticketsQuery.data?.length && (
@@ -179,6 +210,11 @@ function RouteComponent() {
                         ? `Assigned to ${ticket.assignedStaff.firstName} ${ticket.assignedStaff.lastName}`
                         : "Unassigned"}
                     </p>
+                    {ticket.module && (
+                      <span className="badge badge-ghost badge-sm mt-2">
+                        {ticketModuleLabel(ticket.module)}
+                      </span>
+                    )}
                   </div>
                   <div className="flex items-center gap-2 sm:ml-auto">
                     <span

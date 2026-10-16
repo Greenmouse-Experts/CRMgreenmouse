@@ -7,9 +7,13 @@ import {
   Search,
   ShieldCheck,
 } from "lucide-react";
-import { useAdminTickets } from "@/api/adminSupportApi";
+import { useAdminTicketModules, useAdminTickets } from "@/api/adminSupportApi";
 import { useStaffs } from "@/api/adminApi";
-import type { TicketPriority, TicketStatus } from "@/api/supportApi";
+import {
+  ticketModuleLabel,
+  type TicketPriority,
+  type TicketStatus,
+} from "@/api/supportApi";
 import PageHeader from "@/components/Headers/PageHeader";
 import PageLoader from "@/components/layout/PageLoader";
 
@@ -43,30 +47,45 @@ function RouteComponent() {
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState<TicketStatus | "all">("all");
   const [priority, setPriority] = useState<TicketPriority | "all">("all");
+  const [module, setModule] = useState("all");
   const [assignedAdminId, setAssignedAdminId] = useState("");
   const staffsQuery = useStaffs();
+  const modulesQuery = useAdminTicketModules();
   const ticketsQuery = useAdminTickets({
     ...(status !== "all" ? { status } : {}),
     ...(priority !== "all" ? { priority } : {}),
     ...(assignedAdminId ? { assignedAdminId } : {}),
   });
+  const modules = useMemo(() => {
+    const options = new Map(
+      (modulesQuery.data ?? []).map((option) => [option.value, option.label]),
+    );
+    for (const ticket of ticketsQuery.data ?? []) {
+      if (ticket.module && !options.has(ticket.module)) {
+        options.set(ticket.module, ticketModuleLabel(ticket.module));
+      }
+    }
+    return [...options].sort(([a], [b]) => a.localeCompare(b));
+  }, [modulesQuery.data, ticketsQuery.data]);
   const tickets = useMemo(() => {
     const term = search.trim().toLowerCase();
     return [...(ticketsQuery.data ?? [])]
       .filter(
         (ticket) =>
-          !term ||
-          [
-            ticket.subject,
-            ticket.ticketNumber,
-            ticket.description,
-            ticket.tenant?.companyName,
-            ticket.tenant?.email,
-            ticket.contact?.email,
-          ].some((value) => value?.toLowerCase().includes(term)),
+          (module === "all" || ticket.module === module) &&
+          (!term ||
+            [
+              ticket.subject,
+              ticket.ticketNumber,
+              ticket.description,
+              ticket.module ? ticketModuleLabel(ticket.module) : "",
+              ticket.tenant?.companyName,
+              ticket.tenant?.email,
+              ticket.contact?.email,
+            ].some((value) => value?.toLowerCase().includes(term))),
       )
       .sort((a, b) => (b.createdAt || "").localeCompare(a.createdAt || ""));
-  }, [ticketsQuery.data, search]);
+  }, [ticketsQuery.data, search, module]);
 
   return (
     <section className="space-y-5">
@@ -102,7 +121,20 @@ function RouteComponent() {
               onChange={(event) => setSearch(event.target.value)}
             />
           </label>
-          <div className="grid gap-2 sm:grid-cols-3 lg:ml-auto">
+          <div className="grid gap-2 sm:grid-cols-2 lg:ml-auto lg:grid-cols-4">
+            <select
+              className="select select-bordered w-full"
+              aria-label="Filter by module"
+              value={module}
+              onChange={(event) => setModule(event.target.value)}
+            >
+              <option value="all">All modules</option>
+              {modules.map(([value, name]) => (
+                <option key={value} value={value}>
+                  {name}
+                </option>
+              ))}
+            </select>
             <select
               className="select select-bordered w-full"
               aria-label="Filter by status"
@@ -192,6 +224,13 @@ function RouteComponent() {
                         "Tenant"}{" "}
                       · {ownerName(ticket)}
                     </p>
+                    {ticket.module && (
+                      <span className="badge badge-ghost badge-sm mt-2">
+                        {modulesQuery.data?.find(
+                          (option) => option.value === ticket.module,
+                        )?.label ?? ticketModuleLabel(ticket.module)}
+                      </span>
+                    )}
                   </div>
                   <div className="flex items-center gap-2 sm:ml-auto">
                     <span

@@ -10,7 +10,11 @@ import { FormProvider, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { useContacts } from "@/api/crmApi";
 import { uploadTicketAttachments } from "@/api/supportAttachments";
-import { useCreateTicket, type TicketPriority } from "@/api/supportApi";
+import {
+  useCreateTicket,
+  useTicketModules,
+  type TicketPriority,
+} from "@/api/supportApi";
 import Modal, { type ModalHandle } from "@/components/DialogModal";
 import UpdateImages from "@/components/images/UpdateImages";
 import SimpleInput from "@/components/inputs/SimpleInput";
@@ -30,6 +34,7 @@ interface TicketFormValues {
   contactId: string;
   description: string;
   priority: TicketPriority;
+  module: string;
 }
 
 const initialForm: TicketFormValues = {
@@ -37,6 +42,7 @@ const initialForm: TicketFormValues = {
   contactId: "",
   description: "",
   priority: "medium" as TicketPriority,
+  module: "",
 };
 const priorities: TicketPriority[] = ["low", "medium", "high", "urgent"];
 
@@ -46,6 +52,7 @@ const CreateTicketModal = forwardRef<CreateTicketModalHandle>(
     const modalRef = useRef<ModalHandle>(null);
     const contactsQuery = useContacts();
     const createTicket = useCreateTicket();
+    const modulesQuery = useTicketModules();
     const methods = useForm<TicketFormValues>({ defaultValues: initialForm });
     const {
       register,
@@ -100,6 +107,7 @@ const CreateTicketModal = forwardRef<CreateTicketModalHandle>(
           ...(values.contactId ? { contactId: values.contactId } : {}),
           description: values.description.trim(),
           priority: values.priority,
+          module: values.module,
           attachments,
         });
         toast.success("Ticket created.");
@@ -186,6 +194,47 @@ const CreateTicketModal = forwardRef<CreateTicketModalHandle>(
                 </option>
               ))}
             </LocalSelect>
+            <LocalSelect
+              label="Module"
+              required
+              disabled={
+                modulesQuery.isPending ||
+                modulesQuery.isError ||
+                !modulesQuery.data?.length ||
+                isUploading ||
+                createTicket.isPending
+              }
+              {...register("module", { required: "Select a module." })}
+            >
+              <option value="">Select a module</option>
+              {modulesQuery.data?.map((module) => (
+                <option key={module.value} value={module.value}>
+                  {module.label}
+                </option>
+              ))}
+            </LocalSelect>
+            {modulesQuery.isError && (
+              <p className="text-sm text-error">
+                Modules could not be loaded.{" "}
+                <button
+                  type="button"
+                  className="link link-primary"
+                  onClick={() => modulesQuery.refetch()}
+                >
+                  Try again
+                </button>
+              </p>
+            )}
+            {!modulesQuery.isPending &&
+              !modulesQuery.isError &&
+              !modulesQuery.data?.length && (
+                <p className="text-sm text-error">
+                  No support modules are available. Please try again later.
+                </p>
+              )}
+            {errors.module && (
+              <p className="text-sm text-error">{errors.module.message}</p>
+            )}
             <SimpleTextArea
               label="Description"
               required
@@ -220,7 +269,14 @@ const CreateTicketModal = forwardRef<CreateTicketModalHandle>(
               <button
                 type="submit"
                 className="btn btn-primary"
-                disabled={createTicket.isPending || isUploading || isSubmitting}
+                disabled={
+                  createTicket.isPending ||
+                  isUploading ||
+                  isSubmitting ||
+                  modulesQuery.isPending ||
+                  modulesQuery.isError ||
+                  !modulesQuery.data?.length
+                }
               >
                 {isUploading
                   ? "Uploading..."

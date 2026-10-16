@@ -27,6 +27,7 @@ export interface Ticket {
   subject: string;
   description: string;
   priority: TicketPriority;
+  module?: string;
   status: TicketStatus;
   contactId?: string;
   contact?: {
@@ -60,15 +61,68 @@ export interface TicketQueryParams {
 export type CreateTicketInput = Pick<
   Ticket,
   "subject" | "contactId" | "description" | "priority"
-> & { attachments?: string[] };
+> & { module: string; attachments?: string[] };
 export type UpdateTicketInput = { id: string } & Partial<
   Pick<
     Ticket,
-    "subject" | "contactId" | "description" | "priority" | "attachments"
+    | "subject"
+    | "contactId"
+    | "description"
+    | "priority"
+    | "module"
+    | "attachments"
   >
 >;
 
 const unwrap = <T>(value: any): T => value?.data?.data ?? value?.data ?? value;
+
+export interface TicketModuleOption {
+  value: string;
+  label: string;
+}
+
+export const ticketModuleLabel = (value: string) =>
+  value
+    .replaceAll(/[_-]/g, " ")
+    .replace(/\b\w/g, (letter) => letter.toUpperCase());
+
+export const normalizeTicketModules = (
+  payload: unknown,
+): TicketModuleOption[] => {
+  const modules = Array.isArray(payload)
+    ? payload
+    : Array.isArray((payload as any)?.modules)
+      ? (payload as any).modules
+      : [];
+  return modules.flatMap((module: unknown) => {
+    const value =
+      typeof module === "string"
+        ? module
+        : ((module as any)?.value ??
+          (module as any)?.slug ??
+          (module as any)?.key);
+    if (typeof value !== "string" || !value.trim()) return [];
+    const label = (module as any)?.label ?? (module as any)?.name;
+    return [
+      {
+        value,
+        label:
+          typeof label === "string" && label.trim()
+            ? label
+            : ticketModuleLabel(value),
+      },
+    ];
+  });
+};
+
+export const useTicketModules = () =>
+  useQuery<TicketModuleOption[]>({
+    queryKey: ["ticket-modules"],
+    queryFn: async () => {
+      const { data } = await apiClient.get("/tickets/modules");
+      return normalizeTicketModules(unwrap<unknown>(data));
+    },
+  });
 
 export const useTickets = (params?: TicketQueryParams) => {
   return useQuery<Ticket[]>({

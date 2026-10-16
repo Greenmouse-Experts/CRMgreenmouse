@@ -20,7 +20,11 @@ import {
   useAdminTicketReply,
   useAdminTicketStatus,
 } from "@/api/adminSupportApi";
-import type { TicketPriority, TicketStatus } from "@/api/supportApi";
+import {
+  ticketModuleLabel,
+  type TicketPriority,
+  type TicketStatus,
+} from "@/api/supportApi";
 import PageHeader from "@/components/Headers/PageHeader";
 import PageLoader from "@/components/layout/PageLoader";
 import SimpleTextArea from "@/components/inputs/SimpleTextArea";
@@ -338,6 +342,16 @@ function RouteComponent() {
                       </option>
                     ))}
                   </select>
+                </div>
+                <div>
+                  <p className="mb-1 text-xs font-medium text-base-content/60">
+                    Module
+                  </p>
+                  <p className="text-sm">
+                    {ticket.module
+                      ? ticketModuleLabel(ticket.module)
+                      : "Not set"}
+                  </p>
                 </div>
                 <div>
                   <label
