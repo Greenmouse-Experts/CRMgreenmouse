@@ -11,10 +11,12 @@ import type { Actions } from "@/components/tables/pop-up";
 import Modal, { type ModalHandle } from "@/components/DialogModal";
 import PageHeader from "@/components/Headers/PageHeader";
 import PageLoader from "@/components/layout/PageLoader";
+import SimplePhoneInput from "@/components/inputs/SimplePhoneInput";
 import {
   useStaffs,
   useRoles,
   useCreateStaff,
+  useUpdateStaff,
   useDeleteStaff,
   type StaffMember,
 } from "@/api/tenantApi";
@@ -28,10 +30,13 @@ function RouteComponent() {
   const query = useStaffs();
   const rolesQuery = useRoles();
   const createStaff = useCreateStaff();
+  const updateStaff = useUpdateStaff();
   const deleteStaff = useDeleteStaff();
 
   const props = useSearch();
   const addModalRef = useRef<ModalHandle>(null);
+  const editModalRef = useRef<ModalHandle>(null);
+  const [editingId, setEditingId] = useState<string | null>(null);
 
   const [form, setForm] = useState({
     firstName: "",
@@ -71,6 +76,47 @@ function RouteComponent() {
       addModalRef.current?.close();
     } catch (err: any) {
       toast.error(err.response?.data?.message || "Failed to add staff member.");
+    }
+  };
+
+  const handleOpenEdit = (staff: StaffMember) => {
+    setEditingId(staff.id);
+    setForm({
+      firstName: staff.firstName || "",
+      lastName: staff.lastName || "",
+      email: staff.email || "",
+      phoneNumber: staff.phoneNumber || "",
+      roleId: staff.roleId || staff.role?.id || "",
+    });
+    editModalRef.current?.open();
+  };
+
+  const handleUpdateStaff = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingId) return;
+    if (!form.firstName || !form.lastName || !form.email) {
+      toast.error("Please fill in first name, last name, and email.");
+      return;
+    }
+
+    try {
+      await updateStaff.mutateAsync({
+        id: editingId,
+        firstName: form.firstName,
+        lastName: form.lastName,
+        email: form.email,
+        phoneNumber: form.phoneNumber || undefined,
+        roleId: form.roleId || undefined,
+      });
+      toast.success(
+        `Staff member "${form.firstName} ${form.lastName}" updated.`,
+      );
+      editModalRef.current?.close();
+      setEditingId(null);
+    } catch (err: any) {
+      toast.error(
+        err.response?.data?.message || "Failed to update staff member.",
+      );
     }
   };
 
@@ -161,6 +207,13 @@ function RouteComponent() {
       },
     },
     {
+      key: "edit",
+      label: "Edit Staff",
+      action: (item: StaffMember) => {
+        handleOpenEdit(item);
+      },
+    },
+    {
       key: "delete",
       label: "Remove Staff",
       render: () => (
@@ -246,6 +299,89 @@ function RouteComponent() {
         </PageLoader>
       </SimpleContainer>
 
+      {/* Edit Staff Modal */}
+      <Modal ref={editModalRef} title="Edit Staff Member">
+        <form onSubmit={handleUpdateStaff} className="space-y-4 p-2">
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="label text-sm font-semibold">
+                First Name *
+              </label>
+              <input
+                type="text"
+                required
+                className="input input-bordered w-full"
+                value={form.firstName}
+                onChange={(e) =>
+                  setForm({ ...form, firstName: e.target.value })
+                }
+              />
+            </div>
+            <div>
+              <label className="label text-sm font-semibold">Last Name *</label>
+              <input
+                type="text"
+                required
+                className="input input-bordered w-full"
+                value={form.lastName}
+                onChange={(e) => setForm({ ...form, lastName: e.target.value })}
+              />
+            </div>
+          </div>
+
+          <div>
+            <label className="label text-sm font-semibold">Email *</label>
+            <input
+              type="email"
+              required
+              className="input input-bordered w-full"
+              value={form.email}
+              onChange={(e) => setForm({ ...form, email: e.target.value })}
+            />
+          </div>
+
+          <SimplePhoneInput
+            label="Phone Number"
+            value={form.phoneNumber}
+            onChange={(phone) => setForm({ ...form, phoneNumber: phone })}
+            placeholder="+234 800 000 0000"
+          />
+
+          <div>
+            <label className="label text-sm font-semibold">Role</label>
+            <select
+              className="select select-bordered w-full"
+              value={form.roleId}
+              onChange={(e) => setForm({ ...form, roleId: e.target.value })}
+            >
+              <option value="">No Role / Default Staff</option>
+              {rolesQuery.data?.map((role) => (
+                <option key={role.id} value={role.id}>
+                  {role.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="pt-2 flex justify-end gap-2">
+            <button
+              type="button"
+              className="btn btn-ghost"
+              onClick={() => editModalRef.current?.close()}
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              disabled={updateStaff.isPending}
+              className="btn btn-primary"
+            >
+              {updateStaff.isPending ? "Saving..." : "Save Changes"}
+            </button>
+          </div>
+        </form>
+      </Modal>
+
       {/* Add Staff Quick Modal */}
       <Modal ref={addModalRef} title="Invite Staff Member">
         <form onSubmit={handleCreateStaff} className="space-y-4 p-2">
@@ -290,18 +426,12 @@ function RouteComponent() {
             />
           </div>
 
-          <div>
-            <label className="label text-sm font-semibold">Phone Number</label>
-            <input
-              type="text"
-              className="input input-bordered w-full"
-              value={form.phoneNumber}
-              onChange={(e) =>
-                setForm({ ...form, phoneNumber: e.target.value })
-              }
-              placeholder="+234..."
-            />
-          </div>
+          <SimplePhoneInput
+            label="Phone Number"
+            value={form.phoneNumber}
+            onChange={(phone) => setForm({ ...form, phoneNumber: phone })}
+            placeholder="+234 800 000 0000"
+          />
 
           <div>
             <label className="label text-sm font-semibold">Assign Role</label>

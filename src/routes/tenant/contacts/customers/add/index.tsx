@@ -3,6 +3,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useForm, FormProvider } from "react-hook-form";
 import { Country, State } from "country-state-city";
 import SimpleInput from "@/components/inputs/SimpleInput";
+import SimplePhoneInput from "@/components/inputs/SimplePhoneInput";
 import ActionButton from "@/components/buttons/ActionButton";
 import SimpleTitle from "@/components/SimpleTitle";
 import FormWrapper from "@/components/forms/FormWrapper";
@@ -161,10 +162,9 @@ function RouteComponent() {
                     },
                   })}
                 />
-                <SimpleInput
+                <SimplePhoneInput
                   label="Phone Number"
-                  type="tel"
-                  placeholder="+1 (555) 000-0000"
+                  placeholder="+234 800 000 0000"
                   {...methods.register("phone", {
                     required: "Phone number is required",
                   })}

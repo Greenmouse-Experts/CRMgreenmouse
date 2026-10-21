@@ -3,6 +3,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useForm, FormProvider } from "react-hook-form";
 import { Country, State } from "country-state-city";
 import SimpleInput from "@/components/inputs/SimpleInput";
+import SimplePhoneInput from "@/components/inputs/SimplePhoneInput";
 import LocalSelect from "@/components/inputs/LocalSelect";
 import ActionButton from "@/components/buttons/ActionButton";
 import SimpleTitle from "@/components/SimpleTitle";
@@ -187,10 +188,9 @@ function RouteComponent() {
                 Contact Details
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <SimpleInput
+                <SimplePhoneInput
                   label="Work Phone"
-                  type="tel"
-                  placeholder="+1 (555) 000-0000"
+                  placeholder="+234 800 000 0000"
                   {...methods.register("workPhone")}
                 />
                 <SimpleInput

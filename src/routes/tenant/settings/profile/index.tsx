@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
-import { useForm } from "react-hook-form";
+import { useForm, FormProvider } from "react-hook-form";
 import { toast } from "sonner";
 import {
   useTenantMe,
@@ -47,12 +47,13 @@ function RouteComponent() {
     }),
     [profile, onboarding],
   );
+  const formMethods = useForm<TenantProfileUpdate>({ defaultValues: defaults });
   const {
     register,
     handleSubmit,
     reset,
     formState: { errors, isDirty, dirtyFields },
-  } = useForm<TenantProfileUpdate>({ defaultValues: defaults });
+  } = formMethods;
 
   useEffect(() => {
     reset(defaults, { keepDirtyValues: true });
@@ -180,32 +181,34 @@ function RouteComponent() {
           </button>
         </div>
       )}
-      <form onSubmit={save} className="space-y-4">
-        <PersonalInfo
-          email={profile.email}
-          register={register}
-          errors={errors}
-          disabled={updateProfile.isPending}
-        />
-        <AddressInfo register={register} disabled={updateProfile.isPending} />
-        <div className="flex justify-end gap-2">
-          <button
-            type="button"
-            className="btn btn-ghost"
-            disabled={!isDirty || updateProfile.isPending}
-            onClick={() => reset(defaults)}
-          >
-            Cancel
-          </button>
-          <button
-            type="submit"
-            className="btn btn-primary"
-            disabled={!isDirty || updateProfile.isPending}
-          >
-            {updateProfile.isPending ? "Saving..." : "Save changes"}
-          </button>
-        </div>
-      </form>
+      <FormProvider {...formMethods}>
+        <form onSubmit={save} className="space-y-4">
+          <PersonalInfo
+            email={profile.email}
+            register={register}
+            errors={errors}
+            disabled={updateProfile.isPending}
+          />
+          <AddressInfo register={register} disabled={updateProfile.isPending} />
+          <div className="flex justify-end gap-2">
+            <button
+              type="button"
+              className="btn btn-ghost"
+              disabled={!isDirty || updateProfile.isPending}
+              onClick={() => reset(defaults)}
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              className="btn btn-primary"
+              disabled={!isDirty || updateProfile.isPending}
+            >
+              {updateProfile.isPending ? "Saving..." : "Save changes"}
+            </button>
+          </div>
+        </form>
+      </FormProvider>
     </div>
   );
 }

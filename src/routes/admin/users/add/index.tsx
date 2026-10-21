@@ -1,6 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useForm, FormProvider } from "react-hook-form";
 import SimpleInput from "@/components/inputs/SimpleInput";
+import SimplePhoneInput from "@/components/inputs/SimplePhoneInput";
 import ActionButton from "@/components/buttons/ActionButton";
 import { useSelectImage } from "@/helpers/images";
 import SelectImage from "@/components/images/SelectImage";
@@ -95,10 +96,9 @@ function RouteComponent() {
               ))}
             </LocalSelect>
 
-            <SimpleInput
+            <SimplePhoneInput
               label="Phone Number"
-              type="tel"
-              placeholder="e.g. +234 800 000 0000"
+              placeholder="+234 800 000 0000"
               {...methods.register("phoneNumber")}
             />
 

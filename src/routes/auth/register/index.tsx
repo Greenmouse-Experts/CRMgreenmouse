@@ -3,6 +3,7 @@ import { useForm, FormProvider } from "react-hook-form";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 import SimpleInput from "@/components/inputs/SimpleInput";
+import SimplePhoneInput from "@/components/inputs/SimplePhoneInput";
 import apiClient from "@/client/api";
 
 export const Route = createFileRoute("/auth/register/")({
@@ -72,10 +73,9 @@ function RouteComponent() {
             })}
           />
 
-          <SimpleInput
+          <SimplePhoneInput
             label="Phone Number"
-            type="tel"
-            placeholder="+2348012345678"
+            placeholder="+234 801 234 5678"
             {...form.register("phoneNumber", {
               required: "Phone number is required",
             })}

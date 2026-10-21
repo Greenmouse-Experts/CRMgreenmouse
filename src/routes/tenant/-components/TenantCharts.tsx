@@ -55,7 +55,6 @@ export default function TenantCharts() {
               to="/tenant/contacts/customers"
               className="btn btn-sm bg-white/15 hover:bg-white/25 text-white border-none backdrop-blur-sm"
             >
-              ath the
               <UserPlus className="size-3.5" />
               Add Customer
             </Link>

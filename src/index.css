@@ -69,3 +69,85 @@ html {
 @utility fade {
   @apply ring-current/20 border-current/20;
 }
+
+/* International Phone Input Custom Styles (styled like SimpleInput) */
+.simple-phone-input-root {
+  --react-international-phone-border-color: transparent;
+  --react-international-phone-background-color: transparent;
+  --react-international-phone-country-selector-background-color: transparent;
+  --react-international-phone-country-selector-border-color: transparent;
+  --react-international-phone-country-selector-background-color-hover: transparent;
+  --react-international-phone-text-color: currentColor;
+  --react-international-phone-dropdown-item-background-color: var(
+    --color-base-100,
+    #ffffff
+  );
+  --react-international-phone-dropdown-item-text-color: var(
+    --color-base-content,
+    #1f2937
+  );
+  --react-international-phone-selected-dropdown-item-background-color: var(
+    --color-base-200,
+    #f3f4f6
+  );
+  --react-international-phone-selected-dropdown-item-text-color: var(
+    --color-base-content,
+    #1f2937
+  );
+  --react-international-phone-height: 100%;
+}
+
+.simple-phone-input-root .react-international-phone-input-container {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  background: transparent !important;
+  border: none !important;
+}
+
+.simple-phone-input-root .react-international-phone-country-selector-button {
+  background: transparent !important;
+  border: none !important;
+  padding: 0 4px 0 0 !important;
+  height: 100% !important;
+  box-shadow: none !important;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+
+.simple-phone-input-root
+  .react-international-phone-country-selector-button:hover {
+  background: transparent !important;
+}
+
+.simple-phone-input-root .react-international-phone-input {
+  background: transparent !important;
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  height: 100% !important;
+  width: 100% !important;
+  flex: 1 1 0% !important;
+  font-family: inherit !important;
+  font-size: inherit !important;
+  color: inherit !important;
+}
+
+.simple-phone-input-root .react-international-phone-input:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.simple-phone-input-root .react-international-phone-country-selector-dropdown {
+  z-index: 9999 !important;
+  background-color: var(--color-base-100, #ffffff) !important;
+  color: var(--color-base-content, #1f2937) !important;
+  border: 1px solid var(--color-base-300, #e5e7eb) !important;
+  border-radius: var(--radius-box, 0.5rem) !important;
+  box-shadow:
+    0 10px 25px -5px rgba(0, 0, 0, 0.15),
+    0 8px 10px -6px rgba(0, 0, 0, 0.1) !important;
+}

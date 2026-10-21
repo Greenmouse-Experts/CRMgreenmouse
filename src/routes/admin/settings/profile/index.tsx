@@ -10,6 +10,7 @@ import PageLoader from "@/components/layout/PageLoader";
 import Modal, { type ModalHandle } from "@/components/DialogModal";
 import ImageUpload from "@/components/images/ImageUpload";
 import UserInfo from "./-components/UserInfo";
+import SimplePhoneInput from "@/components/inputs/SimplePhoneInput";
 import { toast } from "sonner";
 import { User, Mail, Phone, MapPin, FileText, Save, Edit3 } from "lucide-react";
 
@@ -82,7 +83,8 @@ function ProfileContent({ profile }: { profile: AdminProfile }) {
     try {
       setIsUploadingPhoto(true);
       const profilePic = uploadedFileUrl(await uploadImage(photoFile));
-      if (!profilePic) throw new Error("The image upload did not return a URL.");
+      if (!profilePic)
+        throw new Error("The image upload did not return a URL.");
       await updateProfile.mutateAsync({ profilePic });
       setPhotoFile(undefined);
       photoModalRef.current?.close();
@@ -231,19 +233,14 @@ function ProfileContent({ profile }: { profile: AdminProfile }) {
           </div>
 
           <div>
-            <label className="label">
-              <span className="label-text font-semibold flex items-center gap-1.5">
-                <Phone className="size-3.5 text-base-content/60" /> Phone Number
-              </span>
-            </label>
-            <input
-              type="text"
+            <SimplePhoneInput
+              size="sm"
+              label="Phone Number"
+              icon={<Phone className="size-3.5 text-base-content/60" />}
               disabled={!isEditing}
               value={form.phoneNumber}
-              onChange={(e) =>
-                setForm({ ...form, phoneNumber: e.target.value })
-              }
-              className="input input-sm input-bordered w-full"
+              onChange={(phone) => setForm({ ...form, phoneNumber: phone })}
+              placeholder="+234 800 000 0000"
             />
           </div>
 

@@ -1,5 +1,6 @@
 import { Mail, Phone, Briefcase, Edit } from "lucide-react";
 import SimpleInput from "@/components/inputs/SimpleInput";
+import SimplePhoneInput from "@/components/inputs/SimplePhoneInput";
 import { FormProvider, useForm } from "react-hook-form";
 import { useState } from "react";
 
@@ -41,10 +42,9 @@ export default function PersonalInfo() {
             icon={<Mail size={16} />}
             disabled={!editMode}
           />
-          <SimpleInput
+          <SimplePhoneInput
             label="Phone"
             name="phone"
-            type="tel"
             defaultValue="+09 345 346 46"
             icon={<Phone size={16} />}
             disabled={!editMode}

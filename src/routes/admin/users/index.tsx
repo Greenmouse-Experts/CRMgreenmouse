@@ -11,6 +11,7 @@ import type { Actions } from "@/components/tables/pop-up";
 import Modal, { type ModalHandle } from "@/components/DialogModal";
 import PageHeader from "@/components/Headers/PageHeader";
 import PageLoader from "@/components/layout/PageLoader";
+import SimplePhoneInput from "@/components/inputs/SimplePhoneInput";
 import {
   useStaffs,
   useRoles,
@@ -122,7 +123,7 @@ function RouteComponent() {
       key: "role",
       label: "Role",
       render: (_value: any, item: StaffMember) => (
-        <span className="badge badge-md badge-ghost">
+        <span className="badge badge-sm badge-ghost">
           {item.role?.name || "Staff"}
         </span>
       ),
@@ -138,7 +139,7 @@ function RouteComponent() {
       label: "Status",
       render: (value: string) => (
         <span
-          className={`badge badge-md ${
+          className={`badge badge-sm ${
             value === "active"
               ? "badge-success text-success-content"
               : "badge-ghost"
@@ -174,9 +175,12 @@ function RouteComponent() {
 
   return (
     <div className="space-y-4 pb-12">
-      <PageHeader title="Staff Members">
+      <PageHeader
+        title="Admin Staff Directory"
+        description="Manage system administrators, moderators, and back-office staff"
+      >
         <button onClick={handleOpenAdd} className="btn btn-primary btn-sm">
-          <PlusCircleIcon className="size-4" /> Add Staff
+          <PlusCircleIcon className="size-4" /> Add Staff Member
         </button>
       </PageHeader>
 
@@ -185,7 +189,7 @@ function RouteComponent() {
       <SimpleContainer
         title={
           <>
-            Staff Directory{" "}
+            All Staff Members{" "}
             {query.data && (
               <span className="opacity-80 text-sm">({query.data.length})</span>
             )}
@@ -204,15 +208,23 @@ function RouteComponent() {
           />
         </ContainerRow>
 
-        <PageLoader query={query}>
+        <PageLoader
+          query={query}
+          emptyState={{
+            title: "No Staff Members",
+            description: "There are currently no staff members found.",
+            actionText: "Add First Staff",
+            onAction: handleOpenAdd,
+          }}
+        >
           {(staffs) => {
             const filtered = staffs.filter((s) => {
               if (!props.search) return true;
               const term = props.search.toLowerCase();
               return (
-                s.firstName.toLowerCase().includes(term) ||
-                s.lastName.toLowerCase().includes(term) ||
-                s.email.toLowerCase().includes(term)
+                s.firstName?.toLowerCase().includes(term) ||
+                s.lastName?.toLowerCase().includes(term) ||
+                s.email?.toLowerCase().includes(term)
               );
             });
             return (
@@ -228,9 +240,9 @@ function RouteComponent() {
       </SimpleContainer>
 
       {/* Add Staff Modal */}
-      <Modal ref={addModalRef} title="Add Staff Member">
-        <form onSubmit={handleCreateStaff} className="space-y-4">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+      <Modal ref={addModalRef} title="Add New Staff Member">
+        <form onSubmit={handleCreateStaff} className="space-y-4 p-2">
+          <div className="grid grid-cols-2 gap-3">
             <div>
               <label className="label">
                 <span className="label-text font-semibold">First Name *</span>
@@ -278,17 +290,14 @@ function RouteComponent() {
             </div>
 
             <div className="sm:col-span-2">
-              <label className="label">
-                <span className="label-text font-semibold">Phone Number</span>
-              </label>
-              <input
-                type="text"
+              <SimplePhoneInput
+                size="sm"
+                label="Phone Number"
                 value={form.phoneNumber}
-                onChange={(e) =>
-                  setForm({ ...form, phoneNumber: e.target.value })
+                onChange={(phone) =>
+                  setForm({ ...form, phoneNumber: phone })
                 }
-                placeholder="+2348012345678"
-                className="input input-sm input-bordered w-full"
+                placeholder="+234 801 234 5678"
               />
             </div>
 
