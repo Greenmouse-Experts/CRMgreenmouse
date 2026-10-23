@@ -30,6 +30,7 @@ import { Route as TenantSettingsIndexRouteImport } from './routes/tenant/setting
 import { Route as TenantProductsIndexRouteImport } from './routes/tenant/products/index'
 import { Route as TenantOrdersIndexRouteImport } from './routes/tenant/orders/index'
 import { Route as AuthVerifyIndexRouteImport } from './routes/auth/verify/index'
+import { Route as AuthStaffIndexRouteImport } from './routes/auth/staff/index'
 import { Route as AuthRegisterIndexRouteImport } from './routes/auth/register/index'
 import { Route as AuthLoginIndexRouteImport } from './routes/auth/login/index'
 import { Route as AuthForgotPasswordIndexRouteImport } from './routes/auth/forgot-password/index'
@@ -202,6 +203,11 @@ const AuthVerifyIndexRoute = AuthVerifyIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AuthVerifyRouteRoute,
+} as any)
+const AuthStaffIndexRoute = AuthStaffIndexRouteImport.update({
+  id: '/auth/staff/',
+  path: '/auth/staff/',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const AuthRegisterIndexRoute = AuthRegisterIndexRouteImport.update({
   id: '/',
@@ -610,6 +616,7 @@ export interface FileRoutesByFullPath {
   '/auth/forgot-password': typeof AuthForgotPasswordIndexRoute
   '/auth/login': typeof AuthLoginIndexRoute
   '/auth/register/': typeof AuthRegisterIndexRoute
+  '/auth/staff': typeof AuthStaffIndexRoute
   '/auth/verify/': typeof AuthVerifyIndexRoute
   '/tenant/orders': typeof TenantOrdersIndexRoute
   '/tenant/products': typeof TenantProductsIndexRoute
@@ -693,6 +700,7 @@ export interface FileRoutesByTo {
   '/auth/forgot-password': typeof AuthForgotPasswordIndexRoute
   '/auth/login': typeof AuthLoginIndexRoute
   '/auth/register': typeof AuthRegisterIndexRoute
+  '/auth/staff': typeof AuthStaffIndexRoute
   '/auth/verify': typeof AuthVerifyIndexRoute
   '/tenant/orders': typeof TenantOrdersIndexRoute
   '/tenant/products': typeof TenantProductsIndexRoute
@@ -784,6 +792,7 @@ export interface FileRoutesById {
   '/auth/forgot-password/': typeof AuthForgotPasswordIndexRoute
   '/auth/login/': typeof AuthLoginIndexRoute
   '/auth/register/': typeof AuthRegisterIndexRoute
+  '/auth/staff/': typeof AuthStaffIndexRoute
   '/auth/verify/': typeof AuthVerifyIndexRoute
   '/tenant/orders/': typeof TenantOrdersIndexRoute
   '/tenant/products/': typeof TenantProductsIndexRoute
@@ -876,6 +885,7 @@ export interface FileRouteTypes {
     | '/auth/forgot-password'
     | '/auth/login'
     | '/auth/register/'
+    | '/auth/staff'
     | '/auth/verify/'
     | '/tenant/orders'
     | '/tenant/products'
@@ -959,6 +969,7 @@ export interface FileRouteTypes {
     | '/auth/forgot-password'
     | '/auth/login'
     | '/auth/register'
+    | '/auth/staff'
     | '/auth/verify'
     | '/tenant/orders'
     | '/tenant/products'
@@ -1049,6 +1060,7 @@ export interface FileRouteTypes {
     | '/auth/forgot-password/'
     | '/auth/login/'
     | '/auth/register/'
+    | '/auth/staff/'
     | '/auth/verify/'
     | '/tenant/orders/'
     | '/tenant/products/'
@@ -1125,6 +1137,7 @@ export interface RootRouteChildren {
   AuthAdminIndexRoute: typeof AuthAdminIndexRoute
   AuthForgotPasswordIndexRoute: typeof AuthForgotPasswordIndexRoute
   AuthLoginIndexRoute: typeof AuthLoginIndexRoute
+  AuthStaffIndexRoute: typeof AuthStaffIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -1275,6 +1288,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/auth/verify/'
       preLoaderRoute: typeof AuthVerifyIndexRouteImport
       parentRoute: typeof AuthVerifyRouteRoute
+    }
+    '/auth/staff/': {
+      id: '/auth/staff/'
+      path: '/auth/staff'
+      fullPath: '/auth/staff'
+      preLoaderRoute: typeof AuthStaffIndexRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/auth/register/': {
       id: '/auth/register/'
@@ -1985,6 +2005,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthAdminIndexRoute: AuthAdminIndexRoute,
   AuthForgotPasswordIndexRoute: AuthForgotPasswordIndexRoute,
   AuthLoginIndexRoute: AuthLoginIndexRoute,
+  AuthStaffIndexRoute: AuthStaffIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

@@ -34,7 +34,7 @@ const Modal = forwardRef<ModalHandle, ModalProps>(
     return (
       <dialog ref={modalRef} className="modal modal-middle sm:modal-middle">
         <Toaster theme="dark" richColors />
-        <div className="modal-box max-w-2xl flex flex-col max-h-[90vh] p-6 rounded-lg shadow-xl relative">
+        <div className="modal-box max-w-4xl flex flex-col max-h-[90vh] p-6 rounded-lg shadow-xl relative">
           <div className="flex">
             {title && <h3 className="font-semibold text-lg ">{title}</h3>}
             <form method="dialog" className="ml-auto">

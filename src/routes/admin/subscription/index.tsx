@@ -39,8 +39,11 @@ const DEFAULT_PLAN_FORM = {
   maxProducts: 25,
   maxServices: 10,
   maxInvoicesPerMonth: 30,
+  maxFinancialRecordsPerMonth: -1,
   maxOrdersPerMonth: 60,
   maxCategories: 10,
+  maxLeads: 50,
+  maxCompanies: 10,
   selectedFeatures: ["analytics", "data_export"],
   isCustomPrice: false,
   isActive: true,
@@ -126,8 +129,11 @@ function RouteComponent() {
       maxProducts: plan.maxProducts ?? 25,
       maxServices: plan.maxServices ?? 10,
       maxInvoicesPerMonth: plan.maxInvoicesPerMonth ?? 30,
+      maxFinancialRecordsPerMonth: plan.maxFinancialRecordsPerMonth ?? -1,
       maxOrdersPerMonth: plan.maxOrdersPerMonth ?? 60,
       maxCategories: plan.maxCategories ?? 10,
+      maxLeads: plan.maxLeads ?? 50,
+      maxCompanies: plan.maxCompanies ?? 10,
       selectedFeatures: plan.features || [],
       isCustomPrice: plan.isCustomPrice || false,
       isActive: plan.isActive !== undefined ? plan.isActive : true,
@@ -216,8 +222,11 @@ function RouteComponent() {
       maxProducts: Number(formData.maxProducts),
       maxServices: Number(formData.maxServices),
       maxInvoicesPerMonth: Number(formData.maxInvoicesPerMonth),
+      maxFinancialRecordsPerMonth: Number(formData.maxFinancialRecordsPerMonth),
       maxOrdersPerMonth: Number(formData.maxOrdersPerMonth),
       maxCategories: Number(formData.maxCategories),
+      maxLeads: Number(formData.maxLeads),
+      maxCompanies: Number(formData.maxCompanies),
       features: formData.selectedFeatures,
       isCustomPrice: formData.isCustomPrice,
       isActive: formData.isActive,
@@ -304,6 +313,26 @@ function RouteComponent() {
             Products:{" "}
             <strong>
               {item.maxProducts === -1 ? "Unlimited" : item.maxProducts}
+            </strong>
+          </div>
+          <div>
+            Financial records / mo:{" "}
+            <strong>
+              {item.maxFinancialRecordsPerMonth === -1
+                ? "Unlimited"
+                : item.maxFinancialRecordsPerMonth ?? "—"}
+            </strong>
+          </div>
+          <div>
+            Leads:{" "}
+            <strong>{item.maxLeads === -1 ? "Unlimited" : item.maxLeads ?? "—"}</strong>
+          </div>
+          <div>
+            Companies:{" "}
+            <strong>
+              {item.maxCompanies === -1
+                ? "Unlimited"
+                : item.maxCompanies ?? "—"}
             </strong>
           </div>
         </div>
@@ -685,6 +714,27 @@ function RouteComponent() {
               </div>
 
               <div>
+                <label className="label py-1" htmlFor="maxFinancialRecordsPerMonth">
+                  <span className="label-text text-xs font-medium">
+                    Financial Records / Mo
+                  </span>
+                </label>
+                <input
+                  id="maxFinancialRecordsPerMonth"
+                  type="number"
+                  min={-1}
+                  value={formData.maxFinancialRecordsPerMonth}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      maxFinancialRecordsPerMonth: Number(e.target.value),
+                    })
+                  }
+                  className="input input-sm input-bordered w-full"
+                />
+              </div>
+
+              <div>
                 <label className="label py-1">
                   <span className="label-text text-xs font-medium">
                     Categories
@@ -697,6 +747,45 @@ function RouteComponent() {
                     setFormData({
                       ...formData,
                       maxCategories: Number(e.target.value),
+                    })
+                  }
+                  className="input input-sm input-bordered w-full"
+                />
+              </div>
+
+              <div>
+                <label className="label py-1" htmlFor="maxLeads">
+                  <span className="label-text text-xs font-medium">
+                    Max Leads
+                  </span>
+                </label>
+                <input
+                  id="maxLeads"
+                  type="number"
+                  min={-1}
+                  value={formData.maxLeads}
+                  onChange={(e) =>
+                    setFormData({ ...formData, maxLeads: Number(e.target.value) })
+                  }
+                  className="input input-sm input-bordered w-full"
+                />
+              </div>
+
+              <div>
+                <label className="label py-1" htmlFor="maxCompanies">
+                  <span className="label-text text-xs font-medium">
+                    Max Companies
+                  </span>
+                </label>
+                <input
+                  id="maxCompanies"
+                  type="number"
+                  min={-1}
+                  value={formData.maxCompanies}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      maxCompanies: Number(e.target.value),
                     })
                   }
                   className="input input-sm input-bordered w-full"

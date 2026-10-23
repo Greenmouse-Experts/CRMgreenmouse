@@ -245,8 +245,11 @@ export interface SubscriptionPlan {
   maxProducts: number;
   maxServices: number;
   maxInvoicesPerMonth: number;
+  maxFinancialRecordsPerMonth: number;
   maxOrdersPerMonth: number;
   maxCategories: number;
+  maxLeads: number;
+  maxCompanies: number;
   features: string[];
   paystackPlanCodeMonthly?: string | null;
   paystackPlanCodeYearly?: string | null;
