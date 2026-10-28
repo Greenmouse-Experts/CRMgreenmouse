@@ -29,6 +29,7 @@ import { Route as TenantSubscriptionIndexRouteImport } from './routes/tenant/sub
 import { Route as TenantSettingsIndexRouteImport } from './routes/tenant/settings/index'
 import { Route as TenantProductsIndexRouteImport } from './routes/tenant/products/index'
 import { Route as TenantOrdersIndexRouteImport } from './routes/tenant/orders/index'
+import { Route as TenantNotificationsIndexRouteImport } from './routes/tenant/notifications.index'
 import { Route as AuthVerifyIndexRouteImport } from './routes/auth/verify/index'
 import { Route as AuthStaffIndexRouteImport } from './routes/auth/staff/index'
 import { Route as AuthRegisterIndexRouteImport } from './routes/auth/register/index'
@@ -51,6 +52,7 @@ import { Route as TenantSubscriptionCallbackIndexRouteImport } from './routes/te
 import { Route as TenantSettingsThemeIndexRouteImport } from './routes/tenant/settings/theme/index'
 import { Route as TenantSettingsSecurityIndexRouteImport } from './routes/tenant/settings/security/index'
 import { Route as TenantSettingsProfileIndexRouteImport } from './routes/tenant/settings/profile/index'
+import { Route as TenantSettingsNotificationsIndexRouteImport } from './routes/tenant/settings/notifications.index'
 import { Route as TenantProductsServiceIndexRouteImport } from './routes/tenant/products/service/index'
 import { Route as TenantProductsCategoriesIndexRouteImport } from './routes/tenant/products/categories/index'
 import { Route as TenantProductsAddIndexRouteImport } from './routes/tenant/products/add/index'
@@ -202,6 +204,12 @@ const TenantOrdersIndexRoute = TenantOrdersIndexRouteImport.update({
   path: '/orders/',
   getParentRoute: () => TenantRouteRoute,
 } as any)
+const TenantNotificationsIndexRoute =
+  TenantNotificationsIndexRouteImport.update({
+    id: '/notifications/',
+    path: '/notifications/',
+    getParentRoute: () => TenantRouteRoute,
+  } as any)
 const AuthVerifyIndexRoute = AuthVerifyIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -315,6 +323,12 @@ const TenantSettingsProfileIndexRoute =
   TenantSettingsProfileIndexRouteImport.update({
     id: '/profile/',
     path: '/profile/',
+    getParentRoute: () => TenantSettingsRouteRoute,
+  } as any)
+const TenantSettingsNotificationsIndexRoute =
+  TenantSettingsNotificationsIndexRouteImport.update({
+    id: '/notifications/',
+    path: '/notifications/',
     getParentRoute: () => TenantSettingsRouteRoute,
   } as any)
 const TenantProductsServiceIndexRoute =
@@ -639,6 +653,7 @@ export interface FileRoutesByFullPath {
   '/auth/register/': typeof AuthRegisterIndexRoute
   '/auth/staff': typeof AuthStaffIndexRoute
   '/auth/verify/': typeof AuthVerifyIndexRoute
+  '/tenant/notifications': typeof TenantNotificationsIndexRoute
   '/tenant/orders': typeof TenantOrdersIndexRoute
   '/tenant/products': typeof TenantProductsIndexRoute
   '/tenant/settings/': typeof TenantSettingsIndexRoute
@@ -677,6 +692,7 @@ export interface FileRoutesByFullPath {
   '/tenant/products/add': typeof TenantProductsAddIndexRoute
   '/tenant/products/categories': typeof TenantProductsCategoriesIndexRoute
   '/tenant/products/service': typeof TenantProductsServiceIndexRoute
+  '/tenant/settings/notifications': typeof TenantSettingsNotificationsIndexRoute
   '/tenant/settings/profile': typeof TenantSettingsProfileIndexRoute
   '/tenant/settings/security': typeof TenantSettingsSecurityIndexRoute
   '/tenant/settings/theme': typeof TenantSettingsThemeIndexRoute
@@ -726,6 +742,7 @@ export interface FileRoutesByTo {
   '/auth/register': typeof AuthRegisterIndexRoute
   '/auth/staff': typeof AuthStaffIndexRoute
   '/auth/verify': typeof AuthVerifyIndexRoute
+  '/tenant/notifications': typeof TenantNotificationsIndexRoute
   '/tenant/orders': typeof TenantOrdersIndexRoute
   '/tenant/products': typeof TenantProductsIndexRoute
   '/tenant/settings': typeof TenantSettingsIndexRoute
@@ -764,6 +781,7 @@ export interface FileRoutesByTo {
   '/tenant/products/add': typeof TenantProductsAddIndexRoute
   '/tenant/products/categories': typeof TenantProductsCategoriesIndexRoute
   '/tenant/products/service': typeof TenantProductsServiceIndexRoute
+  '/tenant/settings/notifications': typeof TenantSettingsNotificationsIndexRoute
   '/tenant/settings/profile': typeof TenantSettingsProfileIndexRoute
   '/tenant/settings/security': typeof TenantSettingsSecurityIndexRoute
   '/tenant/settings/theme': typeof TenantSettingsThemeIndexRoute
@@ -821,6 +839,7 @@ export interface FileRoutesById {
   '/auth/register/': typeof AuthRegisterIndexRoute
   '/auth/staff/': typeof AuthStaffIndexRoute
   '/auth/verify/': typeof AuthVerifyIndexRoute
+  '/tenant/notifications/': typeof TenantNotificationsIndexRoute
   '/tenant/orders/': typeof TenantOrdersIndexRoute
   '/tenant/products/': typeof TenantProductsIndexRoute
   '/tenant/settings/': typeof TenantSettingsIndexRoute
@@ -859,6 +878,7 @@ export interface FileRoutesById {
   '/tenant/products/add/': typeof TenantProductsAddIndexRoute
   '/tenant/products/categories/': typeof TenantProductsCategoriesIndexRoute
   '/tenant/products/service/': typeof TenantProductsServiceIndexRoute
+  '/tenant/settings/notifications/': typeof TenantSettingsNotificationsIndexRoute
   '/tenant/settings/profile/': typeof TenantSettingsProfileIndexRoute
   '/tenant/settings/security/': typeof TenantSettingsSecurityIndexRoute
   '/tenant/settings/theme/': typeof TenantSettingsThemeIndexRoute
@@ -917,6 +937,7 @@ export interface FileRouteTypes {
     | '/auth/register/'
     | '/auth/staff'
     | '/auth/verify/'
+    | '/tenant/notifications'
     | '/tenant/orders'
     | '/tenant/products'
     | '/tenant/settings/'
@@ -955,6 +976,7 @@ export interface FileRouteTypes {
     | '/tenant/products/add'
     | '/tenant/products/categories'
     | '/tenant/products/service'
+    | '/tenant/settings/notifications'
     | '/tenant/settings/profile'
     | '/tenant/settings/security'
     | '/tenant/settings/theme'
@@ -1004,6 +1026,7 @@ export interface FileRouteTypes {
     | '/auth/register'
     | '/auth/staff'
     | '/auth/verify'
+    | '/tenant/notifications'
     | '/tenant/orders'
     | '/tenant/products'
     | '/tenant/settings'
@@ -1042,6 +1065,7 @@ export interface FileRouteTypes {
     | '/tenant/products/add'
     | '/tenant/products/categories'
     | '/tenant/products/service'
+    | '/tenant/settings/notifications'
     | '/tenant/settings/profile'
     | '/tenant/settings/security'
     | '/tenant/settings/theme'
@@ -1098,6 +1122,7 @@ export interface FileRouteTypes {
     | '/auth/register/'
     | '/auth/staff/'
     | '/auth/verify/'
+    | '/tenant/notifications/'
     | '/tenant/orders/'
     | '/tenant/products/'
     | '/tenant/settings/'
@@ -1136,6 +1161,7 @@ export interface FileRouteTypes {
     | '/tenant/products/add/'
     | '/tenant/products/categories/'
     | '/tenant/products/service/'
+    | '/tenant/settings/notifications/'
     | '/tenant/settings/profile/'
     | '/tenant/settings/security/'
     | '/tenant/settings/theme/'
@@ -1321,6 +1347,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TenantOrdersIndexRouteImport
       parentRoute: typeof TenantRouteRoute
     }
+    '/tenant/notifications/': {
+      id: '/tenant/notifications/'
+      path: '/notifications'
+      fullPath: '/tenant/notifications'
+      preLoaderRoute: typeof TenantNotificationsIndexRouteImport
+      parentRoute: typeof TenantRouteRoute
+    }
     '/auth/verify/': {
       id: '/auth/verify/'
       path: '/'
@@ -1473,6 +1506,13 @@ declare module '@tanstack/react-router' {
       path: '/profile'
       fullPath: '/tenant/settings/profile'
       preLoaderRoute: typeof TenantSettingsProfileIndexRouteImport
+      parentRoute: typeof TenantSettingsRouteRoute
+    }
+    '/tenant/settings/notifications/': {
+      id: '/tenant/settings/notifications/'
+      path: '/notifications'
+      fullPath: '/tenant/settings/notifications'
+      preLoaderRoute: typeof TenantSettingsNotificationsIndexRouteImport
       parentRoute: typeof TenantSettingsRouteRoute
     }
     '/tenant/products/service/': {
@@ -1922,6 +1962,7 @@ const AdminRouteRouteWithChildren = AdminRouteRoute._addFileChildren(
 
 interface TenantSettingsRouteRouteChildren {
   TenantSettingsIndexRoute: typeof TenantSettingsIndexRoute
+  TenantSettingsNotificationsIndexRoute: typeof TenantSettingsNotificationsIndexRoute
   TenantSettingsProfileIndexRoute: typeof TenantSettingsProfileIndexRoute
   TenantSettingsSecurityIndexRoute: typeof TenantSettingsSecurityIndexRoute
   TenantSettingsThemeIndexRoute: typeof TenantSettingsThemeIndexRoute
@@ -1929,6 +1970,7 @@ interface TenantSettingsRouteRouteChildren {
 
 const TenantSettingsRouteRouteChildren: TenantSettingsRouteRouteChildren = {
   TenantSettingsIndexRoute: TenantSettingsIndexRoute,
+  TenantSettingsNotificationsIndexRoute: TenantSettingsNotificationsIndexRoute,
   TenantSettingsProfileIndexRoute: TenantSettingsProfileIndexRoute,
   TenantSettingsSecurityIndexRoute: TenantSettingsSecurityIndexRoute,
   TenantSettingsThemeIndexRoute: TenantSettingsThemeIndexRoute,
@@ -1940,6 +1982,7 @@ const TenantSettingsRouteRouteWithChildren =
 interface TenantRouteRouteChildren {
   TenantSettingsRouteRoute: typeof TenantSettingsRouteRouteWithChildren
   TenantIndexRoute: typeof TenantIndexRoute
+  TenantNotificationsIndexRoute: typeof TenantNotificationsIndexRoute
   TenantOrdersIndexRoute: typeof TenantOrdersIndexRoute
   TenantProductsIndexRoute: typeof TenantProductsIndexRoute
   TenantSubscriptionIndexRoute: typeof TenantSubscriptionIndexRoute
@@ -1978,6 +2021,7 @@ interface TenantRouteRouteChildren {
 const TenantRouteRouteChildren: TenantRouteRouteChildren = {
   TenantSettingsRouteRoute: TenantSettingsRouteRouteWithChildren,
   TenantIndexRoute: TenantIndexRoute,
+  TenantNotificationsIndexRoute: TenantNotificationsIndexRoute,
   TenantOrdersIndexRoute: TenantOrdersIndexRoute,
   TenantProductsIndexRoute: TenantProductsIndexRoute,
   TenantSubscriptionIndexRoute: TenantSubscriptionIndexRoute,

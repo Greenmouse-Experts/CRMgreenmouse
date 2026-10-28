@@ -1,4 +1,4 @@
-import apiClient, { type ApiResponse } from "./simpleApi";
+import apiClient from "./simpleApi";
 
 export interface Notification {
   id: string;
@@ -9,37 +9,45 @@ export interface Notification {
   type?: string;
 }
 
+export interface NotificationPage {
+  notifications: Notification[];
+  total: number;
+  hasMore: boolean;
+}
+
 export const getNotifications = async (params: {
+  page?: number;
   limit?: number;
-  cursor?: string | null;
-}): Promise<
-  ApiResponse<{
-    notifications: Notification[];
-    hasMore: boolean;
-    nextCursor: string | null;
-    total: number;
-  }>
-> => {
-  const resp = await apiClient.get("/notifications", {
-    params: {
-      limit: params.limit ?? 20,
-      cursor: params.cursor ?? undefined,
-    },
+  unreadOnly?: boolean;
+} = {}): Promise<NotificationPage> => {
+  const { data } = await apiClient.get("/notifications", {
+    params: { page: params.page ?? 1, limit: params.limit ?? 20, unreadOnly: params.unreadOnly ?? false },
   });
-  return resp.data;
+  const result = data?.data ?? data;
+  const notifications = Array.isArray(result) ? result :
+    Array.isArray(result?.notifications) ? result.notifications :
+    Array.isArray(result?.data) ? result.data : [];
+  const pagination = result?.pagination ?? data?.pagination;
+  const total = Number(pagination?.total ?? result?.total ?? notifications.length);
+  const page = params.page ?? 1;
+  const limit = params.limit ?? 20;
+  return {
+    notifications,
+    total,
+    hasMore: typeof pagination?.hasMore === "boolean" ? pagination.hasMore : page * limit < total,
+  };
 };
 
 export const markNotificationRead = async (id: string): Promise<void> => {
-  await apiClient.patch(`/notifications/${id}/read`);
+  await apiClient.patch(`/notifications/${encodeURIComponent(id)}/read`);
 };
 
 export const markAllNotificationsRead = async (): Promise<void> => {
   await apiClient.patch("/notifications/read-all");
 };
 
-export const getUnreadCount = async (): Promise<
-  ApiResponse<{ count: number }>
-> => {
-  const resp = await apiClient.get("/notifications/unread-count");
-  return resp.data;
+export const getUnreadCount = async (): Promise<number> => {
+  const { data } = await apiClient.get("/notifications/unread-count");
+  const result = data?.data ?? data;
+  return Number(typeof result === "number" ? result : result?.count ?? result?.unreadCount ?? 0);
 };

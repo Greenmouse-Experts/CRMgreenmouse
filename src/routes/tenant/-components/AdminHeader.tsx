@@ -1,25 +1,26 @@
 import { Bell, Menu } from "lucide-react";
+import { Link } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
+import { getUnreadCount } from "@/api/notifications-api";
 import TenantUserProfile from "./TenantUserProfile";
 
 export default function AdminHeader() {
-  return (
-    <div className="h-18 px-4 flex sticky top-0 bg-base-100  border-b border-current/10 shadow z-20 items-center">
-      <label
-        htmlFor="tenant-drawer"
-        className="btn btn-square btn-ghost lg:hidden"
-      >
-        <Menu />
-      </label>
-      <h2 className="text-current/80 font-semibold text-md md:text-xl">
-        Tenant DashBoard
-      </h2>
+  const unreadQuery = useQuery({
+    queryKey: ["tenant-notifications-count"],
+    queryFn: getUnreadCount,
+    refetchInterval: 60_000,
+  });
+  const unreadCount = unreadQuery.data ?? 0;
 
+  return (
+    <div className="h-18 px-4 flex sticky top-0 bg-base-100 border-b border-current/10 shadow z-20 items-center">
+      <label htmlFor="tenant-drawer" className="btn btn-square btn-ghost lg:hidden" aria-label="Open menu"><Menu /></label>
+      <h2 className="text-current/80 font-semibold text-md md:text-xl">Tenant DashBoard</h2>
       <div className="ml-auto flex items-center gap-2">
-        <div className="relative">
-          <span className="absolute top-0 right-0 -mt-1 mr-1 flex h-2 w-2 animate-ping rounded-full bg-error"></span>
-          <span className="absolute top-0 right-0 -mt-1 mr-1 flex h-2 w-2 rounded-full bg-error"></span>
-          <Bell className="!size-6"></Bell>
-        </div>
+        <Link to="/tenant/notifications" className="btn btn-ghost btn-circle relative" aria-label={unreadCount > 0 ? `Notifications, ${unreadCount} unread` : "Notifications"}>
+          <Bell className="size-5" />
+          {unreadCount > 0 && <span className="badge badge-error badge-xs absolute -right-1 -top-1 min-w-5 px-1 text-error-content">{unreadCount > 99 ? "99+" : unreadCount}</span>}
+        </Link>
         <TenantUserProfile />
       </div>
     </div>
