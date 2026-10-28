@@ -2,6 +2,7 @@ import { useState, useRef, useMemo } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import PageHeader from "@/components/Headers/PageHeader";
 import PageLoader from "@/components/layout/PageLoader";
+import { RichTextContent } from "@/components/inputs/RichTextEditor";
 import ContainerRow from "@/components/ContainerRow";
 import SimpleContainer from "@/components/SimpleContainer";
 import CustomTable from "@/components/tables/CustomTable";
@@ -412,7 +413,7 @@ function RouteComponent() {
                       <span className="font-semibold block text-sm mb-1">
                         Order Notes:
                       </span>
-                      {selectedOrder.notes}
+                      <RichTextContent value={selectedOrder.notes} />
                     </div>
                   )}
 

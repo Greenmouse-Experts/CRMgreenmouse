@@ -2,36 +2,60 @@ import { FileText, CheckCircle2, Clock, AlertCircle } from "lucide-react";
 import type { Invoice } from "@/api/financeApi";
 import StatCard from "@/components/StatCard";
 
+type InvoiceStatValue = number | { count?: number; total?: number };
+
 interface InvoicesStatProps {
   invoices?: Invoice[];
   statsData?: {
-    total?: number;
-    paid?: number;
-    pending?: number;
-    overdue?: number;
-    revenue?: number;
+    totalInvoices?: number;
+    total?: InvoiceStatValue;
+    paid?: InvoiceStatValue;
+    pending?: InvoiceStatValue;
+    overdue?: InvoiceStatValue;
+    revenue?: number | { total?: number };
+    paidAmount?: number;
   };
+}
+
+function statCount(value: InvoiceStatValue | undefined, fallback: number) {
+  const count = typeof value === "number" ? value : value?.count;
+  return typeof count === "number" && Number.isFinite(count) ? count : fallback;
+}
+
+function statAmount(value: number | { total?: number } | undefined) {
+  const amount = typeof value === "number" ? value : value?.total;
+  return typeof amount === "number" && Number.isFinite(amount)
+    ? amount
+    : undefined;
 }
 
 export default function InvoicesStat({
   invoices = [],
   statsData,
 }: InvoicesStatProps) {
-  const totalInvoices = statsData?.total ?? invoices.length;
-  const paidInvoices =
-    statsData?.paid ??
-    invoices.filter((inv) => inv.status?.toLowerCase() === "paid").length;
-  const pendingInvoices =
-    statsData?.pending ??
+  const totalInvoices = statCount(
+    statsData?.totalInvoices ?? statsData?.total,
+    invoices.length,
+  );
+  const paidInvoices = statCount(
+    statsData?.paid,
+    invoices.filter((inv) => inv.status?.toLowerCase() === "paid").length,
+  );
+  const pendingInvoices = statCount(
+    statsData?.pending,
     invoices.filter((inv) =>
       ["pending", "sent", "draft"].includes(inv.status?.toLowerCase() || ""),
-    ).length;
-  const overdueInvoices =
-    statsData?.overdue ??
-    invoices.filter((inv) => inv.status?.toLowerCase() === "overdue").length;
+    ).length,
+  );
+  const overdueInvoices = statCount(
+    statsData?.overdue,
+    invoices.filter((inv) => inv.status?.toLowerCase() === "overdue").length,
+  );
 
   const totalCollected =
-    statsData?.revenue ??
+    statAmount(statsData?.revenue) ??
+    statAmount(statsData?.paidAmount) ??
+    statAmount(statsData?.paid) ??
     invoices
       .filter((inv) => inv.status?.toLowerCase() === "paid")
       .reduce((sum, inv) => {

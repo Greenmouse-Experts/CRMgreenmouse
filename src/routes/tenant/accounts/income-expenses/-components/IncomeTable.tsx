@@ -31,14 +31,25 @@ export default function IncomeTable() {
   const incomeList = query.data || [];
 
   const handleOpenEdit = (item: IncomeRecord) => {
-    setEditingItem({ ...item });
+    setEditingItem({
+      ...item,
+      date:
+        item.date?.slice(0, 10) ||
+        item.createdAt?.slice(0, 10) ||
+        new Date().toLocaleDateString("en-CA"),
+    });
     editModalRef.current?.open();
   };
 
   const handleSaveEdit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!editingItem.id || !editingItem.amount || !editingItem.categoryId) {
-      toast.error("Amount is required.");
+    if (
+      !editingItem.id ||
+      !editingItem.amount ||
+      !editingItem.categoryId ||
+      !editingItem.date
+    ) {
+      toast.error("Amount, category, and date are required.");
       return;
     }
 
@@ -47,6 +58,7 @@ export default function IncomeTable() {
         id: editingItem.id,
         amount: Number(editingItem.amount),
         categoryId: editingItem.categoryId,
+        date: editingItem.date,
         source: editingItem.source,
         description: editingItem.description,
         status: editingItem.status,
@@ -229,6 +241,18 @@ export default function IncomeTable() {
               </option>
             ))}
           </LocalSelect>
+          <SimpleInput
+            label="Date"
+            type="date"
+            value={editingItem.date || ""}
+            onChange={(e) =>
+              setEditingItem((previous) => ({
+                ...previous,
+                date: e.target.value,
+              }))
+            }
+            required
+          />
           <SimpleInput
             label="Payer / Source"
             type="text"

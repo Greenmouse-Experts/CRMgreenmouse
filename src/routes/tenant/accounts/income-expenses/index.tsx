@@ -44,6 +44,7 @@ function RouteComponent() {
   const [incomeForm, setIncomeForm] = useState({
     amount: undefined as number | undefined,
     categoryId: "",
+    date: new Date().toLocaleDateString("en-CA"),
     source: "",
     description: "",
     status: "Pending",
@@ -62,6 +63,7 @@ function RouteComponent() {
     setIncomeForm({
       amount: undefined,
       categoryId: "",
+      date: new Date().toLocaleDateString("en-CA"),
       source: "",
       description: "",
       status: "Pending",
@@ -88,12 +90,13 @@ function RouteComponent() {
       amount === undefined ||
       !Number.isFinite(amount) ||
       amount <= 0 ||
+      !incomeForm.date ||
       !incomeForm.source.trim() ||
       !incomeForm.categoryId ||
       !incomeCategories.some((c) => c.id === incomeForm.categoryId)
     ) {
       toast.error(
-        "Enter a positive amount, source, and active income category.",
+        "Enter a positive amount, date, source, and active income category.",
       );
       return;
     }
@@ -101,6 +104,7 @@ function RouteComponent() {
       await createIncome.mutateAsync({
         amount,
         categoryId: incomeForm.categoryId,
+        date: incomeForm.date,
         source: incomeForm.source.trim(),
         description: incomeForm.description,
         status: incomeForm.status,
@@ -236,6 +240,18 @@ function RouteComponent() {
                 Create an income category first
               </Link>
             )}
+          <SimpleInput
+            label="Date"
+            type="date"
+            value={incomeForm.date}
+            onChange={(e) =>
+              setIncomeForm((previous) => ({
+                ...previous,
+                date: e.target.value,
+              }))
+            }
+            required
+          />
           <SimpleInput
             label="Payer / Source"
             type="text"

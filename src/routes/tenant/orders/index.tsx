@@ -1,6 +1,6 @@
 import { useMemo, useRef, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { FormProvider, useForm } from "react-hook-form";
+import { Controller, FormProvider, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { Plus, Trash2 } from "lucide-react";
 import CustomTable, { type columnType } from "@/components/tables/CustomTable";
@@ -10,7 +10,11 @@ import PageHeader from "@/components/Headers/PageHeader";
 import ContainerRow from "@/components/ContainerRow";
 import { useSearch } from "@/stores/data";
 import Modal, { type ModalHandle } from "@/components/DialogModal";
-import SimpleInput from "@/components/inputs/SimpleInput";
+import MoneyInput from "@/components/inputs/MoneyInput";
+import RichTextEditor, {
+  RichTextContent,
+  sanitizeRichText,
+} from "@/components/inputs/RichTextEditor";
 import LocalSelect from "@/components/inputs/LocalSelect";
 import PageLoader from "@/components/layout/PageLoader";
 import { useContacts } from "@/api/crmApi";
@@ -215,7 +219,7 @@ function RouteComponent() {
       tax: Number(values.tax) || 0,
       status: values.status,
       paymentStatus: values.paymentStatus,
-      notes: values.notes.trim(),
+      notes: sanitizeRichText(values.notes),
     };
 
     try {
@@ -422,7 +426,7 @@ function RouteComponent() {
                 <div className="space-y-2">
                   {items.map((item, index) => (
                     <div key={index} className="rounded-lg border border-base-200 bg-base-200/30 p-3">
-                      <div className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_5rem_7rem_auto] sm:items-end">
+                      <div className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_5rem_10rem_auto] sm:items-end">
                         <div>
                           <label className="mb-1 block text-xs font-medium" htmlFor={`order-product-${index}`}>Product</label>
                           <select
@@ -453,19 +457,13 @@ function RouteComponent() {
                             required
                           />
                         </div>
-                        <div>
-                          <label className="mb-1 block text-xs font-medium" htmlFor={`order-price-${index}`}>Unit price</label>
-                          <input
-                            id={`order-price-${index}`}
-                            type="number"
-                            min="0"
-                            step="0.01"
-                            value={item.unitPrice}
-                            onChange={(event) => changeItemNumber(index, "unitPrice", Number(event.target.value))}
-                            className="input input-sm input-bordered w-full"
-                            required
-                          />
-                        </div>
+                        <MoneyInput
+                          label={`Unit price (${currency})`}
+                          value={item.unitPrice}
+                          onChange={(value) => changeItemNumber(index, "unitPrice", value ?? 0)}
+                          className="input input-sm input-bordered w-full mt-1"
+                          required
+                        />
                         <button
                           type="button"
                           aria-label={`Remove item ${index + 1}`}
@@ -487,19 +485,19 @@ function RouteComponent() {
             </div>
 
             <div className="grid gap-4 border-t border-base-200 pt-4 sm:grid-cols-2">
-              <SimpleInput
-                label={`Discount (${currency})`}
-                type="number"
-                min="0"
-                step="0.01"
-                {...methods.register("discount", { valueAsNumber: true, min: 0 })}
+              <Controller
+                name="discount"
+                control={methods.control}
+                render={({ field }) => (
+                  <MoneyInput label={`Discount (${currency})`} {...field} />
+                )}
               />
-              <SimpleInput
-                label={`Tax (${currency})`}
-                type="number"
-                min="0"
-                step="0.01"
-                {...methods.register("tax", { valueAsNumber: true, min: 0 })}
+              <Controller
+                name="tax"
+                control={methods.control}
+                render={({ field }) => (
+                  <MoneyInput label={`Tax (${currency})`} {...field} />
+                )}
               />
               <LocalSelect label="Status" {...methods.register("status")}>
                 <option value="pending">Pending</option>
@@ -515,7 +513,13 @@ function RouteComponent() {
                 <option value="paid">Paid</option>
               </LocalSelect>
             </div>
-            <SimpleInput label="Notes" placeholder="Optional fulfillment notes" {...methods.register("notes")} />
+            <Controller
+              name="notes"
+              control={methods.control}
+              render={({ field }) => (
+                <RichTextEditor label="Notes" value={field.value} onChange={field.onChange} />
+              )}
+            />
             <div className="rounded-lg bg-base-200/60 p-3 text-sm tabular-nums">
               <div className="flex justify-between text-base-content/70"><span>Subtotal</span><span>{formatMoney(subtotal, currency)}</span></div>
               <div className="mt-1 flex justify-between text-base-content/70"><span>Discount</span><span>−{formatMoney(discount, currency)}</span></div>
@@ -567,7 +571,11 @@ function RouteComponent() {
                 }) : <p className="p-3 text-sm text-base-content/70">No item details available.</p>}
               </div>
             </div>
-            {selectedOrder.notes && <p className="rounded-lg bg-base-200/50 p-3 text-sm text-base-content/70">{selectedOrder.notes}</p>}
+            {selectedOrder.notes && (
+              <div className="rounded-lg bg-base-200/50 p-3">
+                <RichTextContent value={selectedOrder.notes} />
+              </div>
+            )}
             <div className="flex items-center justify-between border-t border-base-200 pt-4">
               <span className="font-semibold tabular-nums">{formatMoney(selectedOrder.total || 0, selectedOrder.currency || "NGN")}</span>
               <div className="flex gap-2">
