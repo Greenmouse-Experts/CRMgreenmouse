@@ -1,6 +1,6 @@
 {
   "info": {
-    "_postman_id": "441bf3a9-4afa-40c1-9aee-d106b742fcfc",
+    "_postman_id": "bb9440a0-0238-496b-b6eb-3807ba3756f1",
     "name": "Greenmouse CRM API",
     "description": "API documentation for the Greenmouse CRM backend",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
@@ -2399,7 +2399,7 @@
                         ],
                         "body": {
                           "mode": "raw",
-                          "raw": "{\n  \"name\": \"Starter Plan\",\n  \"description\": \"Perfect for small teams getting started\",\n  \"priceMonthly\": 15000,\n  \"priceYearly\": 150000,\n  \"trialDays\": 14,\n  \"maxStaff\": 3,\n  \"maxContacts\": 50,\n  \"maxProducts\": 10,\n  \"maxServices\": 5,\n  \"maxInvoicesPerMonth\": 10,\n  \"maxFinancialRecordsPerMonth\": 100,\n  \"maxOrdersPerMonth\": 30,\n  \"maxCategories\": 5,\n  \"maxLeads\": 50,\n  \"maxCompanies\": 10,\n  \"features\": [\n    \"analytics\",\n    \"data_export\"\n  ],\n  \"paystackPlanCodeMonthly\": \"PLN_abc123\",\n  \"paystackPlanCodeYearly\": \"PLN_xyz456\",\n  \"isCustomPrice\": false,\n  \"isActive\": true\n}",
+                          "raw": "{\n  \"name\": \"Starter Plan\",\n  \"description\": \"Perfect for small teams getting started\",\n  \"priceMonthly\": 15000,\n  \"priceYearly\": 150000,\n  \"trialDays\": 14,\n  \"maxStaff\": 3,\n  \"maxContacts\": 50,\n  \"maxProducts\": 10,\n  \"maxServices\": 5,\n  \"maxInvoicesPerMonth\": 10,\n  \"maxFinancialRecordsPerMonth\": 100,\n  \"maxOrdersPerMonth\": 30,\n  \"maxCategories\": 5,\n  \"maxLeads\": 50,\n  \"maxCompanies\": 10,\n  \"maxQuotes\": 50,\n  \"features\": [\n    \"analytics\",\n    \"data_export\"\n  ],\n  \"paystackPlanCodeMonthly\": \"PLN_abc123\",\n  \"paystackPlanCodeYearly\": \"PLN_xyz456\",\n  \"isCustomPrice\": false,\n  \"isActive\": true\n}",
                           "options": {
                             "raw": {
                               "headerFamily": "json",
@@ -2439,7 +2439,7 @@
                             ],
                             "body": {
                               "mode": "raw",
-                              "raw": "{\n  \"name\": \"Starter Plan\",\n  \"description\": \"Perfect for small teams getting started\",\n  \"priceMonthly\": 15000,\n  \"priceYearly\": 150000,\n  \"trialDays\": 14,\n  \"maxStaff\": 3,\n  \"maxContacts\": 50,\n  \"maxProducts\": 10,\n  \"maxServices\": 5,\n  \"maxInvoicesPerMonth\": 10,\n  \"maxFinancialRecordsPerMonth\": 100,\n  \"maxOrdersPerMonth\": 30,\n  \"maxCategories\": 5,\n  \"maxLeads\": 50,\n  \"maxCompanies\": 10,\n  \"features\": [\n    \"analytics\",\n    \"data_export\"\n  ],\n  \"paystackPlanCodeMonthly\": \"PLN_abc123\",\n  \"paystackPlanCodeYearly\": \"PLN_xyz456\",\n  \"isCustomPrice\": false,\n  \"isActive\": true\n}",
+                              "raw": "{\n  \"name\": \"Starter Plan\",\n  \"description\": \"Perfect for small teams getting started\",\n  \"priceMonthly\": 15000,\n  \"priceYearly\": 150000,\n  \"trialDays\": 14,\n  \"maxStaff\": 3,\n  \"maxContacts\": 50,\n  \"maxProducts\": 10,\n  \"maxServices\": 5,\n  \"maxInvoicesPerMonth\": 10,\n  \"maxFinancialRecordsPerMonth\": 100,\n  \"maxOrdersPerMonth\": 30,\n  \"maxCategories\": 5,\n  \"maxLeads\": 50,\n  \"maxCompanies\": 10,\n  \"maxQuotes\": 50,\n  \"features\": [\n    \"analytics\",\n    \"data_export\"\n  ],\n  \"paystackPlanCodeMonthly\": \"PLN_abc123\",\n  \"paystackPlanCodeYearly\": \"PLN_xyz456\",\n  \"isCustomPrice\": false,\n  \"isActive\": true\n}",
                               "options": {
                                 "raw": {
                                   "headerFamily": "json",
@@ -2547,7 +2547,7 @@
                     ],
                     "body": {
                       "mode": "raw",
-                      "raw": "{\n  \"name\": \"Starter Plan\",\n  \"description\": \"Perfect for small teams getting started\",\n  \"priceMonthly\": 15000,\n  \"priceYearly\": 150000,\n  \"trialDays\": 14,\n  \"maxStaff\": 3,\n  \"maxContacts\": 50,\n  \"maxProducts\": 10,\n  \"maxServices\": 5,\n  \"maxInvoicesPerMonth\": 10,\n  \"maxFinancialRecordsPerMonth\": 100,\n  \"maxOrdersPerMonth\": 30,\n  \"maxCategories\": 5,\n  \"maxLeads\": 50,\n  \"maxCompanies\": 10,\n  \"features\": [\n    \"analytics\",\n    \"data_export\"\n  ],\n  \"paystackPlanCodeMonthly\": \"PLN_abc123\",\n  \"paystackPlanCodeYearly\": \"PLN_xyz456\",\n  \"isCustomPrice\": false,\n  \"isActive\": true\n}",
+                      "raw": "{\n  \"name\": \"Starter Plan\",\n  \"description\": \"Perfect for small teams getting started\",\n  \"priceMonthly\": 15000,\n  \"priceYearly\": 150000,\n  \"trialDays\": 14,\n  \"maxStaff\": 3,\n  \"maxContacts\": 50,\n  \"maxProducts\": 10,\n  \"maxServices\": 5,\n  \"maxInvoicesPerMonth\": 10,\n  \"maxFinancialRecordsPerMonth\": 100,\n  \"maxOrdersPerMonth\": 30,\n  \"maxCategories\": 5,\n  \"maxLeads\": 50,\n  \"maxCompanies\": 10,\n  \"maxQuotes\": 50,\n  \"features\": [\n    \"analytics\",\n    \"data_export\"\n  ],\n  \"paystackPlanCodeMonthly\": \"PLN_abc123\",\n  \"paystackPlanCodeYearly\": \"PLN_xyz456\",\n  \"isCustomPrice\": false,\n  \"isActive\": true\n}",
                       "options": {
                         "raw": {
                           "headerFamily": "json",
@@ -2580,7 +2580,7 @@
                         ],
                         "body": {
                           "mode": "raw",
-                          "raw": "{\n  \"name\": \"Starter Plan\",\n  \"description\": \"Perfect for small teams getting started\",\n  \"priceMonthly\": 15000,\n  \"priceYearly\": 150000,\n  \"trialDays\": 14,\n  \"maxStaff\": 3,\n  \"maxContacts\": 50,\n  \"maxProducts\": 10,\n  \"maxServices\": 5,\n  \"maxInvoicesPerMonth\": 10,\n  \"maxFinancialRecordsPerMonth\": 100,\n  \"maxOrdersPerMonth\": 30,\n  \"maxCategories\": 5,\n  \"maxLeads\": 50,\n  \"maxCompanies\": 10,\n  \"features\": [\n    \"analytics\",\n    \"data_export\"\n  ],\n  \"paystackPlanCodeMonthly\": \"PLN_abc123\",\n  \"paystackPlanCodeYearly\": \"PLN_xyz456\",\n  \"isCustomPrice\": false,\n  \"isActive\": true\n}",
+                          "raw": "{\n  \"name\": \"Starter Plan\",\n  \"description\": \"Perfect for small teams getting started\",\n  \"priceMonthly\": 15000,\n  \"priceYearly\": 150000,\n  \"trialDays\": 14,\n  \"maxStaff\": 3,\n  \"maxContacts\": 50,\n  \"maxProducts\": 10,\n  \"maxServices\": 5,\n  \"maxInvoicesPerMonth\": 10,\n  \"maxFinancialRecordsPerMonth\": 100,\n  \"maxOrdersPerMonth\": 30,\n  \"maxCategories\": 5,\n  \"maxLeads\": 50,\n  \"maxCompanies\": 10,\n  \"maxQuotes\": 50,\n  \"features\": [\n    \"analytics\",\n    \"data_export\"\n  ],\n  \"paystackPlanCodeMonthly\": \"PLN_abc123\",\n  \"paystackPlanCodeYearly\": \"PLN_xyz456\",\n  \"isCustomPrice\": false,\n  \"isActive\": true\n}",
                           "options": {
                             "raw": {
                               "headerFamily": "json",
@@ -2770,7 +2770,7 @@
                             "method": "GET",
                             "header": [],
                             "url": {
-                              "raw": "{{baseUrl}}/v1/admins/tenants/:id/history?page=2575.0739179331486&limit=2575.0739179331486",
+                              "raw": "{{baseUrl}}/v1/admins/tenants/:id/history?page=7566.212121552849&limit=7566.212121552849",
                               "host": [
                                 "{{baseUrl}}"
                               ],
@@ -2784,11 +2784,11 @@
                               "query": [
                                 {
                                   "key": "page",
-                                  "value": "2575.0739179331486"
+                                  "value": "7566.212121552849"
                                 },
                                 {
                                   "key": "limit",
-                                  "value": "2575.0739179331486"
+                                  "value": "7566.212121552849"
                                 }
                               ],
                               "variable": [
@@ -2806,7 +2806,7 @@
                                 "method": "GET",
                                 "header": [],
                                 "url": {
-                                  "raw": "{{baseUrl}}/v1/admins/tenants/:id/history?page=2575.0739179331486&limit=2575.0739179331486",
+                                  "raw": "{{baseUrl}}/v1/admins/tenants/:id/history?page=7566.212121552849&limit=7566.212121552849",
                                   "host": [
                                     "{{baseUrl}}"
                                   ],
@@ -2820,11 +2820,11 @@
                                   "query": [
                                     {
                                       "key": "page",
-                                      "value": "2575.0739179331486"
+                                      "value": "7566.212121552849"
                                     },
                                     {
                                       "key": "limit",
-                                      "value": "2575.0739179331486"
+                                      "value": "7566.212121552849"
                                     }
                                   ],
                                   "variable": [
@@ -2855,7 +2855,7 @@
                             "method": "GET",
                             "header": [],
                             "url": {
-                              "raw": "{{baseUrl}}/v1/admins/tenants/:id/login-activity?page=2575.0739179331486&limit=2575.0739179331486",
+                              "raw": "{{baseUrl}}/v1/admins/tenants/:id/login-activity?page=7566.212121552849&limit=7566.212121552849",
                               "host": [
                                 "{{baseUrl}}"
                               ],
@@ -2869,11 +2869,11 @@
                               "query": [
                                 {
                                   "key": "page",
-                                  "value": "2575.0739179331486"
+                                  "value": "7566.212121552849"
                                 },
                                 {
                                   "key": "limit",
-                                  "value": "2575.0739179331486"
+                                  "value": "7566.212121552849"
                                 }
                               ],
                               "variable": [
@@ -2891,7 +2891,7 @@
                                 "method": "GET",
                                 "header": [],
                                 "url": {
-                                  "raw": "{{baseUrl}}/v1/admins/tenants/:id/login-activity?page=2575.0739179331486&limit=2575.0739179331486",
+                                  "raw": "{{baseUrl}}/v1/admins/tenants/:id/login-activity?page=7566.212121552849&limit=7566.212121552849",
                                   "host": [
                                     "{{baseUrl}}"
                                   ],
@@ -2905,11 +2905,11 @@
                                   "query": [
                                     {
                                       "key": "page",
-                                      "value": "2575.0739179331486"
+                                      "value": "7566.212121552849"
                                     },
                                     {
                                       "key": "limit",
-                                      "value": "2575.0739179331486"
+                                      "value": "7566.212121552849"
                                     }
                                   ],
                                   "variable": [
@@ -4020,7 +4020,7 @@
                         "method": "GET",
                         "header": [],
                         "url": {
-                          "raw": "{{baseUrl}}/v1/admins/overview/revenue-trend?months=2575.0739179331486",
+                          "raw": "{{baseUrl}}/v1/admins/overview/revenue-trend?months=7566.212121552849",
                           "host": [
                             "{{baseUrl}}"
                           ],
@@ -4033,7 +4033,7 @@
                           "query": [
                             {
                               "key": "months",
-                              "value": "2575.0739179331486"
+                              "value": "7566.212121552849"
                             }
                           ]
                         }
@@ -4045,7 +4045,7 @@
                             "method": "GET",
                             "header": [],
                             "url": {
-                              "raw": "{{baseUrl}}/v1/admins/overview/revenue-trend?months=2575.0739179331486",
+                              "raw": "{{baseUrl}}/v1/admins/overview/revenue-trend?months=7566.212121552849",
                               "host": [
                                 "{{baseUrl}}"
                               ],
@@ -4058,7 +4058,7 @@
                               "query": [
                                 {
                                   "key": "months",
-                                  "value": "2575.0739179331486"
+                                  "value": "7566.212121552849"
                                 }
                               ]
                             }
@@ -4134,7 +4134,7 @@
                         "method": "GET",
                         "header": [],
                         "url": {
-                          "raw": "{{baseUrl}}/v1/admins/overview/trial-funnel?days=2575.0739179331486",
+                          "raw": "{{baseUrl}}/v1/admins/overview/trial-funnel?days=7566.212121552849",
                           "host": [
                             "{{baseUrl}}"
                           ],
@@ -4147,7 +4147,7 @@
                           "query": [
                             {
                               "key": "days",
-                              "value": "2575.0739179331486"
+                              "value": "7566.212121552849"
                             }
                           ]
                         }
@@ -4159,7 +4159,7 @@
                             "method": "GET",
                             "header": [],
                             "url": {
-                              "raw": "{{baseUrl}}/v1/admins/overview/trial-funnel?days=2575.0739179331486",
+                              "raw": "{{baseUrl}}/v1/admins/overview/trial-funnel?days=7566.212121552849",
                               "host": [
                                 "{{baseUrl}}"
                               ],
@@ -4172,7 +4172,7 @@
                               "query": [
                                 {
                                   "key": "days",
-                                  "value": "2575.0739179331486"
+                                  "value": "7566.212121552849"
                                 }
                               ]
                             }
@@ -4307,7 +4307,7 @@
                         "method": "GET",
                         "header": [],
                         "url": {
-                          "raw": "{{baseUrl}}/v1/admins/security/audit-logs?organizationId=string&from=string&to=string&actorId=string&action=organization.profile_updated",
+                          "raw": "{{baseUrl}}/v1/admins/security/audit-logs?organizationId=string&from=string&to=string&actorId=string&action=organization.owner_password_reset_requested",
                           "host": [
                             "{{baseUrl}}"
                           ],
@@ -4336,7 +4336,7 @@
                             },
                             {
                               "key": "action",
-                              "value": "organization.profile_updated"
+                              "value": "organization.owner_password_reset_requested"
                             }
                           ]
                         }
@@ -4354,7 +4354,7 @@
                               }
                             ],
                             "url": {
-                              "raw": "{{baseUrl}}/v1/admins/security/audit-logs?organizationId=string&from=string&to=string&actorId=string&action=organization.profile_updated",
+                              "raw": "{{baseUrl}}/v1/admins/security/audit-logs?organizationId=string&from=string&to=string&actorId=string&action=organization.owner_password_reset_requested",
                               "host": [
                                 "{{baseUrl}}"
                               ],
@@ -4383,7 +4383,7 @@
                                 },
                                 {
                                   "key": "action",
-                                  "value": "organization.profile_updated"
+                                  "value": "organization.owner_password_reset_requested"
                                 }
                               ]
                             }
@@ -4998,7 +4998,7 @@
                             ],
                             "body": {
                               "mode": "raw",
-                              "raw": "{\n  \"status\": \"resolved\"\n}",
+                              "raw": "{\n  \"status\": \"in_progress\"\n}",
                               "options": {
                                 "raw": {
                                   "headerFamily": "json",
@@ -5044,7 +5044,7 @@
                                 ],
                                 "body": {
                                   "mode": "raw",
-                                  "raw": "{\n  \"status\": \"resolved\"\n}",
+                                  "raw": "{\n  \"status\": \"in_progress\"\n}",
                                   "options": {
                                     "raw": {
                                       "headerFamily": "json",
@@ -5108,7 +5108,7 @@
                             ],
                             "body": {
                               "mode": "raw",
-                              "raw": "{\n  \"priority\": \"low\"\n}",
+                              "raw": "{\n  \"priority\": \"high\"\n}",
                               "options": {
                                 "raw": {
                                   "headerFamily": "json",
@@ -5154,7 +5154,7 @@
                                 ],
                                 "body": {
                                   "mode": "raw",
-                                  "raw": "{\n  \"priority\": \"low\"\n}",
+                                  "raw": "{\n  \"priority\": \"high\"\n}",
                                   "options": {
                                     "raw": {
                                       "headerFamily": "json",
@@ -6159,7 +6159,7 @@
                     ],
                     "body": {
                       "mode": "raw",
-                      "raw": "{\n  \"roleId\": \"string\",\n  \"isActive\": true,\n  \"firstName\": \"string\",\n  \"lastName\": \"string\",\n  \"phoneNumber\": \"string\"\n}",
+                      "raw": "{\n  \"roleId\": \"string\",\n  \"isActive\": false,\n  \"firstName\": \"string\",\n  \"lastName\": \"string\",\n  \"phoneNumber\": \"string\"\n}",
                       "options": {
                         "raw": {
                           "headerFamily": "json",
@@ -6198,7 +6198,7 @@
                         ],
                         "body": {
                           "mode": "raw",
-                          "raw": "{\n  \"roleId\": \"string\",\n  \"isActive\": true,\n  \"firstName\": \"string\",\n  \"lastName\": \"string\",\n  \"phoneNumber\": \"string\"\n}",
+                          "raw": "{\n  \"roleId\": \"string\",\n  \"isActive\": false,\n  \"firstName\": \"string\",\n  \"lastName\": \"string\",\n  \"phoneNumber\": \"string\"\n}",
                           "options": {
                             "raw": {
                               "headerFamily": "json",
@@ -6322,7 +6322,7 @@
                             ],
                             "body": {
                               "mode": "raw",
-                              "raw": "{\n  \"name\": \"string\",\n  \"description\": \"string\",\n  \"sortOrder\": 6979.574791074048\n}",
+                              "raw": "{\n  \"name\": \"string\",\n  \"description\": \"string\",\n  \"sortOrder\": 5634.298307838614\n}",
                               "options": {
                                 "raw": {
                                   "headerFamily": "json",
@@ -6368,7 +6368,7 @@
                                 ],
                                 "body": {
                                   "mode": "raw",
-                                  "raw": "{\n  \"name\": \"string\",\n  \"description\": \"string\",\n  \"sortOrder\": 6979.574791074048\n}",
+                                  "raw": "{\n  \"name\": \"string\",\n  \"description\": \"string\",\n  \"sortOrder\": 5634.298307838614\n}",
                                   "options": {
                                     "raw": {
                                       "headerFamily": "json",
@@ -6567,7 +6567,7 @@
                         ],
                         "body": {
                           "mode": "raw",
-                          "raw": "{\n  \"name\": \"string\",\n  \"description\": \"string\",\n  \"sortOrder\": 6979.574791074048\n}",
+                          "raw": "{\n  \"name\": \"string\",\n  \"description\": \"string\",\n  \"sortOrder\": 5634.298307838614\n}",
                           "options": {
                             "raw": {
                               "headerFamily": "json",
@@ -6606,7 +6606,7 @@
                             ],
                             "body": {
                               "mode": "raw",
-                              "raw": "{\n  \"name\": \"string\",\n  \"description\": \"string\",\n  \"sortOrder\": 6979.574791074048\n}",
+                              "raw": "{\n  \"name\": \"string\",\n  \"description\": \"string\",\n  \"sortOrder\": 5634.298307838614\n}",
                               "options": {
                                 "raw": {
                                   "headerFamily": "json",
@@ -6908,7 +6908,7 @@
                             ],
                             "body": {
                               "mode": "raw",
-                              "raw": "{\n  \"title\": \"string\",\n  \"bodyMarkdown\": \"string\",\n  \"slug\": \"string\",\n  \"summary\": \"string\",\n  \"categoryId\": \"string\",\n  \"tags\": [\n    \"string\",\n    \"string\"\n  ],\n  \"status\": \"draft\",\n  \"sortOrder\": 2093.3539067754036,\n  \"isFeatured\": false\n}",
+                              "raw": "{\n  \"title\": \"string\",\n  \"bodyMarkdown\": \"string\",\n  \"slug\": \"string\",\n  \"summary\": \"string\",\n  \"categoryId\": \"string\",\n  \"tags\": [\n    \"string\",\n    \"string\"\n  ],\n  \"status\": \"draft\",\n  \"sortOrder\": 4179.731901173928,\n  \"isFeatured\": false\n}",
                               "options": {
                                 "raw": {
                                   "headerFamily": "json",
@@ -6954,7 +6954,7 @@
                                 ],
                                 "body": {
                                   "mode": "raw",
-                                  "raw": "{\n  \"title\": \"string\",\n  \"bodyMarkdown\": \"string\",\n  \"slug\": \"string\",\n  \"summary\": \"string\",\n  \"categoryId\": \"string\",\n  \"tags\": [\n    \"string\",\n    \"string\"\n  ],\n  \"status\": \"draft\",\n  \"sortOrder\": 2093.3539067754036,\n  \"isFeatured\": false\n}",
+                                  "raw": "{\n  \"title\": \"string\",\n  \"bodyMarkdown\": \"string\",\n  \"slug\": \"string\",\n  \"summary\": \"string\",\n  \"categoryId\": \"string\",\n  \"tags\": [\n    \"string\",\n    \"string\"\n  ],\n  \"status\": \"draft\",\n  \"sortOrder\": 4179.731901173928,\n  \"isFeatured\": false\n}",
                                   "options": {
                                     "raw": {
                                       "headerFamily": "json",
@@ -7153,7 +7153,7 @@
                         ],
                         "body": {
                           "mode": "raw",
-                          "raw": "{\n  \"title\": \"string\",\n  \"bodyMarkdown\": \"string\",\n  \"slug\": \"string\",\n  \"summary\": \"string\",\n  \"categoryId\": \"string\",\n  \"tags\": [\n    \"string\",\n    \"string\"\n  ],\n  \"status\": \"draft\",\n  \"sortOrder\": 2093.3539067754036,\n  \"isFeatured\": false\n}",
+                          "raw": "{\n  \"title\": \"string\",\n  \"bodyMarkdown\": \"string\",\n  \"slug\": \"string\",\n  \"summary\": \"string\",\n  \"categoryId\": \"string\",\n  \"tags\": [\n    \"string\",\n    \"string\"\n  ],\n  \"status\": \"draft\",\n  \"sortOrder\": 4179.731901173928,\n  \"isFeatured\": false\n}",
                           "options": {
                             "raw": {
                               "headerFamily": "json",
@@ -7192,7 +7192,7 @@
                             ],
                             "body": {
                               "mode": "raw",
-                              "raw": "{\n  \"title\": \"string\",\n  \"bodyMarkdown\": \"string\",\n  \"slug\": \"string\",\n  \"summary\": \"string\",\n  \"categoryId\": \"string\",\n  \"tags\": [\n    \"string\",\n    \"string\"\n  ],\n  \"status\": \"draft\",\n  \"sortOrder\": 2093.3539067754036,\n  \"isFeatured\": false\n}",
+                              "raw": "{\n  \"title\": \"string\",\n  \"bodyMarkdown\": \"string\",\n  \"slug\": \"string\",\n  \"summary\": \"string\",\n  \"categoryId\": \"string\",\n  \"tags\": [\n    \"string\",\n    \"string\"\n  ],\n  \"status\": \"draft\",\n  \"sortOrder\": 4179.731901173928,\n  \"isFeatured\": false\n}",
                               "options": {
                                 "raw": {
                                   "headerFamily": "json",
@@ -7631,7 +7631,7 @@
                     "method": "GET",
                     "header": [],
                     "url": {
-                      "raw": "{{baseUrl}}/v1/admins/usage?search=string&status=suspended",
+                      "raw": "{{baseUrl}}/v1/admins/usage?search=string&status=active",
                       "host": [
                         "{{baseUrl}}"
                       ],
@@ -7647,7 +7647,7 @@
                         },
                         {
                           "key": "status",
-                          "value": "suspended"
+                          "value": "active"
                         }
                       ]
                     }
@@ -7665,7 +7665,7 @@
                           }
                         ],
                         "url": {
-                          "raw": "{{baseUrl}}/v1/admins/usage?search=string&status=suspended",
+                          "raw": "{{baseUrl}}/v1/admins/usage?search=string&status=active",
                           "host": [
                             "{{baseUrl}}"
                           ],
@@ -7681,7 +7681,7 @@
                             },
                             {
                               "key": "status",
-                              "value": "suspended"
+                              "value": "active"
                             }
                           ]
                         }
@@ -9829,7 +9829,7 @@
                     "method": "GET",
                     "header": [],
                     "url": {
-                      "raw": "{{baseUrl}}/v1/tenant/login-activity?page=2575.0739179331486&limit=2575.0739179331486",
+                      "raw": "{{baseUrl}}/v1/tenant/login-activity?page=7566.212121552849&limit=7566.212121552849",
                       "host": [
                         "{{baseUrl}}"
                       ],
@@ -9841,11 +9841,11 @@
                       "query": [
                         {
                           "key": "page",
-                          "value": "2575.0739179331486"
+                          "value": "7566.212121552849"
                         },
                         {
                           "key": "limit",
-                          "value": "2575.0739179331486"
+                          "value": "7566.212121552849"
                         }
                       ]
                     }
@@ -9863,7 +9863,7 @@
                           }
                         ],
                         "url": {
-                          "raw": "{{baseUrl}}/v1/tenant/login-activity?page=2575.0739179331486&limit=2575.0739179331486",
+                          "raw": "{{baseUrl}}/v1/tenant/login-activity?page=7566.212121552849&limit=7566.212121552849",
                           "host": [
                             "{{baseUrl}}"
                           ],
@@ -9875,11 +9875,11 @@
                           "query": [
                             {
                               "key": "page",
-                              "value": "2575.0739179331486"
+                              "value": "7566.212121552849"
                             },
                             {
                               "key": "limit",
-                              "value": "2575.0739179331486"
+                              "value": "7566.212121552849"
                             }
                           ]
                         }
@@ -10079,7 +10079,7 @@
                     ],
                     "body": {
                       "mode": "raw",
-                      "raw": "{\n  \"industry\": \"Real Estate\",\n  \"teamSize\": \"11-50\",\n  \"logo\": \"https://res.cloudinary.com/...\",\n  \"theme\": \"dark\",\n  \"companyAddress\": \"15 Marina Road, Lagos\",\n  \"companyCity\": \"Lagos\",\n  \"companyCountry\": \"Nigeria\",\n  \"companyWebsite\": \"https://acmecorp.com\",\n  \"companyState\": \"Lagos\",\n  \"businessType\": \"Limited Liability Company\",\n  \"isCacRegistered\": true,\n  \"hearAboutUs\": \"Social Media\"\n}",
+                      "raw": "{\n  \"industry\": \"Education\",\n  \"teamSize\": \"1-10\",\n  \"logo\": \"https://res.cloudinary.com/...\",\n  \"theme\": \"dark\",\n  \"companyAddress\": \"15 Marina Road, Lagos\",\n  \"companyCity\": \"Lagos\",\n  \"companyCountry\": \"Nigeria\",\n  \"companyWebsite\": \"https://acmecorp.com\",\n  \"companyState\": \"Lagos\",\n  \"businessType\": \"Limited Liability Company\",\n  \"isCacRegistered\": true,\n  \"hearAboutUs\": \"Social Media\"\n}",
                       "options": {
                         "raw": {
                           "headerFamily": "json",
@@ -10121,7 +10121,7 @@
                         ],
                         "body": {
                           "mode": "raw",
-                          "raw": "{\n  \"industry\": \"Real Estate\",\n  \"teamSize\": \"11-50\",\n  \"logo\": \"https://res.cloudinary.com/...\",\n  \"theme\": \"dark\",\n  \"companyAddress\": \"15 Marina Road, Lagos\",\n  \"companyCity\": \"Lagos\",\n  \"companyCountry\": \"Nigeria\",\n  \"companyWebsite\": \"https://acmecorp.com\",\n  \"companyState\": \"Lagos\",\n  \"businessType\": \"Limited Liability Company\",\n  \"isCacRegistered\": true,\n  \"hearAboutUs\": \"Social Media\"\n}",
+                          "raw": "{\n  \"industry\": \"Education\",\n  \"teamSize\": \"1-10\",\n  \"logo\": \"https://res.cloudinary.com/...\",\n  \"theme\": \"dark\",\n  \"companyAddress\": \"15 Marina Road, Lagos\",\n  \"companyCity\": \"Lagos\",\n  \"companyCountry\": \"Nigeria\",\n  \"companyWebsite\": \"https://acmecorp.com\",\n  \"companyState\": \"Lagos\",\n  \"businessType\": \"Limited Liability Company\",\n  \"isCacRegistered\": true,\n  \"hearAboutUs\": \"Social Media\"\n}",
                           "options": {
                             "raw": {
                               "headerFamily": "json",
@@ -10672,7 +10672,7 @@
                             }
                           ],
                           "cookie": [],
-                          "body": "{\n  \"page\": 3102.8132474053673,\n  \"limit\": 6750.254494207535,\n  \"total\": 9378.578665764822,\n  \"totalPages\": 7381.792641484722,\n  \"hasNextPage\": false,\n  \"hasPrevPage\": false,\n  \"data\": [\n    {\n      \"id\": \"0efff3db-546a-8b88-22f2-48b4876f0f25\",\n      \"customerId\": \"6337c78a-852b-eff1-402c-08ae113956ac\",\n      \"content\": \"string\",\n      \"createdBy\": \"43498f18-a9cc-89c6-56cf-4b9997e1d397\",\n      \"createdAt\": \"2003-05-21T08:07:47.543Z\",\n      \"author\": {\n        \"id\": \"063217e9-2ead-eaa3-38b3-10fe8f1e405f\",\n        \"firstName\": \"string\",\n        \"lastName\": \"string\"\n      }\n    },\n    {\n      \"id\": \"56b1d88f-f12e-5a41-e85c-13ec042493a9\",\n      \"customerId\": \"e7cf5796-e17e-61f6-c99f-39e9263a2718\",\n      \"content\": \"string\",\n      \"createdBy\": \"1eeb0d1d-b9a2-06f4-559d-c30d30071026\",\n      \"createdAt\": \"2015-01-13T21:55:06.413Z\",\n      \"author\": {\n        \"id\": \"e2e6a413-152a-cbbd-b811-1079bd487a44\",\n        \"firstName\": \"string\",\n        \"lastName\": \"string\"\n      }\n    }\n  ]\n}"
+                          "body": "{\n  \"page\": 1569.2286878767936,\n  \"limit\": 5311.775846339415,\n  \"total\": 3403.143174388363,\n  \"totalPages\": 7909.239597473316,\n  \"hasNextPage\": true,\n  \"hasPrevPage\": true,\n  \"data\": [\n    {\n      \"id\": \"dda6707f-2662-e152-2af6-46a15132279b\",\n      \"customerId\": \"ff7aa5af-28e2-6f18-3df6-15533c816783\",\n      \"content\": \"string\",\n      \"createdBy\": \"e4c36c45-fa1d-82aa-6575-d806ca4cb437\",\n      \"createdAt\": \"2007-08-26T05:23:17.576Z\",\n      \"author\": {\n        \"id\": \"ccd99f8d-dc7b-61f9-81c6-3cf5577d0a7a\",\n        \"firstName\": \"string\",\n        \"lastName\": \"string\"\n      }\n    },\n    {\n      \"id\": \"0e15bab4-9e46-54bd-cf15-16ba047bf1d8\",\n      \"customerId\": \"747f88cf-fda5-b07d-eca7-7b472fdd7489\",\n      \"content\": \"string\",\n      \"createdBy\": \"6cdce47f-1660-03c0-68a6-8b34038ad6e1\",\n      \"createdAt\": \"2013-08-14T11:05:50.922Z\",\n      \"author\": {\n        \"id\": \"0e5158c9-79aa-459d-485b-a2f5cda5b766\",\n        \"firstName\": \"string\",\n        \"lastName\": \"string\"\n      }\n    }\n  ]\n}"
                         },
                         {
                           "name": "Invalid UUID or pagination",
@@ -10872,7 +10872,7 @@
                             }
                           ],
                           "cookie": [],
-                          "body": "{\n  \"id\": \"58cb2ae5-2529-bb82-669c-2388f2d323f4\",\n  \"tenantId\": \"d6bd855d-b93a-ef1f-4263-7ea73e66d378\",\n  \"contactId\": \"f86fd5e4-68f5-e7f2-5b2c-8c7b7f73d0ff\",\n  \"type\": \"meeting\",\n  \"notes\": \"string\",\n  \"staffId\": \"de6fb51b-14cd-1dcf-5725-9ec65c5c2719\",\n  \"createdBy\": \"e62a1fc6-85f9-84f3-b198-9b737a09d0b1\",\n  \"createdByType\": \"staff\",\n  \"occurredAt\": \"1949-12-08T08:34:45.262Z\",\n  \"createdAt\": \"2001-11-14T20:30:13.257Z\",\n  \"staff\": {\n    \"id\": \"008a24e8-ee1a-ecc6-d2ec-aaf60ad8bc3c\",\n    \"firstName\": \"string\",\n    \"lastName\": \"string\"\n  }\n}"
+                          "body": "{\n  \"id\": \"808bf430-a77b-02da-f20b-fd9599bd6f83\",\n  \"tenantId\": \"6db881ae-6a14-f27a-4fc9-9e8d9ef44aed\",\n  \"contactId\": \"bc90a64a-b17b-2590-c57a-304ea0449dd5\",\n  \"type\": \"email\",\n  \"notes\": \"string\",\n  \"staffId\": \"7917a18f-3748-d65a-3cc1-6045d65f1bd8\",\n  \"createdBy\": \"1cdad457-888c-734a-2860-38161d4e0c23\",\n  \"createdByType\": \"staff\",\n  \"occurredAt\": \"1958-08-16T18:47:49.058Z\",\n  \"createdAt\": \"1968-03-16T14:14:32.864Z\",\n  \"staff\": {\n    \"id\": \"e3a9d0ad-449b-5caa-9754-6e0ab777c564\",\n    \"firstName\": \"string\",\n    \"lastName\": \"string\"\n  }\n}"
                         },
                         {
                           "name": "Invalid fields, UUID or timezone-aware date",
@@ -11025,7 +11025,7 @@
                           }
                         ],
                         "url": {
-                          "raw": "{{baseUrl}}/v1/contacts/:id/interactions?type=meeting&staffId=238c453c-f6de-fb69-c57a-295a252f9d41&from=2001-11-03T09:15:16.548Z&to=2001-11-03T09:15:16.548Z",
+                          "raw": "{{baseUrl}}/v1/contacts/:id/interactions?type=email&staffId=7957ebc9-34b8-0989-2974-189d3685000c&from=1957-01-22T01:01:20.159Z&to=1957-01-22T01:01:20.159Z",
                           "host": [
                             "{{baseUrl}}"
                           ],
@@ -11038,21 +11038,21 @@
                           "query": [
                             {
                               "key": "type",
-                              "value": "meeting"
+                              "value": "email"
                             },
                             {
                               "key": "staffId",
-                              "value": "238c453c-f6de-fb69-c57a-295a252f9d41"
+                              "value": "7957ebc9-34b8-0989-2974-189d3685000c"
                             },
                             {
                               "description": "Inclusive occurredAt lower bound; explicit timezone required",
                               "key": "from",
-                              "value": "2001-11-03T09:15:16.548Z"
+                              "value": "1957-01-22T01:01:20.159Z"
                             },
                             {
                               "description": "Inclusive occurredAt upper bound; explicit timezone required",
                               "key": "to",
-                              "value": "2001-11-03T09:15:16.548Z"
+                              "value": "1957-01-22T01:01:20.159Z"
                             }
                           ],
                           "variable": [
@@ -11076,7 +11076,7 @@
                               }
                             ],
                             "url": {
-                              "raw": "{{baseUrl}}/v1/contacts/:id/interactions?type=meeting&staffId=238c453c-f6de-fb69-c57a-295a252f9d41&from=2001-11-03T09:15:16.548Z&to=2001-11-03T09:15:16.548Z",
+                              "raw": "{{baseUrl}}/v1/contacts/:id/interactions?type=email&staffId=7957ebc9-34b8-0989-2974-189d3685000c&from=1957-01-22T01:01:20.159Z&to=1957-01-22T01:01:20.159Z",
                               "host": [
                                 "{{baseUrl}}"
                               ],
@@ -11089,21 +11089,21 @@
                               "query": [
                                 {
                                   "key": "type",
-                                  "value": "meeting"
+                                  "value": "email"
                                 },
                                 {
                                   "key": "staffId",
-                                  "value": "238c453c-f6de-fb69-c57a-295a252f9d41"
+                                  "value": "7957ebc9-34b8-0989-2974-189d3685000c"
                                 },
                                 {
                                   "description": "Inclusive occurredAt lower bound; explicit timezone required",
                                   "key": "from",
-                                  "value": "2001-11-03T09:15:16.548Z"
+                                  "value": "1957-01-22T01:01:20.159Z"
                                 },
                                 {
                                   "description": "Inclusive occurredAt upper bound; explicit timezone required",
                                   "key": "to",
-                                  "value": "2001-11-03T09:15:16.548Z"
+                                  "value": "1957-01-22T01:01:20.159Z"
                                 }
                               ],
                               "variable": [
@@ -11124,7 +11124,7 @@
                             }
                           ],
                           "cookie": [],
-                          "body": "{\n  \"page\": 3281.0874205351847,\n  \"limit\": 4094.7308642605453,\n  \"total\": 590.5114523606603,\n  \"totalPages\": 4213.41917810613,\n  \"hasNextPage\": true,\n  \"hasPrevPage\": false,\n  \"data\": [\n    {\n      \"id\": \"aa04a35b-3485-b31a-4832-9cabe958686f\",\n      \"tenantId\": \"f9708908-cbd2-4f38-ab50-6edb6c879cfb\",\n      \"contactId\": \"3e9f9e01-b56b-a212-0fdb-cfabb7809595\",\n      \"type\": \"meeting\",\n      \"notes\": \"string\",\n      \"staffId\": \"f45f61fc-03f8-0b0a-2354-3a324fabef04\",\n      \"createdBy\": \"8998e4fc-dc5f-9e03-bc7f-c11f9d69ce30\",\n      \"createdByType\": \"tenant\",\n      \"occurredAt\": \"1962-11-06T11:35:02.543Z\",\n      \"createdAt\": \"1969-07-28T06:13:49.269Z\",\n      \"staff\": {\n        \"id\": \"11ff9ac4-881e-7518-f8a3-6cf23fec54aa\",\n        \"firstName\": \"string\",\n        \"lastName\": \"string\"\n      }\n    },\n    {\n      \"id\": \"a388c2db-c09c-7c4c-a81f-5d945b947bb8\",\n      \"tenantId\": \"a550f466-5a7c-5c28-01e3-f41a9bc9ed29\",\n      \"contactId\": \"ced82a36-42e7-0bf9-2c57-901826e427e3\",\n      \"type\": \"email\",\n      \"notes\": \"string\",\n      \"staffId\": \"62d1e94c-09f8-3599-ebbc-2ddaf7fc10a2\",\n      \"createdBy\": \"aa515e1a-e433-374d-20a1-77686ad9795b\",\n      \"createdByType\": \"staff\",\n      \"occurredAt\": \"1993-02-26T11:22:08.805Z\",\n      \"createdAt\": \"1979-08-04T10:26:10.859Z\",\n      \"staff\": {\n        \"id\": \"fda023c1-46b8-89f7-f79e-43ab2bafb5f6\",\n        \"firstName\": \"string\",\n        \"lastName\": \"string\"\n      }\n    }\n  ]\n}"
+                          "body": "{\n  \"page\": 5826.761409001558,\n  \"limit\": 5628.4230857646335,\n  \"total\": 9118.032174743976,\n  \"totalPages\": 1619.905507566497,\n  \"hasNextPage\": true,\n  \"hasPrevPage\": false,\n  \"data\": [\n    {\n      \"id\": \"8c8bfcd1-8513-3ed1-45fa-fc8f8ae58317\",\n      \"tenantId\": \"9818b810-7f97-ce01-ca11-2a727a9f1705\",\n      \"contactId\": \"af5a287a-47a7-1e8c-003f-4274b91b30a7\",\n      \"type\": \"meeting\",\n      \"notes\": \"string\",\n      \"staffId\": \"6766abc2-0a52-c321-748b-fdc96bed02c8\",\n      \"createdBy\": \"cd2d910a-7dd8-3518-1a54-2cc2abf3ac54\",\n      \"createdByType\": \"tenant\",\n      \"occurredAt\": \"1948-08-16T22:29:17.036Z\",\n      \"createdAt\": \"1992-01-30T07:51:23.538Z\",\n      \"staff\": {\n        \"id\": \"6966f4d5-d3de-de58-171f-bf6d17267cde\",\n        \"firstName\": \"string\",\n        \"lastName\": \"string\"\n      }\n    },\n    {\n      \"id\": \"a31cc7a0-d685-7c40-8097-e9a775f4c85b\",\n      \"tenantId\": \"9a622357-9850-2a17-4e93-96d20cc024e4\",\n      \"contactId\": \"04919689-1c4f-e6da-2aa6-044f81ffa5b8\",\n      \"type\": \"call\",\n      \"notes\": \"string\",\n      \"staffId\": \"ec793904-c59c-2088-02ba-9c9242820283\",\n      \"createdBy\": \"709ae70d-b7cf-9e5d-1422-0d68e0ed7cc8\",\n      \"createdByType\": \"staff\",\n      \"occurredAt\": \"1996-09-03T16:37:25.890Z\",\n      \"createdAt\": \"2014-02-16T08:46:39.290Z\",\n      \"staff\": {\n        \"id\": \"34609657-6557-5a05-74d7-729828407d46\",\n        \"firstName\": \"string\",\n        \"lastName\": \"string\"\n      }\n    }\n  ]\n}"
                         },
                         {
                           "name": "Invalid UUID, pagination or date range",
@@ -11132,7 +11132,7 @@
                             "method": "GET",
                             "header": [],
                             "url": {
-                              "raw": "{{baseUrl}}/v1/contacts/:id/interactions?type=meeting&staffId=238c453c-f6de-fb69-c57a-295a252f9d41&from=2001-11-03T09:15:16.548Z&to=2001-11-03T09:15:16.548Z",
+                              "raw": "{{baseUrl}}/v1/contacts/:id/interactions?type=email&staffId=7957ebc9-34b8-0989-2974-189d3685000c&from=1957-01-22T01:01:20.159Z&to=1957-01-22T01:01:20.159Z",
                               "host": [
                                 "{{baseUrl}}"
                               ],
@@ -11145,21 +11145,21 @@
                               "query": [
                                 {
                                   "key": "type",
-                                  "value": "meeting"
+                                  "value": "email"
                                 },
                                 {
                                   "key": "staffId",
-                                  "value": "238c453c-f6de-fb69-c57a-295a252f9d41"
+                                  "value": "7957ebc9-34b8-0989-2974-189d3685000c"
                                 },
                                 {
                                   "description": "Inclusive occurredAt lower bound; explicit timezone required",
                                   "key": "from",
-                                  "value": "2001-11-03T09:15:16.548Z"
+                                  "value": "1957-01-22T01:01:20.159Z"
                                 },
                                 {
                                   "description": "Inclusive occurredAt upper bound; explicit timezone required",
                                   "key": "to",
-                                  "value": "2001-11-03T09:15:16.548Z"
+                                  "value": "1957-01-22T01:01:20.159Z"
                                 }
                               ],
                               "variable": [
@@ -11183,7 +11183,7 @@
                             "method": "GET",
                             "header": [],
                             "url": {
-                              "raw": "{{baseUrl}}/v1/contacts/:id/interactions?type=meeting&staffId=238c453c-f6de-fb69-c57a-295a252f9d41&from=2001-11-03T09:15:16.548Z&to=2001-11-03T09:15:16.548Z",
+                              "raw": "{{baseUrl}}/v1/contacts/:id/interactions?type=email&staffId=7957ebc9-34b8-0989-2974-189d3685000c&from=1957-01-22T01:01:20.159Z&to=1957-01-22T01:01:20.159Z",
                               "host": [
                                 "{{baseUrl}}"
                               ],
@@ -11196,21 +11196,21 @@
                               "query": [
                                 {
                                   "key": "type",
-                                  "value": "meeting"
+                                  "value": "email"
                                 },
                                 {
                                   "key": "staffId",
-                                  "value": "238c453c-f6de-fb69-c57a-295a252f9d41"
+                                  "value": "7957ebc9-34b8-0989-2974-189d3685000c"
                                 },
                                 {
                                   "description": "Inclusive occurredAt lower bound; explicit timezone required",
                                   "key": "from",
-                                  "value": "2001-11-03T09:15:16.548Z"
+                                  "value": "1957-01-22T01:01:20.159Z"
                                 },
                                 {
                                   "description": "Inclusive occurredAt upper bound; explicit timezone required",
                                   "key": "to",
-                                  "value": "2001-11-03T09:15:16.548Z"
+                                  "value": "1957-01-22T01:01:20.159Z"
                                 }
                               ],
                               "variable": [
@@ -11234,7 +11234,7 @@
                             "method": "GET",
                             "header": [],
                             "url": {
-                              "raw": "{{baseUrl}}/v1/contacts/:id/interactions?type=meeting&staffId=238c453c-f6de-fb69-c57a-295a252f9d41&from=2001-11-03T09:15:16.548Z&to=2001-11-03T09:15:16.548Z",
+                              "raw": "{{baseUrl}}/v1/contacts/:id/interactions?type=email&staffId=7957ebc9-34b8-0989-2974-189d3685000c&from=1957-01-22T01:01:20.159Z&to=1957-01-22T01:01:20.159Z",
                               "host": [
                                 "{{baseUrl}}"
                               ],
@@ -11247,21 +11247,21 @@
                               "query": [
                                 {
                                   "key": "type",
-                                  "value": "meeting"
+                                  "value": "email"
                                 },
                                 {
                                   "key": "staffId",
-                                  "value": "238c453c-f6de-fb69-c57a-295a252f9d41"
+                                  "value": "7957ebc9-34b8-0989-2974-189d3685000c"
                                 },
                                 {
                                   "description": "Inclusive occurredAt lower bound; explicit timezone required",
                                   "key": "from",
-                                  "value": "2001-11-03T09:15:16.548Z"
+                                  "value": "1957-01-22T01:01:20.159Z"
                                 },
                                 {
                                   "description": "Inclusive occurredAt upper bound; explicit timezone required",
                                   "key": "to",
-                                  "value": "2001-11-03T09:15:16.548Z"
+                                  "value": "1957-01-22T01:01:20.159Z"
                                 }
                               ],
                               "variable": [
@@ -12181,7 +12181,7 @@
                         }
                       ],
                       "cookie": [],
-                      "body": "{\n  \"id\": \"e9b33eb1-f8de-4238-58b0-0d9e9fca28d2\",\n  \"tenantId\": \"57c3e5df-23f2-49c9-5912-391be157d58e\",\n  \"kind\": \"expense\",\n  \"name\": \"string\",\n  \"isActive\": false,\n  \"createdAt\": \"1962-06-29T12:26:11.351Z\",\n  \"updatedAt\": \"1993-03-13T19:34:20.373Z\"\n}"
+                      "body": "{\n  \"id\": \"462f08c6-7d8e-df28-56b8-8a6afed6f438\",\n  \"tenantId\": \"7d860813-53e3-e891-6a56-378617312c4a\",\n  \"kind\": \"income\",\n  \"name\": \"string\",\n  \"isActive\": true,\n  \"createdAt\": \"1949-10-31T06:20:44.805Z\",\n  \"updatedAt\": \"1980-12-23T23:46:21.320Z\"\n}"
                     }
                   ]
                 },
@@ -12211,7 +12211,7 @@
                     ],
                     "body": {
                       "mode": "raw",
-                      "raw": "{\n  \"name\": \"Consulting\",\n  \"isActive\": false\n}",
+                      "raw": "{\n  \"name\": \"Consulting\",\n  \"isActive\": true\n}",
                       "options": {
                         "raw": {
                           "headerFamily": "json",
@@ -12259,7 +12259,7 @@
                         ],
                         "body": {
                           "mode": "raw",
-                          "raw": "{\n  \"name\": \"Consulting\",\n  \"isActive\": false\n}",
+                          "raw": "{\n  \"name\": \"Consulting\",\n  \"isActive\": true\n}",
                           "options": {
                             "raw": {
                               "headerFamily": "json",
@@ -12295,7 +12295,7 @@
                         }
                       ],
                       "cookie": [],
-                      "body": "{\n  \"id\": \"e9b33eb1-f8de-4238-58b0-0d9e9fca28d2\",\n  \"tenantId\": \"57c3e5df-23f2-49c9-5912-391be157d58e\",\n  \"kind\": \"expense\",\n  \"name\": \"string\",\n  \"isActive\": false,\n  \"createdAt\": \"1962-06-29T12:26:11.351Z\",\n  \"updatedAt\": \"1993-03-13T19:34:20.373Z\"\n}"
+                      "body": "{\n  \"id\": \"462f08c6-7d8e-df28-56b8-8a6afed6f438\",\n  \"tenantId\": \"7d860813-53e3-e891-6a56-378617312c4a\",\n  \"kind\": \"income\",\n  \"name\": \"string\",\n  \"isActive\": true,\n  \"createdAt\": \"1949-10-31T06:20:44.805Z\",\n  \"updatedAt\": \"1980-12-23T23:46:21.320Z\"\n}"
                     }
                   ]
                 }
@@ -12327,7 +12327,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n  \"kind\": \"income\",\n  \"name\": \"Consulting\"\n}",
+                  "raw": "{\n  \"kind\": \"expense\",\n  \"name\": \"Consulting\"\n}",
                   "options": {
                     "raw": {
                       "headerFamily": "json",
@@ -12368,7 +12368,7 @@
                     ],
                     "body": {
                       "mode": "raw",
-                      "raw": "{\n  \"kind\": \"income\",\n  \"name\": \"Consulting\"\n}",
+                      "raw": "{\n  \"kind\": \"expense\",\n  \"name\": \"Consulting\"\n}",
                       "options": {
                         "raw": {
                           "headerFamily": "json",
@@ -12397,7 +12397,7 @@
                     }
                   ],
                   "cookie": [],
-                  "body": "{\n  \"id\": \"e9b33eb1-f8de-4238-58b0-0d9e9fca28d2\",\n  \"tenantId\": \"57c3e5df-23f2-49c9-5912-391be157d58e\",\n  \"kind\": \"expense\",\n  \"name\": \"string\",\n  \"isActive\": false,\n  \"createdAt\": \"1962-06-29T12:26:11.351Z\",\n  \"updatedAt\": \"1993-03-13T19:34:20.373Z\"\n}"
+                  "body": "{\n  \"id\": \"462f08c6-7d8e-df28-56b8-8a6afed6f438\",\n  \"tenantId\": \"7d860813-53e3-e891-6a56-378617312c4a\",\n  \"kind\": \"income\",\n  \"name\": \"string\",\n  \"isActive\": true,\n  \"createdAt\": \"1949-10-31T06:20:44.805Z\",\n  \"updatedAt\": \"1980-12-23T23:46:21.320Z\"\n}"
                 }
               ]
             },
@@ -12422,7 +12422,7 @@
                   }
                 ],
                 "url": {
-                  "raw": "{{baseUrl}}/v1/financial-categories?kind=expense&isActive=false",
+                  "raw": "{{baseUrl}}/v1/financial-categories?kind=income&isActive=false",
                   "host": [
                     "{{baseUrl}}"
                   ],
@@ -12433,7 +12433,7 @@
                   "query": [
                     {
                       "key": "kind",
-                      "value": "expense"
+                      "value": "income"
                     },
                     {
                       "description": "Omit to include active and archived categories",
@@ -12460,7 +12460,7 @@
                       }
                     ],
                     "url": {
-                      "raw": "{{baseUrl}}/v1/financial-categories?kind=expense&isActive=false",
+                      "raw": "{{baseUrl}}/v1/financial-categories?kind=income&isActive=false",
                       "host": [
                         "{{baseUrl}}"
                       ],
@@ -12471,7 +12471,7 @@
                       "query": [
                         {
                           "key": "kind",
-                          "value": "expense"
+                          "value": "income"
                         },
                         {
                           "description": "Omit to include active and archived categories",
@@ -12491,7 +12491,7 @@
                     }
                   ],
                   "cookie": [],
-                  "body": "[\n  {\n    \"id\": \"d255926e-861c-e8d4-97d8-31a92604a35f\",\n    \"tenantId\": \"788858fa-4074-dcfd-df66-f855c40e7b1f\",\n    \"kind\": \"income\",\n    \"name\": \"string\",\n    \"isActive\": false,\n    \"createdAt\": \"1986-04-27T11:49:45.670Z\",\n    \"updatedAt\": \"1983-08-05T22:05:46.457Z\"\n  },\n  {\n    \"id\": \"c7e35c1a-7229-20b3-be36-50144d411e9f\",\n    \"tenantId\": \"3a283057-fe64-e0bc-d26d-9812e9ae22af\",\n    \"kind\": \"income\",\n    \"name\": \"string\",\n    \"isActive\": true,\n    \"createdAt\": \"1975-08-29T03:11:54.543Z\",\n    \"updatedAt\": \"1998-07-15T10:58:58.303Z\"\n  }\n]"
+                  "body": "[\n  {\n    \"id\": \"c9354e30-6181-7e29-aa80-58365bf6d10c\",\n    \"tenantId\": \"2e026566-210b-ae73-a46a-a37c50fe90ba\",\n    \"kind\": \"expense\",\n    \"name\": \"string\",\n    \"isActive\": false,\n    \"createdAt\": \"1997-05-26T11:19:51.960Z\",\n    \"updatedAt\": \"1951-02-06T19:43:36.710Z\"\n  },\n  {\n    \"id\": \"f428e784-cb84-2e82-ea86-e792eff35f5e\",\n    \"tenantId\": \"d74d728a-cf3b-b8ca-0f13-acb42e520059\",\n    \"kind\": \"income\",\n    \"name\": \"string\",\n    \"isActive\": false,\n    \"createdAt\": \"2016-10-06T07:42:53.491Z\",\n    \"updatedAt\": \"1951-10-11T00:46:12.073Z\"\n  }\n]"
                 }
               ]
             }
@@ -12575,7 +12575,7 @@
                             }
                           ],
                           "cookie": [],
-                          "body": "{\n  \"id\": \"1070d23b-09d6-7cdd-2108-2f0cd4f4e393\",\n  \"amount\": 8439.86298251386,\n  \"categoryId\": \"2c959288-d5f6-a5eb-3884-2ee99637ada2\",\n  \"category\": {\n    \"id\": \"6aa61cf1-ba36-2071-af01-23c9faca1bbd\",\n    \"tenantId\": \"b269463c-c2d5-5efd-f92d-231057bf4827\",\n    \"kind\": \"expense\",\n    \"name\": \"string\",\n    \"isActive\": false,\n    \"createdAt\": \"2022-06-01T14:58:03.585Z\",\n    \"updatedAt\": \"1973-07-20T10:25:04.798Z\"\n  },\n  \"description\": \"string\",\n  \"status\": \"Pending\",\n  \"tenantId\": \"92d318a6-67f7-cabb-d489-4e992f150299\",\n  \"createdAt\": \"1980-05-26T13:02:10.316Z\",\n  \"updatedAt\": \"2002-10-07T17:14:54.902Z\",\n  \"source\": \"string\"\n}"
+                          "body": "{\n  \"id\": \"270076da-56b7-e7d9-3228-029ba6426c73\",\n  \"amount\": 7745.110405053879,\n  \"categoryId\": \"36c7e92c-8c68-b983-41ff-360a344ddfd9\",\n  \"category\": {\n    \"id\": \"16a12dc2-7433-0477-cd0d-190e96e884cf\",\n    \"tenantId\": \"6cb83527-12da-03e9-8ed1-00198096e989\",\n    \"kind\": \"income\",\n    \"name\": \"string\",\n    \"isActive\": true,\n    \"createdAt\": \"1986-01-24T11:03:58.633Z\",\n    \"updatedAt\": \"2018-03-13T22:16:48.164Z\"\n  },\n  \"description\": \"string\",\n  \"status\": \"Paid\",\n  \"tenantId\": \"55175238-39fc-1fe4-b287-6535bf240cbc\",\n  \"createdAt\": \"1960-06-25T04:21:57.305Z\",\n  \"updatedAt\": \"2024-05-03T12:45:23.349Z\",\n  \"source\": \"string\"\n}"
                         }
                       ]
                     }
@@ -12648,7 +12648,7 @@
                         }
                       ],
                       "cookie": [],
-                      "body": "{\n  \"id\": \"1070d23b-09d6-7cdd-2108-2f0cd4f4e393\",\n  \"amount\": 8439.86298251386,\n  \"categoryId\": \"2c959288-d5f6-a5eb-3884-2ee99637ada2\",\n  \"category\": {\n    \"id\": \"6aa61cf1-ba36-2071-af01-23c9faca1bbd\",\n    \"tenantId\": \"b269463c-c2d5-5efd-f92d-231057bf4827\",\n    \"kind\": \"expense\",\n    \"name\": \"string\",\n    \"isActive\": false,\n    \"createdAt\": \"2022-06-01T14:58:03.585Z\",\n    \"updatedAt\": \"1973-07-20T10:25:04.798Z\"\n  },\n  \"description\": \"string\",\n  \"status\": \"Pending\",\n  \"tenantId\": \"92d318a6-67f7-cabb-d489-4e992f150299\",\n  \"createdAt\": \"1980-05-26T13:02:10.316Z\",\n  \"updatedAt\": \"2002-10-07T17:14:54.902Z\",\n  \"source\": \"string\"\n}"
+                      "body": "{\n  \"id\": \"270076da-56b7-e7d9-3228-029ba6426c73\",\n  \"amount\": 7745.110405053879,\n  \"categoryId\": \"36c7e92c-8c68-b983-41ff-360a344ddfd9\",\n  \"category\": {\n    \"id\": \"16a12dc2-7433-0477-cd0d-190e96e884cf\",\n    \"tenantId\": \"6cb83527-12da-03e9-8ed1-00198096e989\",\n    \"kind\": \"income\",\n    \"name\": \"string\",\n    \"isActive\": true,\n    \"createdAt\": \"1986-01-24T11:03:58.633Z\",\n    \"updatedAt\": \"2018-03-13T22:16:48.164Z\"\n  },\n  \"description\": \"string\",\n  \"status\": \"Paid\",\n  \"tenantId\": \"55175238-39fc-1fe4-b287-6535bf240cbc\",\n  \"createdAt\": \"1960-06-25T04:21:57.305Z\",\n  \"updatedAt\": \"2024-05-03T12:45:23.349Z\",\n  \"source\": \"string\"\n}"
                     }
                   ]
                 },
@@ -12668,7 +12668,7 @@
                     ],
                     "body": {
                       "mode": "raw",
-                      "raw": "{\n  \"amount\": 2000,\n  \"categoryId\": \"6055c7ee-a2de-44a6-2a94-e1aef9848e5a\",\n  \"source\": \"Greenmouse Ltd.\",\n  \"description\": \"Updated description\",\n  \"status\": \"Rejected\"\n}",
+                      "raw": "{\n  \"amount\": 2000,\n  \"categoryId\": \"a5855654-9dba-57df-a80c-75576a4f6c57\",\n  \"source\": \"Greenmouse Ltd.\",\n  \"description\": \"Updated description\",\n  \"status\": \"Paid\"\n}",
                       "options": {
                         "raw": {
                           "headerFamily": "json",
@@ -12711,7 +12711,7 @@
                         ],
                         "body": {
                           "mode": "raw",
-                          "raw": "{\n  \"amount\": 2000,\n  \"categoryId\": \"6055c7ee-a2de-44a6-2a94-e1aef9848e5a\",\n  \"source\": \"Greenmouse Ltd.\",\n  \"description\": \"Updated description\",\n  \"status\": \"Rejected\"\n}",
+                          "raw": "{\n  \"amount\": 2000,\n  \"categoryId\": \"a5855654-9dba-57df-a80c-75576a4f6c57\",\n  \"source\": \"Greenmouse Ltd.\",\n  \"description\": \"Updated description\",\n  \"status\": \"Paid\"\n}",
                           "options": {
                             "raw": {
                               "headerFamily": "json",
@@ -12747,7 +12747,7 @@
                         }
                       ],
                       "cookie": [],
-                      "body": "{\n  \"id\": \"1070d23b-09d6-7cdd-2108-2f0cd4f4e393\",\n  \"amount\": 8439.86298251386,\n  \"categoryId\": \"2c959288-d5f6-a5eb-3884-2ee99637ada2\",\n  \"category\": {\n    \"id\": \"6aa61cf1-ba36-2071-af01-23c9faca1bbd\",\n    \"tenantId\": \"b269463c-c2d5-5efd-f92d-231057bf4827\",\n    \"kind\": \"expense\",\n    \"name\": \"string\",\n    \"isActive\": false,\n    \"createdAt\": \"2022-06-01T14:58:03.585Z\",\n    \"updatedAt\": \"1973-07-20T10:25:04.798Z\"\n  },\n  \"description\": \"string\",\n  \"status\": \"Pending\",\n  \"tenantId\": \"92d318a6-67f7-cabb-d489-4e992f150299\",\n  \"createdAt\": \"1980-05-26T13:02:10.316Z\",\n  \"updatedAt\": \"2002-10-07T17:14:54.902Z\",\n  \"source\": \"string\"\n}"
+                      "body": "{\n  \"id\": \"270076da-56b7-e7d9-3228-029ba6426c73\",\n  \"amount\": 7745.110405053879,\n  \"categoryId\": \"36c7e92c-8c68-b983-41ff-360a344ddfd9\",\n  \"category\": {\n    \"id\": \"16a12dc2-7433-0477-cd0d-190e96e884cf\",\n    \"tenantId\": \"6cb83527-12da-03e9-8ed1-00198096e989\",\n    \"kind\": \"income\",\n    \"name\": \"string\",\n    \"isActive\": true,\n    \"createdAt\": \"1986-01-24T11:03:58.633Z\",\n    \"updatedAt\": \"2018-03-13T22:16:48.164Z\"\n  },\n  \"description\": \"string\",\n  \"status\": \"Paid\",\n  \"tenantId\": \"55175238-39fc-1fe4-b287-6535bf240cbc\",\n  \"createdAt\": \"1960-06-25T04:21:57.305Z\",\n  \"updatedAt\": \"2024-05-03T12:45:23.349Z\",\n  \"source\": \"string\"\n}"
                     }
                   ]
                 },
@@ -12825,7 +12825,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n  \"amount\": 1500,\n  \"categoryId\": \"4e81a63d-8261-1be7-c490-ee2ad8ec3ac2\",\n  \"source\": \"Greenmouse Ltd.\",\n  \"description\": \"Monthly salary for April\",\n  \"status\": \"Pending\"\n}",
+                  "raw": "{\n  \"amount\": 1500,\n  \"categoryId\": \"2cd3bfb9-9914-6d66-0a4a-92f7ceb7bfd1\",\n  \"source\": \"Greenmouse Ltd.\",\n  \"description\": \"Monthly salary for April\",\n  \"status\": \"Pending\"\n}",
                   "options": {
                     "raw": {
                       "headerFamily": "json",
@@ -12861,7 +12861,7 @@
                     ],
                     "body": {
                       "mode": "raw",
-                      "raw": "{\n  \"amount\": 1500,\n  \"categoryId\": \"4e81a63d-8261-1be7-c490-ee2ad8ec3ac2\",\n  \"source\": \"Greenmouse Ltd.\",\n  \"description\": \"Monthly salary for April\",\n  \"status\": \"Pending\"\n}",
+                      "raw": "{\n  \"amount\": 1500,\n  \"categoryId\": \"2cd3bfb9-9914-6d66-0a4a-92f7ceb7bfd1\",\n  \"source\": \"Greenmouse Ltd.\",\n  \"description\": \"Monthly salary for April\",\n  \"status\": \"Pending\"\n}",
                       "options": {
                         "raw": {
                           "headerFamily": "json",
@@ -12890,7 +12890,7 @@
                     }
                   ],
                   "cookie": [],
-                  "body": "{\n  \"id\": \"1070d23b-09d6-7cdd-2108-2f0cd4f4e393\",\n  \"amount\": 8439.86298251386,\n  \"categoryId\": \"2c959288-d5f6-a5eb-3884-2ee99637ada2\",\n  \"category\": {\n    \"id\": \"6aa61cf1-ba36-2071-af01-23c9faca1bbd\",\n    \"tenantId\": \"b269463c-c2d5-5efd-f92d-231057bf4827\",\n    \"kind\": \"expense\",\n    \"name\": \"string\",\n    \"isActive\": false,\n    \"createdAt\": \"2022-06-01T14:58:03.585Z\",\n    \"updatedAt\": \"1973-07-20T10:25:04.798Z\"\n  },\n  \"description\": \"string\",\n  \"status\": \"Pending\",\n  \"tenantId\": \"92d318a6-67f7-cabb-d489-4e992f150299\",\n  \"createdAt\": \"1980-05-26T13:02:10.316Z\",\n  \"updatedAt\": \"2002-10-07T17:14:54.902Z\",\n  \"source\": \"string\"\n}"
+                  "body": "{\n  \"id\": \"270076da-56b7-e7d9-3228-029ba6426c73\",\n  \"amount\": 7745.110405053879,\n  \"categoryId\": \"36c7e92c-8c68-b983-41ff-360a344ddfd9\",\n  \"category\": {\n    \"id\": \"16a12dc2-7433-0477-cd0d-190e96e884cf\",\n    \"tenantId\": \"6cb83527-12da-03e9-8ed1-00198096e989\",\n    \"kind\": \"income\",\n    \"name\": \"string\",\n    \"isActive\": true,\n    \"createdAt\": \"1986-01-24T11:03:58.633Z\",\n    \"updatedAt\": \"2018-03-13T22:16:48.164Z\"\n  },\n  \"description\": \"string\",\n  \"status\": \"Paid\",\n  \"tenantId\": \"55175238-39fc-1fe4-b287-6535bf240cbc\",\n  \"createdAt\": \"1960-06-25T04:21:57.305Z\",\n  \"updatedAt\": \"2024-05-03T12:45:23.349Z\",\n  \"source\": \"string\"\n}"
                 }
               ]
             },
@@ -12905,7 +12905,7 @@
                   }
                 ],
                 "url": {
-                  "raw": "{{baseUrl}}/v1/income?search=string&categoryId=238c453c-f6de-fb69-c57a-295a252f9d41&status=Paid",
+                  "raw": "{{baseUrl}}/v1/income?search=string&categoryId=7957ebc9-34b8-0989-2974-189d3685000c&status=Rejected",
                   "host": [
                     "{{baseUrl}}"
                   ],
@@ -12920,11 +12920,11 @@
                     },
                     {
                       "key": "categoryId",
-                      "value": "238c453c-f6de-fb69-c57a-295a252f9d41"
+                      "value": "7957ebc9-34b8-0989-2974-189d3685000c"
                     },
                     {
                       "key": "status",
-                      "value": "Paid"
+                      "value": "Rejected"
                     }
                   ]
                 }
@@ -12941,7 +12941,7 @@
                       }
                     ],
                     "url": {
-                      "raw": "{{baseUrl}}/v1/income?search=string&categoryId=238c453c-f6de-fb69-c57a-295a252f9d41&status=Paid",
+                      "raw": "{{baseUrl}}/v1/income?search=string&categoryId=7957ebc9-34b8-0989-2974-189d3685000c&status=Rejected",
                       "host": [
                         "{{baseUrl}}"
                       ],
@@ -12956,11 +12956,11 @@
                         },
                         {
                           "key": "categoryId",
-                          "value": "238c453c-f6de-fb69-c57a-295a252f9d41"
+                          "value": "7957ebc9-34b8-0989-2974-189d3685000c"
                         },
                         {
                           "key": "status",
-                          "value": "Paid"
+                          "value": "Rejected"
                         }
                       ]
                     }
@@ -12975,7 +12975,7 @@
                     }
                   ],
                   "cookie": [],
-                  "body": "[\n  {\n    \"id\": \"fc5ad812-d1f7-5e2e-afb2-a10ea62bc897\",\n    \"amount\": 8891.265495017453,\n    \"categoryId\": \"492b0d3e-a2f9-ee73-a6c8-0a8863bc5b68\",\n    \"category\": {\n      \"id\": \"f3111a28-45be-b4fa-e0a2-c0cb11f9a3b6\",\n      \"tenantId\": \"2cf857fb-84f8-a4db-755f-153098177fd4\",\n      \"kind\": \"income\",\n      \"name\": \"string\",\n      \"isActive\": true,\n      \"createdAt\": \"2016-02-04T01:30:56.962Z\",\n      \"updatedAt\": \"1979-07-27T08:36:06.877Z\"\n    },\n    \"description\": \"string\",\n    \"status\": \"Pending\",\n    \"tenantId\": \"2ab8b061-c666-8cfa-042e-580815f492d0\",\n    \"createdAt\": \"1948-07-02T02:27:04.836Z\",\n    \"updatedAt\": \"1980-08-16T14:50:36.921Z\",\n    \"source\": \"string\"\n  },\n  {\n    \"id\": \"26caf5df-dfdb-4217-13df-966d04d3e97b\",\n    \"amount\": 521.6285677256872,\n    \"categoryId\": \"d1ad7cc8-3398-252b-823e-5a8de67d3ec5\",\n    \"category\": {\n      \"id\": \"15088250-1dcd-f798-edc3-cbefa4720896\",\n      \"tenantId\": \"bcd0183a-8dfc-6881-dc60-d48856599bfd\",\n      \"kind\": \"income\",\n      \"name\": \"string\",\n      \"isActive\": false,\n      \"createdAt\": \"2019-06-09T09:21:10.495Z\",\n      \"updatedAt\": \"1983-10-09T20:42:44.531Z\"\n    },\n    \"description\": \"string\",\n    \"status\": \"Rejected\",\n    \"tenantId\": \"edc19d9c-301c-202b-a777-a9b0283f60e9\",\n    \"createdAt\": \"2010-02-24T20:13:26.578Z\",\n    \"updatedAt\": \"1949-04-10T16:44:10.550Z\",\n    \"source\": \"string\"\n  }\n]"
+                  "body": "[\n  {\n    \"id\": \"bc8e69a9-4836-70f7-4e2a-bdebc1a62272\",\n    \"amount\": 6487.033685138641,\n    \"categoryId\": \"711c2ce7-4cfb-afa8-b3fb-4f5909d35f2b\",\n    \"category\": {\n      \"id\": \"829d145f-cfee-1d38-d8cc-982ba8d647c1\",\n      \"tenantId\": \"3b764de3-4720-d646-e996-701c9172ec5d\",\n      \"kind\": \"income\",\n      \"name\": \"string\",\n      \"isActive\": true,\n      \"createdAt\": \"1999-05-28T16:21:21.339Z\",\n      \"updatedAt\": \"1966-10-22T10:16:30.978Z\"\n    },\n    \"description\": \"string\",\n    \"status\": \"Pending\",\n    \"tenantId\": \"fb0a35f7-3225-3a39-85ba-9b3877ad1415\",\n    \"createdAt\": \"2020-06-18T07:19:12.386Z\",\n    \"updatedAt\": \"1957-08-30T05:57:25.956Z\",\n    \"source\": \"string\"\n  },\n  {\n    \"id\": \"b85b488b-06fd-398f-eaf5-2e991d87bd7a\",\n    \"amount\": 3112.926237503488,\n    \"categoryId\": \"54c3fda6-2850-86af-34c1-43b58bbc1a4f\",\n    \"category\": {\n      \"id\": \"438b10b6-c25b-c274-e35c-bfd12e8a7f02\",\n      \"tenantId\": \"ea02b364-fc51-44fd-1bfc-865a9162c90a\",\n      \"kind\": \"expense\",\n      \"name\": \"string\",\n      \"isActive\": false,\n      \"createdAt\": \"1997-04-03T15:18:17.559Z\",\n      \"updatedAt\": \"2000-04-08T02:11:14.764Z\"\n    },\n    \"description\": \"string\",\n    \"status\": \"Approved\",\n    \"tenantId\": \"3ea1a4a4-bfbc-00ad-6fe7-2210c2fa0031\",\n    \"createdAt\": \"2020-04-19T19:14:31.835Z\",\n    \"updatedAt\": \"2019-07-11T00:11:29.904Z\",\n    \"source\": \"string\"\n  }\n]"
                 }
               ]
             }
@@ -13087,7 +13087,7 @@
                             }
                           ],
                           "cookie": [],
-                          "body": "{\n  \"id\": \"0384782d-291b-207c-d9c8-fde9533fbbb1\",\n  \"amount\": 1626.8646153298505,\n  \"categoryId\": \"7bb7c2f2-1d17-2f56-8577-6faf5de3ce57\",\n  \"category\": {\n    \"id\": \"c5fb9e79-bf94-92c8-968f-1d1836ba6d22\",\n    \"tenantId\": \"6b2e18ba-8280-a7ff-5be2-f2ebafc9316a\",\n    \"kind\": \"income\",\n    \"name\": \"string\",\n    \"isActive\": true,\n    \"createdAt\": \"1960-06-30T07:06:24.616Z\",\n    \"updatedAt\": \"2004-05-28T06:35:29.378Z\"\n  },\n  \"description\": \"string\",\n  \"status\": \"Rejected\",\n  \"tenantId\": \"6c914ff9-c1ee-c96d-d0d3-cc06f03e0cad\",\n  \"createdAt\": \"1962-03-27T18:44:51.702Z\",\n  \"updatedAt\": \"1964-08-07T22:43:50.297Z\",\n  \"date\": \"1965-01-18\",\n  \"receipt\": {\n    \"url\": \"string\",\n    \"publicId\": \"string\",\n    \"resourceType\": \"string\",\n    \"mimeType\": \"image/jpeg\",\n    \"size\": 1133210.4335371288,\n    \"uploadedBy\": \"02b2e2b9-be60-7c66-60b0-471c7286caa8\",\n    \"uploadedAt\": \"1962-01-31T08:14:47.447Z\"\n  },\n  \"paidTo\": \"string\"\n}"
+                          "body": "{\n  \"id\": \"d0ed7ebd-7d06-c44e-5d0b-7c595211928e\",\n  \"amount\": 6435.766458373792,\n  \"categoryId\": \"1306a6b2-5a20-0244-2f1c-9a1341f9c0d9\",\n  \"category\": {\n    \"id\": \"7b44edd9-682b-a061-15ae-aba08eeccce1\",\n    \"tenantId\": \"2b95c092-26db-d7a6-100c-7be28ba2b60f\",\n    \"kind\": \"income\",\n    \"name\": \"string\",\n    \"isActive\": false,\n    \"createdAt\": \"1978-06-15T14:49:31.326Z\",\n    \"updatedAt\": \"2016-11-13T04:29:59.224Z\"\n  },\n  \"description\": \"string\",\n  \"status\": \"Pending\",\n  \"tenantId\": \"3ff211d2-c724-e470-35f2-784ab7877248\",\n  \"createdAt\": \"1967-12-13T04:26:08.113Z\",\n  \"updatedAt\": \"1956-12-08T19:34:26.071Z\",\n  \"date\": \"2016-11-27\",\n  \"receipt\": {\n    \"url\": \"string\",\n    \"publicId\": \"string\",\n    \"resourceType\": \"string\",\n    \"mimeType\": \"application/pdf\",\n    \"size\": 4123549.4507048363,\n    \"uploadedBy\": \"d1151634-2da3-160b-3215-61341c2e748d\",\n    \"uploadedAt\": \"2012-01-14T01:56:51.605Z\"\n  },\n  \"paidTo\": \"string\"\n}"
                         },
                         {
                           "name": "Invalid UUID, file type/signature, missing file or receipt larger than 5 MB",
@@ -13300,7 +13300,7 @@
                             }
                           ],
                           "cookie": [],
-                          "body": "{\n  \"id\": \"0384782d-291b-207c-d9c8-fde9533fbbb1\",\n  \"amount\": 1626.8646153298505,\n  \"categoryId\": \"7bb7c2f2-1d17-2f56-8577-6faf5de3ce57\",\n  \"category\": {\n    \"id\": \"c5fb9e79-bf94-92c8-968f-1d1836ba6d22\",\n    \"tenantId\": \"6b2e18ba-8280-a7ff-5be2-f2ebafc9316a\",\n    \"kind\": \"income\",\n    \"name\": \"string\",\n    \"isActive\": true,\n    \"createdAt\": \"1960-06-30T07:06:24.616Z\",\n    \"updatedAt\": \"2004-05-28T06:35:29.378Z\"\n  },\n  \"description\": \"string\",\n  \"status\": \"Rejected\",\n  \"tenantId\": \"6c914ff9-c1ee-c96d-d0d3-cc06f03e0cad\",\n  \"createdAt\": \"1962-03-27T18:44:51.702Z\",\n  \"updatedAt\": \"1964-08-07T22:43:50.297Z\",\n  \"date\": \"1965-01-18\",\n  \"receipt\": {\n    \"url\": \"string\",\n    \"publicId\": \"string\",\n    \"resourceType\": \"string\",\n    \"mimeType\": \"image/jpeg\",\n    \"size\": 1133210.4335371288,\n    \"uploadedBy\": \"02b2e2b9-be60-7c66-60b0-471c7286caa8\",\n    \"uploadedAt\": \"1962-01-31T08:14:47.447Z\"\n  },\n  \"paidTo\": \"string\"\n}"
+                          "body": "{\n  \"id\": \"d0ed7ebd-7d06-c44e-5d0b-7c595211928e\",\n  \"amount\": 6435.766458373792,\n  \"categoryId\": \"1306a6b2-5a20-0244-2f1c-9a1341f9c0d9\",\n  \"category\": {\n    \"id\": \"7b44edd9-682b-a061-15ae-aba08eeccce1\",\n    \"tenantId\": \"2b95c092-26db-d7a6-100c-7be28ba2b60f\",\n    \"kind\": \"income\",\n    \"name\": \"string\",\n    \"isActive\": false,\n    \"createdAt\": \"1978-06-15T14:49:31.326Z\",\n    \"updatedAt\": \"2016-11-13T04:29:59.224Z\"\n  },\n  \"description\": \"string\",\n  \"status\": \"Pending\",\n  \"tenantId\": \"3ff211d2-c724-e470-35f2-784ab7877248\",\n  \"createdAt\": \"1967-12-13T04:26:08.113Z\",\n  \"updatedAt\": \"1956-12-08T19:34:26.071Z\",\n  \"date\": \"2016-11-27\",\n  \"receipt\": {\n    \"url\": \"string\",\n    \"publicId\": \"string\",\n    \"resourceType\": \"string\",\n    \"mimeType\": \"application/pdf\",\n    \"size\": 4123549.4507048363,\n    \"uploadedBy\": \"d1151634-2da3-160b-3215-61341c2e748d\",\n    \"uploadedAt\": \"2012-01-14T01:56:51.605Z\"\n  },\n  \"paidTo\": \"string\"\n}"
                         }
                       ]
                     }
@@ -13373,7 +13373,7 @@
                         }
                       ],
                       "cookie": [],
-                      "body": "{\n  \"id\": \"0384782d-291b-207c-d9c8-fde9533fbbb1\",\n  \"amount\": 1626.8646153298505,\n  \"categoryId\": \"7bb7c2f2-1d17-2f56-8577-6faf5de3ce57\",\n  \"category\": {\n    \"id\": \"c5fb9e79-bf94-92c8-968f-1d1836ba6d22\",\n    \"tenantId\": \"6b2e18ba-8280-a7ff-5be2-f2ebafc9316a\",\n    \"kind\": \"income\",\n    \"name\": \"string\",\n    \"isActive\": true,\n    \"createdAt\": \"1960-06-30T07:06:24.616Z\",\n    \"updatedAt\": \"2004-05-28T06:35:29.378Z\"\n  },\n  \"description\": \"string\",\n  \"status\": \"Rejected\",\n  \"tenantId\": \"6c914ff9-c1ee-c96d-d0d3-cc06f03e0cad\",\n  \"createdAt\": \"1962-03-27T18:44:51.702Z\",\n  \"updatedAt\": \"1964-08-07T22:43:50.297Z\",\n  \"date\": \"1965-01-18\",\n  \"receipt\": {\n    \"url\": \"string\",\n    \"publicId\": \"string\",\n    \"resourceType\": \"string\",\n    \"mimeType\": \"image/jpeg\",\n    \"size\": 1133210.4335371288,\n    \"uploadedBy\": \"02b2e2b9-be60-7c66-60b0-471c7286caa8\",\n    \"uploadedAt\": \"1962-01-31T08:14:47.447Z\"\n  },\n  \"paidTo\": \"string\"\n}"
+                      "body": "{\n  \"id\": \"d0ed7ebd-7d06-c44e-5d0b-7c595211928e\",\n  \"amount\": 6435.766458373792,\n  \"categoryId\": \"1306a6b2-5a20-0244-2f1c-9a1341f9c0d9\",\n  \"category\": {\n    \"id\": \"7b44edd9-682b-a061-15ae-aba08eeccce1\",\n    \"tenantId\": \"2b95c092-26db-d7a6-100c-7be28ba2b60f\",\n    \"kind\": \"income\",\n    \"name\": \"string\",\n    \"isActive\": false,\n    \"createdAt\": \"1978-06-15T14:49:31.326Z\",\n    \"updatedAt\": \"2016-11-13T04:29:59.224Z\"\n  },\n  \"description\": \"string\",\n  \"status\": \"Pending\",\n  \"tenantId\": \"3ff211d2-c724-e470-35f2-784ab7877248\",\n  \"createdAt\": \"1967-12-13T04:26:08.113Z\",\n  \"updatedAt\": \"1956-12-08T19:34:26.071Z\",\n  \"date\": \"2016-11-27\",\n  \"receipt\": {\n    \"url\": \"string\",\n    \"publicId\": \"string\",\n    \"resourceType\": \"string\",\n    \"mimeType\": \"application/pdf\",\n    \"size\": 4123549.4507048363,\n    \"uploadedBy\": \"d1151634-2da3-160b-3215-61341c2e748d\",\n    \"uploadedAt\": \"2012-01-14T01:56:51.605Z\"\n  },\n  \"paidTo\": \"string\"\n}"
                     }
                   ]
                 },
@@ -13393,7 +13393,7 @@
                     ],
                     "body": {
                       "mode": "raw",
-                      "raw": "{\n  \"amount\": 75000,\n  \"date\": \"2001-08-14\",\n  \"categoryId\": \"dc4b5796-5186-5bb6-281c-0dbca7764775\",\n  \"paidTo\": \"Jane Smith\",\n  \"description\": \"Updated description\",\n  \"status\": \"Approved\"\n}",
+                      "raw": "{\n  \"amount\": 75000,\n  \"date\": \"1979-09-17\",\n  \"categoryId\": \"61711329-acd4-7cab-3630-5c3c158c5510\",\n  \"paidTo\": \"Jane Smith\",\n  \"description\": \"Updated description\",\n  \"status\": \"Approved\"\n}",
                       "options": {
                         "raw": {
                           "headerFamily": "json",
@@ -13436,7 +13436,7 @@
                         ],
                         "body": {
                           "mode": "raw",
-                          "raw": "{\n  \"amount\": 75000,\n  \"date\": \"2001-08-14\",\n  \"categoryId\": \"dc4b5796-5186-5bb6-281c-0dbca7764775\",\n  \"paidTo\": \"Jane Smith\",\n  \"description\": \"Updated description\",\n  \"status\": \"Approved\"\n}",
+                          "raw": "{\n  \"amount\": 75000,\n  \"date\": \"1979-09-17\",\n  \"categoryId\": \"61711329-acd4-7cab-3630-5c3c158c5510\",\n  \"paidTo\": \"Jane Smith\",\n  \"description\": \"Updated description\",\n  \"status\": \"Approved\"\n}",
                           "options": {
                             "raw": {
                               "headerFamily": "json",
@@ -13472,7 +13472,7 @@
                         }
                       ],
                       "cookie": [],
-                      "body": "{\n  \"id\": \"0384782d-291b-207c-d9c8-fde9533fbbb1\",\n  \"amount\": 1626.8646153298505,\n  \"categoryId\": \"7bb7c2f2-1d17-2f56-8577-6faf5de3ce57\",\n  \"category\": {\n    \"id\": \"c5fb9e79-bf94-92c8-968f-1d1836ba6d22\",\n    \"tenantId\": \"6b2e18ba-8280-a7ff-5be2-f2ebafc9316a\",\n    \"kind\": \"income\",\n    \"name\": \"string\",\n    \"isActive\": true,\n    \"createdAt\": \"1960-06-30T07:06:24.616Z\",\n    \"updatedAt\": \"2004-05-28T06:35:29.378Z\"\n  },\n  \"description\": \"string\",\n  \"status\": \"Rejected\",\n  \"tenantId\": \"6c914ff9-c1ee-c96d-d0d3-cc06f03e0cad\",\n  \"createdAt\": \"1962-03-27T18:44:51.702Z\",\n  \"updatedAt\": \"1964-08-07T22:43:50.297Z\",\n  \"date\": \"1965-01-18\",\n  \"receipt\": {\n    \"url\": \"string\",\n    \"publicId\": \"string\",\n    \"resourceType\": \"string\",\n    \"mimeType\": \"image/jpeg\",\n    \"size\": 1133210.4335371288,\n    \"uploadedBy\": \"02b2e2b9-be60-7c66-60b0-471c7286caa8\",\n    \"uploadedAt\": \"1962-01-31T08:14:47.447Z\"\n  },\n  \"paidTo\": \"string\"\n}"
+                      "body": "{\n  \"id\": \"d0ed7ebd-7d06-c44e-5d0b-7c595211928e\",\n  \"amount\": 6435.766458373792,\n  \"categoryId\": \"1306a6b2-5a20-0244-2f1c-9a1341f9c0d9\",\n  \"category\": {\n    \"id\": \"7b44edd9-682b-a061-15ae-aba08eeccce1\",\n    \"tenantId\": \"2b95c092-26db-d7a6-100c-7be28ba2b60f\",\n    \"kind\": \"income\",\n    \"name\": \"string\",\n    \"isActive\": false,\n    \"createdAt\": \"1978-06-15T14:49:31.326Z\",\n    \"updatedAt\": \"2016-11-13T04:29:59.224Z\"\n  },\n  \"description\": \"string\",\n  \"status\": \"Pending\",\n  \"tenantId\": \"3ff211d2-c724-e470-35f2-784ab7877248\",\n  \"createdAt\": \"1967-12-13T04:26:08.113Z\",\n  \"updatedAt\": \"1956-12-08T19:34:26.071Z\",\n  \"date\": \"2016-11-27\",\n  \"receipt\": {\n    \"url\": \"string\",\n    \"publicId\": \"string\",\n    \"resourceType\": \"string\",\n    \"mimeType\": \"application/pdf\",\n    \"size\": 4123549.4507048363,\n    \"uploadedBy\": \"d1151634-2da3-160b-3215-61341c2e748d\",\n    \"uploadedAt\": \"2012-01-14T01:56:51.605Z\"\n  },\n  \"paidTo\": \"string\"\n}"
                     }
                   ]
                 },
@@ -13550,7 +13550,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n  \"amount\": 52615,\n  \"categoryId\": \"aaaaed8e-904a-247e-812b-216f2a0e6657\",\n  \"date\": \"2026-10-09\",\n  \"paidTo\": \"Vernon Effertz\",\n  \"description\": \"Team offsite travel and accommodation\",\n  \"status\": \"Pending\"\n}",
+                  "raw": "{\n  \"amount\": 52615,\n  \"categoryId\": \"902181b3-763c-e29a-a6ef-553cbc963f83\",\n  \"date\": \"2026-10-09\",\n  \"paidTo\": \"Vernon Effertz\",\n  \"description\": \"Team offsite travel and accommodation\",\n  \"status\": \"Pending\"\n}",
                   "options": {
                     "raw": {
                       "headerFamily": "json",
@@ -13586,7 +13586,7 @@
                     ],
                     "body": {
                       "mode": "raw",
-                      "raw": "{\n  \"amount\": 52615,\n  \"categoryId\": \"aaaaed8e-904a-247e-812b-216f2a0e6657\",\n  \"date\": \"2026-10-09\",\n  \"paidTo\": \"Vernon Effertz\",\n  \"description\": \"Team offsite travel and accommodation\",\n  \"status\": \"Pending\"\n}",
+                      "raw": "{\n  \"amount\": 52615,\n  \"categoryId\": \"902181b3-763c-e29a-a6ef-553cbc963f83\",\n  \"date\": \"2026-10-09\",\n  \"paidTo\": \"Vernon Effertz\",\n  \"description\": \"Team offsite travel and accommodation\",\n  \"status\": \"Pending\"\n}",
                       "options": {
                         "raw": {
                           "headerFamily": "json",
@@ -13615,7 +13615,7 @@
                     }
                   ],
                   "cookie": [],
-                  "body": "{\n  \"id\": \"0384782d-291b-207c-d9c8-fde9533fbbb1\",\n  \"amount\": 1626.8646153298505,\n  \"categoryId\": \"7bb7c2f2-1d17-2f56-8577-6faf5de3ce57\",\n  \"category\": {\n    \"id\": \"c5fb9e79-bf94-92c8-968f-1d1836ba6d22\",\n    \"tenantId\": \"6b2e18ba-8280-a7ff-5be2-f2ebafc9316a\",\n    \"kind\": \"income\",\n    \"name\": \"string\",\n    \"isActive\": true,\n    \"createdAt\": \"1960-06-30T07:06:24.616Z\",\n    \"updatedAt\": \"2004-05-28T06:35:29.378Z\"\n  },\n  \"description\": \"string\",\n  \"status\": \"Rejected\",\n  \"tenantId\": \"6c914ff9-c1ee-c96d-d0d3-cc06f03e0cad\",\n  \"createdAt\": \"1962-03-27T18:44:51.702Z\",\n  \"updatedAt\": \"1964-08-07T22:43:50.297Z\",\n  \"date\": \"1965-01-18\",\n  \"receipt\": {\n    \"url\": \"string\",\n    \"publicId\": \"string\",\n    \"resourceType\": \"string\",\n    \"mimeType\": \"image/jpeg\",\n    \"size\": 1133210.4335371288,\n    \"uploadedBy\": \"02b2e2b9-be60-7c66-60b0-471c7286caa8\",\n    \"uploadedAt\": \"1962-01-31T08:14:47.447Z\"\n  },\n  \"paidTo\": \"string\"\n}"
+                  "body": "{\n  \"id\": \"d0ed7ebd-7d06-c44e-5d0b-7c595211928e\",\n  \"amount\": 6435.766458373792,\n  \"categoryId\": \"1306a6b2-5a20-0244-2f1c-9a1341f9c0d9\",\n  \"category\": {\n    \"id\": \"7b44edd9-682b-a061-15ae-aba08eeccce1\",\n    \"tenantId\": \"2b95c092-26db-d7a6-100c-7be28ba2b60f\",\n    \"kind\": \"income\",\n    \"name\": \"string\",\n    \"isActive\": false,\n    \"createdAt\": \"1978-06-15T14:49:31.326Z\",\n    \"updatedAt\": \"2016-11-13T04:29:59.224Z\"\n  },\n  \"description\": \"string\",\n  \"status\": \"Pending\",\n  \"tenantId\": \"3ff211d2-c724-e470-35f2-784ab7877248\",\n  \"createdAt\": \"1967-12-13T04:26:08.113Z\",\n  \"updatedAt\": \"1956-12-08T19:34:26.071Z\",\n  \"date\": \"2016-11-27\",\n  \"receipt\": {\n    \"url\": \"string\",\n    \"publicId\": \"string\",\n    \"resourceType\": \"string\",\n    \"mimeType\": \"application/pdf\",\n    \"size\": 4123549.4507048363,\n    \"uploadedBy\": \"d1151634-2da3-160b-3215-61341c2e748d\",\n    \"uploadedAt\": \"2012-01-14T01:56:51.605Z\"\n  },\n  \"paidTo\": \"string\"\n}"
                 }
               ]
             },
@@ -13630,7 +13630,7 @@
                   }
                 ],
                 "url": {
-                  "raw": "{{baseUrl}}/v1/expenses?search=string&categoryId=238c453c-f6de-fb69-c57a-295a252f9d41&status=Paid",
+                  "raw": "{{baseUrl}}/v1/expenses?search=string&categoryId=7957ebc9-34b8-0989-2974-189d3685000c&status=Rejected",
                   "host": [
                     "{{baseUrl}}"
                   ],
@@ -13645,11 +13645,11 @@
                     },
                     {
                       "key": "categoryId",
-                      "value": "238c453c-f6de-fb69-c57a-295a252f9d41"
+                      "value": "7957ebc9-34b8-0989-2974-189d3685000c"
                     },
                     {
                       "key": "status",
-                      "value": "Paid"
+                      "value": "Rejected"
                     }
                   ]
                 }
@@ -13666,7 +13666,7 @@
                       }
                     ],
                     "url": {
-                      "raw": "{{baseUrl}}/v1/expenses?search=string&categoryId=238c453c-f6de-fb69-c57a-295a252f9d41&status=Paid",
+                      "raw": "{{baseUrl}}/v1/expenses?search=string&categoryId=7957ebc9-34b8-0989-2974-189d3685000c&status=Rejected",
                       "host": [
                         "{{baseUrl}}"
                       ],
@@ -13681,11 +13681,11 @@
                         },
                         {
                           "key": "categoryId",
-                          "value": "238c453c-f6de-fb69-c57a-295a252f9d41"
+                          "value": "7957ebc9-34b8-0989-2974-189d3685000c"
                         },
                         {
                           "key": "status",
-                          "value": "Paid"
+                          "value": "Rejected"
                         }
                       ]
                     }
@@ -13700,7 +13700,7 @@
                     }
                   ],
                   "cookie": [],
-                  "body": "[\n  {\n    \"id\": \"de43083d-fe89-2542-b509-37d83984864c\",\n    \"amount\": 7306.870362069624,\n    \"categoryId\": \"550e7343-ac08-d44b-1ff6-2ad5d26647f5\",\n    \"category\": {\n      \"id\": \"7f56a83e-1040-8015-62dd-079eb604d185\",\n      \"tenantId\": \"3a09ab0d-b13c-e5b9-55a5-b82fed7bb7ca\",\n      \"kind\": \"income\",\n      \"name\": \"string\",\n      \"isActive\": true,\n      \"createdAt\": \"1960-03-10T09:01:42.315Z\",\n      \"updatedAt\": \"1972-09-06T12:51:33.439Z\"\n    },\n    \"description\": \"string\",\n    \"status\": \"Pending\",\n    \"tenantId\": \"20d8c774-470e-536e-2ebd-357a070e6aac\",\n    \"createdAt\": \"1960-09-02T11:23:38.046Z\",\n    \"updatedAt\": \"1965-07-25T06:06:28.062Z\",\n    \"date\": \"2014-11-15\",\n    \"receipt\": {\n      \"url\": \"string\",\n      \"publicId\": \"string\",\n      \"resourceType\": \"string\",\n      \"mimeType\": \"application/pdf\",\n      \"size\": 2596949.8892375967,\n      \"uploadedBy\": \"93e7b36d-4b6a-73cb-ba12-7250dc5b893c\",\n      \"uploadedAt\": \"1990-11-08T22:42:09.962Z\"\n    },\n    \"paidTo\": \"string\"\n  },\n  {\n    \"id\": \"e2912fc6-c2a0-236c-561c-ad07534f580e\",\n    \"amount\": 7760.300335265353,\n    \"categoryId\": \"c08d74f0-ba99-3210-213c-a2751e0d3734\",\n    \"category\": {\n      \"id\": \"77af3eea-6a43-9854-b231-0e985c073931\",\n      \"tenantId\": \"214605eb-15c8-1a1d-7aab-6b46b8b1f51f\",\n      \"kind\": \"expense\",\n      \"name\": \"string\",\n      \"isActive\": false,\n      \"createdAt\": \"1993-08-21T03:03:59.675Z\",\n      \"updatedAt\": \"2019-07-16T13:55:11.538Z\"\n    },\n    \"description\": \"string\",\n    \"status\": \"Paid\",\n    \"tenantId\": \"5e9c150e-9b26-9bfb-3253-571753911d88\",\n    \"createdAt\": \"1988-09-21T18:23:52.756Z\",\n    \"updatedAt\": \"1980-02-09T07:46:12.820Z\",\n    \"date\": \"2011-12-02\",\n    \"receipt\": {\n      \"url\": \"string\",\n      \"publicId\": \"string\",\n      \"resourceType\": \"string\",\n      \"mimeType\": \"application/pdf\",\n      \"size\": 954096.3506789133,\n      \"uploadedBy\": \"ac2ccf4d-3992-db61-50a5-32ecfdb031f2\",\n      \"uploadedAt\": \"1993-07-04T05:51:01.045Z\"\n    },\n    \"paidTo\": \"string\"\n  }\n]"
+                  "body": "[\n  {\n    \"id\": \"ba3969e2-a83c-5523-9998-77af480a44a3\",\n    \"amount\": 6075.550456667483,\n    \"categoryId\": \"be0e85f2-8114-5de3-6c26-99a3f683f492\",\n    \"category\": {\n      \"id\": \"ee951da5-e2c2-41c5-3de2-fe6a12a1ba33\",\n      \"tenantId\": \"90e3a19c-84d0-079d-c4c9-685c0e62b4a9\",\n      \"kind\": \"income\",\n      \"name\": \"string\",\n      \"isActive\": false,\n      \"createdAt\": \"1965-12-26T14:46:31.107Z\",\n      \"updatedAt\": \"1978-12-29T10:58:15.990Z\"\n    },\n    \"description\": \"string\",\n    \"status\": \"Pending\",\n    \"tenantId\": \"1604f28f-75e3-b25d-1189-be41860cf9c2\",\n    \"createdAt\": \"2015-12-08T01:40:22.224Z\",\n    \"updatedAt\": \"1948-02-04T21:21:22.072Z\",\n    \"date\": \"1972-01-03\",\n    \"receipt\": {\n      \"url\": \"string\",\n      \"publicId\": \"string\",\n      \"resourceType\": \"string\",\n      \"mimeType\": \"image/png\",\n      \"size\": 1447259.0760108596,\n      \"uploadedBy\": \"3e0dfe57-572d-fda6-444d-e73476ec0d69\",\n      \"uploadedAt\": \"2009-10-14T10:41:26.012Z\"\n    },\n    \"paidTo\": \"string\"\n  },\n  {\n    \"id\": \"064a4468-ca0a-b5b8-c222-a255cd2e1d28\",\n    \"amount\": 7652.5426358301775,\n    \"categoryId\": \"31297780-7ad2-ce78-2732-247954e8f3bb\",\n    \"category\": {\n      \"id\": \"f4a8aeaf-44aa-e80b-d3fb-bafd2058fbf1\",\n      \"tenantId\": \"44fcad9e-b821-19a2-f351-63cad2da8a14\",\n      \"kind\": \"income\",\n      \"name\": \"string\",\n      \"isActive\": true,\n      \"createdAt\": \"2022-09-12T14:24:28.338Z\",\n      \"updatedAt\": \"2026-06-25T08:35:29.742Z\"\n    },\n    \"description\": \"string\",\n    \"status\": \"Paid\",\n    \"tenantId\": \"1b2ac3d3-a754-80f8-c24e-d40fd19a5dcf\",\n    \"createdAt\": \"1973-10-12T02:37:42.274Z\",\n    \"updatedAt\": \"2024-03-04T05:25:21.004Z\",\n    \"date\": \"1972-06-01\",\n    \"receipt\": {\n      \"url\": \"string\",\n      \"publicId\": \"string\",\n      \"resourceType\": \"string\",\n      \"mimeType\": \"application/pdf\",\n      \"size\": 3608722.5636150944,\n      \"uploadedBy\": \"180ed3c8-e640-66ac-306c-6b72a036b004\",\n      \"uploadedAt\": \"1977-07-26T00:49:15.549Z\"\n    },\n    \"paidTo\": \"string\"\n  }\n]"
                 }
               ]
             }
@@ -14151,7 +14151,7 @@
                         ],
                         "body": {
                           "mode": "raw",
-                          "raw": "{\n  \"status\": \"cancelled\"\n}",
+                          "raw": "{\n  \"status\": \"sent\"\n}",
                           "options": {
                             "raw": {
                               "headerFamily": "json",
@@ -14191,7 +14191,7 @@
                             ],
                             "body": {
                               "mode": "raw",
-                              "raw": "{\n  \"status\": \"cancelled\"\n}",
+                              "raw": "{\n  \"status\": \"sent\"\n}",
                               "options": {
                                 "raw": {
                                   "headerFamily": "json",
@@ -14721,7 +14721,7 @@
                 "method": "GET",
                 "header": [],
                 "url": {
-                  "raw": "{{baseUrl}}/v1/invoices?search=string&contactId=string&status=sent",
+                  "raw": "{{baseUrl}}/v1/invoices?search=string&contactId=string&status=draft",
                   "host": [
                     "{{baseUrl}}"
                   ],
@@ -14741,7 +14741,7 @@
                     },
                     {
                       "key": "status",
-                      "value": "sent"
+                      "value": "draft"
                     }
                   ]
                 }
@@ -14753,7 +14753,7 @@
                     "method": "GET",
                     "header": [],
                     "url": {
-                      "raw": "{{baseUrl}}/v1/invoices?search=string&contactId=string&status=sent",
+                      "raw": "{{baseUrl}}/v1/invoices?search=string&contactId=string&status=draft",
                       "host": [
                         "{{baseUrl}}"
                       ],
@@ -14773,7 +14773,7 @@
                         },
                         {
                           "key": "status",
-                          "value": "sent"
+                          "value": "draft"
                         }
                       ]
                     }
@@ -15563,7 +15563,7 @@
                 "method": "GET",
                 "header": [],
                 "url": {
-                  "raw": "{{baseUrl}}/v1/orders?search=string&status=processing",
+                  "raw": "{{baseUrl}}/v1/orders?search=string&status=shipped",
                   "host": [
                     "{{baseUrl}}"
                   ],
@@ -15578,7 +15578,7 @@
                     },
                     {
                       "key": "status",
-                      "value": "processing"
+                      "value": "shipped"
                     }
                   ]
                 }
@@ -15590,7 +15590,7 @@
                     "method": "GET",
                     "header": [],
                     "url": {
-                      "raw": "{{baseUrl}}/v1/orders?search=string&status=processing",
+                      "raw": "{{baseUrl}}/v1/orders?search=string&status=shipped",
                       "host": [
                         "{{baseUrl}}"
                       ],
@@ -15605,7 +15605,7 @@
                         },
                         {
                           "key": "status",
-                          "value": "processing"
+                          "value": "shipped"
                         }
                       ]
                     }
@@ -15797,7 +15797,7 @@
                             }
                           ],
                           "cookie": [],
-                          "body": "{\n  \"data\": [\n    {\n      \"id\": \"05267184-f374-2eb5-ef0a-8c28a853191a\",\n      \"productId\": \"0566e76d-15ba-6116-f115-6bd38e56188f\",\n      \"tenantId\": \"94697e9d-9ee8-e077-f39c-0f19433ed003\",\n      \"change\": 5225.843311750773,\n      \"previousStock\": 1326.4386694494767,\n      \"newStock\": 9978.567033468384,\n      \"source\": \"import\",\n      \"createdBy\": \"c5379d9f-b2af-0d4a-7fff-d342f847b05f\",\n      \"createdAt\": \"2025-08-12T21:46:03.407Z\"\n    },\n    {\n      \"id\": \"40417fd7-5a0e-a31f-5f83-d41cb5dbef7e\",\n      \"productId\": \"9866015d-e617-0610-da7a-a03b43448f56\",\n      \"tenantId\": \"2aa073ad-7881-022f-7acd-6646ffb687a1\",\n      \"change\": 7270.397245701719,\n      \"previousStock\": 9999.277030899853,\n      \"newStock\": 1692.1592614830017,\n      \"source\": \"initial\",\n      \"createdBy\": \"5345bbcf-b038-80db-52bf-57be3ba40944\",\n      \"createdAt\": \"1990-07-09T11:28:09.908Z\"\n    }\n  ],\n  \"total\": 5904.258420807782,\n  \"page\": 6376.394398289176,\n  \"limit\": 3287.8037819530605,\n  \"totalPages\": 2596.5064267275916,\n  \"hasNextPage\": true,\n  \"hasPrevPage\": false\n}"
+                          "body": "{\n  \"data\": [\n    {\n      \"id\": \"fc02006e-6587-4ed2-e69f-2d88085e7f2b\",\n      \"productId\": \"e57530e8-bf34-67fb-d5fd-3b309bfd7e75\",\n      \"tenantId\": \"0235597d-82f7-8620-8e84-b12f676eeffd\",\n      \"change\": 5977.229599868006,\n      \"previousStock\": 6336.4907667553625,\n      \"newStock\": 9441.598103025059,\n      \"source\": \"import\",\n      \"createdBy\": \"3a5f4f51-874e-36d2-0cf8-07b57a3b3796\",\n      \"createdAt\": \"2003-12-08T03:18:00.740Z\"\n    },\n    {\n      \"id\": \"5bd94a43-662d-5b22-0d3e-f10bf32aa02a\",\n      \"productId\": \"9695d0b6-2cc6-6ba7-077a-115ebc801f1d\",\n      \"tenantId\": \"a4bbe654-779f-60f8-1572-d1c4b95a0204\",\n      \"change\": 3950.7385631888515,\n      \"previousStock\": 4054.493191885551,\n      \"newStock\": 7004.400718983459,\n      \"source\": \"adjustment\",\n      \"createdBy\": \"d45df29d-a442-38db-290e-da2384816694\",\n      \"createdAt\": \"1968-09-15T03:41:55.409Z\"\n    }\n  ],\n  \"total\": 3233.827268094469,\n  \"page\": 2680.3135492439446,\n  \"limit\": 9690.643835682466,\n  \"totalPages\": 1299.6228477842342,\n  \"hasNextPage\": false,\n  \"hasPrevPage\": false\n}"
                         },
                         {
                           "name": "Product not found, including other-organization products",
@@ -16005,7 +16005,7 @@
                     ],
                     "body": {
                       "mode": "raw",
-                      "raw": "{\n  \"name\": \"string\",\n  \"type\": \"service\",\n  \"price\": 1979709341.384892,\n  \"cost\": 1250030602.449956,\n  \"currency\": \"string\",\n  \"stock\": 378316053.1306876,\n  \"trackInventory\": true,\n  \"images\": [\n    \"string\",\n    \"string\"\n  ],\n  \"isActive\": false,\n  \"supplier\": \"string\",\n  \"reorderLevel\": 1984710229.0741556,\n  \"description\": \"string\",\n  \"categoryId\": \"5a6fb097-58d5-62a6-56c8-a2e34e829425\",\n  \"quantity\": 1838336789.6560645,\n  \"inStock\": false\n}",
+                      "raw": "{\n  \"name\": \"string\",\n  \"type\": \"service\",\n  \"price\": 451502048.1107593,\n  \"cost\": 1155831616.96004,\n  \"currency\": \"string\",\n  \"stock\": 1516583.1432447252,\n  \"trackInventory\": false,\n  \"images\": [\n    \"string\",\n    \"string\"\n  ],\n  \"isActive\": true,\n  \"supplier\": \"string\",\n  \"reorderLevel\": 1534048518.214813,\n  \"description\": \"string\",\n  \"categoryId\": \"b63eeff7-c0ae-76c8-afbc-f7d744647a51\",\n  \"quantity\": 1548511493.2654674,\n  \"inStock\": false\n}",
                       "options": {
                         "raw": {
                           "headerFamily": "json",
@@ -16044,7 +16044,7 @@
                         ],
                         "body": {
                           "mode": "raw",
-                          "raw": "{\n  \"name\": \"string\",\n  \"type\": \"service\",\n  \"price\": 1979709341.384892,\n  \"cost\": 1250030602.449956,\n  \"currency\": \"string\",\n  \"stock\": 378316053.1306876,\n  \"trackInventory\": true,\n  \"images\": [\n    \"string\",\n    \"string\"\n  ],\n  \"isActive\": false,\n  \"supplier\": \"string\",\n  \"reorderLevel\": 1984710229.0741556,\n  \"description\": \"string\",\n  \"categoryId\": \"5a6fb097-58d5-62a6-56c8-a2e34e829425\",\n  \"quantity\": 1838336789.6560645,\n  \"inStock\": false\n}",
+                          "raw": "{\n  \"name\": \"string\",\n  \"type\": \"service\",\n  \"price\": 451502048.1107593,\n  \"cost\": 1155831616.96004,\n  \"currency\": \"string\",\n  \"stock\": 1516583.1432447252,\n  \"trackInventory\": false,\n  \"images\": [\n    \"string\",\n    \"string\"\n  ],\n  \"isActive\": true,\n  \"supplier\": \"string\",\n  \"reorderLevel\": 1534048518.214813,\n  \"description\": \"string\",\n  \"categoryId\": \"b63eeff7-c0ae-76c8-afbc-f7d744647a51\",\n  \"quantity\": 1548511493.2654674,\n  \"inStock\": false\n}",
                           "options": {
                             "raw": {
                               "headerFamily": "json",
@@ -16307,7 +16307,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n  \"name\": \"Office Chair\",\n  \"price\": 45000,\n  \"sku\": \"CHAIR-01\",\n  \"reorderLevel\": 2005310228.1324983,\n  \"supplier\": \"Acme Supplies\",\n  \"description\": \"Ergonomic office chair with lumbar support\",\n  \"categoryId\": \"664f1b2c-9d3e-4a5b-8c7d-8e9f0a1b2c3d\",\n  \"type\": \"product\",\n  \"cost\": 30000,\n  \"currency\": \"NGN\",\n  \"stock\": 20,\n  \"trackInventory\": true,\n  \"images\": [\n    \"https://res.cloudinary.com/example/image1.jpg\"\n  ],\n  \"isActive\": true\n}",
+                  "raw": "{\n  \"name\": \"Office Chair\",\n  \"price\": 45000,\n  \"sku\": \"CHAIR-01\",\n  \"reorderLevel\": 1157015713.7993627,\n  \"supplier\": \"Acme Supplies\",\n  \"description\": \"Ergonomic office chair with lumbar support\",\n  \"categoryId\": \"664f1b2c-9d3e-4a5b-8c7d-8e9f0a1b2c3d\",\n  \"type\": \"product\",\n  \"cost\": 30000,\n  \"currency\": \"NGN\",\n  \"stock\": 20,\n  \"trackInventory\": true,\n  \"images\": [\n    \"https://res.cloudinary.com/example/image1.jpg\"\n  ],\n  \"isActive\": true\n}",
                   "options": {
                     "raw": {
                       "headerFamily": "json",
@@ -16339,7 +16339,7 @@
                     ],
                     "body": {
                       "mode": "raw",
-                      "raw": "{\n  \"name\": \"Office Chair\",\n  \"price\": 45000,\n  \"sku\": \"CHAIR-01\",\n  \"reorderLevel\": 2005310228.1324983,\n  \"supplier\": \"Acme Supplies\",\n  \"description\": \"Ergonomic office chair with lumbar support\",\n  \"categoryId\": \"664f1b2c-9d3e-4a5b-8c7d-8e9f0a1b2c3d\",\n  \"type\": \"product\",\n  \"cost\": 30000,\n  \"currency\": \"NGN\",\n  \"stock\": 20,\n  \"trackInventory\": true,\n  \"images\": [\n    \"https://res.cloudinary.com/example/image1.jpg\"\n  ],\n  \"isActive\": true\n}",
+                      "raw": "{\n  \"name\": \"Office Chair\",\n  \"price\": 45000,\n  \"sku\": \"CHAIR-01\",\n  \"reorderLevel\": 1157015713.7993627,\n  \"supplier\": \"Acme Supplies\",\n  \"description\": \"Ergonomic office chair with lumbar support\",\n  \"categoryId\": \"664f1b2c-9d3e-4a5b-8c7d-8e9f0a1b2c3d\",\n  \"type\": \"product\",\n  \"cost\": 30000,\n  \"currency\": \"NGN\",\n  \"stock\": 20,\n  \"trackInventory\": true,\n  \"images\": [\n    \"https://res.cloudinary.com/example/image1.jpg\"\n  ],\n  \"isActive\": true\n}",
                       "options": {
                         "raw": {
                           "headerFamily": "json",
@@ -16373,7 +16373,7 @@
                 "method": "GET",
                 "header": [],
                 "url": {
-                  "raw": "{{baseUrl}}/v1/products?search=string&categoryId=string&isActive=false&type=service",
+                  "raw": "{{baseUrl}}/v1/products?search=string&categoryId=string&isActive=true&type=product",
                   "host": [
                     "{{baseUrl}}"
                   ],
@@ -16392,11 +16392,11 @@
                     },
                     {
                       "key": "isActive",
-                      "value": "false"
+                      "value": "true"
                     },
                     {
                       "key": "type",
-                      "value": "service"
+                      "value": "product"
                     }
                   ]
                 }
@@ -16408,7 +16408,7 @@
                     "method": "GET",
                     "header": [],
                     "url": {
-                      "raw": "{{baseUrl}}/v1/products?search=string&categoryId=string&isActive=false&type=service",
+                      "raw": "{{baseUrl}}/v1/products?search=string&categoryId=string&isActive=true&type=product",
                       "host": [
                         "{{baseUrl}}"
                       ],
@@ -16427,11 +16427,11 @@
                         },
                         {
                           "key": "isActive",
-                          "value": "false"
+                          "value": "true"
                         },
                         {
                           "key": "type",
-                          "value": "service"
+                          "value": "product"
                         }
                       ]
                     }
@@ -17104,7 +17104,7 @@
               "name": "stats",
               "item": [
                 {
-                  "name": "Stat cards — total staffs, invoices, pending orders, customers, products",
+                  "name": "Stat cards — totals plus current-month income/expenses and month-over-month changes",
                   "request": {
                     "auth": {
                       "type": "bearer",
@@ -18405,7 +18405,7 @@
                         ],
                         "body": {
                           "mode": "raw",
-                          "raw": "{\n  \"status\": \"resolved\"\n}",
+                          "raw": "{\n  \"status\": \"in_progress\"\n}",
                           "options": {
                             "raw": {
                               "headerFamily": "json",
@@ -18445,7 +18445,7 @@
                             ],
                             "body": {
                               "mode": "raw",
-                              "raw": "{\n  \"status\": \"resolved\"\n}",
+                              "raw": "{\n  \"status\": \"in_progress\"\n}",
                               "options": {
                                 "raw": {
                                   "headerFamily": "json",
@@ -18996,7 +18996,7 @@
                 "method": "GET",
                 "header": [],
                 "url": {
-                  "raw": "{{baseUrl}}/v1/tickets?priority=high&assignedTo=string&status=waiting",
+                  "raw": "{{baseUrl}}/v1/tickets?priority=low&assignedTo=string&status=in_progress",
                   "host": [
                     "{{baseUrl}}"
                   ],
@@ -19007,7 +19007,7 @@
                   "query": [
                     {
                       "key": "priority",
-                      "value": "high"
+                      "value": "low"
                     },
                     {
                       "description": "Filter by staff ID",
@@ -19016,7 +19016,7 @@
                     },
                     {
                       "key": "status",
-                      "value": "waiting"
+                      "value": "in_progress"
                     }
                   ]
                 }
@@ -19028,7 +19028,7 @@
                     "method": "GET",
                     "header": [],
                     "url": {
-                      "raw": "{{baseUrl}}/v1/tickets?priority=high&assignedTo=string&status=waiting",
+                      "raw": "{{baseUrl}}/v1/tickets?priority=low&assignedTo=string&status=in_progress",
                       "host": [
                         "{{baseUrl}}"
                       ],
@@ -19039,7 +19039,7 @@
                       "query": [
                         {
                           "key": "priority",
-                          "value": "high"
+                          "value": "low"
                         },
                         {
                           "description": "Filter by staff ID",
@@ -19048,7 +19048,7 @@
                         },
                         {
                           "key": "status",
-                          "value": "waiting"
+                          "value": "in_progress"
                         }
                       ]
                     }
@@ -19219,7 +19219,7 @@
                             }
                           ],
                           "cookie": [],
-                          "body": "{\n  \"id\": \"e8a9a9cc-5047-46a6-94e6-6d66f7a3f6c6\",\n  \"quoteNumber\": \"QT-2026-001\",\n  \"date\": \"1965-01-30\",\n  \"clientName\": \"string\",\n  \"amount\": 894.7337189556292,\n  \"description\": \"string\",\n  \"notes\": \"string\",\n  \"expiresAt\": \"1994-06-20\",\n  \"status\": \"converted_to_invoice\",\n  \"tenantId\": \"7e7eef42-8a5e-c8aa-9b04-eb9012ef9249\",\n  \"createdAt\": \"1999-07-18T16:48:27.324Z\",\n  \"updatedAt\": \"1976-01-19T10:58:44.566Z\"\n}"
+                          "body": "{\n  \"id\": \"b2716644-82d6-c8c6-c217-28e6ae9d7b6e\",\n  \"quoteNumber\": \"QT-2026-001\",\n  \"date\": \"2011-12-31\",\n  \"clientName\": \"string\",\n  \"amount\": 6818.3534591191465,\n  \"description\": \"string\",\n  \"notes\": \"string\",\n  \"expiresAt\": \"2001-11-18\",\n  \"status\": \"expired\",\n  \"tenantId\": \"51aabcdf-84e9-0c57-0c21-d685159adab1\",\n  \"createdAt\": \"2008-07-09T23:05:56.493Z\",\n  \"updatedAt\": \"2001-04-26T00:18:13.179Z\"\n}"
                         }
                       ]
                     }
@@ -19325,7 +19325,7 @@
                             }
                           ],
                           "cookie": [],
-                          "body": "{\n  \"quote\": {\n    \"id\": \"224b23fe-013b-fb2b-809a-aeb834479f09\",\n    \"quoteNumber\": \"QT-2026-001\",\n    \"date\": \"1965-12-28\",\n    \"clientName\": \"string\",\n    \"amount\": 1598.760397432457,\n    \"description\": \"string\",\n    \"notes\": \"string\",\n    \"expiresAt\": \"1974-09-12\",\n    \"status\": \"rejected\",\n    \"tenantId\": \"ad9f1b9a-f4df-26ba-2449-a4de98cf5d0d\",\n    \"createdAt\": \"2021-02-28T07:23:02.233Z\",\n    \"updatedAt\": \"2011-07-20T08:11:49.126Z\"\n  },\n  \"invoice\": {\n    \"key_0\": 922\n  },\n  \"order\": {\n    \"key_0\": false,\n    \"key_1\": 4450\n  }\n}"
+                          "body": "{\n  \"quote\": {\n    \"id\": \"5e0ac4a4-9126-e0a2-df0f-6954555e2ebb\",\n    \"quoteNumber\": \"QT-2026-001\",\n    \"date\": \"1970-01-05\",\n    \"clientName\": \"string\",\n    \"amount\": 384.37256388935026,\n    \"description\": \"string\",\n    \"notes\": \"string\",\n    \"expiresAt\": \"2013-01-12\",\n    \"status\": \"accepted\",\n    \"tenantId\": \"f1e8fa81-9b7b-9537-9e93-36aa1f9123a5\",\n    \"createdAt\": \"2002-04-16T06:55:14.987Z\",\n    \"updatedAt\": \"1967-05-12T08:54:17.215Z\"\n  },\n  \"invoice\": {\n    \"key_0\": \"string\",\n    \"key_1\": 8733\n  },\n  \"order\": {\n    \"key_0\": 4800\n  }\n}"
                         },
                         {
                           "name": "Quote not found, or the invoice contact was not found in the authenticated tenant. Nonexistent and cross-tenant contacts both return \"Contact not found\".",
@@ -19444,7 +19444,7 @@
                         }
                       ],
                       "cookie": [],
-                      "body": "{\n  \"id\": \"e8a9a9cc-5047-46a6-94e6-6d66f7a3f6c6\",\n  \"quoteNumber\": \"QT-2026-001\",\n  \"date\": \"1965-01-30\",\n  \"clientName\": \"string\",\n  \"amount\": 894.7337189556292,\n  \"description\": \"string\",\n  \"notes\": \"string\",\n  \"expiresAt\": \"1994-06-20\",\n  \"status\": \"converted_to_invoice\",\n  \"tenantId\": \"7e7eef42-8a5e-c8aa-9b04-eb9012ef9249\",\n  \"createdAt\": \"1999-07-18T16:48:27.324Z\",\n  \"updatedAt\": \"1976-01-19T10:58:44.566Z\"\n}"
+                      "body": "{\n  \"id\": \"b2716644-82d6-c8c6-c217-28e6ae9d7b6e\",\n  \"quoteNumber\": \"QT-2026-001\",\n  \"date\": \"2011-12-31\",\n  \"clientName\": \"string\",\n  \"amount\": 6818.3534591191465,\n  \"description\": \"string\",\n  \"notes\": \"string\",\n  \"expiresAt\": \"2001-11-18\",\n  \"status\": \"expired\",\n  \"tenantId\": \"51aabcdf-84e9-0c57-0c21-d685159adab1\",\n  \"createdAt\": \"2008-07-09T23:05:56.493Z\",\n  \"updatedAt\": \"2001-04-26T00:18:13.179Z\"\n}"
                     }
                   ]
                 },
@@ -19543,7 +19543,7 @@
                         }
                       ],
                       "cookie": [],
-                      "body": "{\n  \"id\": \"e8a9a9cc-5047-46a6-94e6-6d66f7a3f6c6\",\n  \"quoteNumber\": \"QT-2026-001\",\n  \"date\": \"1965-01-30\",\n  \"clientName\": \"string\",\n  \"amount\": 894.7337189556292,\n  \"description\": \"string\",\n  \"notes\": \"string\",\n  \"expiresAt\": \"1994-06-20\",\n  \"status\": \"converted_to_invoice\",\n  \"tenantId\": \"7e7eef42-8a5e-c8aa-9b04-eb9012ef9249\",\n  \"createdAt\": \"1999-07-18T16:48:27.324Z\",\n  \"updatedAt\": \"1976-01-19T10:58:44.566Z\"\n}"
+                      "body": "{\n  \"id\": \"b2716644-82d6-c8c6-c217-28e6ae9d7b6e\",\n  \"quoteNumber\": \"QT-2026-001\",\n  \"date\": \"2011-12-31\",\n  \"clientName\": \"string\",\n  \"amount\": 6818.3534591191465,\n  \"description\": \"string\",\n  \"notes\": \"string\",\n  \"expiresAt\": \"2001-11-18\",\n  \"status\": \"expired\",\n  \"tenantId\": \"51aabcdf-84e9-0c57-0c21-d685159adab1\",\n  \"createdAt\": \"2008-07-09T23:05:56.493Z\",\n  \"updatedAt\": \"2001-04-26T00:18:13.179Z\"\n}"
                     }
                   ]
                 },
@@ -19686,7 +19686,7 @@
                     }
                   ],
                   "cookie": [],
-                  "body": "{\n  \"id\": \"e8a9a9cc-5047-46a6-94e6-6d66f7a3f6c6\",\n  \"quoteNumber\": \"QT-2026-001\",\n  \"date\": \"1965-01-30\",\n  \"clientName\": \"string\",\n  \"amount\": 894.7337189556292,\n  \"description\": \"string\",\n  \"notes\": \"string\",\n  \"expiresAt\": \"1994-06-20\",\n  \"status\": \"converted_to_invoice\",\n  \"tenantId\": \"7e7eef42-8a5e-c8aa-9b04-eb9012ef9249\",\n  \"createdAt\": \"1999-07-18T16:48:27.324Z\",\n  \"updatedAt\": \"1976-01-19T10:58:44.566Z\"\n}"
+                  "body": "{\n  \"id\": \"b2716644-82d6-c8c6-c217-28e6ae9d7b6e\",\n  \"quoteNumber\": \"QT-2026-001\",\n  \"date\": \"2011-12-31\",\n  \"clientName\": \"string\",\n  \"amount\": 6818.3534591191465,\n  \"description\": \"string\",\n  \"notes\": \"string\",\n  \"expiresAt\": \"2001-11-18\",\n  \"status\": \"expired\",\n  \"tenantId\": \"51aabcdf-84e9-0c57-0c21-d685159adab1\",\n  \"createdAt\": \"2008-07-09T23:05:56.493Z\",\n  \"updatedAt\": \"2001-04-26T00:18:13.179Z\"\n}"
                 }
               ]
             },
@@ -19701,7 +19701,7 @@
                   }
                 ],
                 "url": {
-                  "raw": "{{baseUrl}}/v1/quotes?search=string&status=sent",
+                  "raw": "{{baseUrl}}/v1/quotes?search=string&status=accepted",
                   "host": [
                     "{{baseUrl}}"
                   ],
@@ -19718,7 +19718,7 @@
                     {
                       "description": "Effective status including automatic UTC expiry",
                       "key": "status",
-                      "value": "sent"
+                      "value": "accepted"
                     }
                   ]
                 }
@@ -19735,7 +19735,7 @@
                       }
                     ],
                     "url": {
-                      "raw": "{{baseUrl}}/v1/quotes?search=string&status=sent",
+                      "raw": "{{baseUrl}}/v1/quotes?search=string&status=accepted",
                       "host": [
                         "{{baseUrl}}"
                       ],
@@ -19752,7 +19752,7 @@
                         {
                           "description": "Effective status including automatic UTC expiry",
                           "key": "status",
-                          "value": "sent"
+                          "value": "accepted"
                         }
                       ]
                     }
@@ -19767,7 +19767,7 @@
                     }
                   ],
                   "cookie": [],
-                  "body": "[\n  {\n    \"id\": \"ba10210c-002c-69de-11ad-fe7fb23a81da\",\n    \"quoteNumber\": \"QT-2026-001\",\n    \"date\": \"2011-01-30\",\n    \"clientName\": \"string\",\n    \"amount\": 3085.9133076632015,\n    \"description\": \"string\",\n    \"notes\": \"string\",\n    \"expiresAt\": \"2018-01-13\",\n    \"status\": \"rejected\",\n    \"tenantId\": \"c6dc6c05-70e4-ee6f-58c7-765dc6c555a9\",\n    \"createdAt\": \"1980-08-23T14:09:49.057Z\",\n    \"updatedAt\": \"1958-03-23T23:42:45.845Z\"\n  },\n  {\n    \"id\": \"a96520ff-8bb7-ae4a-3e0a-ccefeb7b1ab3\",\n    \"quoteNumber\": \"QT-2026-001\",\n    \"date\": \"1952-09-09\",\n    \"clientName\": \"string\",\n    \"amount\": 3494.0348669927034,\n    \"description\": \"string\",\n    \"notes\": \"string\",\n    \"expiresAt\": \"1958-05-16\",\n    \"status\": \"accepted\",\n    \"tenantId\": \"62c954ff-248b-5054-350e-51eba3d4d449\",\n    \"createdAt\": \"1967-08-25T00:10:52.585Z\",\n    \"updatedAt\": \"1958-01-23T03:35:33.330Z\"\n  }\n]"
+                  "body": "[\n  {\n    \"id\": \"89334701-9bc4-9646-04fd-d7a098f291e3\",\n    \"quoteNumber\": \"QT-2026-001\",\n    \"date\": \"1990-02-23\",\n    \"clientName\": \"string\",\n    \"amount\": 2088.490628469675,\n    \"description\": \"string\",\n    \"notes\": \"string\",\n    \"expiresAt\": \"2017-08-13\",\n    \"status\": \"expired\",\n    \"tenantId\": \"e4ba7b9b-9ec8-4e3b-3ecd-50af2490a825\",\n    \"createdAt\": \"1967-03-23T10:24:40.203Z\",\n    \"updatedAt\": \"1978-11-02T22:56:54.690Z\"\n  },\n  {\n    \"id\": \"f8a1af9c-5fea-45f9-0ed0-cb3c46d8aca6\",\n    \"quoteNumber\": \"QT-2026-001\",\n    \"date\": \"1998-01-22\",\n    \"clientName\": \"string\",\n    \"amount\": 6101.937089488978,\n    \"description\": \"string\",\n    \"notes\": \"string\",\n    \"expiresAt\": \"1983-07-20\",\n    \"status\": \"sent\",\n    \"tenantId\": \"ec410556-80c4-1b06-058d-5ccb1a554f29\",\n    \"createdAt\": \"1996-12-09T03:05:01.547Z\",\n    \"updatedAt\": \"1958-11-07T11:53:02.009Z\"\n  }\n]"
                 }
               ]
             }
@@ -20025,7 +20025,7 @@
                     ],
                     "body": {
                       "mode": "raw",
-                      "raw": "{\n  \"firstName\": \"John\",\n  \"lastName\": \"Doe\",\n  \"email\": \"john@acme.com\",\n  \"phone\": \"+2348012345678\",\n  \"companyName\": \"Acme Corp\",\n  \"source\": \"cold_outreach\",\n  \"status\": \"unqualified\",\n  \"score\": 75,\n  \"notes\": \"Updated notes\",\n  \"assignedTo\": \"uuid-of-staff\"\n}",
+                      "raw": "{\n  \"firstName\": \"John\",\n  \"lastName\": \"Doe\",\n  \"email\": \"john@acme.com\",\n  \"phone\": \"+2348012345678\",\n  \"companyName\": \"Acme Corp\",\n  \"source\": \"other\",\n  \"status\": \"new\",\n  \"score\": 75,\n  \"notes\": \"Updated notes\",\n  \"assignedTo\": \"uuid-of-staff\"\n}",
                       "options": {
                         "raw": {
                           "headerFamily": "json",
@@ -20064,7 +20064,7 @@
                         ],
                         "body": {
                           "mode": "raw",
-                          "raw": "{\n  \"firstName\": \"John\",\n  \"lastName\": \"Doe\",\n  \"email\": \"john@acme.com\",\n  \"phone\": \"+2348012345678\",\n  \"companyName\": \"Acme Corp\",\n  \"source\": \"cold_outreach\",\n  \"status\": \"unqualified\",\n  \"score\": 75,\n  \"notes\": \"Updated notes\",\n  \"assignedTo\": \"uuid-of-staff\"\n}",
+                          "raw": "{\n  \"firstName\": \"John\",\n  \"lastName\": \"Doe\",\n  \"email\": \"john@acme.com\",\n  \"phone\": \"+2348012345678\",\n  \"companyName\": \"Acme Corp\",\n  \"source\": \"other\",\n  \"status\": \"new\",\n  \"score\": 75,\n  \"notes\": \"Updated notes\",\n  \"assignedTo\": \"uuid-of-staff\"\n}",
                           "options": {
                             "raw": {
                               "headerFamily": "json",
@@ -20393,7 +20393,7 @@
                 "method": "GET",
                 "header": [],
                 "url": {
-                  "raw": "{{baseUrl}}/v1/leads?status=unqualified&source=event&assignedTo=string&search=string",
+                  "raw": "{{baseUrl}}/v1/leads?status=unqualified&source=website&assignedTo=string&search=string",
                   "host": [
                     "{{baseUrl}}"
                   ],
@@ -20408,7 +20408,7 @@
                     },
                     {
                       "key": "source",
-                      "value": "event"
+                      "value": "website"
                     },
                     {
                       "key": "assignedTo",
@@ -20428,7 +20428,7 @@
                     "method": "GET",
                     "header": [],
                     "url": {
-                      "raw": "{{baseUrl}}/v1/leads?status=unqualified&source=event&assignedTo=string&search=string",
+                      "raw": "{{baseUrl}}/v1/leads?status=unqualified&source=website&assignedTo=string&search=string",
                       "host": [
                         "{{baseUrl}}"
                       ],
@@ -20443,7 +20443,7 @@
                         },
                         {
                           "key": "source",
-                          "value": "event"
+                          "value": "website"
                         },
                         {
                           "key": "assignedTo",
@@ -20828,7 +20828,7 @@
                     ],
                     "body": {
                       "mode": "raw",
-                      "raw": "{\n  \"name\": \"Acme Q4 Deal v2\",\n  \"value\": 75000,\n  \"currency\": \"NGN\",\n  \"expectedCloseDate\": \"2026-12-31\",\n  \"status\": \"won\",\n  \"notes\": \"Updated notes\",\n  \"assignedTo\": \"uuid-of-staff\",\n  \"stageId\": \"uuid-of-stage\",\n  \"pipelineId\": \"uuid-of-pipeline\"\n}",
+                      "raw": "{\n  \"name\": \"Acme Q4 Deal v2\",\n  \"value\": 75000,\n  \"currency\": \"NGN\",\n  \"expectedCloseDate\": \"2026-12-31\",\n  \"status\": \"on_hold\",\n  \"notes\": \"Updated notes\",\n  \"assignedTo\": \"uuid-of-staff\",\n  \"stageId\": \"uuid-of-stage\",\n  \"pipelineId\": \"uuid-of-pipeline\"\n}",
                       "options": {
                         "raw": {
                           "headerFamily": "json",
@@ -20867,7 +20867,7 @@
                         ],
                         "body": {
                           "mode": "raw",
-                          "raw": "{\n  \"name\": \"Acme Q4 Deal v2\",\n  \"value\": 75000,\n  \"currency\": \"NGN\",\n  \"expectedCloseDate\": \"2026-12-31\",\n  \"status\": \"won\",\n  \"notes\": \"Updated notes\",\n  \"assignedTo\": \"uuid-of-staff\",\n  \"stageId\": \"uuid-of-stage\",\n  \"pipelineId\": \"uuid-of-pipeline\"\n}",
+                          "raw": "{\n  \"name\": \"Acme Q4 Deal v2\",\n  \"value\": 75000,\n  \"currency\": \"NGN\",\n  \"expectedCloseDate\": \"2026-12-31\",\n  \"status\": \"on_hold\",\n  \"notes\": \"Updated notes\",\n  \"assignedTo\": \"uuid-of-staff\",\n  \"stageId\": \"uuid-of-stage\",\n  \"pipelineId\": \"uuid-of-pipeline\"\n}",
                           "options": {
                             "raw": {
                               "headerFamily": "json",
@@ -21038,7 +21038,7 @@
                 "method": "GET",
                 "header": [],
                 "url": {
-                  "raw": "{{baseUrl}}/v1/deals?pipelineId=string&stageId=string&status=open&assignedTo=string",
+                  "raw": "{{baseUrl}}/v1/deals?pipelineId=string&stageId=string&status=on_hold&assignedTo=string",
                   "host": [
                     "{{baseUrl}}"
                   ],
@@ -21057,7 +21057,7 @@
                     },
                     {
                       "key": "status",
-                      "value": "open"
+                      "value": "on_hold"
                     },
                     {
                       "key": "assignedTo",
@@ -21073,7 +21073,7 @@
                     "method": "GET",
                     "header": [],
                     "url": {
-                      "raw": "{{baseUrl}}/v1/deals?pipelineId=string&stageId=string&status=open&assignedTo=string",
+                      "raw": "{{baseUrl}}/v1/deals?pipelineId=string&stageId=string&status=on_hold&assignedTo=string",
                       "host": [
                         "{{baseUrl}}"
                       ],
@@ -21092,7 +21092,7 @@
                         },
                         {
                           "key": "status",
-                          "value": "open"
+                          "value": "on_hold"
                         },
                         {
                           "key": "assignedTo",
@@ -21139,7 +21139,7 @@
                       }
                     ],
                     "url": {
-                      "raw": "{{baseUrl}}/v1/reports/profit-loss?year=7311.97906544936&from=2020-01-02&to=2020-01-02",
+                      "raw": "{{baseUrl}}/v1/reports/profit-loss?year=641.0470951369862&from=1980-04-09&to=1980-04-09",
                       "host": [
                         "{{baseUrl}}"
                       ],
@@ -21152,20 +21152,20 @@
                         {
                           "description": "Current UTC year by default. Cannot be combined with from/to.",
                           "key": "year",
-                          "value": "7311.97906544936"
+                          "value": "641.0470951369862"
                         },
                         {
                           "description": "Inclusive date; from/to must both be supplied",
                           "key": "from",
-                          "value": "2020-01-02"
+                          "value": "1980-04-09"
                         },
                         {
                           "key": "to",
-                          "value": "2020-01-02"
+                          "value": "1980-04-09"
                         }
                       ]
                     },
-                    "description": "Paid income minus Paid expenses; invoice cash is separate. Advanced Reports feature required. Ledger records have no currency field."
+                    "description": "Paid income minus Approved or Paid expenses; invoice cash is separate. Advanced Reports feature required. Ledger records have no currency field."
                   },
                   "response": [
                     {
@@ -21184,7 +21184,7 @@
                           }
                         ],
                         "url": {
-                          "raw": "{{baseUrl}}/v1/reports/profit-loss?year=7311.97906544936&from=2020-01-02&to=2020-01-02",
+                          "raw": "{{baseUrl}}/v1/reports/profit-loss?year=641.0470951369862&from=1980-04-09&to=1980-04-09",
                           "host": [
                             "{{baseUrl}}"
                           ],
@@ -21197,16 +21197,16 @@
                             {
                               "description": "Current UTC year by default. Cannot be combined with from/to.",
                               "key": "year",
-                              "value": "7311.97906544936"
+                              "value": "641.0470951369862"
                             },
                             {
                               "description": "Inclusive date; from/to must both be supplied",
                               "key": "from",
-                              "value": "2020-01-02"
+                              "value": "1980-04-09"
                             },
                             {
                               "key": "to",
-                              "value": "2020-01-02"
+                              "value": "1980-04-09"
                             }
                           ]
                         }
@@ -21221,7 +21221,7 @@
                         }
                       ],
                       "cookie": [],
-                      "body": "{\n  \"basis\": \"paid-ledger\",\n  \"period\": {\n    \"from\": \"2021-07-07\",\n    \"to\": \"1974-07-22\"\n  },\n  \"incomeTotal\": 3821.5849485082786,\n  \"expenseTotal\": 9371.864918070587,\n  \"profit\": 3088.8807365516514,\n  \"monthly\": [\n    {\n      \"month\": \"string\",\n      \"income\": 1436.974889157223,\n      \"expenses\": 9997.815636823612,\n      \"profit\": 9579.812442938071\n    },\n    {\n      \"month\": \"string\",\n      \"income\": 3383.462982582415,\n      \"expenses\": 7753.399565469352,\n      \"profit\": 9849.801734263287\n    }\n  ],\n  \"incomeByCategory\": [\n    {\n      \"categoryId\": \"edefd000-8f8d-9172-20f8-85fe3cdf98c2\",\n      \"name\": \"string\",\n      \"total\": 11.38982439983005,\n      \"count\": 9737.43898959296\n    },\n    {\n      \"categoryId\": \"a547f61e-cfe4-69eb-a296-0c4aef996c00\",\n      \"name\": \"string\",\n      \"total\": 376.79825102448825,\n      \"count\": 1508.3571480854641\n    }\n  ],\n  \"expenseByCategory\": [\n    {\n      \"categoryId\": \"abbb1077-b0b8-04e7-b908-192865d6a10c\",\n      \"name\": \"string\",\n      \"total\": 1747.2451973907189,\n      \"count\": 9996.975757090391\n    },\n    {\n      \"categoryId\": \"74386c46-25b9-a030-861e-324c2b0bd6ba\",\n      \"name\": \"string\",\n      \"total\": 7652.041300336156,\n      \"count\": 5806.752223634717\n    }\n  ]\n}"
+                      "body": "{\n  \"basis\": \"paid-ledger\",\n  \"period\": {\n    \"from\": \"1960-09-21\",\n    \"to\": \"2023-06-02\"\n  },\n  \"incomeTotal\": 5065.886189061215,\n  \"expenseTotal\": 528.5680439242224,\n  \"profit\": 2631.208342376998,\n  \"monthly\": [\n    {\n      \"month\": \"string\",\n      \"income\": 368.9250687654133,\n      \"expenses\": 8791.693184970864,\n      \"profit\": 5997.42124452012\n    },\n    {\n      \"month\": \"string\",\n      \"income\": 5141.9526027891125,\n      \"expenses\": 8662.062144888998,\n      \"profit\": 8532.32127011895\n    }\n  ],\n  \"incomeByCategory\": [\n    {\n      \"categoryId\": \"26af91de-200d-16ef-a4d4-ea461e5c1258\",\n      \"name\": \"string\",\n      \"total\": 9569.755259982374,\n      \"count\": 7625.853208627118\n    },\n    {\n      \"categoryId\": \"01756beb-3edf-70d6-8885-93a3ba0441ef\",\n      \"name\": \"string\",\n      \"total\": 7875.992496383841,\n      \"count\": 5280.447740089291\n    }\n  ],\n  \"expenseByCategory\": [\n    {\n      \"categoryId\": \"4fb6547d-b9c2-1526-fb50-e2bdf0a10f80\",\n      \"name\": \"string\",\n      \"total\": 1676.3776010996612,\n      \"count\": 9878.191368584572\n    },\n    {\n      \"categoryId\": \"ab70c221-2494-1431-7b66-a914b8b191bc\",\n      \"name\": \"string\",\n      \"total\": 983.7962504246822,\n      \"count\": 8873.001929387883\n    }\n  ]\n}"
                     },
                     {
                       "name": "Invalid period; use year or paired inclusive from/to dates",
@@ -21235,7 +21235,7 @@
                           }
                         ],
                         "url": {
-                          "raw": "{{baseUrl}}/v1/reports/profit-loss?year=7311.97906544936&from=2020-01-02&to=2020-01-02",
+                          "raw": "{{baseUrl}}/v1/reports/profit-loss?year=641.0470951369862&from=1980-04-09&to=1980-04-09",
                           "host": [
                             "{{baseUrl}}"
                           ],
@@ -21248,16 +21248,16 @@
                             {
                               "description": "Current UTC year by default. Cannot be combined with from/to.",
                               "key": "year",
-                              "value": "7311.97906544936"
+                              "value": "641.0470951369862"
                             },
                             {
                               "description": "Inclusive date; from/to must both be supplied",
                               "key": "from",
-                              "value": "2020-01-02"
+                              "value": "1980-04-09"
                             },
                             {
                               "key": "to",
-                              "value": "2020-01-02"
+                              "value": "1980-04-09"
                             }
                           ]
                         }
@@ -21281,7 +21281,7 @@
                           }
                         ],
                         "url": {
-                          "raw": "{{baseUrl}}/v1/reports/profit-loss?year=7311.97906544936&from=2020-01-02&to=2020-01-02",
+                          "raw": "{{baseUrl}}/v1/reports/profit-loss?year=641.0470951369862&from=1980-04-09&to=1980-04-09",
                           "host": [
                             "{{baseUrl}}"
                           ],
@@ -21294,16 +21294,16 @@
                             {
                               "description": "Current UTC year by default. Cannot be combined with from/to.",
                               "key": "year",
-                              "value": "7311.97906544936"
+                              "value": "641.0470951369862"
                             },
                             {
                               "description": "Inclusive date; from/to must both be supplied",
                               "key": "from",
-                              "value": "2020-01-02"
+                              "value": "1980-04-09"
                             },
                             {
                               "key": "to",
-                              "value": "2020-01-02"
+                              "value": "1980-04-09"
                             }
                           ]
                         }
@@ -21343,7 +21343,7 @@
                       }
                     ],
                     "url": {
-                      "raw": "{{baseUrl}}/v1/reports/revenue?year=7311.97906544936&from=2020-01-02&to=2020-01-02",
+                      "raw": "{{baseUrl}}/v1/reports/revenue?year=641.0470951369862&from=1980-04-09&to=1980-04-09",
                       "host": [
                         "{{baseUrl}}"
                       ],
@@ -21356,16 +21356,16 @@
                         {
                           "description": "Current UTC year by default. Cannot be combined with from/to.",
                           "key": "year",
-                          "value": "7311.97906544936"
+                          "value": "641.0470951369862"
                         },
                         {
                           "description": "Inclusive date; from/to must both be supplied",
                           "key": "from",
-                          "value": "2020-01-02"
+                          "value": "1980-04-09"
                         },
                         {
                           "key": "to",
-                          "value": "2020-01-02"
+                          "value": "1980-04-09"
                         }
                       ]
                     },
@@ -21388,7 +21388,7 @@
                           }
                         ],
                         "url": {
-                          "raw": "{{baseUrl}}/v1/reports/revenue?year=7311.97906544936&from=2020-01-02&to=2020-01-02",
+                          "raw": "{{baseUrl}}/v1/reports/revenue?year=641.0470951369862&from=1980-04-09&to=1980-04-09",
                           "host": [
                             "{{baseUrl}}"
                           ],
@@ -21401,16 +21401,16 @@
                             {
                               "description": "Current UTC year by default. Cannot be combined with from/to.",
                               "key": "year",
-                              "value": "7311.97906544936"
+                              "value": "641.0470951369862"
                             },
                             {
                               "description": "Inclusive date; from/to must both be supplied",
                               "key": "from",
-                              "value": "2020-01-02"
+                              "value": "1980-04-09"
                             },
                             {
                               "key": "to",
-                              "value": "2020-01-02"
+                              "value": "1980-04-09"
                             }
                           ]
                         }
@@ -21425,7 +21425,7 @@
                         }
                       ],
                       "cookie": [],
-                      "body": "{\n  \"basis\": \"paid-ledger\",\n  \"period\": {\n    \"from\": \"1960-08-22\",\n    \"to\": \"1958-11-14\"\n  },\n  \"total\": 3491.6506257240453,\n  \"count\": 332.31833538913014,\n  \"monthly\": [\n    {\n      \"month\": \"2026-01\",\n      \"total\": 3117.5493338999895,\n      \"count\": 5580.6682916486425\n    },\n    {\n      \"month\": \"2026-01\",\n      \"total\": 894.5521469326567,\n      \"count\": 4171.277607382864\n    }\n  ],\n  \"byCategory\": [\n    {\n      \"categoryId\": \"01eb3cfd-b21b-012d-2737-240656b0167c\",\n      \"name\": \"string\",\n      \"total\": 5004.478077043901,\n      \"count\": 5435.393573609721\n    },\n    {\n      \"categoryId\": \"3960b09c-3cb7-1522-dfed-40c5b2e86f51\",\n      \"name\": \"string\",\n      \"total\": 9807.315073902559,\n      \"count\": 9405.201886647536\n    }\n  ]\n}"
+                      "body": "{\n  \"basis\": \"paid-ledger\",\n  \"period\": {\n    \"from\": \"2025-05-22\",\n    \"to\": \"1986-06-18\"\n  },\n  \"total\": 215.58366517837158,\n  \"count\": 5313.048532988804,\n  \"monthly\": [\n    {\n      \"month\": \"2026-01\",\n      \"total\": 5323.984881227992,\n      \"count\": 3382.2910643307578\n    },\n    {\n      \"month\": \"2026-01\",\n      \"total\": 9755.146780540974,\n      \"count\": 9137.138295244973\n    }\n  ],\n  \"byCategory\": [\n    {\n      \"categoryId\": \"2799bf8f-dd54-5392-a584-3ab4993d21e7\",\n      \"name\": \"string\",\n      \"total\": 9519.694831864526,\n      \"count\": 8628.576363442528\n    },\n    {\n      \"categoryId\": \"94fd067c-00fc-4c50-6f4b-20c7eadd0120\",\n      \"name\": \"string\",\n      \"total\": 55.60257509930943,\n      \"count\": 6322.915232115429\n    }\n  ]\n}"
                     }
                   ]
                 }
@@ -21455,7 +21455,7 @@
                       }
                     ],
                     "url": {
-                      "raw": "{{baseUrl}}/v1/reports/expenses?year=7311.97906544936&from=2020-01-02&to=2020-01-02",
+                      "raw": "{{baseUrl}}/v1/reports/expenses?year=641.0470951369862&from=1980-04-09&to=1980-04-09",
                       "host": [
                         "{{baseUrl}}"
                       ],
@@ -21468,16 +21468,16 @@
                         {
                           "description": "Current UTC year by default. Cannot be combined with from/to.",
                           "key": "year",
-                          "value": "7311.97906544936"
+                          "value": "641.0470951369862"
                         },
                         {
                           "description": "Inclusive date; from/to must both be supplied",
                           "key": "from",
-                          "value": "2020-01-02"
+                          "value": "1980-04-09"
                         },
                         {
                           "key": "to",
-                          "value": "2020-01-02"
+                          "value": "1980-04-09"
                         }
                       ]
                     },
@@ -21500,7 +21500,7 @@
                           }
                         ],
                         "url": {
-                          "raw": "{{baseUrl}}/v1/reports/expenses?year=7311.97906544936&from=2020-01-02&to=2020-01-02",
+                          "raw": "{{baseUrl}}/v1/reports/expenses?year=641.0470951369862&from=1980-04-09&to=1980-04-09",
                           "host": [
                             "{{baseUrl}}"
                           ],
@@ -21513,16 +21513,16 @@
                             {
                               "description": "Current UTC year by default. Cannot be combined with from/to.",
                               "key": "year",
-                              "value": "7311.97906544936"
+                              "value": "641.0470951369862"
                             },
                             {
                               "description": "Inclusive date; from/to must both be supplied",
                               "key": "from",
-                              "value": "2020-01-02"
+                              "value": "1980-04-09"
                             },
                             {
                               "key": "to",
-                              "value": "2020-01-02"
+                              "value": "1980-04-09"
                             }
                           ]
                         }
@@ -21537,7 +21537,7 @@
                         }
                       ],
                       "cookie": [],
-                      "body": "{\n  \"basis\": \"paid-ledger\",\n  \"period\": {\n    \"from\": \"1960-08-22\",\n    \"to\": \"1958-11-14\"\n  },\n  \"total\": 3491.6506257240453,\n  \"count\": 332.31833538913014,\n  \"monthly\": [\n    {\n      \"month\": \"2026-01\",\n      \"total\": 3117.5493338999895,\n      \"count\": 5580.6682916486425\n    },\n    {\n      \"month\": \"2026-01\",\n      \"total\": 894.5521469326567,\n      \"count\": 4171.277607382864\n    }\n  ],\n  \"byCategory\": [\n    {\n      \"categoryId\": \"01eb3cfd-b21b-012d-2737-240656b0167c\",\n      \"name\": \"string\",\n      \"total\": 5004.478077043901,\n      \"count\": 5435.393573609721\n    },\n    {\n      \"categoryId\": \"3960b09c-3cb7-1522-dfed-40c5b2e86f51\",\n      \"name\": \"string\",\n      \"total\": 9807.315073902559,\n      \"count\": 9405.201886647536\n    }\n  ]\n}"
+                      "body": "{\n  \"basis\": \"paid-ledger\",\n  \"period\": {\n    \"from\": \"2025-05-22\",\n    \"to\": \"1986-06-18\"\n  },\n  \"total\": 215.58366517837158,\n  \"count\": 5313.048532988804,\n  \"monthly\": [\n    {\n      \"month\": \"2026-01\",\n      \"total\": 5323.984881227992,\n      \"count\": 3382.2910643307578\n    },\n    {\n      \"month\": \"2026-01\",\n      \"total\": 9755.146780540974,\n      \"count\": 9137.138295244973\n    }\n  ],\n  \"byCategory\": [\n    {\n      \"categoryId\": \"2799bf8f-dd54-5392-a584-3ab4993d21e7\",\n      \"name\": \"string\",\n      \"total\": 9519.694831864526,\n      \"count\": 8628.576363442528\n    },\n    {\n      \"categoryId\": \"94fd067c-00fc-4c50-6f4b-20c7eadd0120\",\n      \"name\": \"string\",\n      \"total\": 55.60257509930943,\n      \"count\": 6322.915232115429\n    }\n  ]\n}"
                     }
                   ]
                 }
@@ -21567,7 +21567,7 @@
                       }
                     ],
                     "url": {
-                      "raw": "{{baseUrl}}/v1/reports/invoice-revenue?year=7311.97906544936&from=2020-01-02&to=2020-01-02",
+                      "raw": "{{baseUrl}}/v1/reports/invoice-revenue?year=641.0470951369862&from=1980-04-09&to=1980-04-09",
                       "host": [
                         "{{baseUrl}}"
                       ],
@@ -21580,16 +21580,16 @@
                         {
                           "description": "Current UTC year by default. Cannot be combined with from/to.",
                           "key": "year",
-                          "value": "7311.97906544936"
+                          "value": "641.0470951369862"
                         },
                         {
                           "description": "Inclusive date; from/to must both be supplied",
                           "key": "from",
-                          "value": "2020-01-02"
+                          "value": "1980-04-09"
                         },
                         {
                           "key": "to",
-                          "value": "2020-01-02"
+                          "value": "1980-04-09"
                         }
                       ]
                     },
@@ -21612,7 +21612,7 @@
                           }
                         ],
                         "url": {
-                          "raw": "{{baseUrl}}/v1/reports/invoice-revenue?year=7311.97906544936&from=2020-01-02&to=2020-01-02",
+                          "raw": "{{baseUrl}}/v1/reports/invoice-revenue?year=641.0470951369862&from=1980-04-09&to=1980-04-09",
                           "host": [
                             "{{baseUrl}}"
                           ],
@@ -21625,16 +21625,16 @@
                             {
                               "description": "Current UTC year by default. Cannot be combined with from/to.",
                               "key": "year",
-                              "value": "7311.97906544936"
+                              "value": "641.0470951369862"
                             },
                             {
                               "description": "Inclusive date; from/to must both be supplied",
                               "key": "from",
-                              "value": "2020-01-02"
+                              "value": "1980-04-09"
                             },
                             {
                               "key": "to",
-                              "value": "2020-01-02"
+                              "value": "1980-04-09"
                             }
                           ]
                         }
@@ -21649,7 +21649,7 @@
                         }
                       ],
                       "cookie": [],
-                      "body": "{\n  \"period\": {\n    \"from\": \"1963-01-28\",\n    \"to\": \"2019-01-23\"\n  },\n  \"currency\": \"string\",\n  \"invoicedTotal\": 3654.0192125137282,\n  \"receivedTotal\": 5445.134625810561,\n  \"outstandingTotal\": 5282.320319981626,\n  \"outstandingCount\": 2587.0974542955882,\n  \"legacyPaidWithoutDateCount\": 7952.848293783927,\n  \"monthly\": [\n    {\n      \"month\": \"string\",\n      \"invoiced\": 7154.012578871791,\n      \"received\": 9022.793742007485\n    },\n    {\n      \"month\": \"string\",\n      \"invoiced\": 8523.861635667467,\n      \"received\": 7269.177548440888\n    }\n  ]\n}"
+                      "body": "{\n  \"period\": {\n    \"from\": \"1955-07-01\",\n    \"to\": \"1999-07-27\"\n  },\n  \"currency\": \"string\",\n  \"invoicedTotal\": 4580.630365411671,\n  \"receivedTotal\": 6812.62991602948,\n  \"outstandingTotal\": 8189.583878289124,\n  \"outstandingCount\": 802.0690032340272,\n  \"legacyPaidWithoutDateCount\": 495.3208369922035,\n  \"monthly\": [\n    {\n      \"month\": \"string\",\n      \"invoiced\": 7677.711031659717,\n      \"received\": 5312.36035666254\n    },\n    {\n      \"month\": \"string\",\n      \"invoiced\": 4787.00306068407,\n      \"received\": 3079.8583523330535\n    }\n  ]\n}"
                     }
                   ]
                 }
@@ -21749,7 +21749,7 @@
                         }
                       ],
                       "cookie": [],
-                      "body": "{\n  \"currency\": \"string\",\n  \"data\": [\n    {\n      \"id\": \"3327b558-43d7-65d9-7590-04d412b05919\",\n      \"invoiceNumber\": \"string\",\n      \"issuedDate\": \"2000-08-01\",\n      \"dueDate\": \"2021-02-06\",\n      \"status\": \"string\",\n      \"currency\": \"string\",\n      \"total\": 1931.867464924064,\n      \"amountPaid\": 2919.045337194921,\n      \"balanceDue\": 7207.884297238951,\n      \"contactId\": \"9cf6d955-9906-dc8f-9679-97c2d112cd46\",\n      \"customer\": {\n        \"id\": \"fee1ac14-bced-9303-9428-6d3a0a410d29\",\n        \"firstName\": \"string\",\n        \"lastName\": \"string\",\n        \"companyName\": \"string\"\n      }\n    },\n    {\n      \"id\": \"48efd102-3750-3b1d-ae19-9b1c72e3c728\",\n      \"invoiceNumber\": \"string\",\n      \"issuedDate\": \"1972-01-26\",\n      \"dueDate\": \"1962-09-20\",\n      \"status\": \"string\",\n      \"currency\": \"string\",\n      \"total\": 2905.6296090870305,\n      \"amountPaid\": 3482.4464891063344,\n      \"balanceDue\": 1438.083917651265,\n      \"contactId\": \"241f5a41-6984-65a1-979f-396eb8722d15\",\n      \"customer\": {\n        \"id\": \"56548f43-63ca-fe81-312d-61ff303d0fc6\",\n        \"firstName\": \"string\",\n        \"lastName\": \"string\",\n        \"companyName\": \"string\"\n      }\n    }\n  ],\n  \"total\": 8729.682224464785,\n  \"page\": 4851.730420407525,\n  \"limit\": 4107.366745991148,\n  \"totalPages\": 6108.195198603301,\n  \"hasNextPage\": true,\n  \"hasPrevPage\": true\n}"
+                      "body": "{\n  \"currency\": \"string\",\n  \"data\": [\n    {\n      \"id\": \"7ecbf4b3-204a-b181-045e-0676cae061c8\",\n      \"invoiceNumber\": \"string\",\n      \"issuedDate\": \"1979-11-09\",\n      \"dueDate\": \"2021-02-10\",\n      \"status\": \"string\",\n      \"currency\": \"string\",\n      \"total\": 3787.886002886649,\n      \"amountPaid\": 769.1726484924022,\n      \"balanceDue\": 2199.2666936013093,\n      \"contactId\": \"2a3c1151-ea6b-2a44-4049-bb07ac644ad1\",\n      \"customer\": {\n        \"id\": \"8898f924-4721-194a-ed37-c46421816073\",\n        \"firstName\": \"string\",\n        \"lastName\": \"string\",\n        \"companyName\": \"string\"\n      }\n    },\n    {\n      \"id\": \"4385da2d-0faf-9bd2-468d-17097c8f9936\",\n      \"invoiceNumber\": \"string\",\n      \"issuedDate\": \"1964-09-30\",\n      \"dueDate\": \"1948-06-20\",\n      \"status\": \"string\",\n      \"currency\": \"string\",\n      \"total\": 8052.819398331999,\n      \"amountPaid\": 2769.3986249065606,\n      \"balanceDue\": 8600.260742398625,\n      \"contactId\": \"a3c2d876-818d-da7d-6274-42730b4675ad\",\n      \"customer\": {\n        \"id\": \"42d5a6e8-47a3-08d9-cc29-265a333f777e\",\n        \"firstName\": \"string\",\n        \"lastName\": \"string\",\n        \"companyName\": \"string\"\n      }\n    }\n  ],\n  \"total\": 4652.683159796092,\n  \"page\": 8307.719379555583,\n  \"limit\": 6688.2201569737745,\n  \"totalPages\": 7040.498707062126,\n  \"hasNextPage\": false,\n  \"hasPrevPage\": true\n}"
                     }
                   ]
                 }
@@ -22106,7 +22106,7 @@
                     "method": "GET",
                     "header": [],
                     "url": {
-                      "raw": "{{baseUrl}}/v1/reports/revenue-trend?year=7311.97906544936",
+                      "raw": "{{baseUrl}}/v1/reports/revenue-trend?year=641.0470951369862",
                       "host": [
                         "{{baseUrl}}"
                       ],
@@ -22118,7 +22118,7 @@
                       "query": [
                         {
                           "key": "year",
-                          "value": "7311.97906544936"
+                          "value": "641.0470951369862"
                         }
                       ]
                     }
@@ -22136,7 +22136,7 @@
                           }
                         ],
                         "url": {
-                          "raw": "{{baseUrl}}/v1/reports/revenue-trend?year=7311.97906544936",
+                          "raw": "{{baseUrl}}/v1/reports/revenue-trend?year=641.0470951369862",
                           "host": [
                             "{{baseUrl}}"
                           ],
@@ -22148,7 +22148,7 @@
                           "query": [
                             {
                               "key": "year",
-                              "value": "7311.97906544936"
+                              "value": "641.0470951369862"
                             }
                           ]
                         }
@@ -22481,7 +22481,7 @@
                     ],
                     "body": {
                       "mode": "raw",
-                      "raw": "{\n  \"title\": \"Call Acme about renewal\",\n  \"description\": \"Confirm seats and billing contact\",\n  \"type\": \"follow_up\",\n  \"priority\": \"medium\",\n  \"dueAt\": \"2026-09-30T10:00:00.000Z\",\n  \"startAt\": \"2026-09-30T10:00:00.000Z\",\n  \"endAt\": \"2026-09-30T10:30:00.000Z\",\n  \"relatedType\": \"deal\",\n  \"relatedId\": \"664f1b2c-9d3e-4a5b-8c7d-8e9f0a1b2c3d\",\n  \"assignedTo\": \"664f1b2c-9d3e-4a5b-8c7d-8e9f0a1b2c3d\"\n}",
+                      "raw": "{\n  \"title\": \"Call Acme about renewal\",\n  \"description\": \"Confirm seats and billing contact\",\n  \"type\": \"call\",\n  \"priority\": \"medium\",\n  \"dueAt\": \"2026-09-30T10:00:00.000Z\",\n  \"startAt\": \"2026-09-30T10:00:00.000Z\",\n  \"endAt\": \"2026-09-30T10:30:00.000Z\",\n  \"relatedType\": \"deal\",\n  \"relatedId\": \"664f1b2c-9d3e-4a5b-8c7d-8e9f0a1b2c3d\",\n  \"assignedTo\": \"664f1b2c-9d3e-4a5b-8c7d-8e9f0a1b2c3d\"\n}",
                       "options": {
                         "raw": {
                           "headerFamily": "json",
@@ -22520,7 +22520,7 @@
                         ],
                         "body": {
                           "mode": "raw",
-                          "raw": "{\n  \"title\": \"Call Acme about renewal\",\n  \"description\": \"Confirm seats and billing contact\",\n  \"type\": \"follow_up\",\n  \"priority\": \"medium\",\n  \"dueAt\": \"2026-09-30T10:00:00.000Z\",\n  \"startAt\": \"2026-09-30T10:00:00.000Z\",\n  \"endAt\": \"2026-09-30T10:30:00.000Z\",\n  \"relatedType\": \"deal\",\n  \"relatedId\": \"664f1b2c-9d3e-4a5b-8c7d-8e9f0a1b2c3d\",\n  \"assignedTo\": \"664f1b2c-9d3e-4a5b-8c7d-8e9f0a1b2c3d\"\n}",
+                          "raw": "{\n  \"title\": \"Call Acme about renewal\",\n  \"description\": \"Confirm seats and billing contact\",\n  \"type\": \"call\",\n  \"priority\": \"medium\",\n  \"dueAt\": \"2026-09-30T10:00:00.000Z\",\n  \"startAt\": \"2026-09-30T10:00:00.000Z\",\n  \"endAt\": \"2026-09-30T10:30:00.000Z\",\n  \"relatedType\": \"deal\",\n  \"relatedId\": \"664f1b2c-9d3e-4a5b-8c7d-8e9f0a1b2c3d\",\n  \"assignedTo\": \"664f1b2c-9d3e-4a5b-8c7d-8e9f0a1b2c3d\"\n}",
                           "options": {
                             "raw": {
                               "headerFamily": "json",
@@ -22691,7 +22691,7 @@
                 "method": "GET",
                 "header": [],
                 "url": {
-                  "raw": "{{baseUrl}}/v1/tasks?search=string&status=open&type=follow_up&priority=high&assignedTo=string&relatedType=string&relatedId=string&dueFrom=string&dueTo=string&overdue=true",
+                  "raw": "{{baseUrl}}/v1/tasks?search=string&status=cancelled&type=email&priority=low&assignedTo=string&relatedType=string&relatedId=string&dueFrom=string&dueTo=string&overdue=true",
                   "host": [
                     "{{baseUrl}}"
                   ],
@@ -22706,15 +22706,15 @@
                     },
                     {
                       "key": "status",
-                      "value": "open"
+                      "value": "cancelled"
                     },
                     {
                       "key": "type",
-                      "value": "follow_up"
+                      "value": "email"
                     },
                     {
                       "key": "priority",
-                      "value": "high"
+                      "value": "low"
                     },
                     {
                       "key": "assignedTo",
@@ -22750,7 +22750,7 @@
                     "method": "GET",
                     "header": [],
                     "url": {
-                      "raw": "{{baseUrl}}/v1/tasks?search=string&status=open&type=follow_up&priority=high&assignedTo=string&relatedType=string&relatedId=string&dueFrom=string&dueTo=string&overdue=true",
+                      "raw": "{{baseUrl}}/v1/tasks?search=string&status=cancelled&type=email&priority=low&assignedTo=string&relatedType=string&relatedId=string&dueFrom=string&dueTo=string&overdue=true",
                       "host": [
                         "{{baseUrl}}"
                       ],
@@ -22765,15 +22765,15 @@
                         },
                         {
                           "key": "status",
-                          "value": "open"
+                          "value": "cancelled"
                         },
                         {
                           "key": "type",
-                          "value": "follow_up"
+                          "value": "email"
                         },
                         {
                           "key": "priority",
-                          "value": "high"
+                          "value": "low"
                         },
                         {
                           "key": "assignedTo",

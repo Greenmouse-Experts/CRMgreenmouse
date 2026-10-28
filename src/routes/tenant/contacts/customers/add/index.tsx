@@ -174,8 +174,7 @@ function RouteComponent() {
                   {...methods.register("type")}
                 >
                   <option value="individual">Individual</option>
-                  <option value="business">Business / Commercial</option>
-                  <option value="partner">Partner</option>
+                  <option value="company">Company</option>
                 </LocalSelect>
               </FormWrapper>
 

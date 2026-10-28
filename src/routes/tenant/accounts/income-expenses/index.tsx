@@ -177,7 +177,7 @@ function RouteComponent() {
             </ActionButton>
           ) : (
             <ActionButton
-              className="btn btn-error btn-sm text-error-content"
+              className="btn btn-error btn-sm text-white"
               onClick={handleOpenExpense}
             >
               <PlusCircle className="size-4 mr-1" /> Add Expense

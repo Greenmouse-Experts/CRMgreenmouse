@@ -7,7 +7,6 @@ export const Route = createFileRoute("/auth/admin/")({
   },
 });
 
-import { Link } from "@tanstack/react-router";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "@tanstack/react-router";
 import { useMutation } from "@tanstack/react-query";
@@ -94,13 +93,13 @@ function RouteComponent() {
               <input type="checkbox" className="toggle" name="" id="" />{" "}
               <span className="fieldset-label text-sm">Remember Me</span>
             </div>
-            <Link
+            {/*<Link
               to="/auth/forgot-password"
               search={{ email: form.getValues("email") }}
               className="link link-primary text-sm font-semibold"
             >
               Forgot Password?
-            </Link>
+            </Link>*/}
           </div>
           <button className="btn btn-primary btn-block" disabled={isPending}>
             {isPending ? (
@@ -109,17 +108,20 @@ function RouteComponent() {
               "Login"
             )}
           </button>
-          <button
-            className="btn btn-soft ring btn-block"
-            onClick={() => {
-              form.setValues({
-                email: "greenmousedev@gmail.com",
-                password: "Password@2022",
-              });
-            }}
-          >
-            Prefill
-          </button>
+          {import.meta.env.DEV && (
+            <button
+              type="button"
+              className="btn btn-soft ring btn-block"
+              onClick={() => {
+                form.setValues({
+                  email: "greenmousedev@gmail.com",
+                  password: "Password@2022",
+                });
+              }}
+            >
+              Prefill
+            </button>
+          )}
           {/*<div className="">
             <section className="ring ring-current/10 bg-base-200 rounded-box p-4 text-xs text-base-content/80 space-y-2">
               <p className="font-semibold ">Demo Credientials</p>
