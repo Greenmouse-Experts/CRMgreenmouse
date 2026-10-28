@@ -19,6 +19,20 @@ function Detail({ label, value }: { label: string; value: string }) {
 }
 
 export default function TenantProfile({ tenant }: { tenant: Tenant }) {
+  const plan = tenant.subscriptionPlan;
+  const limits = plan ? [
+    ["Staff", plan.maxStaff],
+    ["Contacts", plan.maxContacts],
+    ["Products", plan.maxProducts],
+    ["Services", plan.maxServices],
+    ["Invoices / month", plan.maxInvoicesPerMonth],
+    ["Financial records / month", plan.maxFinancialRecordsPerMonth],
+    ["Orders / month", plan.maxOrdersPerMonth],
+    ["Categories", plan.maxCategories],
+    ["Leads", plan.maxLeads],
+    ["Companies", plan.maxCompanies],
+  ] as const : [];
+
   return (
     <div className="grid gap-5 lg:grid-cols-[minmax(0,1.4fr)_minmax(18rem,1fr)]">
       <section className="rounded-2xl border border-base-200 bg-base-100 p-5 sm:p-6" aria-labelledby="tenant-account-heading">
@@ -62,8 +76,40 @@ export default function TenantProfile({ tenant }: { tenant: Tenant }) {
           <Detail label="Billing cycle" value={tenant.billingCycle || "—"} />
           <Detail label="Trial ends" value={date(tenant.trialEndsAt)} />
           <Detail label="Onboarding" value={tenant.isOnboarded ? "Completed" : "Pending"} />
-          <Detail label="Plan ID" value={tenant.subscriptionPlanId || "—"} />
+          <Detail label="Plan" value={plan?.name || "—"} />
+          <Detail label="Plan ID" value={tenant.subscriptionPlanId || plan?.id || "—"} />
+          {plan?.priceMonthly != null && (
+            <Detail label="Monthly price" value={plan.priceMonthly.toLocaleString()} />
+          )}
+          {plan?.priceYearly != null && (
+            <Detail label="Yearly price" value={plan.priceYearly.toLocaleString()} />
+          )}
         </dl>
+        {plan?.features && plan.features.length > 0 && (
+          <div className="mt-5">
+            <h3 className="text-sm font-semibold">Included features</h3>
+            <ul className="mt-2 flex flex-wrap gap-2">
+              {plan.features.map((feature) => (
+                <li key={feature} className="badge badge-outline badge-sm capitalize">
+                  {feature.replace(/[_-]/g, " ")}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+        {limits.some(([, value]) => value != null) && (
+          <div className="mt-5">
+            <h3 className="text-sm font-semibold">Plan limits</h3>
+            <dl className="mt-2 grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
+              {limits.filter(([, value]) => value != null).map(([label, value]) => (
+                <div key={label} className="flex justify-between gap-2 border-b border-base-200 py-1">
+                  <dt className="text-base-content/70">{label}</dt>
+                  <dd className="font-medium tabular-nums">{value === -1 ? "Unlimited" : value?.toLocaleString()}</dd>
+                </div>
+              ))}
+            </dl>
+          </div>
+        )}
       </section>
     </div>
   );

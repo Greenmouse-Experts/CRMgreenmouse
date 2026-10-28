@@ -113,8 +113,25 @@ export interface Tenant {
   isOnboarded: boolean;
   status: "active" | "suspended" | string;
   subscriptionStatus: "trial" | "active" | "expired" | string;
-  subscriptionPlanId?: string;
-  billingCycle?: string;
+  subscriptionPlanId?: string | null;
+  subscriptionPlan?: {
+    id: string;
+    name: string;
+    priceMonthly?: number | null;
+    priceYearly?: number | null;
+    features?: string[];
+    maxStaff?: number | null;
+    maxContacts?: number | null;
+    maxProducts?: number | null;
+    maxServices?: number | null;
+    maxInvoicesPerMonth?: number | null;
+    maxFinancialRecordsPerMonth?: number | null;
+    maxOrdersPerMonth?: number | null;
+    maxCategories?: number | null;
+    maxLeads?: number | null;
+    maxCompanies?: number | null;
+  } | null;
+  billingCycle?: string | null;
   trialEndsAt?: string | null;
   createdAt: string;
   updatedAt: string;
