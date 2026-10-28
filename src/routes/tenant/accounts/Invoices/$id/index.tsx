@@ -7,6 +7,7 @@ import {
   useMarkInvoicePaid,
 } from "@/api/financeApi";
 import PageLoader from "@/components/layout/PageLoader";
+import { RichTextContent } from "@/components/inputs/RichTextEditor";
 import { toast } from "sonner";
 import {
   Send,
@@ -190,7 +191,7 @@ function RouteComponent() {
                         invoice.items.map((item, idx) => (
                           <tr key={idx}>
                             <td className="font-medium text-base-content">
-                              {item.description}
+                              <RichTextContent value={item.description} />
                             </td>
                             <td className="text-center">{item.qty}</td>
                             <td className="text-right">

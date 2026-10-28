@@ -12,6 +12,7 @@ import { useSearch } from "@/stores/data";
 import { useAdminCrossInvoices, useAdminInvoiceStats } from "@/api/adminApi";
 import type { Invoice } from "@/api/financeApi";
 import { FileText, RefreshCw } from "lucide-react";
+import { RichTextContent } from "@/components/inputs/RichTextEditor";
 
 export const Route = createFileRoute("/admin/accounts/Invoices/")({
   component: RouteComponent,
@@ -303,11 +304,14 @@ function RouteComponent() {
                               className="p-3 flex items-center justify-between bg-base-100"
                             >
                               <div>
-                                <span className="font-medium text-base-content block">
-                                  {it.product?.name ||
-                                    it.description ||
-                                    `Item #${idx + 1}`}
-                                </span>
+                                <div className="font-medium text-base-content">
+                                  {it.product?.name && <div>{it.product.name}</div>}
+                                  {it.description ? (
+                                    <RichTextContent value={it.description} />
+                                  ) : !it.product?.name ? (
+                                    `Item #${idx + 1}`
+                                  ) : null}
+                                </div>
                                 <span className="text-sm text-base-content/50">
                                   {it.qty} × {selectedInvoice.currency || "₦"}
                                   {Number(it.unitPrice || 0).toLocaleString()}

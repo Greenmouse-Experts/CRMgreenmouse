@@ -9,6 +9,8 @@ export interface Quote {
   clientName: string;
   amount: number;
   description?: string;
+  expiresAt?: string;
+  notes?: string;
   status: "pending" | "accepted" | "rejected" | "expired" | string;
   contactId?: string;
   createdAt?: string;

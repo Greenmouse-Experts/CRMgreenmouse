@@ -2,6 +2,7 @@ import { useState } from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useForm, FormProvider } from "react-hook-form";
 import SimpleInput from "@/components/inputs/SimpleInput";
+import RichTextEditor, { sanitizeRichText } from "@/components/inputs/RichTextEditor";
 import ActionButton from "@/components/buttons/ActionButton";
 import SimpleTitle from "@/components/SimpleTitle";
 import FormWrapper from "@/components/forms/FormWrapper";
@@ -89,7 +90,11 @@ function RouteComponent() {
   const grandTotal = Math.max(0, subtotal - discount + tax);
 
   const onSubmit = async (data: FormValues) => {
-    if (items.some((i) => !i.description.trim())) {
+    const invoiceItems = items.map((item) => ({
+      ...item,
+      description: sanitizeRichText(item.description),
+    }));
+    if (invoiceItems.some((item) => !item.description)) {
       toast.error("Please provide descriptions for all line items.");
       return;
     }
@@ -104,7 +109,7 @@ function RouteComponent() {
         contactId: data.contactId || undefined,
         billingAddress: data.billingAddress,
         currency: data.currency,
-        items,
+        items: invoiceItems,
         discount: discountVal,
         tax: taxVal,
         status: "draft",
@@ -195,20 +200,15 @@ function RouteComponent() {
                         (Number(item.qty) || 0) * (Number(item.unitPrice) || 0);
                       return (
                         <tr key={idx}>
-                          <td>
-                            <input
-                              type="text"
+                          <td className="min-w-64">
+                            <RichTextEditor
+                              label={`Item ${idx + 1} description`}
                               value={item.description}
-                              onChange={(e) =>
-                                handleItemChange(
-                                  idx,
-                                  "description",
-                                  e.target.value,
-                                )
+                              onChange={(value) =>
+                                handleItemChange(idx, "description", value)
                               }
-                              placeholder="Service or product name..."
-                              className="input input-bordered input-sm w-full"
-                              required
+                              hideLabel
+                              compact
                             />
                           </td>
                           <td>

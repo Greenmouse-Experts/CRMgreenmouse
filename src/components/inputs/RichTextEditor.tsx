@@ -49,9 +49,17 @@ interface RichTextProps {
   value: string;
   onChange: (value: string) => void;
   label: string;
+  hideLabel?: boolean;
+  compact?: boolean;
 }
 
-export default function RichTextEditor({ value, onChange, label }: RichTextProps) {
+export default function RichTextEditor({
+  value,
+  onChange,
+  label,
+  hideLabel = false,
+  compact = false,
+}: RichTextProps) {
   const id = useId();
   const editorRef = useRef<HTMLDivElement>(null);
   const lastValue = useRef<string | undefined>(undefined);
@@ -77,7 +85,10 @@ export default function RichTextEditor({ value, onChange, label }: RichTextProps
 
   return (
     <div className="space-y-1">
-      <label id={`${id}-label`} className="text-sm font-semibold text-base-content/70">
+      <label
+        id={`${id}-label`}
+        className={hideLabel ? "sr-only" : "text-sm font-semibold text-base-content/70"}
+      >
         {label}
       </label>
       <div className="overflow-hidden rounded-lg border border-base-300 bg-base-100 focus-within:border-primary">
@@ -114,7 +125,7 @@ export default function RichTextEditor({ value, onChange, label }: RichTextProps
             document.execCommand("insertText", false, event.clipboardData.getData("text/plain"));
             update();
           }}
-          className="min-h-28 px-3 py-2 text-sm text-base-content outline-none [&_ol]:list-decimal [&_ol]:pl-5 [&_ul]:list-disc [&_ul]:pl-5"
+          className={`${compact ? "min-h-20" : "min-h-28"} px-3 py-2 text-sm text-base-content outline-none [&_ol]:list-decimal [&_ol]:pl-5 [&_ul]:list-disc [&_ul]:pl-5`}
         />
       </div>
     </div>

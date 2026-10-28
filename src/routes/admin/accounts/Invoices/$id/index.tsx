@@ -3,6 +3,7 @@ import { useParams } from "@tanstack/react-router";
 import { createFileRoute } from "@tanstack/react-router";
 import { useAdminCrossInvoice } from "@/api/adminApi";
 import PageLoader from "@/components/layout/PageLoader";
+import { RichTextContent } from "@/components/inputs/RichTextEditor";
 
 export const Route = createFileRoute("/admin/accounts/Invoices/$id/")({
   component: RouteComponent,
@@ -114,9 +115,12 @@ function RouteComponent() {
                           invoice.items.map((it: any, idx: number) => (
                             <tr key={idx} className="border-b border-base-200">
                               <td className="font-medium">
-                                {it.product?.name ||
-                                  it.description ||
-                                  `Item #${idx + 1}`}
+                                {it.product?.name && <div>{it.product.name}</div>}
+                                {it.description ? (
+                                  <RichTextContent value={it.description} />
+                                ) : !it.product?.name ? (
+                                  `Item #${idx + 1}`
+                                ) : null}
                               </td>
                               <td className="text-center">{it.qty || 1}</td>
                               <td className="text-right">

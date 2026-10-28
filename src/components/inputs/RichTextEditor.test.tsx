@@ -16,4 +16,8 @@ describe("sanitizeRichText", () => {
       "First line<br>Second line",
     );
   });
+
+  it("rejects formatting without visible text", () => {
+    expect(sanitizeRichText("<p><br></p>")).toBe("");
+  });
 });

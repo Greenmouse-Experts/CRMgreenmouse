@@ -1,45 +1,17 @@
-import { useMemo, useState } from "react";
-import { createFileRoute } from "@tanstack/react-router";
-import { FormProvider, useForm } from "react-hook-form";
+import { useMemo } from "react";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
 import CustomTable, { type columnType } from "@/components/tables/CustomTable";
 import type { Actions } from "@/components/tables/pop-up";
 import SimpleContainer from "@/components/SimpleContainer";
 import PageHeader from "@/components/Headers/PageHeader";
 import ContainerRow from "@/components/ContainerRow";
-import ActionButton from "@/components/buttons/ActionButton";
-import Modal from "@/components/modals/DialogModal";
-import SimpleInput from "@/components/inputs/SimpleInput";
-import LocalSelect from "@/components/inputs/LocalSelect";
 import PageLoader from "@/components/layout/PageLoader";
 import { useSearch } from "@/stores/data";
-import { useModal } from "@/store/modals";
-import {
-  useQuotes,
-  useCreateQuote,
-  useUpdateQuote,
-  useDeleteQuote,
-  type Quote,
-} from "@/api/salesApi";
+import { useQuotes, useDeleteQuote, type Quote } from "@/api/salesApi";
 
 export const Route = createFileRoute("/tenant/accounts/quotes/")({
   component: RouteComponent,
-});
-
-interface QuoteFormValues {
-  date: string;
-  clientName: string;
-  amount: number;
-  description: string;
-  status: string;
-}
-
-const defaultValues = (): QuoteFormValues => ({
-  date: new Date().toISOString().slice(0, 10),
-  clientName: "",
-  amount: 0,
-  description: "",
-  status: "pending",
 });
 
 const getErrorMessage = (error: unknown, fallback: string) => {
@@ -55,13 +27,15 @@ const formatAmount = (amount: number) =>
   });
 
 const renderStatus = (status: string) => {
-  const normalized = (status || "pending").toLowerCase();
+  const normalized = (status || "draft").toLowerCase();
   const color =
     normalized === "accepted"
       ? "badge-success"
       : normalized === "rejected" || normalized === "expired"
         ? "badge-error"
-        : "badge-info";
+        : normalized === "draft"
+          ? "badge-ghost"
+          : "badge-info";
 
   return (
     <span className={`badge badge-sm badge-soft font-medium capitalize ${color}`}>
@@ -71,74 +45,21 @@ const renderStatus = (status: string) => {
 };
 
 function RouteComponent() {
+  const navigate = useNavigate();
   const query = useQuotes();
-  const createQuote = useCreateQuote();
-  const updateQuote = useUpdateQuote();
   const deleteQuote = useDeleteQuote();
   const searchProps = useSearch();
-  const modal = useModal();
-  const [editingQuote, setEditingQuote] = useState<Quote | null>(null);
-  const methods = useForm<QuoteFormValues>({ defaultValues: defaultValues() });
 
   const filteredQuotes = useMemo(() => {
     const search = (searchProps.search || "").trim().toLowerCase();
     const quotes = query.data || [];
     if (!search) return quotes;
     return quotes.filter((quote) =>
-      [quote.clientName, quote.description, quote.status, quote.date]
+      [quote.clientName, quote.description, quote.status, quote.date, quote.notes]
         .filter(Boolean)
         .some((value) => value!.toLowerCase().includes(search)),
     );
   }, [query.data, searchProps.search]);
-
-  const openCreate = () => {
-    setEditingQuote(null);
-    methods.reset(defaultValues());
-    modal.showModal();
-  };
-
-  const openEdit = (quote: Quote) => {
-    const status = quote.status?.toLowerCase() || "pending";
-    setEditingQuote(quote);
-    methods.reset({
-      date: quote.date?.slice(0, 10) || "",
-      clientName: quote.clientName,
-      amount: quote.amount,
-      description: quote.description || "",
-      status,
-    });
-    modal.showModal();
-  };
-
-  const onSubmit = async (values: QuoteFormValues) => {
-    const quote = {
-      date: values.date,
-      clientName: values.clientName.trim(),
-      amount: Number(values.amount),
-      description: values.description.trim(),
-    };
-
-    try {
-      if (editingQuote) {
-        const statusChanged =
-          values.status !== (editingQuote.status?.toLowerCase() || "pending");
-        await updateQuote.mutateAsync({
-          id: editingQuote.id,
-          ...quote,
-          ...(statusChanged ? { status: values.status } : {}),
-        });
-        toast.success("Quote updated successfully.");
-      } else {
-        await createQuote.mutateAsync({ ...quote, status: values.status });
-        toast.success("Quote created successfully.");
-      }
-      modal.closeModal();
-      methods.reset(defaultValues());
-      setEditingQuote(null);
-    } catch (error) {
-      toast.error(getErrorMessage(error, "Failed to save quote. Please try again."));
-    }
-  };
 
   const handleDelete = async (quote: Quote) => {
     if (!window.confirm(`Delete quote for "${quote.clientName}"?`)) return;
@@ -177,6 +98,15 @@ function RouteComponent() {
       ),
     },
     {
+      key: "expiresAt",
+      label: "Expires",
+      render: (value: string) => (
+        <span className="text-sm text-base-content/70">
+          {value ? new Date(value).toLocaleDateString() : "—"}
+        </span>
+      ),
+    },
+    {
       key: "description",
       label: "Description",
       render: (value: string) => (
@@ -193,7 +123,15 @@ function RouteComponent() {
   ];
 
   const actions: Actions<Quote>[] = [
-    { key: "edit", label: "Edit Quote", action: openEdit },
+    {
+      key: "edit",
+      label: "Edit Quote",
+      action: (quote) =>
+        navigate({
+          to: "/tenant/accounts/quotes/$id/edit",
+          params: { id: quote.id },
+        }),
+    },
     {
       key: "delete",
       label: "Delete Quote",
@@ -202,73 +140,12 @@ function RouteComponent() {
     },
   ];
 
-  const isSaving = createQuote.isPending || updateQuote.isPending;
-
   return (
     <>
-      <Modal ref={modal.ref} title={editingQuote ? "Edit Quote" : "Add Quote"}>
-        <FormProvider {...methods}>
-          <form onSubmit={methods.handleSubmit(onSubmit)} className="space-y-4">
-            <div className="grid gap-4 sm:grid-cols-2">
-              <SimpleInput
-                label="Date"
-                type="date"
-                {...methods.register("date", { required: "Date is required" })}
-              />
-              <SimpleInput
-                label="Amount"
-                type="number"
-                min="0.01"
-                step="0.01"
-                {...methods.register("amount", {
-                  required: "Amount is required",
-                  valueAsNumber: true,
-                  min: { value: 0.01, message: "Amount must be positive" },
-                })}
-              />
-            </div>
-            <SimpleInput
-              label="Client Name"
-              placeholder="Customer or company name"
-              {...methods.register("clientName", {
-                required: "Client name is required",
-                validate: (value) => !!value.trim() || "Client name is required",
-              })}
-            />
-            <SimpleInput
-              label="Description"
-              placeholder="What is this quote for?"
-              {...methods.register("description", {
-                required: "Description is required",
-                validate: (value) => !!value.trim() || "Description is required",
-              })}
-            />
-            <LocalSelect label="Status" {...methods.register("status")}>
-              <option value="pending">Pending</option>
-              <option value="accepted">Accepted</option>
-              <option value="rejected">Rejected</option>
-              {editingQuote &&
-                !["pending", "accepted", "rejected"].includes(
-                  editingQuote.status.toLowerCase(),
-                ) && (
-                  <option value={editingQuote.status.toLowerCase()}>
-                    {editingQuote.status}
-                  </option>
-                )}
-            </LocalSelect>
-            <div className="modal-action">
-              <button type="button" className="btn" onClick={modal.closeModal}>
-                Cancel
-              </button>
-              <button type="submit" className="btn btn-primary" disabled={isSaving}>
-                {isSaving ? "Saving..." : editingQuote ? "Save Changes" : "Add Quote"}
-              </button>
-            </div>
-          </form>
-        </FormProvider>
-      </Modal>
       <PageHeader title="Quotes" description="Create and manage customer quotes.">
-        <ActionButton onClick={openCreate}>Add Quote</ActionButton>
+        <Link to="/tenant/accounts/quotes/add" className="btn btn-primary btn-sm">
+          Add Quote
+        </Link>
       </PageHeader>
       <SimpleContainer title={<>Quotes {query.data && `(${query.data.length})`}</>}>
         <ContainerRow searchProps={searchProps} showSearch searchPlaceholder="Search quotes..." />
@@ -278,7 +155,7 @@ function RouteComponent() {
             title: "No Quotes Yet",
             description: "Create a quote to start tracking proposals for your customers.",
             actionText: "Add Quote",
-            onAction: openCreate,
+            onAction: () => navigate({ to: "/tenant/accounts/quotes/add" }),
           }}
         >
           {() =>
