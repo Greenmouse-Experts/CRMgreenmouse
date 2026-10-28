@@ -4,7 +4,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Bell, CheckCheck, ChevronLeft, ChevronRight, RefreshCw, Settings2 } from "lucide-react";
 import { toast } from "sonner";
 import PageHeader from "@/components/Headers/PageHeader";
-import { getNotifications, markAllNotificationsRead, markNotificationRead } from "@/api/notifications-api";
+import { getNotifications, getUnreadNotifications, markAllNotificationsRead, markNotificationRead } from "@/api/notifications-api";
 import { getNotificationPreferences } from "@/api/notificationPreferences";
 
 export const Route = createFileRoute("/tenant/notifications/")({
@@ -18,7 +18,9 @@ function RouteComponent() {
   const [page, setPage] = useState(1);
   const query = useQuery({
     queryKey: ["tenant-notifications", page, preferences.pageSize, unreadOnly],
-    queryFn: () => getNotifications({ page, limit: preferences.pageSize, unreadOnly }),
+    queryFn: () => unreadOnly
+      ? getUnreadNotifications(page, preferences.pageSize)
+      : getNotifications({ page, limit: preferences.pageSize }),
   });
   const refresh = () => {
     queryClient.invalidateQueries({ queryKey: ["tenant-notifications"] });

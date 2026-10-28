@@ -18,10 +18,9 @@ export interface NotificationPage {
 export const getNotifications = async (params: {
   page?: number;
   limit?: number;
-  unreadOnly?: boolean;
 } = {}): Promise<NotificationPage> => {
   const { data } = await apiClient.get("/notifications", {
-    params: { page: params.page ?? 1, limit: params.limit ?? 20, unreadOnly: params.unreadOnly ?? false },
+    params: { page: params.page ?? 1, limit: params.limit ?? 20 },
   });
   const result = data?.data ?? data;
   const notifications = Array.isArray(result) ? result :
@@ -34,7 +33,36 @@ export const getNotifications = async (params: {
   return {
     notifications,
     total,
-    hasMore: typeof pagination?.hasMore === "boolean" ? pagination.hasMore : page * limit < total,
+    hasMore: typeof pagination?.hasMore === "boolean" ? pagination.hasMore :
+      pagination?.total !== undefined || result?.total !== undefined
+        ? page * limit < total
+        : notifications.length === limit,
+  };
+};
+
+export const getUnreadNotifications = async (page = 1, limit = 20): Promise<NotificationPage> => {
+  const unread: Notification[] = [];
+  const seen = new Set<string>();
+  let currentPage = 1;
+
+  while (true) {
+    const batch = await getNotifications({ page: currentPage, limit: 20 });
+    let newItems = 0;
+    for (const notification of batch.notifications) {
+      if (seen.has(notification.id)) continue;
+      seen.add(notification.id);
+      newItems++;
+      if (!notification.isRead) unread.push(notification);
+    }
+    if (!batch.hasMore || newItems === 0) break;
+    currentPage++;
+  }
+
+  const start = (page - 1) * limit;
+  return {
+    notifications: unread.slice(start, start + limit),
+    total: unread.length,
+    hasMore: start + limit < unread.length,
   };
 };
 

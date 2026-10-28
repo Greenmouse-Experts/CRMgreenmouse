@@ -1,84 +1,51 @@
-import { useInvoiceStats, useInvoices, type Invoice } from "@/api/financeApi";
+import { useInvoiceStats, type InvoiceStatsData } from "@/api/financeApi";
 
-interface InvoicesStatProps {
-  invoices?: Invoice[];
+type StatCard = { title: string; count: number; amount?: number; color: string };
+
+function statValue(value: InvoiceStatsData[keyof InvoiceStatsData]) {
+  if (typeof value === "number") return { count: value };
+  if (value && typeof value === "object") return value;
+  return undefined;
 }
 
-export default function InvoicesStat({
-  invoices: propInvoices,
-}: InvoicesStatProps) {
-  const { data: statsData } = useInvoiceStats();
-  const { data: fetchedInvoices = [] } = useInvoices();
-  const invoices = propInvoices || fetchedInvoices;
+export default function InvoicesStat() {
+  const statsQuery = useInvoiceStats();
 
-  const totalInvoices = statsData?.total ?? invoices.length;
-  const paidInvoices =
-    statsData?.paid ??
-    invoices.filter((i) => (i.status || "").toLowerCase() === "paid").length;
-  const pendingInvoices =
-    statsData?.pending ??
-    invoices.filter((i) => {
-      const s = (i.status || "").toLowerCase();
-      return s === "pending" || s === "sent" || s === "draft";
-    }).length;
+  if (statsQuery.isPending) {
+    return <div className="flex min-h-24 items-center justify-center" role="status"><span className="loading loading-spinner loading-sm" /><span className="sr-only">Loading invoice statistics</span></div>;
+  }
+  if (statsQuery.isError) {
+    return <div className="flex items-center gap-3 text-sm text-error">Could not load invoice statistics.<button type="button" className="btn btn-ghost btn-sm" onClick={() => statsQuery.refetch()}>Retry</button></div>;
+  }
 
-  const totalAmount =
-    statsData?.revenue ??
-    invoices.reduce((acc, curr) => acc + (curr.total || 0), 0);
-  const paidAmount =
-    statsData?.paidAmount ??
-    invoices
-      .filter((i) => (i.status || "").toLowerCase() === "paid")
-      .reduce((acc, curr) => acc + (curr.total || 0), 0);
-  const pendingAmount =
-    statsData?.pendingAmount ??
-    invoices
-      .filter((i) => (i.status || "").toLowerCase() !== "paid")
-      .reduce((acc, curr) => acc + (curr.total || 0), 0);
+  const data = statsQuery.data;
+  const cards: StatCard[] = [];
+  const total = data?.totalInvoices ?? data?.total;
+  if (typeof total === "number") {
+    cards.push({ title: "Total Invoices", count: total, color: "text-primary" });
+  }
+  const statusFields = [
+    { key: "paid", title: "Paid Invoices", color: "text-success" },
+    { key: "pending", title: "Pending Invoices", color: "text-warning" },
+    { key: "sent", title: "Sent Invoices", color: "text-info" },
+    { key: "overdue", title: "Overdue Invoices", color: "text-error" },
+    { key: "draft", title: "Draft Invoices", color: "text-base-content" },
+  ] as const;
+  for (const field of statusFields) {
+    const value = statValue(data?.[field.key]);
+    if (value && typeof value.count === "number") {
+      cards.push({ title: field.title, count: value.count, amount: value.total, color: field.color });
+    }
+  }
 
-  const stats = [
-    {
-      title: "Total Invoices",
-      value: totalInvoices,
-      desc: `Total volume: $${totalAmount.toLocaleString(undefined, {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
-      })}`,
-      figureClass: "text-primary",
-    },
-    {
-      title: "Paid Invoices",
-      value: paidInvoices,
-      desc: `Collected: $${paidAmount.toLocaleString(undefined, {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
-      })}`,
-      figureClass: "text-success",
-    },
-    {
-      title: "Pending & Sent",
-      value: pendingInvoices,
-      desc: `Outstanding: $${pendingAmount.toLocaleString(undefined, {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
-      })}`,
-      figureClass: "text-warning",
-    },
-  ];
-
+  if (cards.length === 0) return null;
   return (
-    <div className="stats *:bg-base-100 stats-vertical lg:stats-horizontal shadow-sm w-full">
-      {stats.map((stat, index) => (
-        <div className="stat" key={index}>
-          <div className="stat-title text-xs font-medium text-base-content/60">
-            {stat.title}
-          </div>
-          <div className="stat-value text-2xl font-semibold text-base-content mt-1">
-            {stat.value}
-          </div>
-          <div className="stat-desc text-xs mt-1 text-base-content/70">
-            {stat.desc}
-          </div>
+    <div className="stats stats-vertical lg:stats-horizontal w-full shadow-sm">
+      {cards.map((card) => (
+        <div className="stat bg-base-100" key={card.title}>
+          <div className="stat-title text-sm">{card.title}</div>
+          <div className={`stat-value mt-1 text-2xl font-semibold ${card.color}`}>{card.count.toLocaleString()}</div>
+          {typeof card.amount === "number" && <div className="stat-desc mt-1">Amount: {card.amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>}
         </div>
       ))}
     </div>

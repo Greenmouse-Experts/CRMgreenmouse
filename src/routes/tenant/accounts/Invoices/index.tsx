@@ -2,7 +2,6 @@ import { useMemo } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import InvoicesStat from "./-components/InvocesStat";
 import SimpleContainer from "@/components/SimpleContainer";
-import ContainerRow from "@/components/ContainerRow";
 import CustomTable from "@/components/tables/CustomTable";
 import PageHeader from "@/components/Headers/PageHeader";
 import PageLoader from "@/components/layout/PageLoader";
@@ -235,7 +234,6 @@ function RouteComponent() {
       action: (item: Invoice) => handleDelete(item),
     },
   ];
-
   return (
     <div className="space-y-4">
       <PageHeader
@@ -247,10 +245,9 @@ function RouteComponent() {
         </Link>
       </PageHeader>
 
-      <InvoicesStat invoices={invoices} />
+      <InvoicesStat />
 
       <SimpleContainer title="Invoices Directory">
-        <ContainerRow searchProps={searchProps} />
         <PageLoader query={query}>
           <div className="bg-base-100">
             <CustomTable

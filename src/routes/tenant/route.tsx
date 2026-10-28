@@ -14,6 +14,7 @@ import {
   Users,
   QuoteIcon,
   List,
+  Bell,
 } from "lucide-react";
 import AdminHeader from "./-components/AdminHeader";
 import { Link } from "@tanstack/react-router";
@@ -25,9 +26,8 @@ interface Links {
   label: string;
   icon: React.ReactNode;
   type: "menu" | "submenu";
-  children: Partial<Links[]> | null;
+  children: Links[] | null;
 }
-[];
 const ICON_SIZE = 12;
 const nav_links = [
   {
@@ -45,7 +45,7 @@ const nav_links = [
     children: [
       {
         path: "/tenant/users",
-        label: "Staffs",
+        label: "Staff",
         icon: <Users size={ICON_SIZE} />,
         type: "menu",
         children: null,
@@ -57,13 +57,6 @@ const nav_links = [
         type: "menu",
         children: null,
       },
-      // {
-      //   path: "/tenant/users/permissions",
-      //   label: "Permissions",
-      //   icon: <Cog size={ICON_SIZE} />,
-      //   type: "menu",
-      //   children: null,
-      // },
     ],
   },
   {
@@ -110,7 +103,14 @@ const nav_links = [
       },
       {
         path: "/tenant/products/categories",
-        label: "Categories",
+        label: "Product Categories",
+        icon: <Tag size={ICON_SIZE} />,
+        type: "menu",
+        children: null,
+      },
+      {
+        path: "/tenant/products/service/categories",
+        label: "Service Categories",
         icon: <Tag size={ICON_SIZE} />,
         type: "menu",
         children: null,
@@ -131,7 +131,14 @@ const nav_links = [
         children: null,
       },
       {
-        path: "/tenant/accounts/invoices",
+        path: "/tenant/accounts/income-expenses/categories",
+        label: "Financial Categories",
+        icon: <Tag size={ICON_SIZE} />,
+        type: "menu",
+        children: null,
+      },
+      {
+        path: "/tenant/accounts/Invoices",
         label: "Invoices",
         icon: <ShoppingCart size={ICON_SIZE} />,
         type: "menu",
@@ -151,13 +158,13 @@ const nav_links = [
         type: "menu",
         children: null,
       },
-      // {
-      //   path: "/tenant/accounts/transactions",
-      //   label: "Transactions",
-      //   icon: <DollarSign size={ICON_SIZE} />,
-      //   type: "menu",
-      //   children: null,
-      // },
+      {
+        path: "/tenant/accounts/transactions",
+        label: "Transactions",
+        icon: <ReceiptText size={ICON_SIZE} />,
+        type: "menu",
+        children: null,
+      },
     ],
   },
   {
@@ -183,6 +190,13 @@ const nav_links = [
     children: null,
   },
 
+  {
+    path: "/tenant/notifications",
+    label: "Notifications",
+    icon: <Bell size={ICON_SIZE} />,
+    type: "menu",
+    children: null,
+  },
   {
     path: "/tenant/settings",
     label: "Settings",
@@ -227,6 +241,11 @@ export const Route = createFileRoute("/tenant")({
 
 function RouteComponent() {
   const url = useLocation();
+  const pathname = url.pathname.replace(/\/$/, "") || "/";
+  const activeLinkPath = nav_links
+    .flatMap((link) => link.children?.map((child) => child.path) ?? [link.path])
+    .filter((path) => pathname === path || (path !== "/tenant" && pathname.startsWith(`${path}/`)))
+    .sort((first, second) => second.length - first.length)[0];
   return (
     <div className="drawer lg:drawer-open">
       <input id="tenant-drawer" type="checkbox" className="drawer-toggle" />
@@ -248,7 +267,6 @@ function RouteComponent() {
           </div>
           <ul className="menu  w-full space-y-2 ">
             {nav_links.map((link) => {
-              const int_url = link.path;
               if (link.type === "submenu" && link.children) {
                 // Submenus should be open by default
                 return (
@@ -260,8 +278,7 @@ function RouteComponent() {
                       </summary>
                       <ul className="py-1 space-y-1">
                         {link.children.map((childLink) => {
-                          if (!childLink) return null;
-                          const isChildActive = childLink.path === url.pathname;
+                          const isChildActive = childLink.path === activeLinkPath;
                           return (
                             <li key={childLink.path}>
                               <Link
@@ -280,7 +297,7 @@ function RouteComponent() {
                 );
               }
 
-              const isActive = int_url === url.pathname;
+              const isActive = link.path === activeLinkPath;
               return (
                 <li key={link.path} className="mb-2">
                   <Link
