@@ -11,6 +11,7 @@ import PageHeader from "@/components/Headers/PageHeader";
 import PageLoader from "@/components/layout/PageLoader";
 import ProductSummary from "./-components/ProductSummary";
 import ProductNav from "./-components/ProductNav";
+import { ProductImageGallery, ProductImageStrip } from "@/components/images/ProductImages";
 import type { Product } from "@/api/catalogApi";
 import { useAdminCrossProducts, useAdminCrossCategories } from "@/api/adminApi";
 
@@ -156,21 +157,8 @@ function RouteComponent() {
                   {
                     label: "Product Name",
                     key: "name",
-                    render: (product: Product) => (
+                    render: (_: unknown, product: Product) => (
                       <div className="flex items-center gap-3">
-                        <div className="avatar placeholder">
-                          <div className="bg-primary/10 text-primary rounded-lg w-10 h-10 flex items-center justify-center">
-                            {product.images && product.images[0] ? (
-                              <img
-                                src={product.images[0]}
-                                alt={product.name}
-                                className="w-full h-full object-cover rounded-lg"
-                              />
-                            ) : (
-                              <Package size={20} />
-                            )}
-                          </div>
-                        </div>
                         <div>
                           <div className="font-semibold text-base-content text-sm">
                             {product.name}
@@ -185,9 +173,20 @@ function RouteComponent() {
                     ),
                   },
                   {
+                    label: "Images",
+                    key: "images",
+                    render: (_: unknown, product: Product) => (
+                      <ProductImageStrip
+                        images={product.images}
+                        productName={product.name}
+                        onClick={() => handleOpenDetails(product)}
+                      />
+                    ),
+                  },
+                  {
                     label: "Category",
                     key: "categoryId",
-                    render: (product: Product) => {
+                    render: (_: unknown, product: Product) => {
                       const cat = (categoriesQuery.data || []).find(
                         (c: any) => c.id === product.categoryId,
                       );
@@ -201,7 +200,7 @@ function RouteComponent() {
                   {
                     label: "Selling Price",
                     key: "price",
-                    render: (product: Product) => {
+                    render: (_: unknown, product: Product) => {
                       const cur = product.currency || "NGN";
                       return (
                         <div className="font-semibold text-base-content text-sm">
@@ -213,7 +212,7 @@ function RouteComponent() {
                   {
                     label: "Cost & Margin",
                     key: "cost",
-                    render: (product: Product) => {
+                    render: (_: unknown, product: Product) => {
                       const cost = Number(product.cost) || 0;
                       const price = Number(product.price) || 0;
                       if (!cost) {
@@ -251,7 +250,7 @@ function RouteComponent() {
                   {
                     label: "Stock Level",
                     key: "stock",
-                    render: (product: Product) => {
+                    render: (_: unknown, product: Product) => {
                       const qty = product.stock ?? product.quantity ?? 0;
                       let badgeClass = "badge-success text-success-content";
                       let label = `${qty} in stock`;
@@ -274,7 +273,7 @@ function RouteComponent() {
                   {
                     label: "Status",
                     key: "isActive",
-                    render: (product: Product) => (
+                    render: (_: unknown, product: Product) => (
                       <span
                         className={`badge badge-md text-sm ${
                           product.isActive !== false
@@ -321,6 +320,12 @@ function RouteComponent() {
                         : "Inactive"}
                     </span>
                   </div>
+
+                  <ProductImageGallery
+                    key={selectedProduct.id}
+                    images={selectedProduct.images}
+                    productName={selectedProduct.name}
+                  />
 
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                     <div className="bg-base-200/50 p-3 rounded-lg">

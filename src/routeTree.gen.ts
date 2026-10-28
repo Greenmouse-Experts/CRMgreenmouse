@@ -83,6 +83,7 @@ import { Route as AdminAccountsIncomeExpensesIndexRouteImport } from './routes/a
 import { Route as AdminAccountsAnalysisIndexRouteImport } from './routes/admin/accounts/analysis/index'
 import { Route as AdminAccountsInvoicesIndexRouteImport } from './routes/admin/accounts/Invoices/index'
 import { Route as TenantUsersDetailsIdIndexRouteImport } from './routes/tenant/users/details/$id/index'
+import { Route as TenantProductsServiceCategoriesIndexRouteImport } from './routes/tenant/products/service/categories/index'
 import { Route as TenantProductsServiceAddIndexRouteImport } from './routes/tenant/products/service/add/index'
 import { Route as TenantContactsCustomersAddIndexRouteImport } from './routes/tenant/contacts/customers/add/index'
 import { Route as TenantContactsCompaniesAddIndexRouteImport } from './routes/tenant/contacts/companies/add/index'
@@ -498,6 +499,12 @@ const TenantUsersDetailsIdIndexRoute =
     path: '/users/details/$id/',
     getParentRoute: () => TenantRouteRoute,
   } as any)
+const TenantProductsServiceCategoriesIndexRoute =
+  TenantProductsServiceCategoriesIndexRouteImport.update({
+    id: '/products/service/categories/',
+    path: '/products/service/categories/',
+    getParentRoute: () => TenantRouteRoute,
+  } as any)
 const TenantProductsServiceAddIndexRoute =
   TenantProductsServiceAddIndexRouteImport.update({
     id: '/products/service/add/',
@@ -676,6 +683,7 @@ export interface FileRoutesByFullPath {
   '/tenant/contacts/companies/add': typeof TenantContactsCompaniesAddIndexRoute
   '/tenant/contacts/customers/add': typeof TenantContactsCustomersAddIndexRoute
   '/tenant/products/service/add': typeof TenantProductsServiceAddIndexRoute
+  '/tenant/products/service/categories': typeof TenantProductsServiceCategoriesIndexRoute
   '/tenant/users/details/$id': typeof TenantUsersDetailsIdIndexRoute
   '/admin/contacts/companies/details/$id': typeof AdminContactsCompaniesDetailsIdIndexRoute
   '/tenant/contacts/companies/details/$id': typeof TenantContactsCompaniesDetailsIdIndexRoute
@@ -760,6 +768,7 @@ export interface FileRoutesByTo {
   '/tenant/contacts/companies/add': typeof TenantContactsCompaniesAddIndexRoute
   '/tenant/contacts/customers/add': typeof TenantContactsCustomersAddIndexRoute
   '/tenant/products/service/add': typeof TenantProductsServiceAddIndexRoute
+  '/tenant/products/service/categories': typeof TenantProductsServiceCategoriesIndexRoute
   '/tenant/users/details/$id': typeof TenantUsersDetailsIdIndexRoute
   '/admin/contacts/companies/details/$id': typeof AdminContactsCompaniesDetailsIdIndexRoute
   '/tenant/contacts/companies/details/$id': typeof TenantContactsCompaniesDetailsIdIndexRoute
@@ -852,6 +861,7 @@ export interface FileRoutesById {
   '/tenant/contacts/companies/add/': typeof TenantContactsCompaniesAddIndexRoute
   '/tenant/contacts/customers/add/': typeof TenantContactsCustomersAddIndexRoute
   '/tenant/products/service/add/': typeof TenantProductsServiceAddIndexRoute
+  '/tenant/products/service/categories/': typeof TenantProductsServiceCategoriesIndexRoute
   '/tenant/users/details/$id/': typeof TenantUsersDetailsIdIndexRoute
   '/admin/contacts/companies/details/$id/': typeof AdminContactsCompaniesDetailsIdIndexRoute
   '/tenant/contacts/companies/details/$id/': typeof TenantContactsCompaniesDetailsIdIndexRoute
@@ -945,6 +955,7 @@ export interface FileRouteTypes {
     | '/tenant/contacts/companies/add'
     | '/tenant/contacts/customers/add'
     | '/tenant/products/service/add'
+    | '/tenant/products/service/categories'
     | '/tenant/users/details/$id'
     | '/admin/contacts/companies/details/$id'
     | '/tenant/contacts/companies/details/$id'
@@ -1029,6 +1040,7 @@ export interface FileRouteTypes {
     | '/tenant/contacts/companies/add'
     | '/tenant/contacts/customers/add'
     | '/tenant/products/service/add'
+    | '/tenant/products/service/categories'
     | '/tenant/users/details/$id'
     | '/admin/contacts/companies/details/$id'
     | '/tenant/contacts/companies/details/$id'
@@ -1120,6 +1132,7 @@ export interface FileRouteTypes {
     | '/tenant/contacts/companies/add/'
     | '/tenant/contacts/customers/add/'
     | '/tenant/products/service/add/'
+    | '/tenant/products/service/categories/'
     | '/tenant/users/details/$id/'
     | '/admin/contacts/companies/details/$id/'
     | '/tenant/contacts/companies/details/$id/'
@@ -1660,6 +1673,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TenantUsersDetailsIdIndexRouteImport
       parentRoute: typeof TenantRouteRoute
     }
+    '/tenant/products/service/categories/': {
+      id: '/tenant/products/service/categories/'
+      path: '/products/service/categories'
+      fullPath: '/tenant/products/service/categories'
+      preLoaderRoute: typeof TenantProductsServiceCategoriesIndexRouteImport
+      parentRoute: typeof TenantRouteRoute
+    }
     '/tenant/products/service/add/': {
       id: '/tenant/products/service/add/'
       path: '/products/service/add'
@@ -1908,6 +1928,7 @@ interface TenantRouteRouteChildren {
   TenantContactsCompaniesAddIndexRoute: typeof TenantContactsCompaniesAddIndexRoute
   TenantContactsCustomersAddIndexRoute: typeof TenantContactsCustomersAddIndexRoute
   TenantProductsServiceAddIndexRoute: typeof TenantProductsServiceAddIndexRoute
+  TenantProductsServiceCategoriesIndexRoute: typeof TenantProductsServiceCategoriesIndexRoute
   TenantUsersDetailsIdIndexRoute: typeof TenantUsersDetailsIdIndexRoute
   TenantContactsCompaniesDetailsIdIndexRoute: typeof TenantContactsCompaniesDetailsIdIndexRoute
 }
@@ -1945,6 +1966,8 @@ const TenantRouteRouteChildren: TenantRouteRouteChildren = {
   TenantContactsCompaniesAddIndexRoute: TenantContactsCompaniesAddIndexRoute,
   TenantContactsCustomersAddIndexRoute: TenantContactsCustomersAddIndexRoute,
   TenantProductsServiceAddIndexRoute: TenantProductsServiceAddIndexRoute,
+  TenantProductsServiceCategoriesIndexRoute:
+    TenantProductsServiceCategoriesIndexRoute,
   TenantUsersDetailsIdIndexRoute: TenantUsersDetailsIdIndexRoute,
   TenantContactsCompaniesDetailsIdIndexRoute:
     TenantContactsCompaniesDetailsIdIndexRoute,

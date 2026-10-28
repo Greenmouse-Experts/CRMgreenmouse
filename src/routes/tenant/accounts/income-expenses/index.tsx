@@ -8,6 +8,7 @@ import ExpenseTable from "./-components/ExpenseTable";
 import ActionButton from "@/components/buttons/ActionButton";
 import Modal, { type ModalHandle } from "@/components/DialogModal";
 import SimpleInput from "@/components/inputs/SimpleInput";
+import MoneyInput from "@/components/inputs/MoneyInput";
 import SimpleTextArea from "@/components/inputs/SimpleTextArea";
 import PageHeader from "@/components/Headers/PageHeader";
 import LocalSelect from "@/components/inputs/LocalSelect";
@@ -41,7 +42,7 @@ function RouteComponent() {
   const expenseModalRef = useRef<ModalHandle>(null);
 
   const [incomeForm, setIncomeForm] = useState({
-    amount: "",
+    amount: undefined as number | undefined,
     categoryId: "",
     source: "",
     description: "",
@@ -49,7 +50,7 @@ function RouteComponent() {
   });
 
   const [expenseForm, setExpenseForm] = useState({
-    amount: "",
+    amount: undefined as number | undefined,
     categoryId: "",
     date: new Date().toLocaleDateString("en-CA"),
     paidTo: "",
@@ -59,7 +60,7 @@ function RouteComponent() {
 
   const handleOpenIncome = () => {
     setIncomeForm({
-      amount: "",
+      amount: undefined,
       categoryId: "",
       source: "",
       description: "",
@@ -70,7 +71,7 @@ function RouteComponent() {
 
   const handleOpenExpense = () => {
     setExpenseForm({
-      amount: "",
+      amount: undefined,
       categoryId: "",
       date: new Date().toLocaleDateString("en-CA"),
       paidTo: "",
@@ -82,9 +83,11 @@ function RouteComponent() {
 
   const handleSubmitIncome = async (e: React.FormEvent) => {
     e.preventDefault();
+    const amount = incomeForm.amount;
     if (
-      !Number.isFinite(Number(incomeForm.amount)) ||
-      Number(incomeForm.amount) <= 0 ||
+      amount === undefined ||
+      !Number.isFinite(amount) ||
+      amount <= 0 ||
       !incomeForm.source.trim() ||
       !incomeForm.categoryId ||
       !incomeCategories.some((c) => c.id === incomeForm.categoryId)
@@ -96,7 +99,7 @@ function RouteComponent() {
     }
     try {
       await createIncome.mutateAsync({
-        amount: Number(incomeForm.amount),
+        amount,
         categoryId: incomeForm.categoryId,
         source: incomeForm.source.trim(),
         description: incomeForm.description,
@@ -113,9 +116,11 @@ function RouteComponent() {
 
   const handleSubmitExpense = async (e: React.FormEvent) => {
     e.preventDefault();
+    const amount = expenseForm.amount;
     if (
-      !Number.isFinite(Number(expenseForm.amount)) ||
-      Number(expenseForm.amount) <= 0 ||
+      amount === undefined ||
+      !Number.isFinite(amount) ||
+      amount <= 0 ||
       !expenseForm.paidTo.trim() ||
       !expenseForm.date ||
       !expenseForm.categoryId ||
@@ -128,7 +133,7 @@ function RouteComponent() {
     }
     try {
       await createExpense.mutateAsync({
-        amount: Number(expenseForm.amount),
+        amount,
         categoryId: expenseForm.categoryId,
         date: expenseForm.date,
         paidTo: expenseForm.paidTo.trim(),
@@ -188,14 +193,11 @@ function RouteComponent() {
       {/* Add Income Modal */}
       <Modal ref={incomeModalRef} title="Log New Income">
         <form onSubmit={handleSubmitIncome} className="space-y-4 pt-2">
-          <SimpleInput
+          <MoneyInput
             label="Amount ($)"
-            type="number"
-            step="0.01"
-            placeholder="0.00"
             value={incomeForm.amount}
-            onChange={(e) =>
-              setIncomeForm({ ...incomeForm, amount: e.target.value })
+            onChange={(amount) =>
+              setIncomeForm((previous) => ({ ...previous, amount }))
             }
             required
           />
@@ -286,14 +288,11 @@ function RouteComponent() {
       {/* Add Expense Modal */}
       <Modal ref={expenseModalRef} title="Record New Expense">
         <form onSubmit={handleSubmitExpense} className="space-y-4 pt-2">
-          <SimpleInput
+          <MoneyInput
             label="Amount ($)"
-            type="number"
-            step="0.01"
-            placeholder="0.00"
             value={expenseForm.amount}
-            onChange={(e) =>
-              setExpenseForm({ ...expenseForm, amount: e.target.value })
+            onChange={(amount) =>
+              setExpenseForm((previous) => ({ ...previous, amount }))
             }
             required
           />

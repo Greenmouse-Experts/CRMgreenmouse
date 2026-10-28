@@ -289,15 +289,24 @@ export interface Category {
   createdAt?: string;
 }
 
-export const useCategories = () => {
+export const useCategories = (type?: "product" | "service") => {
   return useQuery<Category[]>({
-    queryKey: ["categories"],
+    queryKey: ["categories", type],
     queryFn: async () => {
       const { data } = await apiClient.get<any>("/categories");
-      if (Array.isArray(data)) return data;
-      if (Array.isArray(data?.data)) return data.data;
-      if (Array.isArray(data?.categories)) return data.categories;
-      return [];
+      const categories: Category[] = Array.isArray(data)
+        ? data
+        : Array.isArray(data?.data)
+          ? data.data
+          : Array.isArray(data?.categories)
+            ? data.categories
+            : [];
+      if (!type) return categories;
+      return categories.filter((category) =>
+        type === "service"
+          ? category.type?.toLowerCase() === "service"
+          : category.type?.toLowerCase() !== "service",
+      );
     },
   });
 };

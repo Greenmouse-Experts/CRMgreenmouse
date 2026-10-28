@@ -2,13 +2,14 @@ import { useState } from "react";
 import SimpleTitle from "@/components/SimpleTitle";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import SimpleInput from "@/components/inputs/SimpleInput";
-import { useForm, FormProvider } from "react-hook-form";
+import { useForm, FormProvider, Controller } from "react-hook-form";
 import SimpleTextArea from "@/components/inputs/SimpleTextArea";
+import MoneyInput from "@/components/inputs/MoneyInput";
 import LocalSelect from "@/components/inputs/LocalSelect";
 import UpdateImages from "@/components/images/UpdateImages";
 import { useCreateProduct } from "@/api/catalogApi";
 import { useCategories } from "@/api/crmApi";
-import { useUploadImage } from "@/api/imageApi";
+import { uploadedFileUrl, useUploadImage } from "@/api/imageApi";
 import { toast } from "sonner";
 
 interface ProductFormFields {
@@ -27,7 +28,7 @@ export const Route = createFileRoute("/tenant/products/add/")({
 function RouteComponent() {
   const navigate = useNavigate();
   const createProduct = useCreateProduct();
-  const categoriesQuery = useCategories();
+  const categoriesQuery = useCategories("product");
   const uploadImage = useUploadImage();
   const [submitting, setSubmitting] = useState(false);
 
@@ -55,16 +56,10 @@ function RouteComponent() {
       if (newImages && newImages.length > 0) {
         const filesArr = Array.from(newImages);
         for (const file of filesArr) {
-          try {
-            const uploadRes = await uploadImage.mutateAsync(file);
-            const url =
-              uploadRes?.data?.url ||
-              (uploadRes as any)?.url ||
-              (uploadRes as any)?.payload?.url;
-            if (url) uploadedUrls.push(url);
-          } catch {
-            // Proceed if single image fails
-          }
+          const uploadRes = await uploadImage.mutateAsync(file);
+          const url = uploadedFileUrl(uploadRes);
+          if (!url) throw new Error(`Could not upload ${file.name}.`);
+          uploadedUrls.push(url);
         }
       }
 
@@ -84,14 +79,16 @@ function RouteComponent() {
       toast.success(`Product "${data.name}" created successfully.`);
       navigate({ to: "/tenant/products" });
     } catch (err: any) {
-      toast.error(err?.response?.data?.message || "Failed to create product.");
+      toast.error(
+        err?.response?.data?.message || err?.message || "Failed to create product.",
+      );
     } finally {
       setSubmitting(false);
     }
   };
 
   return (
-    <div className="p-4 max-w-3xl mx-auto space-y-6">
+    <div className="p-4  mx-auto space-y-6">
       <SimpleTitle title={"Add New Product"} />
       <FormProvider {...methods}>
         <form
@@ -141,27 +138,39 @@ function RouteComponent() {
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <SimpleInput
-                label="Selling Price (₦)"
-                type="number"
-                placeholder="0.00"
-                {...methods.register("price", {
+              <Controller
+                name="price"
+                control={methods.control}
+                rules={{
                   required: "Price is required",
-                  valueAsNumber: true,
-                  min: {
-                    value: 0.01,
-                    message: "Price must be a positive number",
-                  },
-                })}
+                  validate: (value) =>
+                    (value !== undefined && value > 0) ||
+                    "Price must be a positive number",
+                }}
+                render={({ field, fieldState }) => (
+                  <MoneyInput
+                    label="Selling Price (₦)"
+                    required
+                    {...field}
+                    error={fieldState.error?.message}
+                  />
+                )}
               />
 
-              <SimpleInput
-                label="Cost Price (₦)"
-                type="number"
-                placeholder="0.00"
-                {...methods.register("cost", {
-                  valueAsNumber: true,
-                })}
+              <Controller
+                name="cost"
+                control={methods.control}
+                rules={{
+                  validate: (value) =>
+                    value === undefined || value >= 0 || "Cost cannot be negative",
+                }}
+                render={({ field, fieldState }) => (
+                  <MoneyInput
+                    label="Cost Price (₦)"
+                    {...field}
+                    error={fieldState.error?.message}
+                  />
+                )}
               />
             </div>
 

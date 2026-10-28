@@ -1,6 +1,6 @@
 import { useState, useRef } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import SimpleContainer from "@/components/SimpleContainer";
 import ContainerRow from "@/components/ContainerRow";
 import { useSearch } from "@/stores/data";
@@ -12,7 +12,9 @@ import PageHeader from "@/components/Headers/PageHeader";
 import PageLoader from "@/components/layout/PageLoader";
 import ProductSummary from "./-components/ProductSummary";
 import UpdateImages from "@/components/images/UpdateImages";
-import { useUploadImage } from "@/api/imageApi";
+import { ProductImageGallery, ProductImageStrip } from "@/components/images/ProductImages";
+import MoneyInput from "@/components/inputs/MoneyInput";
+import { useUploadImage, uploadedFileUrl } from "@/api/imageApi";
 import {
   useProducts,
   useCreateProduct,
@@ -46,7 +48,7 @@ interface EditProductFormValues {
 
 function RouteComponent() {
   const query = useProducts();
-  const categoriesQuery = useCategories();
+  const categoriesQuery = useCategories("product");
   const createProduct = useCreateProduct();
   const updateProduct = useUpdateProduct();
   const deleteProduct = useDeleteProduct();
@@ -141,14 +143,10 @@ function RouteComponent() {
     if (files && files.length > 0) {
       const filesArr = Array.from(files);
       for (const file of filesArr) {
-        try {
-          const res = await uploadImage.mutateAsync(file);
-          const url =
-            res?.data?.url || (res as any)?.url || (res as any)?.payload?.url;
-          if (url) uploadedUrls.push(url);
-        } catch (err) {
-          console.error("Failed to upload image file:", err);
-        }
+        const res = await uploadImage.mutateAsync(file);
+        const url = uploadedFileUrl(res);
+        if (!url) throw new Error("Image upload did not return a URL.");
+        uploadedUrls.push(url);
       }
     }
     return uploadedUrls;
@@ -177,7 +175,7 @@ function RouteComponent() {
       toast.success("Product created successfully");
       addModalRef.current?.close();
     } catch (err: any) {
-      toast.error(err?.response?.data?.message || "Failed to create product");
+      toast.error(err?.response?.data?.message || err?.message || "Failed to create product");
     }
   };
 
@@ -206,7 +204,7 @@ function RouteComponent() {
       toast.success("Product updated successfully");
       editModalRef.current?.close();
     } catch (err: any) {
-      toast.error(err?.response?.data?.message || "Failed to update product");
+      toast.error(err?.response?.data?.message || err?.message || "Failed to update product");
     }
   };
 
@@ -252,17 +250,6 @@ function RouteComponent() {
       label: "Product",
       render: (_: any, item: Product) => (
         <div className="flex items-center gap-3">
-          <div className="size-10 rounded-lg bg-primary/10 flex items-center justify-center text-primary font-semibold overflow-hidden shrink-0 border border-base-200">
-            {item.images && item.images.length > 0 && item.images[0] ? (
-              <img
-                src={item.images[0]}
-                alt={item.name}
-                className="size-full object-cover"
-              />
-            ) : (
-              <Package className="size-5" />
-            )}
-          </div>
           <div>
             <div className="font-semibold text-base-content">{item.name}</div>
             <div className="text-xs text-base-content/60 line-clamp-1 max-w-[200px]">
@@ -270,6 +257,17 @@ function RouteComponent() {
             </div>
           </div>
         </div>
+      ),
+    },
+    {
+      key: "images",
+      label: "Images",
+      render: (_: unknown, item: Product) => (
+        <ProductImageStrip
+          images={item.images}
+          productName={item.name}
+          onClick={() => handleOpenDetails(item)}
+        />
       ),
     },
     {
@@ -440,39 +438,32 @@ function RouteComponent() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="text-xs font-semibold text-base-content/70">
-                Selling Price (₦) *
-              </label>
-              <input
-                type="number"
-                step="0.01"
-                className="input input-bordered w-full mt-1"
-                placeholder="0.00"
-                {...addMethods.register("price", {
+              <Controller
+                name="price"
+                control={addMethods.control}
+                rules={{
                   required: "Price is required",
-                  valueAsNumber: true,
-                  validate: (val) =>
-                    (val !== undefined && !isNaN(val) && val > 0) ||
+                  validate: (value) =>
+                    (value !== undefined && value > 0) ||
                     "Price must be a positive number",
-                })}
+                }}
+                render={({ field, fieldState }) => (
+                  <MoneyInput
+                    label="Selling Price (₦)"
+                    required
+                    {...field}
+                    error={fieldState.error?.message}
+                  />
+                )}
               />
-              {addMethods.formState.errors.price && (
-                <span className="text-xs text-error mt-1 block">
-                  {addMethods.formState.errors.price.message}
-                </span>
-              )}
             </div>
             <div>
-              <label className="text-xs font-semibold text-base-content/70">
-                Cost Price (₦)
-              </label>
-              <input
-                type="number"
-                step="0.01"
-                min="0"
-                className="input input-bordered w-full mt-1"
-                placeholder="0.00"
-                {...addMethods.register("cost", { valueAsNumber: true })}
+              <Controller
+                name="cost"
+                control={addMethods.control}
+                render={({ field }) => (
+                  <MoneyInput label="Cost Price (₦)" {...field} />
+                )}
               />
             </div>
           </div>
@@ -578,26 +569,24 @@ function RouteComponent() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="text-xs font-semibold text-base-content/70">
-                Selling Price (₦) *
-              </label>
-              <input
-                type="number"
-                step="0.01"
-                className="input input-bordered w-full mt-1"
-                {...editMethods.register("price", {
+              <Controller
+                name="price"
+                control={editMethods.control}
+                rules={{
                   required: "Price is required",
-                  valueAsNumber: true,
-                  validate: (val) =>
-                    (val !== undefined && !isNaN(val) && val > 0) ||
+                  validate: (value) =>
+                    (value !== undefined && value > 0) ||
                     "Price must be a positive number",
-                })}
+                }}
+                render={({ field, fieldState }) => (
+                  <MoneyInput
+                    label="Selling Price (₦)"
+                    required
+                    {...field}
+                    error={fieldState.error?.message}
+                  />
+                )}
               />
-              {editMethods.formState.errors.price && (
-                <span className="text-xs text-error mt-1 block">
-                  {editMethods.formState.errors.price.message}
-                </span>
-              )}
             </div>
 
             <div>
@@ -747,28 +736,11 @@ function RouteComponent() {
               </div>
             </div>
 
-            {/* Product Images Gallery */}
-            {selectedProduct.images && selectedProduct.images.length > 0 && (
-              <div className="space-y-2">
-                <span className="text-xs font-semibold text-base-content/70 block">
-                  Product Gallery ({selectedProduct.images.length})
-                </span>
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                  {selectedProduct.images.map((imgUrl, idx) => (
-                    <div
-                      key={idx}
-                      className="aspect-square rounded-lg overflow-hidden border border-base-200 bg-base-200/50"
-                    >
-                      <img
-                        src={imgUrl}
-                        alt={`${selectedProduct.name} image ${idx + 1}`}
-                        className="size-full object-cover"
-                      />
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
+            <ProductImageGallery
+              key={selectedProduct.id}
+              images={selectedProduct.images}
+              productName={selectedProduct.name}
+            />
 
             <div className="grid grid-cols-2 gap-4 text-sm">
               <div className="p-3 bg-base-200/30 rounded-lg">
