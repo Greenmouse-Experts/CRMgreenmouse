@@ -5,6 +5,8 @@ import {
   get_profile_value,
   set_user_value,
   clear_user,
+  type AuthUser,
+  type ProfileData,
 } from "@/store/authStore";
 import { toast } from "sonner";
 
@@ -67,6 +69,19 @@ apiClient.interceptors.request.use((config) => {
 
 let refreshPromise: Promise<string | null> | null = null;
 
+export const refreshEndpointForSession = (
+  user: AuthUser,
+  profile: ProfileData | null,
+) => {
+  const userType =
+    user.user?.userType ||
+    user.profile?.userType ||
+    (profile?.sub === user.user?.id ? profile.userType : undefined);
+  return userType?.trim().toLowerCase() === "tenant"
+    ? "tenant/auth/refresh"
+    : "auth/refresh";
+};
+
 const refreshAccessToken = async (): Promise<string | null> => {
   const user = get_user_value();
   if (!user?.refreshToken) {
@@ -74,15 +89,7 @@ const refreshAccessToken = async (): Promise<string | null> => {
   }
 
   const profile = get_profile_value();
-  const userType = (
-    user.user?.userType ||
-    user.profile?.userType ||
-    profile?.userType ||
-    ""
-  ).toLowerCase();
-
-  const isAdmin = userType === "admin";
-  const refreshEndpoint = isAdmin ? "auth/refresh" : "tenant/auth/refresh";
+  const refreshEndpoint = refreshEndpointForSession(user, profile);
 
   const { data } = await axios.post(`${new_url}${refreshEndpoint}`, {
     refreshToken: user.refreshToken,

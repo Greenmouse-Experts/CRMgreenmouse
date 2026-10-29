@@ -582,9 +582,33 @@ export const useTenantDeleteRole = useDeleteRole;
 
 // ==================== TENANT SUBSCRIPTION HOOKS & TYPES ====================
 
+export interface TenantSubscriptionPlan {
+  id: string;
+  name: string;
+  description?: string;
+  price?: number;
+  priceMonthly?: number;
+  priceYearly?: number;
+  trialDays?: number;
+  maxStaff?: number;
+  maxContacts?: number;
+  maxProducts?: number;
+  maxServices?: number;
+  maxInvoicesPerMonth?: number;
+  maxFinancialRecordsPerMonth?: number;
+  maxOrdersPerMonth?: number;
+  maxCategories?: number;
+  maxLeads?: number;
+  maxCompanies?: number;
+  maxQuotes?: number;
+  features?: string[];
+  isCustomPrice?: boolean;
+}
+
 export interface TenantCurrentSubscription {
   id?: string;
   planId?: string;
+  subscriptionPlanId?: string;
   planName?: string;
   status?: string;
   subscriptionStatus?: string;
@@ -593,17 +617,8 @@ export interface TenantCurrentSubscription {
   currentPeriodStart?: string;
   currentPeriodEnd?: string;
   cancelAtPeriodEnd?: boolean;
-  plan?: {
-    id: string;
-    name: string;
-    description?: string;
-    price?: number;
-    priceMonthly?: number;
-    priceYearly?: number;
-    billingCycle?: string;
-    features?: string[];
-    [key: string]: any;
-  };
+  plan?: TenantSubscriptionPlan;
+  subscriptionPlan?: TenantSubscriptionPlan;
   [key: string]: any;
 }
 
@@ -618,12 +633,14 @@ export const useTenantSubscriptionCurrent = () => {
 };
 
 export const useTenantSubscriptionPlans = () => {
-  return useQuery<any[]>({
+  return useQuery<TenantSubscriptionPlan[]>({
     queryKey: ["tenant", "subscription", "plans"],
     queryFn: async () => {
       const { data } = await apiClient.get<any>("/tenant/subscription/plans");
       if (Array.isArray(data)) return data;
       if (Array.isArray(data?.data)) return data.data;
+      if (Array.isArray(data?.data?.data)) return data.data.data;
+      if (Array.isArray(data?.data?.plans)) return data.data.plans;
       return [];
     },
   });

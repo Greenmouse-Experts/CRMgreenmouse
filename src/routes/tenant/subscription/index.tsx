@@ -3,6 +3,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import PaystackPop from "@paystack/inline-js";
 import { getPaystackAccessCode } from "./-checkout";
 import { priceForCycle } from "./-pricing";
+import PlanDetails from "./-plan-details";
 import PageHeader from "@/components/Headers/PageHeader";
 import PageLoader from "@/components/layout/PageLoader";
 import SimpleContainer from "@/components/SimpleContainer";
@@ -14,10 +15,10 @@ import {
   useTenantSubscriptionUpgrade,
   useTenantSubscriptionDowngrade,
   useTenantSubscriptionCancel,
+  type TenantSubscriptionPlan,
 } from "@/api/tenantApi";
 import { toast } from "sonner";
 import {
-  Check,
   Zap,
   ShieldCheck,
   Calendar,
@@ -110,7 +111,7 @@ function RouteComponent() {
     }
   }, []);
 
-  const handleSubscribeOrUpgrade = async (plan: any) => {
+  const handleSubscribeOrUpgrade = async (plan: TenantSubscriptionPlan) => {
     if (checkoutPlanId) return;
     setCheckoutPlanId(plan.id);
     try {
@@ -180,7 +181,7 @@ function RouteComponent() {
     }
   };
 
-  const handleDowngrade = async (plan: any) => {
+  const handleDowngrade = async (plan: TenantSubscriptionPlan) => {
     if (
       !window.confirm(`Are you sure you want to downgrade to "${plan.name}"?`)
     ) {
@@ -283,15 +284,21 @@ function RouteComponent() {
     },
   ];
 
-  const currentPlanId = currentSub?.planId || currentSub?.plan?.id;
+  const currentPlanId =
+    currentSub?.planId ||
+    currentSub?.subscriptionPlanId ||
+    currentSub?.plan?.id ||
+    currentSub?.subscriptionPlan?.id;
   const subscriptionStatus =
     currentSub?.subscriptionStatus || currentSub?.status || "unknown";
   const currentPlan =
-    currentSub?.plan || plans.find((plan) => plan.id === currentPlanId);
+    currentSub?.plan ||
+    currentSub?.subscriptionPlan ||
+    plans.find((plan) => plan.id === currentPlanId);
   const currentBillingCycle =
     currentSub?.billingCycle === "yearly" ? "yearly" : "monthly";
   const currentPlanPrice =
-    priceForCycle(currentSub?.plan, currentBillingCycle) ?? currentSub?.price;
+    priceForCycle(currentPlan, currentBillingCycle) ?? currentSub?.price;
   const statusBadgeClass =
     subscriptionStatus === "active"
       ? "badge-success"
@@ -354,19 +361,21 @@ function RouteComponent() {
                         )}
                       </div>
                       <h2 className="text-2xl font-semibold text-base-content flex items-center gap-2">
-                        {currentSub.planName ||
-                          currentSub.plan?.name ||
-                          "Standard Plan"}
+                        {currentSub.planName || currentPlan?.name || "Plan details unavailable"}
                         <ShieldCheck className="size-6 text-primary" />
                       </h2>
-                      {currentSub.plan?.description && (
+                      {currentPlan?.description && (
                         <p className="text-sm text-base-content/70">
-                          {currentSub.plan.description}
+                          {currentPlan.description}
                         </p>
                       )}
                       <p className="text-sm text-base-content/70 flex items-center gap-3">
                         <span className="capitalize font-semibold text-base-content">
-                          {currentSub.billingCycle || "Monthly"} Billing
+                          {currentSub.billingCycle
+                            ? `${currentSub.billingCycle} billing`
+                            : subscriptionStatus === "trial"
+                              ? "Trial"
+                              : "Billing cycle unavailable"}
                         </span>
                         <span>•</span>
                         <span>
@@ -450,6 +459,11 @@ function RouteComponent() {
                       </div>
                     </div>
                   </div>
+                  {currentPlan && (
+                    <div className="border-t border-base-200 p-6">
+                      <PlanDetails plan={currentPlan} />
+                    </div>
+                  )}
                 </div>
               )}
             </>
@@ -514,7 +528,7 @@ function RouteComponent() {
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {plans.map((plan: any) => {
+              {plans.map((plan) => {
                 const isCurrent = currentPlanId === plan.id;
                 const price = priceForCycle(plan, billingCycle);
                 const comparisonPrice = priceForCycle(currentPlan, billingCycle);
@@ -565,69 +579,7 @@ function RouteComponent() {
                         </div>
                       </div>
 
-                      {/* Quotas & Limits */}
-                      <div className="space-y-2 text-xs">
-                        <p className="font-semibold text-base-content/70 uppercase text-[10px] tracking-wider">
-                          Resource Limits
-                        </p>
-                        <ul className="space-y-1.5 text-base-content/80">
-                          {plan.maxStaff !== undefined && (
-                            <li className="flex justify-between border-b border-base-200/50 pb-1">
-                              <span>Max Staff Users</span>
-                              <span className="font-semibold">
-                                {plan.maxStaff === 0 || plan.maxStaff === -1
-                                  ? "Unlimited"
-                                  : plan.maxStaff}
-                              </span>
-                            </li>
-                          )}
-                          {plan.maxContacts !== undefined && (
-                            <li className="flex justify-between border-b border-base-200/50 pb-1">
-                              <span>Max Contacts</span>
-                              <span className="font-semibold">
-                                {plan.maxContacts === 0 ||
-                                plan.maxContacts === -1
-                                  ? "Unlimited"
-                                  : plan.maxContacts}
-                              </span>
-                            </li>
-                          )}
-                          {plan.maxInvoicesPerMonth !== undefined && (
-                            <li className="flex justify-between border-b border-base-200/50 pb-1">
-                              <span>Invoices / Month</span>
-                              <span className="font-semibold">
-                                {plan.maxInvoicesPerMonth === 0 ||
-                                plan.maxInvoicesPerMonth === -1
-                                  ? "Unlimited"
-                                  : plan.maxInvoicesPerMonth}
-                              </span>
-                            </li>
-                          )}
-                        </ul>
-                      </div>
-
-                      {/* Included Features */}
-                      {Array.isArray(plan.features) &&
-                        plan.features.length > 0 && (
-                          <div className="space-y-2 text-xs">
-                            <p className="font-semibold text-base-content/70 uppercase text-[10px] tracking-wider">
-                              Included Features
-                            </p>
-                            <ul className="space-y-1.5">
-                              {plan.features.map(
-                                (feat: string, idx: number) => (
-                                  <li
-                                    key={idx}
-                                    className="flex items-start gap-2 text-base-content/80"
-                                  >
-                                    <Check className="size-4 text-success shrink-0 mt-0.5" />
-                                    <span>{feat}</span>
-                                  </li>
-                                ),
-                              )}
-                            </ul>
-                          </div>
-                        )}
+                      <PlanDetails plan={plan} />
                     </div>
 
                     {/* Action Footer */}
