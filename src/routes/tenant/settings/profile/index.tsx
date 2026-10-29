@@ -189,7 +189,7 @@ function RouteComponent() {
             errors={errors}
             disabled={updateProfile.isPending}
           />
-          <AddressInfo register={register} disabled={updateProfile.isPending} />
+          <AddressInfo disabled={updateProfile.isPending} />
           <div className="flex justify-end gap-2">
             <button
               type="button"

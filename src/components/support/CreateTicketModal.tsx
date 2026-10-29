@@ -145,6 +145,47 @@ const CreateTicketModal = forwardRef<CreateTicketModalHandle>(
               placeholder="What needs help?"
             />
             <LocalSelect
+              label="Module"
+              required
+              disabled={
+                modulesQuery.isPending ||
+                modulesQuery.isError ||
+                !modulesQuery.data?.length ||
+                isUploading ||
+                createTicket.isPending
+              }
+              {...register("module", { required: "Select a module." })}
+            >
+              <option value="">Select a module</option>
+              {modulesQuery.data?.map((module) => (
+                <option key={module.value} value={module.value}>
+                  {module.label}
+                </option>
+              ))}
+            </LocalSelect>
+            {modulesQuery.isError && (
+              <p className="text-sm text-error">
+                Modules could not be loaded.{" "}
+                <button
+                  type="button"
+                  className="link link-primary"
+                  onClick={() => modulesQuery.refetch()}
+                >
+                  Try again
+                </button>
+              </p>
+            )}
+            {!modulesQuery.isPending &&
+              !modulesQuery.isError &&
+              !modulesQuery.data?.length && (
+                <p className="text-sm text-error">
+                  No support modules are available. Please try again later.
+                </p>
+              )}
+            {errors.module && (
+              <p className="text-sm text-error">{errors.module.message}</p>
+            )}
+            <LocalSelect
               label="Contact (optional)"
               disabled={isUploading || createTicket.isPending}
               {...register("contactId")}
@@ -194,47 +235,6 @@ const CreateTicketModal = forwardRef<CreateTicketModalHandle>(
                 </option>
               ))}
             </LocalSelect>
-            <LocalSelect
-              label="Module"
-              required
-              disabled={
-                modulesQuery.isPending ||
-                modulesQuery.isError ||
-                !modulesQuery.data?.length ||
-                isUploading ||
-                createTicket.isPending
-              }
-              {...register("module", { required: "Select a module." })}
-            >
-              <option value="">Select a module</option>
-              {modulesQuery.data?.map((module) => (
-                <option key={module.value} value={module.value}>
-                  {module.label}
-                </option>
-              ))}
-            </LocalSelect>
-            {modulesQuery.isError && (
-              <p className="text-sm text-error">
-                Modules could not be loaded.{" "}
-                <button
-                  type="button"
-                  className="link link-primary"
-                  onClick={() => modulesQuery.refetch()}
-                >
-                  Try again
-                </button>
-              </p>
-            )}
-            {!modulesQuery.isPending &&
-              !modulesQuery.isError &&
-              !modulesQuery.data?.length && (
-                <p className="text-sm text-error">
-                  No support modules are available. Please try again later.
-                </p>
-              )}
-            {errors.module && (
-              <p className="text-sm text-error">{errors.module.message}</p>
-            )}
             <SimpleTextArea
               label="Description"
               required

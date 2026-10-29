@@ -44,6 +44,20 @@ export const useAdminTicketModules = () =>
     },
   });
 
+export const useCreateAdminTicketModule = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (module: TicketModuleOption) => {
+      const { data } = await apiClient.post("/admins/tickets/modules", module);
+      return unwrap<TicketModuleOption>(data);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin", "ticket-modules"] });
+      queryClient.invalidateQueries({ queryKey: ["ticket-modules"] });
+    },
+  });
+};
+
 export const useAdminTickets = (params?: AdminTicketQueryParams) =>
   useQuery<AdminTicket[]>({
     queryKey: ["admin", "tickets", params],

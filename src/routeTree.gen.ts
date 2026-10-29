@@ -68,6 +68,7 @@ import { Route as AuthRegisterOnBoardingIndexRouteImport } from './routes/auth/r
 import { Route as AdminUsersRolesIndexRouteImport } from './routes/admin/users/roles/index'
 import { Route as AdminUsersAddIndexRouteImport } from './routes/admin/users/add/index'
 import { Route as AdminTenantsIdIndexRouteImport } from './routes/admin/tenants/$id.index'
+import { Route as AdminSupportModulesIndexRouteImport } from './routes/admin/support/modules/index'
 import { Route as AdminSupportIdIndexRouteImport } from './routes/admin/support/$id/index'
 import { Route as AdminSubscriptionFeaturesIndexRouteImport } from './routes/admin/subscription/features.index'
 import { Route as AdminSettingsThemeIndexRouteImport } from './routes/admin/settings/theme/index'
@@ -417,6 +418,12 @@ const AdminTenantsIdIndexRoute = AdminTenantsIdIndexRouteImport.update({
   path: '/tenants/$id/',
   getParentRoute: () => AdminRouteRoute,
 } as any)
+const AdminSupportModulesIndexRoute =
+  AdminSupportModulesIndexRouteImport.update({
+    id: '/support/modules/',
+    path: '/support/modules/',
+    getParentRoute: () => AdminRouteRoute,
+  } as any)
 const AdminSupportIdIndexRoute = AdminSupportIdIndexRouteImport.update({
   id: '/support/$id/',
   path: '/support/$id/',
@@ -677,6 +684,7 @@ export interface FileRoutesByFullPath {
   '/admin/settings/theme': typeof AdminSettingsThemeIndexRoute
   '/admin/subscription/features': typeof AdminSubscriptionFeaturesIndexRoute
   '/admin/support/$id': typeof AdminSupportIdIndexRoute
+  '/admin/support/modules': typeof AdminSupportModulesIndexRoute
   '/admin/tenants/$id': typeof AdminTenantsIdIndexRoute
   '/admin/users/add': typeof AdminUsersAddIndexRoute
   '/admin/users/roles': typeof AdminUsersRolesIndexRoute
@@ -766,6 +774,7 @@ export interface FileRoutesByTo {
   '/admin/settings/theme': typeof AdminSettingsThemeIndexRoute
   '/admin/subscription/features': typeof AdminSubscriptionFeaturesIndexRoute
   '/admin/support/$id': typeof AdminSupportIdIndexRoute
+  '/admin/support/modules': typeof AdminSupportModulesIndexRoute
   '/admin/tenants/$id': typeof AdminTenantsIdIndexRoute
   '/admin/users/add': typeof AdminUsersAddIndexRoute
   '/admin/users/roles': typeof AdminUsersRolesIndexRoute
@@ -863,6 +872,7 @@ export interface FileRoutesById {
   '/admin/settings/theme/': typeof AdminSettingsThemeIndexRoute
   '/admin/subscription/features/': typeof AdminSubscriptionFeaturesIndexRoute
   '/admin/support/$id/': typeof AdminSupportIdIndexRoute
+  '/admin/support/modules/': typeof AdminSupportModulesIndexRoute
   '/admin/tenants/$id/': typeof AdminTenantsIdIndexRoute
   '/admin/users/add/': typeof AdminUsersAddIndexRoute
   '/admin/users/roles/': typeof AdminUsersRolesIndexRoute
@@ -961,6 +971,7 @@ export interface FileRouteTypes {
     | '/admin/settings/theme'
     | '/admin/subscription/features'
     | '/admin/support/$id'
+    | '/admin/support/modules'
     | '/admin/tenants/$id'
     | '/admin/users/add'
     | '/admin/users/roles'
@@ -1050,6 +1061,7 @@ export interface FileRouteTypes {
     | '/admin/settings/theme'
     | '/admin/subscription/features'
     | '/admin/support/$id'
+    | '/admin/support/modules'
     | '/admin/tenants/$id'
     | '/admin/users/add'
     | '/admin/users/roles'
@@ -1146,6 +1158,7 @@ export interface FileRouteTypes {
     | '/admin/settings/theme/'
     | '/admin/subscription/features/'
     | '/admin/support/$id/'
+    | '/admin/support/modules/'
     | '/admin/tenants/$id/'
     | '/admin/users/add/'
     | '/admin/users/roles/'
@@ -1620,6 +1633,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminTenantsIdIndexRouteImport
       parentRoute: typeof AdminRouteRoute
     }
+    '/admin/support/modules/': {
+      id: '/admin/support/modules/'
+      path: '/support/modules'
+      fullPath: '/admin/support/modules'
+      preLoaderRoute: typeof AdminSupportModulesIndexRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
     '/admin/support/$id/': {
       id: '/admin/support/$id/'
       path: '/support/$id'
@@ -1908,6 +1928,7 @@ interface AdminRouteRouteChildren {
   AdminProductsServiceIndexRoute: typeof AdminProductsServiceIndexRoute
   AdminSubscriptionFeaturesIndexRoute: typeof AdminSubscriptionFeaturesIndexRoute
   AdminSupportIdIndexRoute: typeof AdminSupportIdIndexRoute
+  AdminSupportModulesIndexRoute: typeof AdminSupportModulesIndexRoute
   AdminTenantsIdIndexRoute: typeof AdminTenantsIdIndexRoute
   AdminUsersAddIndexRoute: typeof AdminUsersAddIndexRoute
   AdminUsersRolesIndexRoute: typeof AdminUsersRolesIndexRoute
@@ -1943,6 +1964,7 @@ const AdminRouteRouteChildren: AdminRouteRouteChildren = {
   AdminProductsServiceIndexRoute: AdminProductsServiceIndexRoute,
   AdminSubscriptionFeaturesIndexRoute: AdminSubscriptionFeaturesIndexRoute,
   AdminSupportIdIndexRoute: AdminSupportIdIndexRoute,
+  AdminSupportModulesIndexRoute: AdminSupportModulesIndexRoute,
   AdminTenantsIdIndexRoute: AdminTenantsIdIndexRoute,
   AdminUsersAddIndexRoute: AdminUsersAddIndexRoute,
   AdminUsersRolesIndexRoute: AdminUsersRolesIndexRoute,

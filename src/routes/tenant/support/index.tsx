@@ -3,6 +3,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { Inbox, Plus, Search, ArrowUpRight, CircleHelp } from "lucide-react";
 import {
   useTickets,
+  useTicketModules,
   ticketModuleLabel,
   type Ticket,
   type TicketPriority,
@@ -41,6 +42,7 @@ const displayStatus = (status: string) => status.replaceAll("_", " ");
 
 function RouteComponent() {
   const ticketsQuery = useTickets();
+  const modulesQuery = useTicketModules();
   const modalRef = useRef<CreateTicketModalHandle>(null);
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState<TicketStatus | "all">("all");
@@ -49,15 +51,18 @@ function RouteComponent() {
   const openCreate = () => modalRef.current?.open();
 
   const modules = useMemo(
-    () =>
-      [
-        ...new Set(
-          (ticketsQuery.data ?? [])
-            .map((ticket) => ticket.module)
-            .filter((value): value is string => !!value),
-        ),
-      ].sort(),
-    [ticketsQuery.data],
+    () => {
+      const values = new Map(
+        (modulesQuery.data ?? []).map((option) => [option.value, option.label]),
+      );
+      for (const ticket of ticketsQuery.data ?? []) {
+        if (ticket.module && !values.has(ticket.module)) {
+          values.set(ticket.module, ticketModuleLabel(ticket.module));
+        }
+      }
+      return [...values].sort(([first], [second]) => first.localeCompare(second));
+    },
+    [modulesQuery.data, ticketsQuery.data],
   );
 
   const tickets = useMemo(() => {
@@ -119,9 +124,9 @@ function RouteComponent() {
                 onChange={(event) => setModule(event.target.value)}
               >
                 <option value="all">All modules</option>
-                {modules.map((value) => (
+                {modules.map(([value, label]) => (
                   <option key={value} value={value}>
-                    {ticketModuleLabel(value)}
+                    {label}
                   </option>
                 ))}
               </select>

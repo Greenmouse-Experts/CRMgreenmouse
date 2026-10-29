@@ -3,6 +3,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import {
   ArrowUpRight,
   Inbox,
+  Layers,
   RefreshCw,
   Search,
   ShieldCheck,
@@ -93,6 +94,9 @@ function RouteComponent() {
         title="Platform support"
         description="Review escalated tenant tickets and keep each request moving."
       >
+        <Link to="/admin/support/modules" className="btn btn-outline btn-sm">
+          <Layers className="size-4" /> Manage modules
+        </Link>
         <button
           type="button"
           className="btn btn-outline btn-sm"
