@@ -2,7 +2,6 @@ import { Link } from "@tanstack/react-router";
 import {
   Menu,
   X,
-  MousePointer2,
   LogIn,
   ChevronRight,
   LayoutDashboard,
@@ -28,42 +27,34 @@ export default function HomeNav() {
 
   const navLinks = [
     { name: "Features", href: "#features" },
-    { name: "Solutions", href: "#solutions" },
-    { name: "Pricing", href: "#pricing" },
-    { name: "About", href: "#about" },
+    { name: "Why Kinova", href: "#why-kinova" },
+    { name: "Get Started", href: "#get-started" },
   ];
 
   return (
     <nav
       ref={navRef}
-      className="sticky top-0 z-50 w-full border-b border-base-200 bg-base-100/70 backdrop-blur-lg"
+      className="sticky top-0 z-50 w-full border-b border-base-300/60 bg-base-100/80 backdrop-blur-md"
     >
-      <div className="container mx-auto flex h-20 items-center justify-between">
+      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
         {/* Brand/Logo */}
         <Link
           to="/"
-          className="flex items-center gap-2 group transition-all duration-300"
+          className="flex items-center gap-2.5"
         >
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary text-primary-content shadow-lg shadow-primary/20 group-hover:scale-110 transition-transform">
-            <MousePointer2 className="size-6 rotate-12" />
+          <div className="grid size-9 place-items-center rounded-xl bg-primary text-lg font-bold text-primary-content">
+            K
           </div>
-          <div className="flex flex-col leading-none">
-            <span className="text-xl font-semibold tracking-tight text-primary">
-              <span className="text-base-content">Kinovia</span>
-            </span>
-            <span className="text-[10px] font-medium tracking-[0.2em] uppercase opacity-50">
-              Business Suite
-            </span>
-          </div>
+          <span className="text-xl font-bold tracking-tight text-base-content">Kinova <span className="text-primary">CRM</span></span>
         </Link>
 
         {/* Desktop Navigation */}
-        <div className="hidden lg:flex items-center gap-1">
+        <div className="hidden lg:flex items-center gap-8">
           {navLinks.map((link) => (
             <a
               key={link.name}
               href={link.href}
-              className="px-4 py-2 text-sm font-semibold rounded-lg hover:bg-base-200 hover:text-primary transition-all"
+              className="text-sm font-medium text-base-content/70 transition-colors hover:text-base-content"
             >
               {link.name}
             </a>
@@ -113,7 +104,7 @@ export default function HomeNav() {
 
       {/* Mobile Menu Overlay */}
       <div
-        className={`fixed inset-x-0 top-20 bg-base-100 border-b border-base-200 p-6 shadow-2xl transition-all duration-300 transform lg:hidden ${
+        className={`fixed inset-x-0 top-16 bg-base-100 border-b border-base-200 p-6 shadow-2xl transition-all duration-300 transform lg:hidden ${
           isOpen
             ? "translate-y-0 opacity-100 visible"
             : "-translate-y-4 opacity-0 invisible"
