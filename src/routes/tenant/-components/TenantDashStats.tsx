@@ -1,89 +1,138 @@
 import { Link } from "@tanstack/react-router";
-import { Users, FileText, UsersRound, ShoppingBag, Clock } from "lucide-react";
+import {
+  ArrowRight,
+  Clock,
+  FileText,
+  ReceiptText,
+  UsersRound,
+  Wallet,
+} from "lucide-react";
 import { useDashboardStats } from "@/api/tenantApi";
+import { useExpensesReport, useInvoiceRevenueReport, useRevenueReport } from "@/api/reportsApi";
+import QueryCompLayout from "@/components/layout/QueryCompLayout";
+
+const formatNumber = (value: number) => new Intl.NumberFormat().format(value);
+const formatMoney = (value: number) => `₦${formatNumber(value)}`;
 
 export default function TenantDashStats() {
-  const { data: stats, isLoading } = useDashboardStats();
-
-  const cards = [
-    {
-      title: "Total Customers",
-      value: isLoading ? "..." : (stats?.totalCustomers ?? 0),
-      subtitle: "Active CRM contacts",
-      icon: UsersRound,
-      to: "/tenant/contacts/customers",
-      color: "from-blue-500/20 to-blue-500/5 text-blue-600 dark:text-blue-400",
-    },
-    {
-      title: "Products & Services",
-      value: isLoading ? "..." : (stats?.totalProducts ?? 0),
-      subtitle: "Catalog items available",
-      icon: ShoppingBag,
-      to: "/tenant/products",
-      color:
-        "from-purple-500/20 to-purple-500/5 text-purple-600 dark:text-purple-400",
-    },
-    {
-      title: "Pending Orders",
-      value: isLoading ? "..." : (stats?.pendingOrders ?? 0),
-      subtitle: "Awaiting fulfillment",
-      icon: Clock,
-      to: "/tenant/orders",
-      color:
-        "from-amber-500/20 to-amber-500/5 text-amber-600 dark:text-amber-400",
-    },
-    {
-      title: "Total Invoices",
-      value: isLoading ? "..." : (stats?.totalInvoices ?? 0),
-      subtitle: "Generated billings",
-      icon: FileText,
-      to: "/tenant/accounts/Invoices",
-      color:
-        "from-emerald-500/20 to-emerald-500/5 text-emerald-600 dark:text-emerald-400",
-    },
-    {
-      title: "Team Members",
-      value: isLoading ? "..." : (stats?.totalStaffs ?? 0),
-      subtitle: "Active workspace staff",
-      icon: Users,
-      to: "/tenant/users",
-      color: "from-teal-500/20 to-teal-500/5 text-teal-600 dark:text-teal-400",
-    },
-  ];
+  const query = useDashboardStats();
+  const revenueQuery = useRevenueReport();
+  const expensesQuery = useExpensesReport();
+  const debtsQuery = useInvoiceRevenueReport({ currency: "NGN" });
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-      {cards.map((card, index) => {
-        const Icon = card.icon;
+    <QueryCompLayout query={query}>
+      {(stats) => {
+        const cards = [
+          {
+            title: "Total Income",
+            value: revenueQuery.data ? formatMoney(revenueQuery.data.total) : "—",
+            linkLabel: "View income",
+            icon: Wallet,
+            to: "/tenant/accounts/income-expenses",
+            accent: "bg-primary/10 text-primary",
+          },
+          {
+            title: "Total Expenses",
+            value: expensesQuery.data ? formatMoney(expensesQuery.data.total) : "—",
+            linkLabel: "View expenses",
+            icon: ReceiptText,
+            to: "/tenant/accounts/income-expenses",
+            accent: "bg-warning/10 text-warning",
+          },
+          {
+            title: "Total Customers",
+            value: formatNumber(stats.totalCustomers),
+            linkLabel: "View customers",
+            icon: UsersRound,
+            to: "/tenant/contacts/customers",
+            accent: "bg-info/10 text-info",
+          },
+          // {
+          //   title: "Products",
+          //   value: formatNumber(stats.totalProducts),
+          //   change: stats.totalProductsChange,
+          //   linkLabel: "View products",
+          //   icon: Package,
+          //   to: "/staff/products",
+          //   accent: "bg-primary/10 text-primary",
+          // },
+          // {
+          //   title: "Services",
+          //   value: formatNumber(stats.totalServices),
+          //   change: stats.totalServicesChange,
+          //   linkLabel: "View services",
+          //   icon: ShoppingBag,
+          //   to: "/staff/products/service",
+          //   accent: "bg-info/10 text-info",
+          // },
+          {
+            title: "Total Debts",
+            value: debtsQuery.isLoading
+              ? "…"
+              : debtsQuery.data
+                ? formatMoney(debtsQuery.data.outstandingTotal)
+                : "—",
+            linkLabel: "View Debts",
+            icon: Clock,
+            to: "/tenant/accounts/Invoices",
+            accent: "bg-warning/10 text-warning",
+          },
+          {
+            title: "Total Invoices",
+            value: formatNumber(stats.totalInvoices),
+            linkLabel: "View invoices",
+            icon: FileText,
+            to: "/tenant/accounts/Invoices",
+            accent: "bg-primary/10 text-primary",
+          },
+          // {
+          //   title: "Team Members",
+          //   value: formatNumber(stats.totalStaffs),
+          //   linkLabel: "View team",
+          //   icon: Users,
+          //   to: "/staff/users",
+          //   accent: "bg-info/10 text-info",
+          // },
+        ];
+
         return (
-          <Link
-            key={index}
-            to={card.to}
-            className="card bg-base-100 shadow-sm hover:shadow-md border border-base-200 transition-all duration-200 hover:-translate-y-0.5"
-          >
-            <div className="card-body p-4">
-              <div className="flex items-start justify-between">
-                <div className="space-y-1">
-                  <span className="text-xs font-semibold text-base-content/60 uppercase tracking-wider">
-                    {card.title}
-                  </span>
-                  <p className="text-2xl font-semibold text-base-content">
-                    {card.value}
-                  </p>
-                  <p className="text-xs text-base-content/60 font-medium">
-                    {card.subtitle}
-                  </p>
-                </div>
-                <div
-                  className={`p-2.5 rounded-xl bg-gradient-to-br ${card.color}`}
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-3 lg:grid-cols-5">
+            {cards.map((card) => {
+              const Icon = card.icon;
+              return (
+                <Link
+                  key={card.title}
+                  to={card.to}
+                  className="card border border-base-200 bg-base-100 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md"
                 >
-                  <Icon className="size-5" />
-                </div>
-              </div>
-            </div>
-          </Link>
+                  <div className="card-body gap-3 p-4">
+                    <div className="flex items-start justify-between gap-2">
+                      <div className={`rounded-xl p-2.5 ${card.accent}`}>
+                        <Icon className="size-5" aria-hidden="true" />
+                      </div>
+                    </div>
+                    <div>
+                      <p className="text-base font-semibold tabular-nums text-base-content">
+                        {card.value}
+                      </p>
+                      <p className="text-xs font-semibold text-base-content/70">
+                        {card.title}
+                      </p>
+                    </div>
+                    <span
+                      className={`inline-flex items-center gap-1 text-xs font-medium ${card.accent} !bg-transparent`}
+                    >
+                      {card.linkLabel}
+                      <ArrowRight className="!size-3" aria-hidden="true" />
+                    </span>
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
         );
-      })}
-    </div>
+      }}
+    </QueryCompLayout>
   );
 }

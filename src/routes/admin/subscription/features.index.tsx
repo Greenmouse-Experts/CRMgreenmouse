@@ -4,7 +4,6 @@ import {
   useAdminSubscriptions,
   useAdminSubscriptionFeatures,
   useUpdateSubscriptionPlan,
-  type SubscriptionPlan,
 } from "@/api/adminApi";
 import PageHeader from "@/components/Headers/PageHeader";
 import PageLoader from "@/components/layout/PageLoader";
