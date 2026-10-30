@@ -94,7 +94,10 @@ function RouteComponent() {
         title="Platform support"
         description="Review escalated tenant tickets and keep each request moving."
       >
-        <Link to="/admin/support/modules" className="btn btn-outline btn-sm">
+        <Link
+          to="/admin/support/modules"
+          className="btn btn-outline btn-sm whitespace-nowrap"
+        >
           <Layers className="size-4" /> Manage modules
         </Link>
         <button

@@ -113,10 +113,15 @@ function RouteComponent() {
               type="button"
               className="btn btn-soft ring btn-block"
               onClick={() => {
-                form.setValues({
+                // form.setValues({
+                //   email: "greenmousedev@gmail.com",
+                //   password: "Password@2022",
+                // });
+                const data = {
                   email: "greenmousedev@gmail.com",
                   password: "Password@2022",
-                });
+                };
+                mutate(data);
               }}
             >
               Prefill

@@ -30,10 +30,10 @@ function RouteComponent() {
   const stats = useMemo(() => {
     const total = rawCategories.length;
     const products = rawCategories.filter(
-      (c) => (c.type || "").toLowerCase() !== "service",
+      (c) => (c.categoryType || "").toLowerCase() !== "service",
     ).length;
     const services = rawCategories.filter(
-      (c) => (c.type || "").toLowerCase() === "service",
+      (c) => (c.categoryType || "").toLowerCase() === "service",
     ).length;
     return { total, products, services };
   }, [rawCategories]);
@@ -47,10 +47,10 @@ function RouteComponent() {
         if (!matchesName && !matchesDesc) return false;
       }
       if (typeFilter === "product") {
-        return (c.type || "").toLowerCase() !== "service";
+        return (c.categoryType || "").toLowerCase() !== "service";
       }
       if (typeFilter === "service") {
-        return (c.type || "").toLowerCase() === "service";
+        return (c.categoryType || "").toLowerCase() === "service";
       }
       return true;
     });
@@ -205,7 +205,7 @@ function RouteComponent() {
                     key: "type",
                     render: (c: any) => {
                       const isService =
-                        (c.type || "").toLowerCase() === "service";
+                        (c.categoryType || "").toLowerCase() === "service";
                       return (
                         <span
                           className={`badge badge-md font-medium text-sm ${
@@ -264,13 +264,13 @@ function RouteComponent() {
                     </div>
                     <span
                       className={`badge badge-md text-sm ${
-                        (selectedCategory.type || "").toLowerCase() ===
+                        (selectedCategory.categoryType || "").toLowerCase() ===
                         "service"
                           ? "badge-secondary"
                           : "badge-info"
                       }`}
                     >
-                      {(selectedCategory.type || "Product").toUpperCase()}
+                      {(selectedCategory.categoryType || "Product").toUpperCase()}
                     </span>
                   </div>
 

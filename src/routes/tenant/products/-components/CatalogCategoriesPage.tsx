@@ -70,7 +70,7 @@ export default function CatalogCategoriesPage({
       return;
     }
     try {
-      await createCategory.mutateAsync({ ...form, type });
+      await createCategory.mutateAsync({ ...form, categoryType: type });
       toast.success("Category created successfully");
       addModalRef.current?.close();
     } catch (err: any) {
