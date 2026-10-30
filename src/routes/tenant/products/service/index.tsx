@@ -25,6 +25,122 @@ import {
 } from "@/api/catalogApi";
 import { useCategories } from "@/api/crmApi";
 import { toast } from "sonner";
+import MoneyInput from "@/components/inputs/MoneyInput";
+import { Controller, useForm, type UseFormReturn } from "react-hook-form";
+
+interface ServiceFormValues {
+  name: string;
+  price: number | undefined;
+  categoryId: string;
+  description: string;
+  isActive: boolean;
+}
+
+const emptyService: ServiceFormValues = {
+  name: "",
+  price: undefined,
+  categoryId: "",
+  description: "",
+  isActive: true,
+};
+
+function ServiceFields({
+  methods,
+  categories,
+}: {
+  methods: UseFormReturn<ServiceFormValues>;
+  categories: { id: string; name: string }[];
+}) {
+  const {
+    register,
+    control,
+    formState: { errors },
+  } = methods;
+
+  return (
+    <>
+      <div>
+        <label
+          htmlFor="service-name"
+          className="text-xs font-semibold text-base-content/70"
+        >
+          Service Name *
+        </label>
+        <input
+          id="service-name"
+          type="text"
+          className={`input input-bordered mt-1 w-full ${errors.name ? "input-error" : ""}`}
+          placeholder="e.g. Website Maintenance & Support"
+          aria-invalid={Boolean(errors.name)}
+          {...register("name", {
+            required: "Service name is required",
+            validate: (value) =>
+              value.trim().length > 0 || "Service name is required",
+          })}
+        />
+        {errors.name && (
+          <p className="mt-1 text-xs text-error">{errors.name.message}</p>
+        )}
+      </div>
+
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+        <Controller
+          name="price"
+          control={control}
+          rules={{
+            validate: (value) =>
+              (value !== undefined && Number.isFinite(value) && value > 0) ||
+              "Price must be greater than zero",
+          }}
+          render={({ field, fieldState }) => (
+            <MoneyInput
+              {...field}
+              label="Rate / Price (₦)"
+              required
+              error={fieldState.error?.message}
+            />
+          )}
+        />
+        <div>
+          <label
+            htmlFor="service-category"
+            className="text-xs font-semibold text-base-content/70"
+          >
+            Category
+          </label>
+          <select
+            id="service-category"
+            className="select select-bordered mt-1 w-full"
+            {...register("categoryId")}
+          >
+            <option value="">Select a category</option>
+            {categories.map((category) => (
+              <option key={category.id} value={category.id}>
+                {category.name}
+              </option>
+            ))}
+          </select>
+        </div>
+      </div>
+
+      <div>
+        <label
+          htmlFor="service-description"
+          className="text-xs font-semibold text-base-content/70"
+        >
+          Description
+        </label>
+        <textarea
+          id="service-description"
+          className="textarea textarea-bordered mt-1 w-full"
+          rows={3}
+          placeholder="Detail what is included in this service..."
+          {...register("description")}
+        />
+      </div>
+    </>
+  );
+}
 
 export const Route = createFileRoute("/tenant/products/service/")({
   component: RouteComponent,
@@ -46,30 +162,19 @@ function RouteComponent() {
   const [selectedService, setSelectedService] = useState<ServiceItem | null>(
     null,
   );
-  const [form, setForm] = useState({
-    name: "",
-    price: 0,
-    categoryId: "",
-    description: "",
-    isActive: true,
-  });
+  const methods = useForm<ServiceFormValues>({ defaultValues: emptyService });
 
   const handleOpenAdd = () => {
-    setForm({
-      name: "",
-      price: 0,
-      categoryId: "",
-      description: "",
-      isActive: true,
-    });
+    methods.reset(emptyService);
+    setSelectedService(null);
     addModalRef.current?.open();
   };
 
   const handleOpenEdit = (service: ServiceItem) => {
     setSelectedService(service);
-    setForm({
+    methods.reset({
       name: service.name || "",
-      price: Number(service.price) || 0,
+      price: Number(service.price),
       categoryId: service.categoryId || "",
       description: service.description || "",
       isActive: service.isActive ?? true,
@@ -82,35 +187,40 @@ function RouteComponent() {
     detailsModalRef.current?.open();
   };
 
-  const handleSaveAdd = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!form.name.trim()) {
-      toast.error("Service name is required");
-      return;
-    }
+  const handleSaveAdd = methods.handleSubmit(async (values) => {
+    if (values.price === undefined) return;
     try {
-      await createService.mutateAsync(form);
+      await createService.mutateAsync({
+        name: values.name.trim(),
+        price: values.price,
+        categoryId: values.categoryId || undefined,
+        description: values.description.trim() || undefined,
+        isActive: values.isActive,
+      });
       toast.success("Service created successfully");
       addModalRef.current?.close();
     } catch (err: any) {
       toast.error(err?.response?.data?.message || "Failed to create service");
     }
-  };
+  });
 
-  const handleSaveEdit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!selectedService) return;
+  const handleSaveEdit = methods.handleSubmit(async (values) => {
+    if (!selectedService || values.price === undefined) return;
     try {
       await updateService.mutateAsync({
         id: selectedService.id,
-        ...form,
+        name: values.name.trim(),
+        price: values.price,
+        categoryId: values.categoryId || undefined,
+        description: values.description.trim() || undefined,
+        isActive: values.isActive,
       });
       toast.success("Service updated successfully");
       editModalRef.current?.close();
     } catch (err: any) {
       toast.error(err?.response?.data?.message || "Failed to update service");
     }
-  };
+  });
 
   const handleToggleStatus = async (service: ServiceItem) => {
     try {
@@ -332,73 +442,10 @@ function RouteComponent() {
       {/* Add Service Modal */}
       <Modal ref={addModalRef} title="Create New Service">
         <form onSubmit={handleSaveAdd} className="space-y-4">
-          <div>
-            <label className="text-xs font-semibold text-base-content/70">
-              Service Name *
-            </label>
-            <input
-              type="text"
-              required
-              className="input input-bordered w-full mt-1"
-              placeholder="e.g. Website Maintenance & Support"
-              value={form.name}
-              onChange={(e) => setForm({ ...form, name: e.target.value })}
-            />
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="text-xs font-semibold text-base-content/70">
-                Rate / Price (₦) *
-              </label>
-              <input
-                type="number"
-                required
-                min="0"
-                className="input input-bordered w-full mt-1"
-                placeholder="0.00"
-                value={form.price}
-                onChange={(e) =>
-                  setForm({ ...form, price: Number(e.target.value) })
-                }
-              />
-            </div>
-            <div>
-              <label className="text-xs font-semibold text-base-content/70">
-                Category
-              </label>
-              <select
-                className="select select-bordered w-full mt-1"
-                value={form.categoryId}
-                onChange={(e) =>
-                  setForm({ ...form, categoryId: e.target.value })
-                }
-              >
-                <option value="">Select a category</option>
-                {categoriesQuery.data?.map((c) => (
-                  <option key={c.id} value={c.id}>
-                    {c.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
-
-          <div>
-            <label className="text-xs font-semibold text-base-content/70">
-              Description
-            </label>
-            <textarea
-              className="textarea textarea-bordered w-full mt-1"
-              rows={3}
-              placeholder="Detail what is included in this service..."
-              value={form.description}
-              onChange={(e) =>
-                setForm({ ...form, description: e.target.value })
-              }
-            />
-          </div>
-
+          <ServiceFields
+            methods={methods}
+            categories={categoriesQuery.data ?? []}
+          />
           <div className="modal-action">
             <button
               type="button"
@@ -421,70 +468,10 @@ function RouteComponent() {
       {/* Edit Service Modal */}
       <Modal ref={editModalRef} title="Edit Service">
         <form onSubmit={handleSaveEdit} className="space-y-4">
-          <div>
-            <label className="text-xs font-semibold text-base-content/70">
-              Service Name *
-            </label>
-            <input
-              type="text"
-              required
-              className="input input-bordered w-full mt-1"
-              value={form.name}
-              onChange={(e) => setForm({ ...form, name: e.target.value })}
-            />
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="text-xs font-semibold text-base-content/70">
-                Rate / Price (₦) *
-              </label>
-              <input
-                type="number"
-                required
-                min="0"
-                className="input input-bordered w-full mt-1"
-                value={form.price}
-                onChange={(e) =>
-                  setForm({ ...form, price: Number(e.target.value) })
-                }
-              />
-            </div>
-            <div>
-              <label className="text-xs font-semibold text-base-content/70">
-                Category
-              </label>
-              <select
-                className="select select-bordered w-full mt-1"
-                value={form.categoryId}
-                onChange={(e) =>
-                  setForm({ ...form, categoryId: e.target.value })
-                }
-              >
-                <option value="">Select a category</option>
-                {categoriesQuery.data?.map((c) => (
-                  <option key={c.id} value={c.id}>
-                    {c.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
-
-          <div>
-            <label className="text-xs font-semibold text-base-content/70">
-              Description
-            </label>
-            <textarea
-              className="textarea textarea-bordered w-full mt-1"
-              rows={3}
-              value={form.description}
-              onChange={(e) =>
-                setForm({ ...form, description: e.target.value })
-              }
-            />
-          </div>
-
+          <ServiceFields
+            methods={methods}
+            categories={categoriesQuery.data ?? []}
+          />
           <div className="modal-action">
             <button
               type="button"

@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import InvoicesStat from "./-components/InvocesStat";
 import SimpleContainer from "@/components/SimpleContainer";
@@ -13,7 +13,9 @@ import {
   Trash2,
   Eye,
   Edit,
+  Palette,
 } from "lucide-react";
+import InvoiceBrandingSettings from "./-components/InvoiceBrandingSettings";
 import { useSearch } from "@/stores/data";
 import {
   useInvoices,
@@ -35,6 +37,7 @@ function RouteComponent() {
   const deleteInvoice = useDeleteInvoice();
   const searchProps = useSearch();
   const navigate = useNavigate();
+  const [showBranding, setShowBranding] = useState(false);
 
   const invoices = query.data || [];
 
@@ -240,10 +243,21 @@ function RouteComponent() {
         title="Invoices"
         description="Manage your customer invoices, billing records, and incoming payments"
       >
+        <button
+          type="button"
+          className="btn btn-outline"
+          aria-expanded={showBranding}
+          aria-controls="invoice-branding-settings"
+          onClick={() => setShowBranding((current) => !current)}
+        >
+          <Palette className="size-4" /> Branding settings
+        </button>
         <Link to="/tenant/accounts/Invoices/add" className="btn btn-primary">
           <PlusCircleIcon className="size-4 mr-1" /> Add Invoice
         </Link>
       </PageHeader>
+
+      {showBranding && <InvoiceBrandingSettings />}
 
       <InvoicesStat />
 

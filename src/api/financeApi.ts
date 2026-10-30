@@ -371,13 +371,10 @@ export const useInvoiceStats = () => {
 };
 
 export interface InvoiceBrandingConfig {
-  logo?: string;
-  companyName?: string;
-  companyAddress?: string;
-  primaryColor?: string;
+  logoUrl?: string;
   accentColor?: string;
-  notes?: string;
-  terms?: string;
+  footerNotes?: string;
+  displayName?: string;
 }
 
 export const useInvoiceBranding = () => {
