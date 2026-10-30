@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 import { useForm, FormProvider } from "react-hook-form";
 import { toast } from "sonner";
 import {
@@ -19,6 +19,11 @@ import AddressInfo from "./-components/AddressInfo";
 
 export const Route = createFileRoute("/tenant/settings/profile/")({
   component: RouteComponent,
+  loader: () => {
+    if (get_user_value()?.user.userType === "staff") {
+      return redirect({ to: "/tenant/settings/notifications" });
+    }
+  },
 });
 
 function RouteComponent() {

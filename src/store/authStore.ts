@@ -11,6 +11,8 @@ interface UserData {
   firstName?: string;
   lastName?: string;
   phoneNumber?: string;
+  tenantId?: string;
+  permissions?: string[];
 }
 
 export interface ProfileData {
@@ -115,7 +117,7 @@ export const set_user_value = (user: AuthUser) => {
   store.set(user_atom, user);
 };
 
-export const set_profile_value = (profile: ProfileData) => {
+export const set_profile_value = (profile: ProfileData | null) => {
   const store = getDefaultStore();
   store.set(profile_atom, profile);
 };

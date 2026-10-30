@@ -1,23 +1,35 @@
-import { useProfile } from "@/store/authStore";
+import { useAuth, useProfile } from "@/store/authStore";
 import { useLogout } from "@/helpers/auth";
 import { Link } from "@tanstack/react-router";
 import { Building2, LogOut, Settings, UserCircle } from "lucide-react";
 import logoutApi from "@/client/logout";
+import apiClient from "@/client/api";
 import { useTenantOnboarding } from "@/api/tenantApi";
 
 export default function TenantUserProfile() {
+  const [auth] = useAuth();
   const [profile] = useProfile();
-  const { data: onboarding } = useTenantOnboarding();
-  const { logout } = useLogout(logoutApi);
+  const isStaff = auth?.user.userType === "staff";
+  const { data: onboarding } = useTenantOnboarding(!isStaff);
+  const { logout } = useLogout(
+    isStaff
+      ? async () => (await apiClient.post("/auth/logout")).data
+      : logoutApi,
+    isStaff ? "/auth/staff" : "/auth/login",
+  );
+  const displayName = isStaff
+    ? `${auth?.user.firstName ?? ""} ${auth?.user.lastName ?? ""}`.trim() ||
+      "Staff User"
+    : profile?.companyName || auth?.user.companyName || "Tenant User";
+  const displayRole = isStaff ? "Staff" : profile?.userType || "Tenant";
+  const email = isStaff ? auth?.user.email : profile?.email || auth?.user.email;
 
   return (
     <div className="flex items-center border-l pl-4 ml-2 border-current/30">
       <div className="mr-2 md:flex flex-col text-sm text-right hidden font-semibold">
-        <span className="truncate max-w-[150px]">
-          {profile?.companyName || "Tenant User"}
-        </span>
+        <span className="truncate max-w-[150px]">{displayName}</span>
         <span className="text-base-content/70 text-xs capitalize">
-          {profile?.userType || "Tenant"}
+          {displayRole}
         </span>
       </div>
       <div className="dropdown dropdown-end">
@@ -26,7 +38,7 @@ export default function TenantUserProfile() {
             className="btn btn-circle size-8 ring ring-primary/20 p-0 overflow-hidden"
             aria-label="Open profile menu"
           >
-            {onboarding?.logo ? (
+            {!isStaff && onboarding?.logo ? (
               <img
                 src={onboarding.logo}
                 className="size-full object-contain"
@@ -41,25 +53,27 @@ export default function TenantUserProfile() {
           <li className="px-4 py-2 border-b border-base-200 mb-1">
             <div className="flex flex-col gap-0.5 overflow-hidden">
               <span className="text-sm font-semibold truncate">
-                {profile?.companyName}
+                {displayName}
               </span>
-              <span className="text-xs opacity-60 truncate">
-                {profile?.email}
-              </span>
+              <span className="text-xs opacity-60 truncate">{email}</span>
             </div>
           </li>
+          {!isStaff && (
+            <li>
+              <Link
+                to="/tenant/settings/profile"
+                className="flex items-center gap-2 py-2"
+              >
+                <UserCircle size={16} />
+                Profile
+              </Link>
+            </li>
+          )}
           <li>
             <Link
-              to="/tenant/settings/profile"
-              className="flex items-center gap-2 py-2"
-            >
-              <UserCircle size={16} />
-              Profile
-            </Link>
-          </li>
-          <li>
-            <Link
-              to="/tenant/settings"
+              to={
+                isStaff ? "/tenant/settings/notifications" : "/tenant/settings"
+              }
               className="flex items-center gap-2 py-2"
             >
               <Settings size={16} />

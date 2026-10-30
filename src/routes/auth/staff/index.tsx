@@ -4,9 +4,8 @@ import { useNavigate } from "@tanstack/react-router";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 import SimpleInput from "@/components/inputs/SimpleInput";
-import apiClient, { new_url } from "@/client/api";
+import { new_url } from "@/client/api";
 import { set_user_value, set_profile_value } from "@/store/authStore";
-import { setProfileFavicon } from "@/utils/favicon";
 import axios from "axios";
 
 export const Route = createFileRoute("/auth/staff/")({
@@ -35,38 +34,12 @@ function RouteComponent() {
   const { mutate, isPending } = useMutation({
     mutationFn: (data: LoginProps) =>
       axios.post(new_url + "auth/staff/login", data).then((res) => res.data),
-    onSuccess: async (res) => {
-      // res is { accessToken, refreshToken, user }
+    onSuccess: (res) => {
+      // Staff identity and permissions are included in the login response.
+      set_profile_value(null);
       set_user_value(res);
       toast.success("Login successful");
-
-      let needsOnboarding = false;
-      try {
-        const profileRes = await apiClient
-          .get("/tenant/auth/me")
-          .then((r) => r.data);
-        const profileData = profileRes.data ?? profileRes;
-
-        if (profileData) {
-          // Store detailed profile in auth store
-          set_profile_value(profileData);
-
-          needsOnboarding = !profileData.isOnboarded;
-        }
-      } catch (err) {
-        console.error("Failed to fetch profile", err);
-      }
-
-      try {
-        const { data } = await apiClient.get("/tenant/onboarding");
-        setProfileFavicon((data?.data ?? data)?.logo);
-      } catch (err) {
-        console.error("Failed to fetch company logo", err);
-      }
-
-      nav({
-        to: needsOnboarding ? "/auth/register/on-boarding" : "/tenant",
-      });
+      nav({ to: "/tenant" });
     },
     onError: (err: any) => {
       const message =

@@ -125,9 +125,10 @@ export const useUpdateTenantProfile = () => {
   });
 };
 
-export const useTenantOnboarding = () => {
+export const useTenantOnboarding = (enabled = true) => {
   return useQuery<TenantOnboardingData>({
     queryKey: ["tenant", "onboarding"],
+    enabled,
     queryFn: async () => {
       const { data } = await apiClient.get<any>("/tenant/onboarding");
       const onboarding = data?.data ?? data;

@@ -15,7 +15,10 @@ export const extract_message = (data: AxiosError<ApiResponse>) => {
   return api_error;
 };
 
-export const useLogout = (logoutFn?: () => Promise<any>) => {
+export const useLogout = (
+  logoutFn?: () => Promise<any>,
+  loginRoute: "/auth/login" | "/auth/staff" = "/auth/login",
+) => {
   const [, setUser] = useAuth();
   const [, setProfile] = useProfile();
   const resetOnboarding = useOnboardingStore((state) => state.reset);
@@ -31,10 +34,11 @@ export const useLogout = (logoutFn?: () => Promise<any>) => {
       setUser(null);
       setProfile(null);
       resetOnboarding();
-      nav({
-        to: "/auth/login",
-        search: { email: "" },
-      });
+      if (loginRoute === "/auth/staff") {
+        nav({ to: "/auth/staff", search: { email: "" } });
+      } else {
+        nav({ to: "/auth/login", search: { email: "" } });
+      }
     },
   });
   const logout = () => {

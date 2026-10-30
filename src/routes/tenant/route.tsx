@@ -228,9 +228,7 @@ export const Route = createFileRoute("/tenant")({
       return redirect({
         to: "/auth/login",
       });
-    console.log(auth?.user.userType);
-
-    if (auth?.user?.userType != "tenant") {
+    if (auth.user.userType !== "tenant" && auth.user.userType !== "staff") {
       toast.info("wrong dashboard");
       return redirect({
         to: "/auth/login",
@@ -244,7 +242,11 @@ function RouteComponent() {
   const pathname = url.pathname.replace(/\/$/, "") || "/";
   const activeLinkPath = nav_links
     .flatMap((link) => link.children?.map((child) => child.path) ?? [link.path])
-    .filter((path) => pathname === path || (path !== "/tenant" && pathname.startsWith(`${path}/`)))
+    .filter(
+      (path) =>
+        pathname === path ||
+        (path !== "/tenant" && pathname.startsWith(`${path}/`)),
+    )
     .sort((first, second) => second.length - first.length)[0];
   return (
     <div className="drawer lg:drawer-open">
@@ -278,7 +280,8 @@ function RouteComponent() {
                       </summary>
                       <ul className="py-1 space-y-1">
                         {link.children.map((childLink) => {
-                          const isChildActive = childLink.path === activeLinkPath;
+                          const isChildActive =
+                            childLink.path === activeLinkPath;
                           return (
                             <li key={childLink.path}>
                               <Link
