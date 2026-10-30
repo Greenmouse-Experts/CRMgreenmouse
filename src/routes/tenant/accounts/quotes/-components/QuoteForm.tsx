@@ -116,12 +116,12 @@ export default function QuoteForm({ quote }: { quote?: Quote }) {
             />
             <LocalSelect label="Status" {...methods.register("status")}>
               <option value="draft">Draft</option>
-              <option value="pending">Pending</option>
+              <option value="sent">Sent</option>
               <option value="accepted">Accepted</option>
               <option value="rejected">Rejected</option>
               <option value="expired">Expired</option>
-              {status && !["draft", "pending", "accepted", "rejected", "expired"].includes(status) && (
-                <option value={status}>{quote?.status}</option>
+              {status && !["draft", "sent", "accepted", "rejected", "expired"].includes(status) && (
+                <option value={status}>{status.replaceAll("_", " ")}</option>
               )}
             </LocalSelect>
           </div>

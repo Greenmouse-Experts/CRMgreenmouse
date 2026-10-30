@@ -5,13 +5,14 @@ import apiClient from "./simpleApi";
 
 export interface Quote {
   id: string;
+  quoteNumber?: string;
   date?: string;
   clientName: string;
   amount: number;
   description?: string;
   expiresAt?: string;
   notes?: string;
-  status: "pending" | "accepted" | "rejected" | "expired" | string;
+  status: "draft" | "sent" | "accepted" | "rejected" | "expired" | "converted_to_invoice" | string;
   contactId?: string;
   createdAt?: string;
   updatedAt?: string;
@@ -42,7 +43,7 @@ export const useQuotes = (params?: QuoteQueryParams) => {
       const { data } = await apiClient.get<Quote[]>("/quotes", {
         params,
       });
-      return data;
+      return (data as any)?.data ?? data;
     },
   });
 };
@@ -53,7 +54,7 @@ export const useQuote = (id?: string) => {
     queryFn: async () => {
       if (!id) throw new Error("Quote ID required");
       const { data } = await apiClient.get<Quote>(`/quotes/${id}`);
-      return data;
+      return (data as any)?.data ?? data;
     },
     enabled: !!id,
   });

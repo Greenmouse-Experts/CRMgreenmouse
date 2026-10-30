@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useState } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
 import CustomTable, { type columnType } from "@/components/tables/CustomTable";
@@ -39,27 +39,21 @@ const renderStatus = (status: string) => {
 
   return (
     <span className={`badge badge-sm badge-soft font-medium capitalize ${color}`}>
-      {normalized}
+      {normalized.replaceAll("_", " ")}
     </span>
   );
 };
 
 function RouteComponent() {
   const navigate = useNavigate();
-  const query = useQuotes();
-  const deleteQuote = useDeleteQuote();
   const searchProps = useSearch();
-
-  const filteredQuotes = useMemo(() => {
-    const search = (searchProps.search || "").trim().toLowerCase();
-    const quotes = query.data || [];
-    if (!search) return quotes;
-    return quotes.filter((quote) =>
-      [quote.clientName, quote.description, quote.status, quote.date, quote.notes]
-        .filter(Boolean)
-        .some((value) => value!.toLowerCase().includes(search)),
-    );
-  }, [query.data, searchProps.search]);
+  const [status, setStatus] = useState("all");
+  const query = useQuotes({
+    search: searchProps.search?.trim() || undefined,
+    status: status === "all" ? undefined : status,
+  });
+  const deleteQuote = useDeleteQuote();
+  const quotes = query.data ?? [];
 
   const handleDelete = async (quote: Quote) => {
     if (!window.confirm(`Delete quote for "${quote.clientName}"?`)) return;
@@ -72,6 +66,13 @@ function RouteComponent() {
   };
 
   const columns: columnType<Quote>[] = [
+    {
+      key: "quoteNumber",
+      label: "Quote #",
+      render: (value: string, quote: Quote) => (
+        <span className="font-medium">{value || `#${quote.id.slice(0, 8)}`}</span>
+      ),
+    },
     {
       key: "date",
       label: "Date",
@@ -148,22 +149,40 @@ function RouteComponent() {
         </Link>
       </PageHeader>
       <SimpleContainer title={<>Quotes {query.data && `(${query.data.length})`}</>}>
-        <ContainerRow searchProps={searchProps} showSearch searchPlaceholder="Search quotes..." />
+        <ContainerRow searchProps={searchProps} showSearch searchPlaceholder="Search client or quote number...">
+          <select
+            className="select select-bordered select-sm"
+            aria-label="Filter quotes by status"
+            value={status}
+            onChange={(event) => setStatus(event.target.value)}
+          >
+            <option value="all">All statuses</option>
+            <option value="draft">Draft</option>
+            <option value="sent">Sent</option>
+            <option value="accepted">Accepted</option>
+            <option value="rejected">Rejected</option>
+            <option value="expired">Expired</option>
+            <option value="converted_to_invoice">Converted to invoice</option>
+          </select>
+        </ContainerRow>
         <PageLoader
           query={query}
           emptyState={{
-            title: "No Quotes Yet",
-            description: "Create a quote to start tracking proposals for your customers.",
-            actionText: "Add Quote",
-            onAction: () => navigate({ to: "/tenant/accounts/quotes/add" }),
+            title: status === "all" && !searchProps.search ? "No Quotes Yet" : "No matching quotes",
+            description: status === "all" && !searchProps.search
+              ? "Create a quote to start tracking proposals for your customers."
+              : "Try a different search or status.",
+            ...(status === "all" && !searchProps.search
+              ? { actionText: "Add Quote", onAction: () => navigate({ to: "/tenant/accounts/quotes/add" }) }
+              : {}),
           }}
         >
           {() =>
-            filteredQuotes.length > 0 ? (
-              <CustomTable data={filteredQuotes} columns={columns} actions={actions} ring={false} />
+            quotes.length > 0 ? (
+              <CustomTable data={quotes} columns={columns} actions={actions} ring={false} />
             ) : (
               <div className="rounded-b-box border border-base-200 bg-base-100 px-4 py-10 text-center text-sm text-base-content/70">
-                No quotes match your search.
+                No quotes match these filters.
               </div>
             )
           }
