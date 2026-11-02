@@ -26,9 +26,13 @@ function monthLabel(month: string) {
   )} ’${String(year).slice(-2)}`;
 }
 
-export default function AdminFinanceTrend() {
+export default function AdminFinanceTrend({
+  months = 12,
+}: {
+  months?: 3 | 6 | 12;
+}) {
   const query = useAdminRevenueTrend();
-  const trend = query.data?.trend ?? [];
+  const trend = (query.data?.trend ?? []).slice(-months);
   const totals = trend.reduce(
     (result, point) => ({
       added: result.added + point.added,
@@ -47,7 +51,7 @@ export default function AdminFinanceTrend() {
 
   return (
     <section
-      className="overflow-hidden rounded-2xl border border-base-200 bg-base-100"
+      className="overflow-hidden rounded-xl bg-base-100 shadow-sm"
       aria-labelledby="mrr-trend-title"
     >
       <div className="flex items-start gap-3 border-b border-base-200 px-5 py-5 sm:px-6">
@@ -55,23 +59,32 @@ export default function AdminFinanceTrend() {
           <ChartNoAxesCombined className="size-5" aria-hidden="true" />
         </span>
         <div>
-          <h2 id="mrr-trend-title" className="text-lg font-semibold text-base-content">
-            Contracted MRR movement
+          <h2
+            id="mrr-trend-title"
+            className="text-lg font-semibold text-base-content"
+          >
+            Revenue movement
           </h2>
           <p className="mt-0.5 text-sm text-base-content/70">
-            {query.data?.note || "Monthly recurring revenue added, lost, and net change. This is not collected cash."}
+            {query.data?.note ||
+              `Monthly contracted MRR added, lost and net change · ${months}M. Not collected cash or operating costs.`}
           </p>
         </div>
       </div>
       {query.isPending ? (
-        <div className="flex min-h-76 items-center justify-center" role="status">
+        <div
+          className="flex min-h-76 items-center justify-center"
+          role="status"
+        >
           <span className="loading loading-spinner text-primary" />
           <span className="sr-only">Loading MRR trend</span>
         </div>
       ) : query.isError ? (
         <div className="px-6 py-12 text-center" role="alert">
           <p className="font-medium">MRR trend could not be loaded.</p>
-          <p className="mt-1 text-sm text-base-content/70">{query.error.message}</p>
+          <p className="mt-1 text-sm text-base-content/70">
+            {query.error.message}
+          </p>
           <button
             type="button"
             className="btn btn-outline btn-sm mt-3"
@@ -87,14 +100,20 @@ export default function AdminFinanceTrend() {
       ) : (
         <>
           <div className="grid grid-cols-1 gap-4 border-b border-base-200 px-5 py-4 sm:grid-cols-3 sm:px-6">
-            {([
-              ["Added MRR", totals.added, "text-emerald-600"],
-              ["Lost MRR", totals.lost, "text-rose-600"],
-              ["Net change", totals.net, "text-primary"],
-            ] as const).map(([label, value, color]) => (
+            {(
+              [
+                ["Added MRR", totals.added, "text-emerald-600"],
+                ["Lost MRR", totals.lost, "text-rose-600"],
+                ["Net change", totals.net, "text-primary"],
+              ] as const
+            ).map(([label, value, color]) => (
               <div key={label}>
-                <p className="text-xs font-medium text-base-content/70">{label}</p>
-                <p className={`mt-1 text-xl font-semibold tabular-nums ${color}`}>
+                <p className="text-xs font-medium text-base-content/70">
+                  {label}
+                </p>
+                <p
+                  className={`mt-1 text-xl font-semibold tabular-nums ${color}`}
+                >
                   {fullNumber.format(value)}
                 </p>
               </div>
@@ -142,10 +161,15 @@ export default function AdminFinanceTrend() {
                     tickLine={false}
                     axisLine={false}
                     tick={{ fill: "var(--color-base-content)", fontSize: 12 }}
-                    tickFormatter={(value: number) => compactNumber.format(value)}
+                    tickFormatter={(value: number) =>
+                      compactNumber.format(value)
+                    }
                   />
                   <Tooltip
-                    formatter={(value, name) => [fullNumber.format(Number(value)), String(name)]}
+                    formatter={(value, name) => [
+                      fullNumber.format(Number(value)),
+                      String(name),
+                    ]}
                     contentStyle={{
                       backgroundColor: "var(--color-base-100)",
                       border: "1px solid var(--color-base-300)",
@@ -153,8 +177,18 @@ export default function AdminFinanceTrend() {
                       color: "var(--color-base-content)",
                     }}
                   />
-                  <Bar dataKey="added" name="Added MRR" fill="#059669" maxBarSize={28} />
-                  <Bar dataKey="lost" name="Lost MRR" fill="#e11d48" maxBarSize={28} />
+                  <Bar
+                    dataKey="added"
+                    name="Added MRR"
+                    fill="#059669"
+                    maxBarSize={28}
+                  />
+                  <Bar
+                    dataKey="lost"
+                    name="Lost MRR"
+                    fill="#e11d48"
+                    maxBarSize={28}
+                  />
                   <Line
                     type="monotone"
                     dataKey="net"
