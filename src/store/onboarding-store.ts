@@ -1,6 +1,11 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
+export const TEAM_SIZES = ["1-10", "11-50", "51-200", "201-500", "500+"];
+
+const normalizeTeamSize = (teamSize?: string) =>
+  teamSize && TEAM_SIZES.includes(teamSize) ? teamSize : "";
+
 export interface OnboardingFormData {
   industry: string;
   teamSize: string;
@@ -28,7 +33,7 @@ interface OnboardingState {
 
 const defaultFormData: OnboardingFormData = {
   industry: "",
-  teamSize: "1-20",
+  teamSize: "",
   logo: null,
   theme: "light",
   companyAddress: "",
@@ -60,7 +65,9 @@ export const useOnboardingStore = create<OnboardingState>()(
                 : data.theme === "light"
                   ? "light"
                   : state.formData.theme,
-            teamSize: data.teamSize || state.formData.teamSize || "1-20",
+            teamSize: normalizeTeamSize(
+              data.teamSize ?? state.formData.teamSize,
+            ),
           },
         })),
       reset: () =>
@@ -78,7 +85,7 @@ export const useOnboardingStore = create<OnboardingState>()(
           ...currentState.formData,
           ...(persistedState?.formData ?? {}),
           theme: persistedState?.formData?.theme === "dark" ? "dark" : "light",
-          teamSize: persistedState?.formData?.teamSize || "1-20",
+          teamSize: normalizeTeamSize(persistedState?.formData?.teamSize),
         },
       }),
     },

@@ -29,6 +29,7 @@ import {
 import {
   useOnboardingStore,
   type OnboardingFormData,
+  TEAM_SIZES,
 } from "@/store/onboarding-store";
 import apiClient from "@/client/api";
 import { useSelectImage } from "@/helpers/images";
@@ -159,8 +160,6 @@ const INDUSTRIES = [
   },
 ];
 
-const TEAM_SIZES = ["1-10", "11-50", "51-200", "201-500", "500+"];
-
 const BUSINESS_TYPES = [
   "Sole Proprietorship",
   "Partnership",
@@ -265,13 +264,15 @@ function OnboardingWizard() {
           : payload.theme === "light"
             ? "light"
             : formData.theme,
-      teamSize: payload.teamSize || formData.teamSize || "1-20",
+      teamSize: payload.teamSize ?? formData.teamSize,
     };
     updateFormData(updated);
 
     const patchPayload: Partial<OnboardingFormData> = {
       ...(updated.industry ? { industry: updated.industry } : {}),
-      ...(updated.teamSize ? { teamSize: updated.teamSize } : {}),
+      ...(TEAM_SIZES.includes(updated.teamSize)
+        ? { teamSize: updated.teamSize }
+        : {}),
       ...(updated.logo !== undefined ? { logo: updated.logo } : {}),
       theme: updated.theme === "dark" ? "dark" : "light",
       ...(updated.companyAddress
@@ -703,10 +704,9 @@ function TeamSizeStep({
     advance({ teamSize });
   };
 
-  const defaultTeamSize =
-    formData.teamSize && TEAM_SIZES.includes(formData.teamSize)
-      ? formData.teamSize
-      : "1-20";
+  const defaultTeamSize = TEAM_SIZES.includes(formData.teamSize)
+    ? formData.teamSize
+    : "";
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
