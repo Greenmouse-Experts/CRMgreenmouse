@@ -10,6 +10,12 @@ export interface DashboardStats {
   pendingOrders: number;
   totalCustomers: number;
   totalProducts: number;
+  totalIncome?: number;
+  incomeChange?: number;
+  totalExpenses?: number;
+  expenseChange?: number;
+  customerChange?: number;
+  invoiceChange?: number;
 }
 
 export interface DashboardBalance {
