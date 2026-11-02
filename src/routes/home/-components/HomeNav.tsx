@@ -1,11 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import {
-  Menu,
-  X,
-  LogIn,
-  ChevronRight,
-  LayoutDashboard,
-} from "lucide-react";
+import { Menu, X, LogIn, ChevronRight, LayoutDashboard } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import { useAuth } from "@/store/authStore";
 
@@ -27,7 +21,7 @@ export default function HomeNav() {
 
   const navLinks = [
     { name: "Features", href: "#features" },
-    { name: "Why Kinova", href: "#why-kinova" },
+    { name: "Why kinovia", href: "#why-kinovia" },
     { name: "Get Started", href: "#get-started" },
   ];
 
@@ -38,14 +32,13 @@ export default function HomeNav() {
     >
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
         {/* Brand/Logo */}
-        <Link
-          to="/"
-          className="flex items-center gap-2.5"
-        >
+        <Link to="/" className="flex items-center gap-2.5">
           <div className="grid size-9 place-items-center rounded-xl bg-primary text-lg font-bold text-primary-content">
             K
           </div>
-          <span className="text-xl font-bold tracking-tight text-base-content">Kinova <span className="text-primary">CRM</span></span>
+          <span className="text-xl font-bold tracking-tight text-base-content">
+            kinovia <span className="text-primary">CRM</span>
+          </span>
         </Link>
 
         {/* Desktop Navigation */}

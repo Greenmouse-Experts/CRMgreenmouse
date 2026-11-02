@@ -22,7 +22,7 @@ function HomePage() {
             <div className="relative overflow-hidden rounded-3xl bg-primary px-6 py-16 text-center text-primary-content sm:px-12 [&_h2]:mx-auto [&_h2]:max-w-2xl [&_h2]:text-3xl [&_h2]:font-extrabold [&_h2]:tracking-tight sm:[&_h2]:text-4xl [&_p]:mx-auto [&_p]:mt-4 [&_p]:max-w-xl [&_p]:text-primary-content/80">
               <h2>Ready to see your whole business in one place?</h2>
               <p>
-                Set up Kinova CRM in minutes. Add your team, import your
+                Set up kinovia CRM in minutes. Add your team, import your
                 customers, and start tracking everything that matters — today.
               </p>
               <div className="mt-8 flex flex-wrap items-center gap-3 justify-center">
@@ -30,7 +30,7 @@ function HomePage() {
                   className="btn px-8 border-0 bg-base-100 text-primary hover:bg-base-200"
                   href="/auth/register"
                 >
-                  Start with Kinova CRM <span aria-hidden="true">→</span>
+                  Start with kinovia CRM <span aria-hidden="true">→</span>
                 </a>
                 <a
                   className="btn px-8 border-primary-content/40 bg-transparent text-primary-content hover:bg-primary-content/10"
