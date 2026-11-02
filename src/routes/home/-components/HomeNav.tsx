@@ -7,6 +7,9 @@ export default function HomeNav() {
   const [isOpen, setIsOpen] = useState(false);
   const navRef = useRef<HTMLElement>(null);
   const [user] = useAuth();
+  const dash_route = user?.user.userType.includes("admin")
+    ? "/admin"
+    : "/tenant";
 
   useEffect(() => {
     if (!isOpen) return;
@@ -58,7 +61,7 @@ export default function HomeNav() {
         <div className="hidden md:flex items-center gap-3">
           {user ? (
             <Link
-              to="/tenant"
+              to={dash_route}
               className="btn btn-primary btn-sm rounded-lg px-6 font-semibold shadow-md shadow-primary/10 hover:shadow-primary/30 gap-2"
             >
               <LayoutDashboard className="size-4" />
