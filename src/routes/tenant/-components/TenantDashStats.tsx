@@ -8,7 +8,7 @@ import {
   Wallet,
 } from "lucide-react";
 import { useDashboardStats } from "@/api/tenantApi";
-import { useExpensesReport, useInvoiceRevenueReport, useRevenueReport } from "@/api/reportsApi";
+import { useInvoiceRevenueReport } from "@/api/reportsApi";
 import QueryCompLayout from "@/components/layout/QueryCompLayout";
 
 const formatNumber = (value: number) => new Intl.NumberFormat().format(value);
@@ -16,17 +16,17 @@ const formatMoney = (value: number) => `₦${formatNumber(value)}`;
 
 export default function TenantDashStats() {
   const query = useDashboardStats();
-  const revenueQuery = useRevenueReport();
-  const expensesQuery = useExpensesReport();
-  const debtsQuery = useInvoiceRevenueReport({ currency: "NGN" });
 
+  const debtsQuery = useInvoiceRevenueReport({ currency: "NGN" });
   return (
     <QueryCompLayout query={query}>
       {(stats) => {
         const cards = [
           {
             title: "Total Income",
-            value: revenueQuery.data ? formatMoney(revenueQuery.data.total) : "—",
+            value:
+              stats.totalIncome == null ? "—" : formatMoney(stats.totalIncome),
+            change: stats.incomeChange,
             linkLabel: "View income",
             icon: Wallet,
             to: "/tenant/accounts/income-expenses",
@@ -34,7 +34,11 @@ export default function TenantDashStats() {
           },
           {
             title: "Total Expenses",
-            value: expensesQuery.data ? formatMoney(expensesQuery.data.total) : "—",
+            value:
+              stats.totalExpenses == null
+                ? "—"
+                : formatMoney(stats.totalExpenses),
+            change: stats.expenseChange,
             linkLabel: "View expenses",
             icon: ReceiptText,
             to: "/tenant/accounts/income-expenses",
@@ -43,6 +47,7 @@ export default function TenantDashStats() {
           {
             title: "Total Customers",
             value: formatNumber(stats.totalCustomers),
+            change: stats.customerChange,
             linkLabel: "View customers",
             icon: UsersRound,
             to: "/tenant/contacts/customers",
@@ -81,6 +86,7 @@ export default function TenantDashStats() {
           {
             title: "Total Invoices",
             value: formatNumber(stats.totalInvoices),
+            change: stats.invoiceChange,
             linkLabel: "View invoices",
             icon: FileText,
             to: "/tenant/accounts/Invoices",
@@ -119,6 +125,17 @@ export default function TenantDashStats() {
                       <p className="text-xs font-semibold text-base-content/70">
                         {card.title}
                       </p>
+                      {card.change != null && Number.isFinite(card.change) && (
+                        <p
+                          className={`mt-1 text-xs font-semibold tabular-nums ${card.change === 0 ? "text-base-content/70" : (card.title === "Total Expenses" ? card.change < 0 : card.change > 0) ? "text-success" : "text-error"}`}
+                        >
+                          {card.change > 0 ? "+" : ""}
+                          {card.change.toLocaleString("en-NG", {
+                            maximumFractionDigits: 1,
+                          })}
+                          % change
+                        </p>
+                      )}
                     </div>
                     <span
                       className={`inline-flex items-center gap-1 text-xs font-medium ${card.accent} !bg-transparent`}
