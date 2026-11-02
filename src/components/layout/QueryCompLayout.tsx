@@ -33,7 +33,7 @@ export default function QueryCompLayout<T>({
             <ShieldOff className="h-8 w-8" />
           </div>
           <h3 className="text-lg font-semibold text-base-content">
-            Access Denied
+            Upgrade Subscription
           </h3>
           <p className="mt-1 text-sm text-base-content/60 max-w-xs">
             {extract_message(query.error as AxiosError<ApiResponse>)}
