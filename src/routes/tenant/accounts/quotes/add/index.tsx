@@ -11,7 +11,7 @@ import QuoteFields, {
   type QuoteFormValues,
 } from "../-components/QuoteFields";
 
-export const Route = createFileRoute("/staff/accounts/quotes/add/")({
+export const Route = createFileRoute("/tenant/accounts/quotes/add/")({
   component: AddQuotePage,
 });
 
@@ -33,7 +33,7 @@ function AddQuotePage() {
     try {
       await createQuote.mutateAsync(quotePayload(values));
       toast.success("Quote created successfully.");
-      await navigate({ to: "/staff/accounts/quotes" });
+      await navigate({ to: "/tenant/accounts/quotes" });
     } catch (error) {
       const response = error as {
         response?: { data?: { message?: string | string[] } };
@@ -49,7 +49,7 @@ function AddQuotePage() {
   return (
     <div className="mx-auto  space-y-5 pb-12">
       <Link
-        to="/staff/accounts/quotes"
+        to="/tenant/accounts/quotes"
         className="btn btn-ghost btn-sm w-fit gap-2"
       >
         <ArrowLeft className="size-4" /> Back to quotes
@@ -77,7 +77,7 @@ function AddQuotePage() {
             </p>
           )}
           <div className="flex flex-wrap justify-end gap-3 border-t border-base-200 pt-5">
-            <Link to="/staff/accounts/quotes" className="btn btn-ghost">
+            <Link to="/tenant/accounts/quotes" className="btn btn-ghost">
               Cancel
             </Link>
             <button

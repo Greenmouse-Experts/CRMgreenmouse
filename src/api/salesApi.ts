@@ -7,15 +7,49 @@ export interface Quote {
   id: string;
   quoteNumber?: string;
   date?: string;
-  clientName: string;
+  clientName?: string;
   amount: number;
   description?: string;
   expiresAt?: string;
   notes?: string;
-  status: "draft" | "sent" | "accepted" | "rejected" | "expired" | "converted_to_invoice" | string;
+  status:
+    | "draft"
+    | "sent"
+    | "accepted"
+    | "rejected"
+    | "expired"
+    | "converted_to_invoice"
+    | string;
   contactId?: string;
+  companyRecordId?: string;
+  companyId?: string;
+  contact?: {
+    id?: string;
+    firstName?: string;
+    lastName?: string;
+    email?: string;
+    phone?: string;
+  };
+  company?: {
+    id?: string;
+    name?: string;
+    email?: string;
+    phone?: string;
+  };
   createdAt?: string;
   updatedAt?: string;
+}
+
+export interface CreateQuotePayload {
+  date: string;
+  amount: number;
+  description?: string;
+  status?: "draft" | "sent" | "accepted" | "rejected" | "expired" | string;
+  contactId?: string;
+  companyRecordId?: string;
+  expiresAt?: string;
+  notes?: string;
+  clientName?: string;
 }
 
 export interface QuoteQueryParams {
@@ -79,7 +113,7 @@ export const useQuoteStats = () => {
 export const useCreateQuote = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (quote: Partial<Quote>) => {
+    mutationFn: async (quote: Partial<Quote> | CreateQuotePayload) => {
       const { data } = await apiClient.post<Quote>("/quotes", quote);
       return data;
     },
@@ -92,7 +126,10 @@ export const useCreateQuote = () => {
 export const useUpdateQuote = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async ({ id, ...quote }: Partial<Quote> & { id: string }) => {
+    mutationFn: async ({
+      id,
+      ...quote
+    }: (Partial<Quote> | Partial<CreateQuotePayload>) & { id: string }) => {
       const { data } = await apiClient.patch<Quote>(`/quotes/${id}`, quote);
       return data;
     },
@@ -119,7 +156,7 @@ export const useUpdateQuoteStatus = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async ({ id, status }: { id: string; status: string }) => {
-      const { data } = await apiClient.patch(`/quotes/${id}/status`, {
+      const { data } = await apiClient.patch<Quote>(`/quotes/${id}/status`, {
         status,
       });
       return data;
@@ -137,16 +174,13 @@ export const useConvertQuote = () => {
       id,
       ...payload
     }: ConvertQuotePayload & { id: string }) => {
-      const { data } = await apiClient.post<any>(
-        `/quotes/${id}/convert`,
-        payload,
-      );
-      return data?.data || data;
+      const { data } = await apiClient.post(`/quotes/${id}/convert`, payload);
+      return data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["quotes"] });
-      queryClient.invalidateQueries({ queryKey: ["orders"] });
       queryClient.invalidateQueries({ queryKey: ["invoices"] });
+      queryClient.invalidateQueries({ queryKey: ["orders"] });
     },
   });
 };
@@ -200,10 +234,10 @@ type OrderWriteFields = Pick<
   | "notes"
 > & { contactId?: string | null };
 
-type CreateOrderInput = Pick<OrderWriteFields, "items"> &
+export type CreateOrderInput = Pick<OrderWriteFields, "items"> &
   Partial<Omit<OrderWriteFields, "items">>;
 
-type UpdateOrderInput = Partial<OrderWriteFields> & { id: string };
+export type UpdateOrderInput = Partial<OrderWriteFields> & { id: string };
 
 export interface OrderQueryParams {
   search?: string;
@@ -217,7 +251,7 @@ export const useOrders = (params?: OrderQueryParams) => {
       const { data } = await apiClient.get<Order[]>("/orders", {
         params,
       });
-      return data;
+      return (data as any)?.data ?? data;
     },
   });
 };
@@ -228,7 +262,7 @@ export const useOrder = (id?: string) => {
     queryFn: async () => {
       if (!id) throw new Error("Order ID required");
       const { data } = await apiClient.get<Order>(`/orders/${id}`);
-      return data;
+      return (data as any)?.data ?? data;
     },
     enabled: !!id,
   });
@@ -301,6 +335,260 @@ export const useUpdateOrderStatus = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["orders"] });
+    },
+  });
+};
+
+// ==================== LEADS ====================
+
+export interface Lead {
+  id: string;
+  title: string;
+  contactId?: string;
+  source?: string;
+  status: "new" | "contacted" | "qualified" | "lost" | string;
+  value?: number;
+  score?: number;
+  assignedTo?: string;
+  notes?: string;
+  createdAt?: string;
+  updatedAt?: string;
+  contact?: {
+    id: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+    phone?: string;
+  };
+}
+
+export interface LeadQueryParams {
+  search?: string;
+  status?: string;
+  source?: string;
+  assignedTo?: string;
+}
+
+export const useLeads = (params?: LeadQueryParams) => {
+  return useQuery<Lead[]>({
+    queryKey: ["leads", params],
+    queryFn: async () => {
+      const { data } = await apiClient.get<Lead[]>("/leads", {
+        params,
+      });
+      return (data as any)?.data ?? data;
+    },
+  });
+};
+
+export const useLead = (id?: string) => {
+  return useQuery<Lead>({
+    queryKey: ["leads", id],
+    queryFn: async () => {
+      if (!id) throw new Error("Lead ID required");
+      const { data } = await apiClient.get<Lead>(`/leads/${id}`);
+      return (data as any)?.data ?? data;
+    },
+    enabled: !!id,
+  });
+};
+
+export const useLeadStats = () => {
+  return useQuery<{
+    total?: number;
+    new?: number;
+    contacted?: number;
+    qualified?: number;
+    lost?: number;
+    totalValue?: number;
+  }>({
+    queryKey: ["leads", "stats"],
+    queryFn: async () => {
+      const { data } = await apiClient.get("/leads/stats");
+      return data;
+    },
+  });
+};
+
+export const useCreateLead = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (lead: Partial<Lead>) => {
+      const { data } = await apiClient.post<Lead>("/leads", lead);
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["leads"] });
+    },
+  });
+};
+
+export const useUpdateLead = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ id, ...lead }: Partial<Lead> & { id: string }) => {
+      const { data } = await apiClient.patch<Lead>(`/leads/${id}`, lead);
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["leads"] });
+    },
+  });
+};
+
+export const useDeleteLead = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (id: string) => {
+      const { data } = await apiClient.delete(`/leads/${id}`);
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["leads"] });
+    },
+  });
+};
+
+export const useConvertLead = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({
+      id,
+      dealTitle,
+      dealValue,
+      pipelineStageId,
+    }: {
+      id: string;
+      dealTitle?: string;
+      dealValue?: number;
+      pipelineStageId?: string;
+    }) => {
+      const { data } = await apiClient.post(`/leads/${id}/convert`, {
+        dealTitle,
+        dealValue,
+        pipelineStageId,
+      });
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["leads"] });
+      queryClient.invalidateQueries({ queryKey: ["deals"] });
+    },
+  });
+};
+
+// ==================== DEALS ====================
+
+export interface Deal {
+  id: string;
+  title: string;
+  contactId?: string;
+  companyId?: string;
+  pipelineStageId?: string;
+  value: number;
+  currency?: string;
+  probability?: number;
+  expectedCloseDate?: string;
+  status: "open" | "won" | "lost" | string;
+  assignedTo?: string;
+  notes?: string;
+  createdAt?: string;
+  updatedAt?: string;
+  contact?: {
+    id: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+  };
+  company?: {
+    id: string;
+    name: string;
+  };
+}
+
+export interface DealQueryParams {
+  search?: string;
+  status?: string;
+  pipelineStageId?: string;
+  assignedTo?: string;
+}
+
+export const useDeals = (params?: DealQueryParams) => {
+  return useQuery<Deal[]>({
+    queryKey: ["deals", params],
+    queryFn: async () => {
+      const { data } = await apiClient.get<Deal[]>("/deals", {
+        params,
+      });
+      return (data as any)?.data ?? data;
+    },
+  });
+};
+
+export const useDeal = (id?: string) => {
+  return useQuery<Deal>({
+    queryKey: ["deals", id],
+    queryFn: async () => {
+      if (!id) throw new Error("Deal ID required");
+      const { data } = await apiClient.get<Deal>(`/deals/${id}`);
+      return (data as any)?.data ?? data;
+    },
+    enabled: !!id,
+  });
+};
+
+export const useDealStats = () => {
+  return useQuery<{
+    total?: number;
+    won?: number;
+    lost?: number;
+    open?: number;
+    totalValue?: number;
+    wonValue?: number;
+  }>({
+    queryKey: ["deals", "stats"],
+    queryFn: async () => {
+      const { data } = await apiClient.get("/deals/stats");
+      return data;
+    },
+  });
+};
+
+export const useCreateDeal = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (deal: Partial<Deal>) => {
+      const { data } = await apiClient.post<Deal>("/deals", deal);
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["deals"] });
+    },
+  });
+};
+
+export const useUpdateDeal = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ id, ...deal }: Partial<Deal> & { id: string }) => {
+      const { data } = await apiClient.patch<Deal>(`/deals/${id}`, deal);
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["deals"] });
+    },
+  });
+};
+
+export const useDeleteDeal = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (id: string) => {
+      const { data } = await apiClient.delete(`/deals/${id}`);
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["deals"] });
     },
   });
 };

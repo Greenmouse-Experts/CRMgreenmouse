@@ -19,9 +19,13 @@ import {
   type Quote,
 } from "@/api/salesApi";
 import { useContacts, useCompanies } from "@/api/crmApi";
-import QuoteFields, { defaultQuoteValues, quotePayload, type QuoteFormValues } from "./-components/QuoteFields";
+import QuoteFields, {
+  defaultQuoteValues,
+  quotePayload,
+  type QuoteFormValues,
+} from "./-components/QuoteFields";
 
-export const Route = createFileRoute("/staff/accounts/quotes/")({
+export const Route = createFileRoute("/tenant/accounts/quotes/")({
   component: RouteComponent,
 });
 
@@ -63,8 +67,14 @@ function RouteComponent() {
   const contactsQuery = useContacts();
   const companiesQuery = useCompanies();
 
-  const contacts = useMemo(() => contactsQuery.data || [], [contactsQuery.data]);
-  const companies = useMemo(() => companiesQuery.data || [], [companiesQuery.data]);
+  const contacts = useMemo(
+    () => contactsQuery.data || [],
+    [contactsQuery.data],
+  );
+  const companies = useMemo(
+    () => companiesQuery.data || [],
+    [companiesQuery.data],
+  );
 
   const updateQuote = useUpdateQuote();
   const deleteQuote = useDeleteQuote();
@@ -75,24 +85,30 @@ function RouteComponent() {
   const [editingQuote, setEditingQuote] = useState<Quote | null>(null);
   const [deletingQuote, setDeletingQuote] = useState<Quote | null>(null);
 
-  const methods = useForm<QuoteFormValues>({ defaultValues: defaultQuoteValues() });
+  const methods = useForm<QuoteFormValues>({
+    defaultValues: defaultQuoteValues(),
+  });
 
   const getClientLabel = (quote: Quote) => {
     if (quote.contactId) {
       const contact = contacts.find((c) => c.id === quote.contactId);
       if (contact) {
-        const fullName = `${contact.firstName || ""} ${contact.lastName || ""}`.trim();
+        const fullName =
+          `${contact.firstName || ""} ${contact.lastName || ""}`.trim();
         return fullName || contact.email || quote.contactId;
       }
     }
     if (quote.companyRecordId || quote.companyId) {
-      const company = companies.find((c) => c.id === (quote.companyRecordId || quote.companyId));
+      const company = companies.find(
+        (c) => c.id === (quote.companyRecordId || quote.companyId),
+      );
       if (company) {
         return company.name;
       }
     }
     if (quote.contact) {
-      const fullName = `${quote.contact.firstName || ""} ${quote.contact.lastName || ""}`.trim();
+      const fullName =
+        `${quote.contact.firstName || ""} ${quote.contact.lastName || ""}`.trim();
       if (fullName) return fullName;
       if (quote.contact.email) return quote.contact.email;
     }
@@ -139,7 +155,10 @@ function RouteComponent() {
   const onSubmit = async (values: QuoteFormValues) => {
     try {
       if (!editingQuote) return;
-      await updateQuote.mutateAsync({ id: editingQuote.id, ...quotePayload(values) });
+      await updateQuote.mutateAsync({
+        id: editingQuote.id,
+        ...quotePayload(values),
+      });
       toast.success("Quote updated successfully.");
       formModal.closeModal();
       methods.reset(defaultQuoteValues());
@@ -262,8 +281,18 @@ function RouteComponent() {
               editingStatus={editingQuote?.status}
             />
             <div className="modal-action">
-              <button type="button" className="btn btn-ghost" onClick={formModal.closeModal}>Cancel</button>
-              <button type="submit" className="btn btn-primary" disabled={isSaving}>
+              <button
+                type="button"
+                className="btn btn-ghost"
+                onClick={formModal.closeModal}
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                className="btn btn-primary"
+                disabled={isSaving}
+              >
                 {isSaving ? "Saving..." : "Save Changes"}
               </button>
             </div>
@@ -281,7 +310,8 @@ function RouteComponent() {
             </span>
             {deletingQuote?.amount !== undefined ? (
               <>
-                {" "}valued at{" "}
+                {" "}
+                valued at{" "}
                 <span className="font-semibold text-primary font-mono">
                   ₦{formatAmount(deletingQuote.amount)}
                 </span>
@@ -317,7 +347,9 @@ function RouteComponent() {
         title="Quotes"
         description="Create and manage customer quotes."
       >
-        <Link to="/staff/accounts/quotes/add" className="btn btn-primary">Add Quote</Link>
+        <Link to="/tenant/accounts/quotes/add" className="btn btn-primary">
+          Add Quote
+        </Link>
       </PageHeader>
 
       <SimpleContainer
@@ -335,7 +367,7 @@ function RouteComponent() {
             description:
               "Create a quote to start tracking proposals for your customers.",
             actionText: "Add Quote",
-            onAction: () => navigate({ to: "/staff/accounts/quotes/add" }),
+            onAction: () => navigate({ to: "/tenant/accounts/quotes/add" }),
           }}
         >
           {() =>

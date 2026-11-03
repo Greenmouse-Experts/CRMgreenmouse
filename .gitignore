@@ -12,3 +12,6 @@ tests.ts
 graphify-out/
 auth_cred.ts
 skills/
+
+# Local Netlify folder
+.netlify
