@@ -1,22 +1,34 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { useQueryClient } from "@tanstack/react-query";
+import { FormProvider, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import CustomTable, { type columnType } from "@/components/tables/CustomTable";
 import type { Actions } from "@/components/tables/pop-up";
 import SimpleContainer from "@/components/SimpleContainer";
 import PageHeader from "@/components/Headers/PageHeader";
 import ContainerRow from "@/components/ContainerRow";
+import Modal from "@/components/DialogModal";
 import PageLoader from "@/components/layout/PageLoader";
 import { useSearch } from "@/stores/data";
-import { useQuotes, useDeleteQuote, type Quote } from "@/api/salesApi";
+import { useModal } from "@/store/modals";
+import {
+  useQuotes,
+  useUpdateQuote,
+  useDeleteQuote,
+  type Quote,
+} from "@/api/salesApi";
+import { useContacts, useCompanies } from "@/api/crmApi";
+import QuoteFields, { defaultQuoteValues, quotePayload, type QuoteFormValues } from "./-components/QuoteFields";
 
-export const Route = createFileRoute("/tenant/accounts/quotes/")({
+export const Route = createFileRoute("/staff/accounts/quotes/")({
   component: RouteComponent,
 });
 
 const getErrorMessage = (error: unknown, fallback: string) => {
-  const message = (error as { response?: { data?: { message?: string | string[] } } })
-    ?.response?.data?.message;
+  const message = (
+    error as { response?: { data?: { message?: string | string[] } } }
+  )?.response?.data?.message;
   return (Array.isArray(message) ? message.join(". ") : message) || fallback;
 };
 
@@ -33,46 +45,133 @@ const renderStatus = (status: string) => {
       ? "badge-success"
       : normalized === "rejected" || normalized === "expired"
         ? "badge-error"
-        : normalized === "draft"
-          ? "badge-ghost"
-          : "badge-info";
+        : "badge-info";
 
   return (
-    <span className={`badge badge-sm badge-soft font-medium capitalize ${color}`}>
-      {normalized.replaceAll("_", " ")}
+    <span
+      className={`badge badge-sm badge-soft font-medium capitalize ${color}`}
+    >
+      {normalized}
     </span>
   );
 };
 
 function RouteComponent() {
   const navigate = useNavigate();
-  const searchProps = useSearch();
-  const [status, setStatus] = useState("all");
-  const query = useQuotes({
-    search: searchProps.search?.trim() || undefined,
-    status: status === "all" ? undefined : status,
-  });
-  const deleteQuote = useDeleteQuote();
-  const quotes = query.data ?? [];
+  const queryClient = useQueryClient();
+  const query = useQuotes();
+  const contactsQuery = useContacts();
+  const companiesQuery = useCompanies();
 
-  const handleDelete = async (quote: Quote) => {
-    if (!window.confirm(`Delete quote for "${quote.clientName}"?`)) return;
+  const contacts = useMemo(() => contactsQuery.data || [], [contactsQuery.data]);
+  const companies = useMemo(() => companiesQuery.data || [], [companiesQuery.data]);
+
+  const updateQuote = useUpdateQuote();
+  const deleteQuote = useDeleteQuote();
+  const searchProps = useSearch();
+  const formModal = useModal();
+  const deleteModal = useModal();
+
+  const [editingQuote, setEditingQuote] = useState<Quote | null>(null);
+  const [deletingQuote, setDeletingQuote] = useState<Quote | null>(null);
+
+  const methods = useForm<QuoteFormValues>({ defaultValues: defaultQuoteValues() });
+
+  const getClientLabel = (quote: Quote) => {
+    if (quote.contactId) {
+      const contact = contacts.find((c) => c.id === quote.contactId);
+      if (contact) {
+        const fullName = `${contact.firstName || ""} ${contact.lastName || ""}`.trim();
+        return fullName || contact.email || quote.contactId;
+      }
+    }
+    if (quote.companyRecordId || quote.companyId) {
+      const company = companies.find((c) => c.id === (quote.companyRecordId || quote.companyId));
+      if (company) {
+        return company.name;
+      }
+    }
+    if (quote.contact) {
+      const fullName = `${quote.contact.firstName || ""} ${quote.contact.lastName || ""}`.trim();
+      if (fullName) return fullName;
+      if (quote.contact.email) return quote.contact.email;
+    }
+    if (quote.company?.name) {
+      return quote.company.name;
+    }
+    return quote.clientName || "—";
+  };
+
+  const filteredQuotes = useMemo(() => {
+    const search = (searchProps.search || "").trim().toLowerCase();
+    const quotes = query.data || [];
+    if (!search) return quotes;
+    return quotes.filter((quote) => {
+      const client = getClientLabel(quote).toLowerCase();
+      const desc = (quote.description || "").toLowerCase();
+      const status = (quote.status || "").toLowerCase();
+      const date = (quote.date || "").toLowerCase();
+      return (
+        client.includes(search) ||
+        desc.includes(search) ||
+        status.includes(search) ||
+        date.includes(search)
+      );
+    });
+  }, [query.data, searchProps.search, contacts, companies]);
+
+  const openEdit = (quote: Quote) => {
+    const status = quote.status?.toLowerCase() || "draft";
+    setEditingQuote(quote);
+    methods.reset({
+      date: quote.date?.slice(0, 10) || "",
+      contactId: quote.contactId || "",
+      companyRecordId: quote.companyRecordId || "",
+      amount: quote.amount,
+      description: quote.description || "",
+      status,
+      expiresAt: quote.expiresAt?.slice(0, 10) || "",
+      notes: quote.notes || "",
+    });
+    formModal.showModal();
+  };
+
+  const onSubmit = async (values: QuoteFormValues) => {
     try {
-      await deleteQuote.mutateAsync(quote.id);
-      toast.success("Quote deleted.");
+      if (!editingQuote) return;
+      await updateQuote.mutateAsync({ id: editingQuote.id, ...quotePayload(values) });
+      toast.success("Quote updated successfully.");
+      formModal.closeModal();
+      methods.reset(defaultQuoteValues());
+      setEditingQuote(null);
+      void queryClient.invalidateQueries({ queryKey: ["quotes"] });
+    } catch (error) {
+      toast.error(
+        getErrorMessage(error, "Failed to save quote. Please try again."),
+      );
+    }
+  };
+
+  const handleDelete = (quote: Quote) => {
+    setDeletingQuote(quote);
+    deleteModal.showModal();
+  };
+
+  const confirmDelete = async () => {
+    if (!deletingQuote) return;
+    try {
+      await deleteQuote.mutateAsync(deletingQuote.id);
+      await queryClient.invalidateQueries({ queryKey: ["quotes"] });
+      await query.refetch();
+      toast.success("Quote deleted successfully.");
+      deleteModal.closeModal();
+      setDeletingQuote(null);
     } catch (error) {
       toast.error(getErrorMessage(error, "Failed to delete quote."));
     }
   };
 
   const columns: columnType<Quote>[] = [
-    {
-      key: "quoteNumber",
-      label: "Quote #",
-      render: (value: string, quote: Quote) => (
-        <span className="font-medium">{value || `#${quote.id.slice(0, 8)}`}</span>
-      ),
-    },
     {
       key: "date",
       label: "Date",
@@ -87,23 +186,33 @@ function RouteComponent() {
     {
       key: "clientName",
       label: "Client",
-      render: (value: string) => (
-        <span className="font-medium text-base-content">{value || "—"}</span>
-      ),
+      render: (_: string, quote: Quote) => {
+        const isCompany = Boolean(quote.companyRecordId || quote.companyId);
+        return (
+          <div className="flex flex-col">
+            <span className="font-medium text-base-content">
+              {getClientLabel(quote)}
+            </span>
+            {quote.contactId && (
+              <span className="text-[10px] text-base-content/50 uppercase font-medium">
+                Contact
+              </span>
+            )}
+            {isCompany && (
+              <span className="text-[10px] text-base-content/50 uppercase font-medium">
+                Company
+              </span>
+            )}
+          </div>
+        );
+      },
     },
     {
       key: "amount",
       label: "Amount",
       render: (value: number) => (
-        <span className="tabular-nums font-medium">{formatAmount(value)}</span>
-      ),
-    },
-    {
-      key: "expiresAt",
-      label: "Expires",
-      render: (value: string) => (
-        <span className="text-sm text-base-content/70">
-          {value ? new Date(value).toLocaleDateString() : "—"}
+        <span className="tabular-nums font-semibold text-base-content">
+          ₦{formatAmount(value)}
         </span>
       ),
     },
@@ -111,7 +220,10 @@ function RouteComponent() {
       key: "description",
       label: "Description",
       render: (value: string) => (
-        <span className="block max-w-xs truncate text-sm text-base-content/70" title={value || ""}>
+        <span
+          className="block max-w-xs truncate text-sm text-base-content/70"
+          title={value || ""}
+        >
           {value || "—"}
         </span>
       ),
@@ -124,65 +236,119 @@ function RouteComponent() {
   ];
 
   const actions: Actions<Quote>[] = [
-    {
-      key: "edit",
-      label: "Edit Quote",
-      action: (quote) =>
-        navigate({
-          to: "/tenant/accounts/quotes/$id/edit",
-          params: { id: quote.id },
-        }),
-    },
+    { key: "edit", label: "Edit Quote", action: openEdit },
     {
       key: "delete",
       label: "Delete Quote",
-      render: () => <span className="font-medium text-error">Delete Quote</span>,
+      render: () => (
+        <span className="font-medium text-error">Delete Quote</span>
+      ),
       action: handleDelete,
     },
   ];
 
+  const isSaving = updateQuote.isPending;
+
   return (
     <>
-      <PageHeader title="Quotes" description="Create and manage customer quotes.">
-        <Link to="/tenant/accounts/quotes/add" className="btn btn-primary btn-sm">
-          Add Quote
-        </Link>
+      <Modal ref={formModal.ref} title="Edit Quote">
+        <FormProvider {...methods}>
+          <form onSubmit={methods.handleSubmit(onSubmit)} className="space-y-6">
+            <QuoteFields
+              contacts={contacts}
+              companies={companies}
+              contactsLoading={contactsQuery.isLoading}
+              companiesLoading={companiesQuery.isLoading}
+              editingStatus={editingQuote?.status}
+            />
+            <div className="modal-action">
+              <button type="button" className="btn btn-ghost" onClick={formModal.closeModal}>Cancel</button>
+              <button type="submit" className="btn btn-primary" disabled={isSaving}>
+                {isSaving ? "Saving..." : "Save Changes"}
+              </button>
+            </div>
+          </form>
+        </FormProvider>
+      </Modal>
+
+      {/* Delete Confirmation Modal */}
+      <Modal ref={deleteModal.ref} title="Delete Quote">
+        <div className="space-y-4">
+          <p className="text-sm text-base-content/80">
+            Are you sure you want to delete this quote for{" "}
+            <span className="font-semibold text-base-content">
+              {deletingQuote ? getClientLabel(deletingQuote) : "this client"}
+            </span>
+            {deletingQuote?.amount !== undefined ? (
+              <>
+                {" "}valued at{" "}
+                <span className="font-semibold text-primary font-mono">
+                  ₦{formatAmount(deletingQuote.amount)}
+                </span>
+              </>
+            ) : null}
+            ? This action cannot be undone.
+          </p>
+          <div className="modal-action flex justify-end gap-2 pt-2">
+            <button
+              type="button"
+              className="btn btn-ghost btn-sm"
+              onClick={() => {
+                deleteModal.closeModal();
+                setDeletingQuote(null);
+              }}
+              disabled={deleteQuote.isPending}
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              className="btn btn-error btn-sm text-white"
+              onClick={confirmDelete}
+              disabled={deleteQuote.isPending}
+            >
+              {deleteQuote.isPending ? "Deleting..." : "Delete Quote"}
+            </button>
+          </div>
+        </div>
+      </Modal>
+
+      <PageHeader
+        title="Quotes"
+        description="Create and manage customer quotes."
+      >
+        <Link to="/staff/accounts/quotes/add" className="btn btn-primary">Add Quote</Link>
       </PageHeader>
-      <SimpleContainer title={<>Quotes {query.data && `(${query.data.length})`}</>}>
-        <ContainerRow searchProps={searchProps} showSearch searchPlaceholder="Search client or quote number...">
-          <select
-            className="select select-bordered select-sm"
-            aria-label="Filter quotes by status"
-            value={status}
-            onChange={(event) => setStatus(event.target.value)}
-          >
-            <option value="all">All statuses</option>
-            <option value="draft">Draft</option>
-            <option value="sent">Sent</option>
-            <option value="accepted">Accepted</option>
-            <option value="rejected">Rejected</option>
-            <option value="expired">Expired</option>
-            <option value="converted_to_invoice">Converted to invoice</option>
-          </select>
-        </ContainerRow>
+
+      <SimpleContainer
+        title={<>Quotes {query.data && `(${filteredQuotes.length})`}</>}
+      >
+        <ContainerRow
+          searchProps={searchProps}
+          showSearch
+          searchPlaceholder="Search quotes..."
+        />
         <PageLoader
           query={query}
           emptyState={{
-            title: status === "all" && !searchProps.search ? "No Quotes Yet" : "No matching quotes",
-            description: status === "all" && !searchProps.search
-              ? "Create a quote to start tracking proposals for your customers."
-              : "Try a different search or status.",
-            ...(status === "all" && !searchProps.search
-              ? { actionText: "Add Quote", onAction: () => navigate({ to: "/tenant/accounts/quotes/add" }) }
-              : {}),
+            title: "No Quotes Yet",
+            description:
+              "Create a quote to start tracking proposals for your customers.",
+            actionText: "Add Quote",
+            onAction: () => navigate({ to: "/staff/accounts/quotes/add" }),
           }}
         >
           {() =>
-            quotes.length > 0 ? (
-              <CustomTable data={quotes} columns={columns} actions={actions} ring={false} />
+            filteredQuotes.length > 0 ? (
+              <CustomTable
+                data={filteredQuotes}
+                columns={columns}
+                actions={actions}
+                ring={false}
+              />
             ) : (
               <div className="rounded-b-box border border-base-200 bg-base-100 px-4 py-10 text-center text-sm text-base-content/70">
-                No quotes match these filters.
+                No quotes match your search.
               </div>
             )
           }
