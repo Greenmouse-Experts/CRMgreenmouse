@@ -3,7 +3,6 @@ import { FormProvider, useForm } from "react-hook-form";
 import { ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
 import PageHeader from "@/components/Headers/PageHeader";
-import { useContacts, useCompanies } from "@/api/crmApi";
 import { useCreateQuote } from "@/api/salesApi";
 import QuoteFields, {
   defaultQuoteValues,
@@ -17,16 +16,14 @@ export const Route = createFileRoute("/tenant/accounts/quotes/add/")({
 
 function AddQuotePage() {
   const navigate = useNavigate();
-  const contactsQuery = useContacts();
-  const companiesQuery = useCompanies();
   const createQuote = useCreateQuote();
   const methods = useForm<QuoteFormValues>({
     defaultValues: defaultQuoteValues(),
   });
 
   const onSubmit = async (values: QuoteFormValues) => {
-    if (!values.contactId && !values.companyRecordId) {
-      toast.error("Select a contact, a company, or both.");
+    if (!values.clientName.trim()) {
+      toast.error("Enter a client name.");
       return;
     }
 
@@ -64,18 +61,7 @@ function AddQuotePage() {
           onSubmit={methods.handleSubmit(onSubmit)}
           className="space-y-6 rounded-xl bg-base-100 p-5 sm:p-8"
         >
-          <QuoteFields
-            contacts={contactsQuery.data || []}
-            companies={companiesQuery.data || []}
-            contactsLoading={contactsQuery.isLoading}
-            companiesLoading={companiesQuery.isLoading}
-          />
-          {(contactsQuery.isError || companiesQuery.isError) && (
-            <p role="alert" className="text-sm text-error">
-              Some customer options could not be loaded. Retry the page to see
-              the full list.
-            </p>
-          )}
+          <QuoteFields />
           <div className="flex flex-wrap justify-end gap-3 border-t border-base-200 pt-5">
             <Link to="/tenant/accounts/quotes" className="btn btn-ghost">
               Cancel

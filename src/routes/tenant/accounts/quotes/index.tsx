@@ -139,10 +139,10 @@ function RouteComponent() {
   const openEdit = (quote: Quote) => {
     const status = quote.status?.toLowerCase() || "draft";
     setEditingQuote(quote);
+    const clientLabel = getClientLabel(quote);
     methods.reset({
       date: quote.date?.slice(0, 10) || "",
-      contactId: quote.contactId || "",
-      companyRecordId: quote.companyRecordId || "",
+      clientName: quote.clientName?.trim() || (clientLabel === "—" ? "" : clientLabel),
       amount: quote.amount,
       description: quote.description || "",
       status,
@@ -273,13 +273,7 @@ function RouteComponent() {
       <Modal ref={formModal.ref} title="Edit Quote">
         <FormProvider {...methods}>
           <form onSubmit={methods.handleSubmit(onSubmit)} className="space-y-6">
-            <QuoteFields
-              contacts={contacts}
-              companies={companies}
-              contactsLoading={contactsQuery.isLoading}
-              companiesLoading={companiesQuery.isLoading}
-              editingStatus={editingQuote?.status}
-            />
+            <QuoteFields editingStatus={editingQuote?.status} />
             <div className="modal-action">
               <button
                 type="button"

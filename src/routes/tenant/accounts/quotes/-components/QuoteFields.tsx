@@ -3,7 +3,6 @@ import SimpleInput from "@/components/inputs/SimpleInput";
 import FormattedPriceInput from "@/components/inputs/FormattedPriceInput";
 import LocalSelect from "@/components/inputs/LocalSelect";
 import SimpleTextArea from "@/components/inputs/SimpleTextArea";
-import type { Company, Contact } from "@/api/crmApi";
 import type { Quote } from "@/api/salesApi";
 import MarkdownEditor from "./MarkdownEditor";
 
@@ -12,8 +11,7 @@ export interface QuoteFormValues {
   amount: number;
   description: string;
   status: string;
-  contactId: string;
-  companyRecordId: string;
+  clientName: string;
   expiresAt: string;
   notes: string;
 }
@@ -23,8 +21,7 @@ export const defaultQuoteValues = (): QuoteFormValues => ({
   amount: 0,
   description: "",
   status: "draft",
-  contactId: "",
-  companyRecordId: "",
+  clientName: "",
   expiresAt: "",
   notes: "",
 });
@@ -34,27 +31,16 @@ export const quotePayload = (values: QuoteFormValues): Partial<Quote> => ({
   amount: Number(values.amount),
   description: values.description.trim(),
   status: values.status,
-  ...(values.contactId ? { contactId: values.contactId } : {}),
-  ...(values.companyRecordId
-    ? { companyRecordId: values.companyRecordId }
-    : {}),
+  clientName: values.clientName.trim(),
   ...(values.expiresAt ? { expiresAt: values.expiresAt } : {}),
   ...(values.notes.trim() ? { notes: values.notes.trim() } : {}),
 });
 
 interface QuoteFieldsProps {
-  contacts: Contact[];
-  companies: Company[];
-  contactsLoading?: boolean;
-  companiesLoading?: boolean;
   editingStatus?: string;
 }
 
 export default function QuoteFields({
-  contacts,
-  companies,
-  contactsLoading,
-  companiesLoading,
   editingStatus,
 }: QuoteFieldsProps) {
   const methods = useFormContext<QuoteFormValues>();
@@ -120,47 +106,20 @@ export default function QuoteFields({
 
       <div className="space-y-3">
         <div>
-          <h2 className="text-base font-semibold">Customer details</h2>
+          <h2 className="text-base font-semibold">Client details</h2>
           <p className="text-sm text-base-content/70">
-            Link a contact, a company, or both to this quote.
+            Who is this quote for?
           </p>
         </div>
-        <div className="grid gap-4 sm:grid-cols-2">
-          <div>
-            <LocalSelect label="Contact" {...methods.register("contactId")}>
-              <option value="">No contact selected</option>
-              {contacts.map((contact) => (
-                <option key={contact.id} value={contact.id}>
-                  {`${contact.firstName || ""} ${contact.lastName || ""}`.trim() ||
-                    contact.email}
-                </option>
-              ))}
-            </LocalSelect>
-            {contactsLoading && (
-              <p className="mt-1 text-xs text-base-content/70">
-                Loading contacts...
-              </p>
-            )}
-          </div>
-          <div>
-            <LocalSelect
-              label="Company"
-              {...methods.register("companyRecordId")}
-            >
-              <option value="">No company selected</option>
-              {companies.map((company) => (
-                <option key={company.id} value={company.id}>
-                  {company.name}
-                </option>
-              ))}
-            </LocalSelect>
-            {companiesLoading && (
-              <p className="mt-1 text-xs text-base-content/70">
-                Loading companies...
-              </p>
-            )}
-          </div>
-        </div>
+        <SimpleInput
+          label="Client name"
+          placeholder="Customer or company name"
+          required
+          {...methods.register("clientName", {
+            required: "Client name is required",
+            validate: (value) => !!value.trim() || "Client name is required",
+          })}
+        />
       </div>
 
       <div className="space-y-3">
