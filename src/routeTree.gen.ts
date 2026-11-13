@@ -11,10 +11,12 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TestRouteRouteImport } from './routes/test/route'
 import { Route as TenantRouteRouteImport } from './routes/tenant/route'
+import { Route as HrRouteRouteImport } from './routes/hr/route'
 import { Route as AdminRouteRouteImport } from './routes/admin/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as TestIndexRouteImport } from './routes/test/index'
 import { Route as TenantIndexRouteImport } from './routes/tenant/index'
+import { Route as HrIndexRouteImport } from './routes/hr/index'
 import { Route as HomeIndexRouteImport } from './routes/home/index'
 import { Route as AdminIndexRouteImport } from './routes/admin/index'
 import { Route as TestHomeRouteImport } from './routes/test/home'
@@ -115,6 +117,11 @@ const TenantRouteRoute = TenantRouteRouteImport.update({
   path: '/tenant',
   getParentRoute: () => rootRouteImport,
 } as any)
+const HrRouteRoute = HrRouteRouteImport.update({
+  id: '/hr',
+  path: '/hr',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminRouteRoute = AdminRouteRouteImport.update({
   id: '/admin',
   path: '/admin',
@@ -134,6 +141,11 @@ const TenantIndexRoute = TenantIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => TenantRouteRoute,
+} as any)
+const HrIndexRoute = HrIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => HrRouteRoute,
 } as any)
 const HomeIndexRoute = HomeIndexRouteImport.update({
   id: '/home/',
@@ -634,6 +646,7 @@ const AdminContactsCompaniesDetailsIdIndexRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteRouteWithChildren
+  '/hr': typeof HrRouteRouteWithChildren
   '/tenant': typeof TenantRouteRouteWithChildren
   '/test': typeof TestRouteRouteWithChildren
   '/admin/settings': typeof AdminSettingsRouteRouteWithChildren
@@ -643,6 +656,7 @@ export interface FileRoutesByFullPath {
   '/test/home': typeof TestHomeRoute
   '/admin/': typeof AdminIndexRoute
   '/home': typeof HomeIndexRoute
+  '/hr/': typeof HrIndexRoute
   '/tenant/': typeof TenantIndexRoute
   '/test/': typeof TestIndexRoute
   '/auth/forgot-password/new-password': typeof AuthForgotPasswordNewPasswordRoute
@@ -733,6 +747,7 @@ export interface FileRoutesByTo {
   '/test/home': typeof TestHomeRoute
   '/admin': typeof AdminIndexRoute
   '/home': typeof HomeIndexRoute
+  '/hr': typeof HrIndexRoute
   '/tenant': typeof TenantIndexRoute
   '/test': typeof TestIndexRoute
   '/auth/forgot-password/new-password': typeof AuthForgotPasswordNewPasswordRoute
@@ -822,6 +837,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteRouteWithChildren
+  '/hr': typeof HrRouteRouteWithChildren
   '/tenant': typeof TenantRouteRouteWithChildren
   '/test': typeof TestRouteRouteWithChildren
   '/admin/settings': typeof AdminSettingsRouteRouteWithChildren
@@ -831,6 +847,7 @@ export interface FileRoutesById {
   '/test/home': typeof TestHomeRoute
   '/admin/': typeof AdminIndexRoute
   '/home/': typeof HomeIndexRoute
+  '/hr/': typeof HrIndexRoute
   '/tenant/': typeof TenantIndexRoute
   '/test/': typeof TestIndexRoute
   '/auth/forgot-password/new-password': typeof AuthForgotPasswordNewPasswordRoute
@@ -921,6 +938,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/admin'
+    | '/hr'
     | '/tenant'
     | '/test'
     | '/admin/settings'
@@ -930,6 +948,7 @@ export interface FileRouteTypes {
     | '/test/home'
     | '/admin/'
     | '/home'
+    | '/hr/'
     | '/tenant/'
     | '/test/'
     | '/auth/forgot-password/new-password'
@@ -1020,6 +1039,7 @@ export interface FileRouteTypes {
     | '/test/home'
     | '/admin'
     | '/home'
+    | '/hr'
     | '/tenant'
     | '/test'
     | '/auth/forgot-password/new-password'
@@ -1108,6 +1128,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/admin'
+    | '/hr'
     | '/tenant'
     | '/test'
     | '/admin/settings'
@@ -1117,6 +1138,7 @@ export interface FileRouteTypes {
     | '/test/home'
     | '/admin/'
     | '/home/'
+    | '/hr/'
     | '/tenant/'
     | '/test/'
     | '/auth/forgot-password/new-password'
@@ -1206,6 +1228,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AdminRouteRoute: typeof AdminRouteRouteWithChildren
+  HrRouteRoute: typeof HrRouteRouteWithChildren
   TenantRouteRoute: typeof TenantRouteRouteWithChildren
   TestRouteRoute: typeof TestRouteRouteWithChildren
   AuthRegisterRouteRoute: typeof AuthRegisterRouteRouteWithChildren
@@ -1232,6 +1255,13 @@ declare module '@tanstack/react-router' {
       path: '/tenant'
       fullPath: '/tenant'
       preLoaderRoute: typeof TenantRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/hr': {
+      id: '/hr'
+      path: '/hr'
+      fullPath: '/hr'
+      preLoaderRoute: typeof HrRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin': {
@@ -1261,6 +1291,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/tenant/'
       preLoaderRoute: typeof TenantIndexRouteImport
       parentRoute: typeof TenantRouteRoute
+    }
+    '/hr/': {
+      id: '/hr/'
+      path: '/'
+      fullPath: '/hr/'
+      preLoaderRoute: typeof HrIndexRouteImport
+      parentRoute: typeof HrRouteRoute
     }
     '/home/': {
       id: '/home/'
@@ -1982,6 +2019,17 @@ const AdminRouteRouteWithChildren = AdminRouteRoute._addFileChildren(
   AdminRouteRouteChildren,
 )
 
+interface HrRouteRouteChildren {
+  HrIndexRoute: typeof HrIndexRoute
+}
+
+const HrRouteRouteChildren: HrRouteRouteChildren = {
+  HrIndexRoute: HrIndexRoute,
+}
+
+const HrRouteRouteWithChildren =
+  HrRouteRoute._addFileChildren(HrRouteRouteChildren)
+
 interface TenantSettingsRouteRouteChildren {
   TenantSettingsIndexRoute: typeof TenantSettingsIndexRoute
   TenantSettingsNotificationsIndexRoute: typeof TenantSettingsNotificationsIndexRoute
@@ -2129,6 +2177,7 @@ const AuthVerifyRouteRouteWithChildren = AuthVerifyRouteRoute._addFileChildren(
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRouteRoute: AdminRouteRouteWithChildren,
+  HrRouteRoute: HrRouteRouteWithChildren,
   TenantRouteRoute: TenantRouteRouteWithChildren,
   TestRouteRoute: TestRouteRouteWithChildren,
   AuthRegisterRouteRoute: AuthRegisterRouteRouteWithChildren,
