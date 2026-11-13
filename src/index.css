@@ -151,3 +151,11 @@ html {
     0 10px 25px -5px rgba(0, 0, 0, 0.15),
     0 8px 10px -6px rgba(0, 0, 0, 0.1) !important;
 }
+
+@utility btn {
+  @apply whitespace-nowrap;
+}
+
+@utility btn-outline {
+  @apply fade;
+}

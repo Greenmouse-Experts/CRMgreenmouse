@@ -199,9 +199,24 @@ const recruitmentStages = [
 ];
 
 const milestones = [
-  { initials: "AO", name: "Amara Okafor", detail: "Birthday · Nov 14", icon: "cake" },
-  { initials: "TA", name: "Tunde Adeyemi", detail: "Birthday · Nov 15", icon: "cake" },
-  { initials: "CE", name: "Chiamaka Eze", detail: "Birthday · Nov 16", icon: "cake" },
+  {
+    initials: "AO",
+    name: "Amara Okafor",
+    detail: "Birthday · Nov 14",
+    icon: "cake",
+  },
+  {
+    initials: "TA",
+    name: "Tunde Adeyemi",
+    detail: "Birthday · Nov 15",
+    icon: "cake",
+  },
+  {
+    initials: "CE",
+    name: "Chiamaka Eze",
+    detail: "Birthday · Nov 16",
+    icon: "cake",
+  },
   {
     initials: "ZM",
     name: "Zainab Musa",
@@ -272,7 +287,7 @@ function DashboardPanel({
         <div>
           <h2 className="font-semibold text-base-content">{title}</h2>
           {description && (
-            <p className="mt-1 text-xs text-base-content/60">{description}</p>
+            <p className="mt-1  text-base-content/60">{description}</p>
           )}
         </div>
         {action}
@@ -294,7 +309,7 @@ function ChartTooltip({
   if (!active || !payload?.length) return null;
 
   return (
-    <div className="rounded-lg border border-base-300 bg-base-100 px-3 py-2 text-xs shadow-lg">
+    <div className="rounded-lg border border-base-300 bg-base-100 px-3 py-2  shadow-lg">
       <p className="mb-1 font-medium text-base-content">{label}</p>
       {payload.map((item) => (
         <p key={item.name} style={{ color: item.color }}>
@@ -342,7 +357,7 @@ export default function HrDashboard() {
 
       <div className="flex flex-wrap items-center justify-between gap-2">
         <p className="text-sm text-base-content/65">{dateLabel}</p>
-        <span className="badge badge-ghost gap-1.5 text-xs">
+        <span className="badge badge-ghost gap-1.5 ">
           <CircleAlert className="size-3.5" />
           Sample workforce data
         </span>
@@ -463,30 +478,30 @@ export default function HrDashboard() {
           action={<span className="badge badge-warning badge-sm">5</span>}
           className="xl:col-span-7"
         >
-          <div className="mt-3 divide-y divide-base-200">
+          <div className="mt-3 divide-y space-y-2 divide-base-200">
             {approvals.map((item) => (
               <Link
                 key={`${item.type}-${item.person}`}
                 to={item.path}
-                className="group flex items-center gap-3 py-3 transition-colors hover:bg-base-200/50 focus-visible:rounded-box focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+                className="group flex items-center gap-3 py-3 transition-colors  focus-visible:rounded-box focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 ring px-4 fade rounded-md hover:bg-primary/20"
               >
                 <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-base-200 text-base-content/70">
                   {item.icon}
                 </span>
                 <span className="min-w-0 flex-1">
                   <span className="flex flex-wrap items-center gap-x-2 gap-y-0.5">
-                    <span className="text-xs font-medium text-base-content/60">
-                      {item.type}
+                    <span className=" font-medium text-base-content/60">
+                      {item.type}:
                     </span>
-                    <span className="text-sm font-semibold text-base-content">
+                    <span className=" font-semibold text-base-content">
                       {item.person}
                     </span>
                   </span>
-                  <span className="block truncate text-xs text-base-content/60">
+                  <span className="block truncate text-sm  text-base-content/60">
                     {item.detail}
                   </span>
                 </span>
-                <span className="shrink-0 text-xs text-base-content/50">
+                <span className="shrink-0  text-base-content/50">
                   {item.age}
                 </span>
               </Link>
@@ -501,7 +516,7 @@ export default function HrDashboard() {
             action={
               <Link
                 to={hrPaths.attendance}
-                className="link link-primary text-xs focus-visible:rounded-sm focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+                className="link link-primary  focus-visible:rounded-sm focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
               >
                 Open attendance
               </Link>
@@ -554,7 +569,7 @@ export default function HrDashboard() {
             action={
               <Link
                 to={hrPaths.recruitment}
-                className="link link-primary text-xs focus-visible:rounded-sm focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+                className="link link-primary  focus-visible:rounded-sm focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
               >
                 View pipeline
               </Link>
@@ -564,7 +579,7 @@ export default function HrDashboard() {
               {recruitmentStages.map((stage) => (
                 <div
                   key={stage.name}
-                  className="grid grid-cols-[7rem_1fr_2rem] items-center gap-3 text-xs"
+                  className="grid grid-cols-[7rem_1fr_2rem] items-center gap-3 "
                 >
                   <span className="truncate text-base-content/70">
                     {stage.name}
@@ -594,7 +609,7 @@ export default function HrDashboard() {
           action={
             <Link
               to={hrPaths.employees}
-              className="link link-primary text-xs focus-visible:rounded-sm focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+              className="link link-primary  focus-visible:rounded-sm focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
             >
               View employees
             </Link>
@@ -606,14 +621,14 @@ export default function HrDashboard() {
                 key={milestone.name}
                 className="flex items-center gap-3 py-3"
               >
-                <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-semibold text-primary">
+                <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-primary/10  font-semibold text-primary">
                   {milestone.initials}
                 </span>
                 <span className="min-w-0 flex-1">
                   <span className="block truncate text-sm font-medium">
                     {milestone.name}
                   </span>
-                  <span className="block text-xs text-base-content/60">
+                  <span className="block  text-base-content/60">
                     {milestone.detail}
                   </span>
                 </span>
@@ -634,10 +649,7 @@ export default function HrDashboard() {
         >
           <ol className="mt-3 divide-y divide-base-200">
             {recentActivity.map((item, index) => (
-              <li
-                key={item.text}
-                className="flex items-start gap-3 py-3"
-              >
+              <li key={item.text} className="flex items-start gap-3 py-3">
                 <span
                   className={`mt-1 flex size-6 shrink-0 items-center justify-center rounded-full ${
                     index === 0
@@ -656,7 +668,7 @@ export default function HrDashboard() {
                 <span className="min-w-0 flex-1 text-sm leading-5 text-base-content/80">
                   {item.text}
                 </span>
-                <span className="shrink-0 pt-0.5 text-xs text-base-content/50">
+                <span className="shrink-0 pt-0.5  text-base-content/50">
                   {item.time}
                 </span>
               </li>
@@ -673,7 +685,7 @@ export default function HrDashboard() {
               to={action.path}
               className="btn btn-sm btn-outline"
             >
-              <span className="size-4">{action.icon}</span>
+              {action.icon}
               {action.label}
             </Link>
           ))}
