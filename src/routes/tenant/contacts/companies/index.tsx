@@ -6,6 +6,7 @@ import CustomTable from "@/components/tables/CustomTable";
 import type { Actions } from "@/components/tables/pop-up";
 import CompanySummary from "./-components/CompanySummary";
 import Modal, { type ModalHandle } from "@/components/DialogModal";
+import BulkImport from "@/components/imports/BulkImport";
 import CreateTicketModal, {
   type CreateTicketModalHandle,
 } from "@/components/support/CreateTicketModal";
@@ -24,6 +25,7 @@ import {
   Eye,
   Trash2,
   LifeBuoy,
+  FileUp,
 } from "lucide-react";
 
 export const Route = createFileRoute("/tenant/contacts/companies/")({
@@ -37,6 +39,7 @@ function RouteComponent() {
 
   const detailsModalRef = useRef<ModalHandle>(null);
   const ticketModalRef = useRef<CreateTicketModalHandle>(null);
+  const importModalRef = useRef<ModalHandle>(null);
   const [selectedCompany, setSelectedCompany] = useState<Company | null>(null);
 
   const companies = query.data || [];
@@ -184,7 +187,14 @@ function RouteComponent() {
         title="Companies"
         description="Directory of enterprise accounts, corporate partners, and suppliers"
       >
-        <div>
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            className="btn btn-outline"
+            onClick={() => importModalRef.current?.open()}
+          >
+            <FileUp className="size-4 mr-1" /> Import
+          </button>
           <Link to="/tenant/contacts/companies/add" className="btn btn-primary">
             <PlusCircleIcon className="size-4 mr-1" /> Add Company
           </Link>
@@ -327,6 +337,14 @@ function RouteComponent() {
         )}
       </Modal>
       <CreateTicketModal ref={ticketModalRef} />
+      <Modal ref={importModalRef} title="Import companies">
+        <BulkImport
+          entity="companies"
+          bare
+          title="Upload a CSV file"
+          description="Import company accounts in bulk. Download the template to match the expected columns."
+        />
+      </Modal>
     </>
   );
 }

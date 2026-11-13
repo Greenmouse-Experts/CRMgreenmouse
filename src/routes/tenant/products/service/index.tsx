@@ -10,10 +10,12 @@ import {
   CheckCircle,
   DollarSign,
   Layers,
+  FileUp,
 } from "lucide-react";
 import CustomTable from "@/components/tables/CustomTable";
 import type { Actions } from "@/components/tables/pop-up";
 import Modal, { type ModalHandle } from "@/components/DialogModal";
+import BulkImport from "@/components/imports/BulkImport";
 import PageLoader from "@/components/layout/PageLoader";
 import {
   useServices,
@@ -158,6 +160,7 @@ function RouteComponent() {
   const addModalRef = useRef<ModalHandle>(null);
   const editModalRef = useRef<ModalHandle>(null);
   const detailsModalRef = useRef<ModalHandle>(null);
+  const importModalRef = useRef<ModalHandle>(null);
 
   const [selectedService, setSelectedService] = useState<ServiceItem | null>(
     null,
@@ -352,6 +355,13 @@ function RouteComponent() {
         description="Manage service offerings, consulting rates, and subscriptions"
       >
         <div className="flex items-center gap-2">
+          <button
+            type="button"
+            className="btn btn-outline btn-sm"
+            onClick={() => importModalRef.current?.open()}
+          >
+            <FileUp className="size-4" /> Import
+          </button>
           <Link
             to="/tenant/products/service/categories"
             className="btn btn-outline btn-sm"
@@ -561,6 +571,15 @@ function RouteComponent() {
             </div>
           </div>
         )}
+      </Modal>
+
+      <Modal ref={importModalRef} title="Import services">
+        <BulkImport
+          entity="services"
+          bare
+          title="Upload a CSV file"
+          description="Import service offerings in bulk. Download the template to match the expected columns."
+        />
       </Modal>
     </>
   );

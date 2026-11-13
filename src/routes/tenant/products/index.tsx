@@ -4,10 +4,11 @@ import { Controller, useForm } from "react-hook-form";
 import SimpleContainer from "@/components/SimpleContainer";
 import ContainerRow from "@/components/ContainerRow";
 import { useSearch } from "@/stores/data";
-import { PlusCircleIcon, Package, Layers } from "lucide-react";
+import { PlusCircleIcon, Package, Layers, FileUp } from "lucide-react";
 import CustomTable from "@/components/tables/CustomTable";
 import type { Actions } from "@/components/tables/pop-up";
 import Modal, { type ModalHandle } from "@/components/DialogModal";
+import BulkImport from "@/components/imports/BulkImport";
 import PageHeader from "@/components/Headers/PageHeader";
 import PageLoader from "@/components/layout/PageLoader";
 import ProductSummary from "./-components/ProductSummary";
@@ -60,6 +61,7 @@ function RouteComponent() {
   const editModalRef = useRef<ModalHandle>(null);
   const detailsModalRef = useRef<ModalHandle>(null);
   const stockModalRef = useRef<ModalHandle>(null);
+  const importModalRef = useRef<ModalHandle>(null);
 
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [stockAdjustment, setStockAdjustment] = useState<number>(0);
@@ -362,6 +364,13 @@ function RouteComponent() {
         description="Manage your inventory items, pricing, and stock levels"
       >
         <div className="flex items-center gap-2">
+          <button
+            type="button"
+            className="btn btn-outline btn-sm"
+            onClick={() => importModalRef.current?.open()}
+          >
+            <FileUp className="size-4" /> Import
+          </button>
           <Link
             to="/tenant/products/categories"
             className="btn btn-outline btn-sm"
@@ -799,6 +808,15 @@ function RouteComponent() {
             </div>
           </div>
         )}
+      </Modal>
+
+      <Modal ref={importModalRef} title="Import products">
+        <BulkImport
+          entity="products"
+          bare
+          title="Upload a CSV file"
+          description="Import inventory products in bulk. Download the template to match the expected columns."
+        />
       </Modal>
     </>
   );

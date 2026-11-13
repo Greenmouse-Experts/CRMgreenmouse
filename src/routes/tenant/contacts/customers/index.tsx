@@ -12,6 +12,7 @@ import {
   Building2,
   Eye,
   Trash2,
+  FileUp,
 } from "lucide-react";
 import CustomTable from "@/components/tables/CustomTable";
 import type { Actions } from "@/components/tables/pop-up";
@@ -19,6 +20,7 @@ import CustomerSummary from "./-components/CustomerSum";
 import PageHeader from "@/components/Headers/PageHeader";
 import PageLoader from "@/components/layout/PageLoader";
 import Modal, { type ModalHandle } from "@/components/DialogModal";
+import BulkImport from "@/components/imports/BulkImport";
 import CreateTicketModal, {
   type CreateTicketModalHandle,
 } from "@/components/support/CreateTicketModal";
@@ -37,6 +39,7 @@ function RouteComponent() {
 
   const detailsModalRef = useRef<ModalHandle>(null);
   const ticketModalRef = useRef<CreateTicketModalHandle>(null);
+  const importModalRef = useRef<ModalHandle>(null);
   const [selectedContact, setSelectedContact] = useState<Contact | null>(null);
 
   const contacts = query.data || [];
@@ -185,7 +188,14 @@ function RouteComponent() {
         title="Customers & Contacts"
         description="Directory of client contacts, accounts, and engagement history"
       >
-        <div>
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            className="btn btn-outline"
+            onClick={() => importModalRef.current?.open()}
+          >
+            <FileUp className="size-4 mr-1" /> Import
+          </button>
           <Link to="/tenant/contacts/customers/add" className="btn btn-primary">
             <PlusCircleIcon className="size-4 mr-1" /> Add Customer
           </Link>
@@ -312,6 +322,14 @@ function RouteComponent() {
         )}
       </Modal>
       <CreateTicketModal ref={ticketModalRef} />
+      <Modal ref={importModalRef} title="Import customers">
+        <BulkImport
+          entity="contacts"
+          bare
+          title="Upload a CSV file"
+          description="Import customer contacts in bulk. Download the template to match the expected columns."
+        />
+      </Modal>
     </>
   );
 }
