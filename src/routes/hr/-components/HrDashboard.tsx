@@ -37,7 +37,7 @@ const hrPaths: Record<
   "employees" | "reports" | "attendance" | "recruitment" | "leave" | "payroll",
   string
 > = {
-  employees: "/hr/employees",
+  employees: "/hr/staffs",
   reports: "/hr/reports",
   attendance: "/hr/attendance-time",
   recruitment: "/hr/recruitment",

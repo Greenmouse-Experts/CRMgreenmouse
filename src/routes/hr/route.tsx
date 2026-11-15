@@ -50,7 +50,7 @@ const nav_links: NavSection[] = [
     title: "People",
     items: [
       {
-        path: "/hr/employees",
+        path: "/hr/staffs",
         label: "Employees",
         icon: <Users size={ICON_SIZE} />,
       },

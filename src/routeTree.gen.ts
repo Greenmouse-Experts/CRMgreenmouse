@@ -32,6 +32,7 @@ import { Route as TenantSettingsIndexRouteImport } from './routes/tenant/setting
 import { Route as TenantProductsIndexRouteImport } from './routes/tenant/products/index'
 import { Route as TenantOrdersIndexRouteImport } from './routes/tenant/orders/index'
 import { Route as TenantNotificationsIndexRouteImport } from './routes/tenant/notifications.index'
+import { Route as HrStaffsIndexRouteImport } from './routes/hr/staffs/index'
 import { Route as AuthVerifyIndexRouteImport } from './routes/auth/verify/index'
 import { Route as AuthStaffIndexRouteImport } from './routes/auth/staff/index'
 import { Route as AuthRegisterIndexRouteImport } from './routes/auth/register/index'
@@ -223,6 +224,11 @@ const TenantNotificationsIndexRoute =
     path: '/notifications/',
     getParentRoute: () => TenantRouteRoute,
   } as any)
+const HrStaffsIndexRoute = HrStaffsIndexRouteImport.update({
+  id: '/staffs/',
+  path: '/staffs/',
+  getParentRoute: () => HrRouteRoute,
+} as any)
 const AuthVerifyIndexRoute = AuthVerifyIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -674,6 +680,7 @@ export interface FileRoutesByFullPath {
   '/auth/register/': typeof AuthRegisterIndexRoute
   '/auth/staff': typeof AuthStaffIndexRoute
   '/auth/verify/': typeof AuthVerifyIndexRoute
+  '/hr/staffs': typeof HrStaffsIndexRoute
   '/tenant/notifications': typeof TenantNotificationsIndexRoute
   '/tenant/orders': typeof TenantOrdersIndexRoute
   '/tenant/products': typeof TenantProductsIndexRoute
@@ -765,6 +772,7 @@ export interface FileRoutesByTo {
   '/auth/register': typeof AuthRegisterIndexRoute
   '/auth/staff': typeof AuthStaffIndexRoute
   '/auth/verify': typeof AuthVerifyIndexRoute
+  '/hr/staffs': typeof HrStaffsIndexRoute
   '/tenant/notifications': typeof TenantNotificationsIndexRoute
   '/tenant/orders': typeof TenantOrdersIndexRoute
   '/tenant/products': typeof TenantProductsIndexRoute
@@ -865,6 +873,7 @@ export interface FileRoutesById {
   '/auth/register/': typeof AuthRegisterIndexRoute
   '/auth/staff/': typeof AuthStaffIndexRoute
   '/auth/verify/': typeof AuthVerifyIndexRoute
+  '/hr/staffs/': typeof HrStaffsIndexRoute
   '/tenant/notifications/': typeof TenantNotificationsIndexRoute
   '/tenant/orders/': typeof TenantOrdersIndexRoute
   '/tenant/products/': typeof TenantProductsIndexRoute
@@ -966,6 +975,7 @@ export interface FileRouteTypes {
     | '/auth/register/'
     | '/auth/staff'
     | '/auth/verify/'
+    | '/hr/staffs'
     | '/tenant/notifications'
     | '/tenant/orders'
     | '/tenant/products'
@@ -1057,6 +1067,7 @@ export interface FileRouteTypes {
     | '/auth/register'
     | '/auth/staff'
     | '/auth/verify'
+    | '/hr/staffs'
     | '/tenant/notifications'
     | '/tenant/orders'
     | '/tenant/products'
@@ -1156,6 +1167,7 @@ export interface FileRouteTypes {
     | '/auth/register/'
     | '/auth/staff/'
     | '/auth/verify/'
+    | '/hr/staffs/'
     | '/tenant/notifications/'
     | '/tenant/orders/'
     | '/tenant/products/'
@@ -1403,6 +1415,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/tenant/notifications'
       preLoaderRoute: typeof TenantNotificationsIndexRouteImport
       parentRoute: typeof TenantRouteRoute
+    }
+    '/hr/staffs/': {
+      id: '/hr/staffs/'
+      path: '/staffs'
+      fullPath: '/hr/staffs'
+      preLoaderRoute: typeof HrStaffsIndexRouteImport
+      parentRoute: typeof HrRouteRoute
     }
     '/auth/verify/': {
       id: '/auth/verify/'
@@ -2021,10 +2040,12 @@ const AdminRouteRouteWithChildren = AdminRouteRoute._addFileChildren(
 
 interface HrRouteRouteChildren {
   HrIndexRoute: typeof HrIndexRoute
+  HrStaffsIndexRoute: typeof HrStaffsIndexRoute
 }
 
 const HrRouteRouteChildren: HrRouteRouteChildren = {
   HrIndexRoute: HrIndexRoute,
+  HrStaffsIndexRoute: HrStaffsIndexRoute,
 }
 
 const HrRouteRouteWithChildren =
