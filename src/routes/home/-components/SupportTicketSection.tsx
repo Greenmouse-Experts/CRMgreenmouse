@@ -28,12 +28,17 @@ export default function SupportTicketSection() {
     setTimeout(() => {
       setLoading(false);
       setSubmitted(true);
-      toast.success("Support ticket submitted! Our team will follow up shortly.");
+      toast.success(
+        "Support ticket submitted! Our team will follow up shortly.",
+      );
     }, 600);
   };
 
   return (
-    <section id="support" className="relative py-20 sm:py-28 bg-[#0f162e] text-white overflow-hidden">
+    <section
+      id="support"
+      className="relative py-20 sm:py-28 bg-[#0f162e] text-white overflow-hidden"
+    >
       {/* Background Subtle Dot Pattern */}
       <div
         className="pointer-events-none absolute inset-0 opacity-15"
@@ -50,7 +55,7 @@ export default function SupportTicketSection() {
           {/* Left Text & Timeline */}
           <div className="lg:col-span-5 space-y-8 text-left">
             <div className="space-y-4">
-              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight leading-tight">
+              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-medium tracking-tight leading-tight">
                 Tell us what <br />
                 you need.
               </h2>

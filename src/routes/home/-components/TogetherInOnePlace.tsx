@@ -25,7 +25,7 @@ export default function TogetherInOnePlace() {
 
           {/* Right Content */}
           <div className="lg:col-span-6 space-y-6">
-            <h2 className="text-3xl sm:text-4xl lg:text-[44px] font-extrabold tracking-tight text-slate-900 leading-tight">
+            <h2 className="text-3xl sm:text-4xl lg:text-[44px] font-medium tracking-tight text-slate-900 leading-tight">
               Bring your business tools <br />
               together in one place.
             </h2>

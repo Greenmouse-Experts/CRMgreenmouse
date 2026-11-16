@@ -47,7 +47,7 @@ export default function FaqSection() {
         <div className="grid gap-12 lg:grid-cols-12 lg:gap-16">
           {/* Left Title & Subtitle */}
           <div className="lg:col-span-5 space-y-4 text-left">
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-slate-900 leading-tight">
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-medium tracking-tight text-slate-900 leading-tight">
               Frequently <br />
               asked questions.
             </h2>

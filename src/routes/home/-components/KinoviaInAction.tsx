@@ -6,7 +6,7 @@ export default function KinoviaInAction() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Section Title */}
         <div className="mx-auto max-w-2xl text-center space-y-3 mb-12 sm:mb-16">
-          <h2 className="text-3xl sm:text-4xl lg:text-[44px] font-extrabold tracking-tight text-slate-900 leading-tight">
+          <h2 className="text-3xl sm:text-4xl lg:text-[44px] font-medium tracking-tight text-slate-900 leading-tight">
             See KINOVIA <span className="text-[#5958ed]">in action.</span>
           </h2>
           <p className="text-sm sm:text-base text-slate-600 font-normal max-w-lg mx-auto">
@@ -34,7 +34,7 @@ export default function KinoviaInAction() {
                 FEATURED PRODUCT: CRM
               </span>
 
-              <h3 className="text-3xl sm:text-4xl font-extrabold tracking-tight leading-tight">
+              <h3 className="text-3xl sm:text-4xl font-medium tracking-tight leading-tight">
                 Your customers. <br />
                 Your pipeline. <br />
                 <span className="text-[#a5a4f7]">One clear view.</span>

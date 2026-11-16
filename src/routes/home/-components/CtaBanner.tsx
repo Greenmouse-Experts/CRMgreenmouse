@@ -13,7 +13,7 @@ export default function CtaBanner() {
       />
 
       <div className="relative z-10 mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 space-y-6">
-        <h2 className="text-3xl sm:text-5xl lg:text-[56px] font-extrabold tracking-tight leading-[1.12]">
+        <h2 className="text-3xl sm:text-5xl lg:text-[56px] font-medium tracking-tight leading-[1.12]">
           Smarter tools. <br />
           Stronger connections. <br />
           Better business.

@@ -36,12 +36,14 @@ export default function SolutionsGrid() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="mx-auto max-w-2xl text-center space-y-3 mb-12 sm:mb-16">
-          <h2 className="text-3xl sm:text-4xl lg:text-[44px] font-extrabold tracking-tight text-slate-900 leading-tight">
+          <h2 className="text-3xl sm:text-4xl lg:text-[44px] font-medium tracking-tight text-slate-900 leading-tight">
             Three solutions. <br />
-            One <span className="text-[#5958ed] italic font-serif">connected</span> experience.
+            One <span className="text-[#5958ed] italic ">connected</span>{" "}
+            experience.
           </h2>
           <p className="text-sm sm:text-base text-slate-600 font-normal max-w-lg mx-auto">
-            Start with the tool you need today. Each one shares information with the others.
+            Start with the tool you need today. Each one shares information with
+            the others.
           </p>
         </div>
 
