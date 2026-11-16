@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { Menu, X, LogIn, ChevronRight, LayoutDashboard } from "lucide-react";
+import { Menu, X, ArrowRight, LayoutDashboard } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import { useAuth } from "@/store/authStore";
 
@@ -23,46 +23,45 @@ export default function HomeNav() {
   }, [isOpen]);
 
   const navLinks = [
-    { name: "Features", href: "#features" },
-    { name: "Why kinovia", href: "#why-kinovia" },
-    { name: "Get Started", href: "#get-started" },
+    { name: "Solutions", href: "#solutions" },
+    { name: "Platform", href: "#platform" },
+    { name: "Showcase", href: "#showcase" },
+    { name: "Support", href: "#support" },
+    { name: "FAQ", href: "#faq" },
   ];
 
   return (
-    <nav
+    <header
       ref={navRef}
-      className="sticky top-0 z-50 w-full border-b border-base-300/60 bg-base-100/80 backdrop-blur-md"
+      className="sticky top-0 z-50 w-full border-b border-slate-100 bg-white/85 backdrop-blur-md"
     >
-      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto flex h-20 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
         {/* Brand/Logo */}
-        <Link to="/" className="flex items-center gap-2.5">
-          <div className="grid size-9 place-items-center rounded-xl bg-primary text-lg font-bold text-primary-content">
-            K
-          </div>
-          <span className="text-xl font-bold tracking-tight text-base-content">
-            kinovia <span className="text-primary">CRM</span>
+        <Link to="/" className="flex items-center gap-2">
+          <span className="text-2xl font-black tracking-tight text-slate-900">
+            KINOVIA<span className="text-[#5958ed]">.</span>
           </span>
         </Link>
 
         {/* Desktop Navigation */}
-        <div className="hidden lg:flex items-center gap-8">
+        <nav className="hidden md:flex items-center gap-8">
           {navLinks.map((link) => (
             <a
               key={link.name}
               href={link.href}
-              className="text-sm font-medium text-base-content/70 transition-colors hover:text-base-content"
+              className="text-sm font-medium text-slate-600 transition-colors hover:text-slate-950"
             >
               {link.name}
             </a>
           ))}
-        </div>
+        </nav>
 
         {/* Action Buttons */}
-        <div className="hidden md:flex items-center gap-3">
+        <div className="hidden sm:flex items-center gap-3">
           {user ? (
             <Link
               to={dash_route}
-              className="btn btn-primary btn-sm rounded-lg px-6 font-semibold shadow-md shadow-primary/10 hover:shadow-primary/30 gap-2"
+              className="btn btn-sm bg-[#5958ed] text-white hover:bg-[#4d4ce0] border-0 rounded-full px-5 font-medium gap-1.5 shadow-sm"
             >
               <LayoutDashboard className="size-4" />
               Dashboard
@@ -72,17 +71,16 @@ export default function HomeNav() {
               <Link
                 to="/auth/login"
                 search={{ email: "" }}
-                className="btn btn-ghost btn-sm font-semibold gap-2"
+                className="btn btn-ghost btn-sm text-sm font-medium text-slate-700 hover:text-slate-950 hover:bg-slate-100 rounded-full px-4"
               >
-                <LogIn className="size-4" />
                 Sign In
               </Link>
               <Link
                 to="/auth/register"
-                className="btn btn-primary btn-sm rounded-lg px-6 font-semibold shadow-md shadow-primary/10 hover:shadow-primary/30"
+                className="btn btn-sm bg-[#5958ed] text-white hover:bg-[#4d4ce0] border-0 rounded-full px-5 text-xs font-semibold gap-1.5 shadow-sm shadow-[#5958ed]/20"
               >
                 Get Started
-                <ChevronRight className="size-4" />
+                <ArrowRight className="size-3.5" />
               </Link>
             </>
           )}
@@ -90,42 +88,36 @@ export default function HomeNav() {
 
         {/* Mobile Menu Toggle */}
         <button
-          className="lg:hidden btn btn-ghost btn-circle"
+          className="md:hidden btn btn-ghost btn-circle btn-sm text-slate-700"
           onClick={() => setIsOpen(!isOpen)}
           aria-label="Toggle menu"
         >
-          {isOpen ? <X className="size-6" /> : <Menu className="size-6" />}
+          {isOpen ? <X className="size-5" /> : <Menu className="size-5" />}
         </button>
       </div>
 
-      {/* Mobile Menu Overlay */}
-      <div
-        className={`fixed inset-x-0 top-16 bg-base-100 border-b border-base-200 p-6 shadow-2xl transition-all duration-300 transform lg:hidden ${
-          isOpen
-            ? "translate-y-0 opacity-100 visible"
-            : "-translate-y-4 opacity-0 invisible"
-        }`}
-      >
-        <div className="flex flex-col gap-1">
-          {navLinks.map((link) => (
-            <a
-              key={link.name}
-              href={link.href}
-              className="flex items-center justify-between p-3 text-lg font-semibold rounded-xl hover:bg-base-200 transition-colors"
-              onClick={() => setIsOpen(false)}
-            >
-              {link.name}
-              <ChevronRight className="size-4 opacity-30" />
-            </a>
-          ))}
-          <div className="grid grid-cols-2 gap-4 mt-6">
+      {/* Mobile Drawer */}
+      {isOpen && (
+        <div className="md:hidden border-b border-slate-100 bg-white px-4 py-6 shadow-xl space-y-4">
+          <div className="flex flex-col space-y-3">
+            {navLinks.map((link) => (
+              <a
+                key={link.name}
+                href={link.href}
+                onClick={() => setIsOpen(false)}
+                className="text-base font-medium text-slate-700 hover:text-slate-950 px-2 py-1"
+              >
+                {link.name}
+              </a>
+            ))}
+          </div>
+          <div className="pt-4 border-t border-slate-100 flex flex-col gap-2">
             {user ? (
               <Link
-                to="/tenant"
-                className="btn btn-primary font-semibold shadow-lg shadow-primary/20 col-span-2 gap-2"
+                to={dash_route}
                 onClick={() => setIsOpen(false)}
+                className="btn bg-[#5958ed] text-white hover:bg-[#4d4ce0] border-0 rounded-full w-full justify-center"
               >
-                <LayoutDashboard className="size-4" />
                 Go to Dashboard
               </Link>
             ) : (
@@ -133,23 +125,23 @@ export default function HomeNav() {
                 <Link
                   to="/auth/login"
                   search={{ email: "" }}
-                  className="btn btn-outline btn-primary font-semibold"
                   onClick={() => setIsOpen(false)}
+                  className="btn btn-outline border-slate-300 text-slate-700 rounded-full w-full"
                 >
                   Sign In
                 </Link>
                 <Link
                   to="/auth/register"
-                  className="btn btn-primary font-semibold shadow-lg shadow-primary/20"
                   onClick={() => setIsOpen(false)}
+                  className="btn bg-[#5958ed] text-white hover:bg-[#4d4ce0] border-0 rounded-full w-full justify-center"
                 >
-                  Join Now
+                  Get Started
                 </Link>
               </>
             )}
           </div>
         </div>
-      </div>
-    </nav>
+      )}
+    </header>
   );
 }

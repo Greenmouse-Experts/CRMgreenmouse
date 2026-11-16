@@ -1,46 +1,57 @@
-import { ArrowRight, ChartNoAxesCombined, Sparkles } from "lucide-react";
-import DashboardPreview from "./DashboardPreview";
+import { ArrowRight } from "lucide-react";
 
 export default function Hero() {
   return (
-    <section id="top" className="relative overflow-hidden bg-base-100">
-      <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8 grid items-center gap-12 py-16 sm:py-24 lg:grid-cols-2 lg:gap-16">
-        <div className="[&_h1]:mt-5 [&_h1]:max-w-[12ch] [&_h1]:text-4xl [&_h1]:font-extrabold [&_h1]:leading-[1.1] [&_h1]:tracking-tight sm:[&_h1]:text-5xl lg:[&_h1]:text-6xl [&_h1_em]:not-italic [&_h1_em]:text-primary [&>p]:mt-6 [&>p]:max-w-xl [&>p]:text-lg [&>p]:leading-relaxed [&>p]:text-base-content/70">
-          <span className="badge badge-outline badge-primary h-auto gap-2 rounded-full bg-primary/5 px-3 py-2 text-xs font-semibold">
-            <Sparkles size={14} /> All-in-one business management
-          </span>
-          <h1>
-            Run your entire business from <em>one dashboard</em>
-          </h1>
-          <p>
-            kinovia CRM brings your customers, products, invoicing, expenses,
-            orders, subscriptions and support together — so you always know
-            exactly how your business is performing, in real time.
-          </p>
-          <div className="mt-8 flex flex-wrap items-center gap-3">
-            <a className="btn px-8 btn-primary" href="/auth/register">
-              Get Started Free <ArrowRight size={17} />
-            </a>
-            <a className="btn px-8 btn-outline" href="#dashboard-preview">
-              <ChartNoAxesCombined size={17} /> See it in action
-            </a>
+    <section className="relative overflow-hidden bg-white pt-8 pb-16 lg:pt-16 lg:pb-24">
+      {/* Background Graphic Layer */}
+      <div
+        className="pointer-events-none absolute inset-0 z-0 bg-top bg-no-repeat opacity-90"
+        style={{
+          backgroundImage: "url('/homepage/hero_bg.png')",
+          backgroundSize: "100% auto",
+        }}
+        aria-hidden="true"
+      />
+
+      <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="grid items-center gap-12 lg:grid-cols-12 lg:gap-8">
+          {/* Left Text Column */}
+          <div className="lg:col-span-6 space-y-6 text-left">
+            <h1 className="text-4xl sm:text-5xl lg:text-[62px] font-extrabold tracking-tight text-slate-900 leading-[1.12]">
+              One platform. <br />
+              More ways to <br />
+              <span className="text-[#5958ed] italic font-serif">grow.</span>
+            </h1>
+
+            <p className="max-w-xl text-base sm:text-lg text-slate-600 leading-relaxed font-normal">
+              Manage customer relationships, connect your teams, coordinate
+              logistics, support online sales, and handle service requests with
+              KINOVIA&apos;s suite of business solutions.
+            </p>
+
+            <div className="pt-2">
+              <a
+                href="#solutions"
+                className="inline-flex items-center gap-2 rounded-xl bg-[#5958ed] px-6 py-3.5 text-sm font-semibold text-white shadow-md shadow-[#5958ed]/25 transition-all hover:bg-[#4b4ad4] hover:shadow-lg hover:shadow-[#5958ed]/35"
+              >
+                <span>Explore our products</span>
+                <ArrowRight className="size-4" />
+              </a>
+            </div>
           </div>
-          <dl className="mt-10 flex flex-wrap gap-x-10 gap-y-4 [&_dt]:text-2xl [&_dt]:font-bold [&_dt]:text-primary [&_dd]:text-sm [&_dd]:text-base-content/65">
-            <div>
-              <dt>10+</dt>
-              <dd>Business modules</dd>
+
+          {/* Right Floating Dashboard Preview Image */}
+          <div className="lg:col-span-6 flex justify-center lg:justify-end">
+            <div className="relative w-full max-w-xl transition-transform duration-300 hover:scale-[1.01]">
+              <img
+                src="/homepage/hero.png"
+                alt="Kinovia Overview Dashboard Preview"
+                className="w-full h-auto drop-shadow-2xl"
+                loading="eager"
+              />
             </div>
-            <div>
-              <dt>Live</dt>
-              <dd>Real-time reports</dd>
-            </div>
-            <div>
-              <dt>Ready</dt>
-              <dd>Multi-currency</dd>
-            </div>
-          </dl>
+          </div>
         </div>
-        <DashboardPreview />
       </div>
     </section>
   );
