@@ -47,7 +47,7 @@ export default function HomeNav() {
             <a
               key={link.name}
               href={link.href}
-              className="text-sm font-medium text-slate-600 transition-colors hover:text-slate-950"
+              className=" font-medium text-slate-600 transition-colors hover:text-slate-950"
             >
               {link.name}
             </a>
@@ -69,13 +69,13 @@ export default function HomeNav() {
               <Link
                 to="/auth/login"
                 search={{ email: "" }}
-                className="btn btn-ghost btn-sm text-sm font-medium text-slate-700 hover:text-slate-950 hover:bg-slate-100 rounded-full px-4"
+                className="btn btn-ghost btn-sm  font-medium text-slate-700 hover:text-slate-950 hover:bg-slate-100 rounded-full px-4"
               >
                 Sign In
               </Link>
               <Link
                 to="/auth/register"
-                className="btn btn-sm bg-[#5958ed] text-white hover:bg-[#4d4ce0] border-0 rounded-full px-5 text-xs font-semibold gap-1.5 shadow-sm shadow-[#5958ed]/20"
+                className="btn btn-sm bg-[#5958ed] text-white hover:bg-[#4d4ce0] border-0 rounded-full px-5  font-semibold gap-1.5 shadow-sm shadow-[#5958ed]/20"
               >
                 Get Started
                 <ArrowRight className="size-3.5" />
