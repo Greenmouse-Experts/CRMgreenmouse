@@ -37,7 +37,7 @@ export default function HomeNav() {
         {/* Brand/Logo */}
         <Link to="/" className="flex items-center gap-2">
           <span className="text-2xl font-black tracking-tight text-slate-900">
-            KINOVIA<span className="text-[#5958ed]">.</span>
+            KINOVIA<span className="text-primary">.</span>
           </span>
         </Link>
 
@@ -59,7 +59,7 @@ export default function HomeNav() {
           {user ? (
             <Link
               to={dash_route}
-              className="btn btn-sm bg-[#5958ed] text-white hover:bg-[#4d4ce0] border-0 rounded-full px-5 font-medium gap-1.5 shadow-sm"
+              className="btn btn-sm bg-primary text-white hover:bg-[#4d4ce0] border-0 rounded-full px-5 font-medium gap-1.5 shadow-sm"
             >
               <LayoutDashboard className="size-4" />
               Dashboard
@@ -75,7 +75,7 @@ export default function HomeNav() {
               </Link>
               <Link
                 to="/auth/register"
-                className="btn btn-sm bg-[#5958ed] text-white hover:bg-[#4d4ce0] border-0 rounded-full px-5  font-semibold gap-1.5 shadow-sm shadow-[#5958ed]/20"
+                className="btn btn-sm bg-primary text-white hover:bg-[#4d4ce0] border-0 rounded-full px-5  font-semibold gap-1.5 shadow-sm shadow-primary/20"
               >
                 Get Started
                 <ArrowRight className="size-3.5" />
@@ -114,7 +114,7 @@ export default function HomeNav() {
               <Link
                 to={dash_route}
                 onClick={() => setIsOpen(false)}
-                className="btn bg-[#5958ed] text-white hover:bg-[#4d4ce0] border-0 rounded-full w-full justify-center"
+                className="btn bg-primary text-white hover:bg-[#4d4ce0] border-0 rounded-full w-full justify-center"
               >
                 Go to Dashboard
               </Link>
@@ -131,7 +131,7 @@ export default function HomeNav() {
                 <Link
                   to="/auth/register"
                   onClick={() => setIsOpen(false)}
-                  className="btn bg-[#5958ed] text-white hover:bg-[#4d4ce0] border-0 rounded-full w-full justify-center"
+                  className="btn bg-primary text-white hover:bg-[#4d4ce0] border-0 rounded-full w-full justify-center"
                 >
                   Get Started
                 </Link>
