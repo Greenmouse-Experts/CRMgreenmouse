@@ -19,14 +19,14 @@ export default function CtaBanner() {
           Better business.
         </h2>
 
-        <p className="text-sm sm:text-lg text-white/90 font-normal max-w-xl mx-auto">
+        <p className=" sm:text-lg text-white/90 font-normal max-w-xl mx-auto">
           Discover what connected tools can do for your business.
         </p>
 
         <div className="pt-4">
           <a
             href="#support"
-            className="inline-flex items-center gap-2 rounded-full bg-white px-7 py-3 text-sm font-semibold text-slate-900 shadow-xl transition-all hover:bg-slate-100 hover:scale-[1.02]"
+            className="inline-flex items-center gap-2 rounded-full bg-white px-7 py-3  font-semibold text-slate-900 shadow-xl transition-all hover:bg-slate-100 hover:scale-[1.02]"
           >
             <span>Talk to us</span>
             <ArrowRight className="size-4 text-slate-900" />

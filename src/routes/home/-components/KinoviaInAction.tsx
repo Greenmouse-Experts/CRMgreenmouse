@@ -9,7 +9,7 @@ export default function KinoviaInAction() {
           <h2 className="text-3xl sm:text-4xl lg:text-[44px] font-medium tracking-tight text-slate-900 leading-tight">
             See KINOVIA <span className="text-[#5958ed]">in action.</span>
           </h2>
-          <p className="text-sm sm:text-base text-slate-600 font-normal max-w-lg mx-auto">
+          <p className=" sm:text-base text-slate-600 font-normal max-w-lg mx-auto">
             Go beyond the feature list. Take a closer look at the software
             experience designed to make everyday business feel more connected.
           </p>
@@ -40,7 +40,7 @@ export default function KinoviaInAction() {
                 <span className="text-[#a5a4f7]">One clear view.</span>
               </h3>
 
-              <p className="text-sm sm:text-base text-slate-300/80 leading-relaxed font-normal">
+              <p className=" sm:text-base text-slate-300/80 leading-relaxed font-normal">
                 Get a feel for KINOVIA CRM, a single workspace concept for
                 managing contacts, following opportunities, and seeing the work
                 that matters.
@@ -49,7 +49,7 @@ export default function KinoviaInAction() {
               <div className="pt-2">
                 <a
                   href="/auth/register"
-                  className="inline-flex items-center gap-2 rounded-xl bg-[#5958ed] px-6 py-3.5 text-sm font-semibold text-white shadow-md shadow-[#5958ed]/30 transition-all hover:bg-[#4b4ad4] hover:shadow-lg"
+                  className="inline-flex items-center gap-2 rounded-xl bg-[#5958ed] px-6 py-3.5  font-semibold text-white shadow-md shadow-[#5958ed]/30 transition-all hover:bg-[#4b4ad4] hover:shadow-lg"
                 >
                   <span>Ask about Kinovia CRM</span>
                   <ArrowRight className="size-4" />

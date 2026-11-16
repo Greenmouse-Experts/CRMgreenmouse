@@ -30,7 +30,7 @@ export default function TogetherInOnePlace() {
               together in one place.
             </h2>
 
-            <p className="text-sm sm:text-base text-slate-600 leading-relaxed font-normal">
+            <p className=" sm:text-base text-slate-600 leading-relaxed font-normal">
               From managing customer relationships and service requests to
               coordinating logistics and online sales, KINOVIA brings three
               essential business solutions into one connected experience. Give
@@ -45,7 +45,7 @@ export default function TogetherInOnePlace() {
                   <div className="grid size-5 place-items-center rounded-full bg-emerald-100 text-emerald-600 shrink-0">
                     <Check className="size-3 stroke-[3]" />
                   </div>
-                  <span className="text-sm sm:text-[15px] font-medium text-slate-700">
+                  <span className=" sm:text-[15px] font-medium text-slate-700">
                     {item}
                   </span>
                 </li>
@@ -56,7 +56,7 @@ export default function TogetherInOnePlace() {
             <div className="pt-4">
               <a
                 href="#solutions"
-                className="inline-flex items-center gap-2 rounded-xl bg-[#5958ed] px-6 py-3.5 text-sm font-semibold text-white shadow-md shadow-[#5958ed]/25 transition-all hover:bg-[#4b4ad4] hover:shadow-lg"
+                className="inline-flex items-center gap-2 rounded-xl bg-[#5958ed] px-6 py-3.5  font-semibold text-white shadow-md shadow-[#5958ed]/25 transition-all hover:bg-[#4b4ad4] hover:shadow-lg"
               >
                 <span>Discover our solutions</span>
                 <ArrowRight className="size-4" />

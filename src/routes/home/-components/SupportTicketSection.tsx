@@ -59,7 +59,7 @@ export default function SupportTicketSection() {
                 Tell us what <br />
                 you need.
               </h2>
-              <p className="text-sm sm:text-base text-slate-300/80 leading-relaxed max-w-md font-normal">
+              <p className=" sm:text-base text-slate-300/80 leading-relaxed max-w-md font-normal">
                 Questions about the products, or help with one you already use?
                 Send one message and the right person will pick it up.
               </p>
@@ -68,10 +68,10 @@ export default function SupportTicketSection() {
             {/* Stepper Indicator */}
             <div className="flex items-center gap-4 pt-2">
               <div className="flex items-center gap-2.5">
-                <div className="grid size-6 place-items-center rounded-full bg-[#5958ed] text-xs font-bold text-white">
+                <div className="grid size-6 place-items-center rounded-full bg-[#5958ed]  font-bold text-white">
                   1
                 </div>
-                <span className="text-xs font-medium text-slate-300">
+                <span className=" font-medium text-slate-300">
                   Describe your request
                 </span>
               </div>
@@ -79,10 +79,10 @@ export default function SupportTicketSection() {
               <div className="h-px w-8 bg-slate-600" />
 
               <div className="flex items-center gap-2.5">
-                <div className="grid size-6 place-items-center rounded-full bg-slate-700 text-xs font-bold text-slate-300">
+                <div className="grid size-6 place-items-center rounded-full bg-slate-700  font-bold text-slate-300">
                   2
                 </div>
-                <span className="text-xs font-medium text-slate-400">
+                <span className=" font-medium text-slate-400">
                   Our team follows up
                 </span>
               </div>
@@ -104,7 +104,7 @@ export default function SupportTicketSection() {
                   <h4 className="text-lg font-bold text-slate-900">
                     Ticket received!
                   </h4>
-                  <p className="text-sm text-slate-600 max-w-sm mx-auto">
+                  <p className=" text-slate-600 max-w-sm mx-auto">
                     We&apos;ve logged your ticket and sent a confirmation to{" "}
                     <span className="font-semibold text-slate-900">
                       {form.email}
@@ -123,7 +123,7 @@ export default function SupportTicketSection() {
                         message: "",
                       });
                     }}
-                    className="btn btn-sm btn-ghost text-xs text-[#5958ed] font-semibold"
+                    className="btn btn-sm btn-ghost  text-[#5958ed] font-semibold"
                   >
                     Submit another request
                   </button>
@@ -133,7 +133,7 @@ export default function SupportTicketSection() {
                   {/* Row 1: Full name & Email */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="space-y-1.5 text-left">
-                      <label className="text-xs font-semibold text-slate-700">
+                      <label className=" font-semibold text-slate-700">
                         Full name
                       </label>
                       <input
@@ -144,12 +144,12 @@ export default function SupportTicketSection() {
                         onChange={(e) =>
                           setForm({ ...form, fullName: e.target.value })
                         }
-                        className="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-3.5 py-2.5 text-sm text-slate-900 transition focus:border-[#5958ed] focus:bg-white focus:outline-none"
+                        className="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-3.5 py-2.5  text-slate-900 transition focus:border-[#5958ed] focus:bg-white focus:outline-none"
                       />
                     </div>
 
                     <div className="space-y-1.5 text-left">
-                      <label className="text-xs font-semibold text-slate-700">
+                      <label className=" font-semibold text-slate-700">
                         Email address
                       </label>
                       <input
@@ -160,7 +160,7 @@ export default function SupportTicketSection() {
                         onChange={(e) =>
                           setForm({ ...form, email: e.target.value })
                         }
-                        className="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-3.5 py-2.5 text-sm text-slate-900 transition focus:border-[#5958ed] focus:bg-white focus:outline-none"
+                        className="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-3.5 py-2.5  text-slate-900 transition focus:border-[#5958ed] focus:bg-white focus:outline-none"
                       />
                     </div>
                   </div>
@@ -168,7 +168,7 @@ export default function SupportTicketSection() {
                   {/* Row 2: Product & Subject */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="space-y-1.5 text-left">
-                      <label className="text-xs font-semibold text-slate-700">
+                      <label className=" font-semibold text-slate-700">
                         Product
                       </label>
                       <select
@@ -176,7 +176,7 @@ export default function SupportTicketSection() {
                         onChange={(e) =>
                           setForm({ ...form, product: e.target.value })
                         }
-                        className="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-3.5 py-2.5 text-sm text-slate-700 transition focus:border-[#5958ed] focus:bg-white focus:outline-none"
+                        className="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-3.5 py-2.5  text-slate-700 transition focus:border-[#5958ed] focus:bg-white focus:outline-none"
                       >
                         <option value="">Select a product</option>
                         <option value="Kinovia CRM">KINOVIA CRM</option>
@@ -187,7 +187,7 @@ export default function SupportTicketSection() {
                     </div>
 
                     <div className="space-y-1.5 text-left">
-                      <label className="text-xs font-semibold text-slate-700">
+                      <label className=" font-semibold text-slate-700">
                         Subject
                       </label>
                       <input
@@ -197,14 +197,14 @@ export default function SupportTicketSection() {
                         onChange={(e) =>
                           setForm({ ...form, subject: e.target.value })
                         }
-                        className="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-3.5 py-2.5 text-sm text-slate-900 transition focus:border-[#5958ed] focus:bg-white focus:outline-none"
+                        className="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-3.5 py-2.5  text-slate-900 transition focus:border-[#5958ed] focus:bg-white focus:outline-none"
                       />
                     </div>
                   </div>
 
                   {/* Row 3: Message textarea */}
                   <div className="space-y-1.5 text-left">
-                    <label className="text-xs font-semibold text-slate-700">
+                    <label className=" font-semibold text-slate-700">
                       Tell us more
                     </label>
                     <textarea
@@ -215,7 +215,7 @@ export default function SupportTicketSection() {
                       onChange={(e) =>
                         setForm({ ...form, message: e.target.value })
                       }
-                      className="w-full rounded-xl border border-slate-200 bg-slate-50/50 p-3.5 text-sm text-slate-900 transition focus:border-[#5958ed] focus:bg-white focus:outline-none resize-none"
+                      className="w-full rounded-xl border border-slate-200 bg-slate-50/50 p-3.5  text-slate-900 transition focus:border-[#5958ed] focus:bg-white focus:outline-none resize-none"
                     />
                   </div>
 
@@ -224,7 +224,7 @@ export default function SupportTicketSection() {
                     <button
                       type="submit"
                       disabled={loading}
-                      className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#5958ed] py-3.5 text-sm font-semibold text-white shadow-md shadow-[#5958ed]/25 transition-all hover:bg-[#4b4ad4] hover:shadow-lg disabled:opacity-70"
+                      className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#5958ed] py-3.5  font-semibold text-white shadow-md shadow-[#5958ed]/25 transition-all hover:bg-[#4b4ad4] hover:shadow-lg disabled:opacity-70"
                     >
                       <span>{loading ? "Sending..." : "Send message"}</span>
                       <ArrowRight className="size-4" />

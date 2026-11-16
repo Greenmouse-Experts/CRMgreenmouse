@@ -41,7 +41,7 @@ export default function SolutionsGrid() {
             One <span className="text-[#5958ed] italic ">connected</span>{" "}
             experience.
           </h2>
-          <p className="text-sm sm:text-base text-slate-600 font-normal max-w-lg mx-auto">
+          <p className=" sm:text-base text-slate-600 font-normal max-w-lg mx-auto">
             Start with the tool you need today. Each one shares information with
             the others.
           </p>
@@ -68,7 +68,7 @@ export default function SolutionsGrid() {
                     <h3 className="text-xl font-bold text-slate-900">
                       {item.title}
                     </h3>
-                    <p className="text-xs sm:text-sm text-slate-600 leading-relaxed font-normal">
+                    <p className=" sm: text-slate-600 leading-relaxed font-normal">
                       {item.description}
                     </p>
                   </div>

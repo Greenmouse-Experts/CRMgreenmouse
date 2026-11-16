@@ -12,7 +12,7 @@ export default function LandingFooter() {
         </Link>
 
         {/* Links */}
-        <nav className="flex items-center gap-6 text-xs sm:text-sm font-medium text-slate-600">
+        <nav className="flex items-center gap-6  sm: font-medium text-slate-600">
           <a href="#" className="hover:text-slate-950 transition-colors">
             Home
           </a>

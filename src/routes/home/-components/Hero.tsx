@@ -32,7 +32,7 @@ export default function Hero() {
             <div className="pt-2">
               <a
                 href="#solutions"
-                className="inline-flex items-center gap-2 rounded-xl bg-[#5958ed] px-6 py-3.5 text-sm font-semibold text-white shadow-md shadow-[#5958ed]/25 transition-all hover:bg-[#4b4ad4] hover:shadow-lg hover:shadow-[#5958ed]/35"
+                className="inline-flex items-center gap-2 rounded-xl bg-[#5958ed] px-6 py-3.5  font-semibold text-white shadow-md shadow-[#5958ed]/25 transition-all hover:bg-[#4b4ad4] hover:shadow-lg hover:shadow-[#5958ed]/35"
               >
                 <span>Explore our products</span>
                 <ArrowRight className="size-4" />

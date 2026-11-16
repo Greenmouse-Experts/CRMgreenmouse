@@ -51,7 +51,7 @@ export default function FaqSection() {
               Frequently <br />
               asked questions.
             </h2>
-            <p className="text-sm sm:text-base text-slate-600 leading-relaxed font-normal max-w-md">
+            <p className=" sm:text-base text-slate-600 leading-relaxed font-normal max-w-md">
               Answers to a few common questions about KINOVIA and its product
               ecosystem.
             </p>
@@ -71,7 +71,7 @@ export default function FaqSection() {
                     onClick={() => toggle(index)}
                     className="flex w-full items-center justify-between p-5 sm:p-6 text-left transition hover:bg-[#ededfc]"
                   >
-                    <span className="text-sm sm:text-base font-bold text-slate-900 pr-4">
+                    <span className=" sm:text-base font-bold text-slate-900 pr-4">
                       {faq.question}
                     </span>
                     <div className="grid size-6 place-items-center rounded-full bg-white text-[#5958ed] shrink-0 shadow-2xs">
@@ -84,7 +84,7 @@ export default function FaqSection() {
                   </button>
 
                   {isOpen && (
-                    <div className="px-5 pb-5 sm:px-6 sm:pb-6 text-xs sm:text-sm text-slate-600 leading-relaxed pt-1 border-t border-[#e8e7fa]/60">
+                    <div className="px-5 pb-5 sm:px-6 sm:pb-6  sm: text-slate-600 leading-relaxed pt-1 border-t border-[#e8e7fa]/60">
                       {faq.answer}
                     </div>
                   )}
