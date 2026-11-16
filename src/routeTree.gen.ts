@@ -33,6 +33,8 @@ import { Route as TenantProductsIndexRouteImport } from './routes/tenant/product
 import { Route as TenantOrdersIndexRouteImport } from './routes/tenant/orders/index'
 import { Route as TenantNotificationsIndexRouteImport } from './routes/tenant/notifications.index'
 import { Route as HrStaffsIndexRouteImport } from './routes/hr/staffs/index'
+import { Route as HrRecruitmentIndexRouteImport } from './routes/hr/recruitment/index'
+import { Route as HrOnboardingIndexRouteImport } from './routes/hr/onboarding/index'
 import { Route as HomeContactUsIndexRouteImport } from './routes/home/contact-us.index'
 import { Route as AuthVerifyIndexRouteImport } from './routes/auth/verify/index'
 import { Route as AuthStaffIndexRouteImport } from './routes/auth/staff/index'
@@ -228,6 +230,16 @@ const TenantNotificationsIndexRoute =
 const HrStaffsIndexRoute = HrStaffsIndexRouteImport.update({
   id: '/staffs/',
   path: '/staffs/',
+  getParentRoute: () => HrRouteRoute,
+} as any)
+const HrRecruitmentIndexRoute = HrRecruitmentIndexRouteImport.update({
+  id: '/recruitment/',
+  path: '/recruitment/',
+  getParentRoute: () => HrRouteRoute,
+} as any)
+const HrOnboardingIndexRoute = HrOnboardingIndexRouteImport.update({
+  id: '/onboarding/',
+  path: '/onboarding/',
   getParentRoute: () => HrRouteRoute,
 } as any)
 const HomeContactUsIndexRoute = HomeContactUsIndexRouteImport.update({
@@ -687,6 +699,8 @@ export interface FileRoutesByFullPath {
   '/auth/staff': typeof AuthStaffIndexRoute
   '/auth/verify/': typeof AuthVerifyIndexRoute
   '/home/contact-us': typeof HomeContactUsIndexRoute
+  '/hr/onboarding': typeof HrOnboardingIndexRoute
+  '/hr/recruitment': typeof HrRecruitmentIndexRoute
   '/hr/staffs': typeof HrStaffsIndexRoute
   '/tenant/notifications': typeof TenantNotificationsIndexRoute
   '/tenant/orders': typeof TenantOrdersIndexRoute
@@ -780,6 +794,8 @@ export interface FileRoutesByTo {
   '/auth/staff': typeof AuthStaffIndexRoute
   '/auth/verify': typeof AuthVerifyIndexRoute
   '/home/contact-us': typeof HomeContactUsIndexRoute
+  '/hr/onboarding': typeof HrOnboardingIndexRoute
+  '/hr/recruitment': typeof HrRecruitmentIndexRoute
   '/hr/staffs': typeof HrStaffsIndexRoute
   '/tenant/notifications': typeof TenantNotificationsIndexRoute
   '/tenant/orders': typeof TenantOrdersIndexRoute
@@ -882,6 +898,8 @@ export interface FileRoutesById {
   '/auth/staff/': typeof AuthStaffIndexRoute
   '/auth/verify/': typeof AuthVerifyIndexRoute
   '/home/contact-us/': typeof HomeContactUsIndexRoute
+  '/hr/onboarding/': typeof HrOnboardingIndexRoute
+  '/hr/recruitment/': typeof HrRecruitmentIndexRoute
   '/hr/staffs/': typeof HrStaffsIndexRoute
   '/tenant/notifications/': typeof TenantNotificationsIndexRoute
   '/tenant/orders/': typeof TenantOrdersIndexRoute
@@ -985,6 +1003,8 @@ export interface FileRouteTypes {
     | '/auth/staff'
     | '/auth/verify/'
     | '/home/contact-us'
+    | '/hr/onboarding'
+    | '/hr/recruitment'
     | '/hr/staffs'
     | '/tenant/notifications'
     | '/tenant/orders'
@@ -1078,6 +1098,8 @@ export interface FileRouteTypes {
     | '/auth/staff'
     | '/auth/verify'
     | '/home/contact-us'
+    | '/hr/onboarding'
+    | '/hr/recruitment'
     | '/hr/staffs'
     | '/tenant/notifications'
     | '/tenant/orders'
@@ -1179,6 +1201,8 @@ export interface FileRouteTypes {
     | '/auth/staff/'
     | '/auth/verify/'
     | '/home/contact-us/'
+    | '/hr/onboarding/'
+    | '/hr/recruitment/'
     | '/hr/staffs/'
     | '/tenant/notifications/'
     | '/tenant/orders/'
@@ -1434,6 +1458,20 @@ declare module '@tanstack/react-router' {
       path: '/staffs'
       fullPath: '/hr/staffs'
       preLoaderRoute: typeof HrStaffsIndexRouteImport
+      parentRoute: typeof HrRouteRoute
+    }
+    '/hr/recruitment/': {
+      id: '/hr/recruitment/'
+      path: '/recruitment'
+      fullPath: '/hr/recruitment'
+      preLoaderRoute: typeof HrRecruitmentIndexRouteImport
+      parentRoute: typeof HrRouteRoute
+    }
+    '/hr/onboarding/': {
+      id: '/hr/onboarding/'
+      path: '/onboarding'
+      fullPath: '/hr/onboarding'
+      preLoaderRoute: typeof HrOnboardingIndexRouteImport
       parentRoute: typeof HrRouteRoute
     }
     '/home/contact-us/': {
@@ -2060,11 +2098,15 @@ const AdminRouteRouteWithChildren = AdminRouteRoute._addFileChildren(
 
 interface HrRouteRouteChildren {
   HrIndexRoute: typeof HrIndexRoute
+  HrOnboardingIndexRoute: typeof HrOnboardingIndexRoute
+  HrRecruitmentIndexRoute: typeof HrRecruitmentIndexRoute
   HrStaffsIndexRoute: typeof HrStaffsIndexRoute
 }
 
 const HrRouteRouteChildren: HrRouteRouteChildren = {
   HrIndexRoute: HrIndexRoute,
+  HrOnboardingIndexRoute: HrOnboardingIndexRoute,
+  HrRecruitmentIndexRoute: HrRecruitmentIndexRoute,
   HrStaffsIndexRoute: HrStaffsIndexRoute,
 }
 
