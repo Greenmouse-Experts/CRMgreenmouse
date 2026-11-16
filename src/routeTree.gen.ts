@@ -33,6 +33,7 @@ import { Route as TenantProductsIndexRouteImport } from './routes/tenant/product
 import { Route as TenantOrdersIndexRouteImport } from './routes/tenant/orders/index'
 import { Route as TenantNotificationsIndexRouteImport } from './routes/tenant/notifications.index'
 import { Route as HrStaffsIndexRouteImport } from './routes/hr/staffs/index'
+import { Route as HomeContactUsIndexRouteImport } from './routes/home/contact-us.index'
 import { Route as AuthVerifyIndexRouteImport } from './routes/auth/verify/index'
 import { Route as AuthStaffIndexRouteImport } from './routes/auth/staff/index'
 import { Route as AuthRegisterIndexRouteImport } from './routes/auth/register/index'
@@ -228,6 +229,11 @@ const HrStaffsIndexRoute = HrStaffsIndexRouteImport.update({
   id: '/staffs/',
   path: '/staffs/',
   getParentRoute: () => HrRouteRoute,
+} as any)
+const HomeContactUsIndexRoute = HomeContactUsIndexRouteImport.update({
+  id: '/home/contact-us/',
+  path: '/home/contact-us/',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const AuthVerifyIndexRoute = AuthVerifyIndexRouteImport.update({
   id: '/',
@@ -680,6 +686,7 @@ export interface FileRoutesByFullPath {
   '/auth/register/': typeof AuthRegisterIndexRoute
   '/auth/staff': typeof AuthStaffIndexRoute
   '/auth/verify/': typeof AuthVerifyIndexRoute
+  '/home/contact-us': typeof HomeContactUsIndexRoute
   '/hr/staffs': typeof HrStaffsIndexRoute
   '/tenant/notifications': typeof TenantNotificationsIndexRoute
   '/tenant/orders': typeof TenantOrdersIndexRoute
@@ -772,6 +779,7 @@ export interface FileRoutesByTo {
   '/auth/register': typeof AuthRegisterIndexRoute
   '/auth/staff': typeof AuthStaffIndexRoute
   '/auth/verify': typeof AuthVerifyIndexRoute
+  '/home/contact-us': typeof HomeContactUsIndexRoute
   '/hr/staffs': typeof HrStaffsIndexRoute
   '/tenant/notifications': typeof TenantNotificationsIndexRoute
   '/tenant/orders': typeof TenantOrdersIndexRoute
@@ -873,6 +881,7 @@ export interface FileRoutesById {
   '/auth/register/': typeof AuthRegisterIndexRoute
   '/auth/staff/': typeof AuthStaffIndexRoute
   '/auth/verify/': typeof AuthVerifyIndexRoute
+  '/home/contact-us/': typeof HomeContactUsIndexRoute
   '/hr/staffs/': typeof HrStaffsIndexRoute
   '/tenant/notifications/': typeof TenantNotificationsIndexRoute
   '/tenant/orders/': typeof TenantOrdersIndexRoute
@@ -975,6 +984,7 @@ export interface FileRouteTypes {
     | '/auth/register/'
     | '/auth/staff'
     | '/auth/verify/'
+    | '/home/contact-us'
     | '/hr/staffs'
     | '/tenant/notifications'
     | '/tenant/orders'
@@ -1067,6 +1077,7 @@ export interface FileRouteTypes {
     | '/auth/register'
     | '/auth/staff'
     | '/auth/verify'
+    | '/home/contact-us'
     | '/hr/staffs'
     | '/tenant/notifications'
     | '/tenant/orders'
@@ -1167,6 +1178,7 @@ export interface FileRouteTypes {
     | '/auth/register/'
     | '/auth/staff/'
     | '/auth/verify/'
+    | '/home/contact-us/'
     | '/hr/staffs/'
     | '/tenant/notifications/'
     | '/tenant/orders/'
@@ -1251,6 +1263,7 @@ export interface RootRouteChildren {
   AuthForgotPasswordIndexRoute: typeof AuthForgotPasswordIndexRoute
   AuthLoginIndexRoute: typeof AuthLoginIndexRoute
   AuthStaffIndexRoute: typeof AuthStaffIndexRoute
+  HomeContactUsIndexRoute: typeof HomeContactUsIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -1422,6 +1435,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/hr/staffs'
       preLoaderRoute: typeof HrStaffsIndexRouteImport
       parentRoute: typeof HrRouteRoute
+    }
+    '/home/contact-us/': {
+      id: '/home/contact-us/'
+      path: '/home/contact-us'
+      fullPath: '/home/contact-us'
+      preLoaderRoute: typeof HomeContactUsIndexRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/auth/verify/': {
       id: '/auth/verify/'
@@ -2209,6 +2229,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthForgotPasswordIndexRoute: AuthForgotPasswordIndexRoute,
   AuthLoginIndexRoute: AuthLoginIndexRoute,
   AuthStaffIndexRoute: AuthStaffIndexRoute,
+  HomeContactUsIndexRoute: HomeContactUsIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

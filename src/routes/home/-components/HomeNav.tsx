@@ -23,10 +23,8 @@ export default function HomeNav() {
   }, [isOpen]);
 
   const navLinks = [
-    { name: "Solutions", href: "#solutions" },
-    { name: "Platform", href: "#platform" },
-    { name: "Showcase", href: "#showcase" },
-    { name: "Support", href: "#support" },
+    { name: "Home", href: "/" },
+    { name: "Contact us", href: "/home/contact-us" },
     { name: "FAQ", href: "#faq" },
   ];
 
