@@ -17,10 +17,10 @@ export default function Hero() {
         <div className="grid items-center gap-12 lg:grid-cols-12 lg:gap-8">
           {/* Left Text Column */}
           <div className="lg:col-span-6 space-y-6 text-left">
-            <h1 className="text-4xl sm:text-5xl lg:text-[62px] font-extrabold tracking-tight text-slate-900 leading-[1.12]">
+            <h1 className="text-7xl font-semibold">
               One platform. <br />
               More ways to <br />
-              <span className="text-[#5958ed] italic font-serif">grow.</span>
+              <span className="text-[#5958ed] ">grow.</span>
             </h1>
 
             <p className="max-w-xl text-base sm:text-lg text-slate-600 leading-relaxed font-normal">
