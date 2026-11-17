@@ -58,7 +58,10 @@ export default function FaqSection() {
   };
 
   return (
-    <section id="faq" className="relative py-20 sm:py-28 bg-white overflow-hidden">
+    <section
+      id="faq"
+      className="relative py-20 sm:py-28 bg-white overflow-hidden"
+    >
       {/* Background Dot Pattern */}
       <div
         className="pointer-events-none absolute inset-0 z-0"
@@ -75,8 +78,8 @@ export default function FaqSection() {
       <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="grid gap-10 lg:grid-cols-12 lg:gap-16">
           {/* Left: Section Header */}
-          <div className="lg:col-span-4">
-            <div className="space-y-4 lg:sticky lg:top-28">
+          <div className="lg:col-span-4 ">
+            <div className="space-y-4 ">
               <h2 className="text-3xl sm:text-4xl lg:text-[44px] font-medium tracking-tight text-slate-900 leading-tight">
                 Frequently <br className="hidden sm:inline" />
                 asked questions.
