@@ -59,7 +59,7 @@ export default function HomeNav() {
           {user ? (
             <Link
               to={dash_route}
-              className="btn btn-sm bg-primary text-white hover:bg-[#4d4ce0] border-0 rounded-full px-5 font-medium gap-1.5 shadow-sm"
+              className="btn  bg-primary text-white hover:bg-[#4d4ce0] border-0 rounded-full px-5 font-medium gap-1.5 shadow-sm"
             >
               <LayoutDashboard className="size-4" />
               Dashboard
@@ -69,7 +69,7 @@ export default function HomeNav() {
               <Link
                 to="/auth/login"
                 search={{ email: "" }}
-                className="btn btn-ghost btn-sm  font-medium text-slate-700 hover:text-slate-950 hover:bg-slate-100 rounded-full px-4"
+                className="btn btn-ghost   font-medium text-slate-700 hover:text-slate-950 hover:bg-slate-100 rounded-full px-4"
               >
                 Sign In
               </Link>

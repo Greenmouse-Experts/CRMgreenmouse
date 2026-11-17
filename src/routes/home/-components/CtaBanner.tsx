@@ -7,7 +7,7 @@ export default function CtaBanner() {
       <div
         className="pointer-events-none absolute inset-0 z-0 bg-cover bg-center opacity-95 mix-blend-overlay"
         style={{
-          backgroundImage: "url('/homepage/talk_to_us_bg.png')",
+          backgroundImage: "url('/blue_bg.png')",
         }}
         aria-hidden="true"
       />
@@ -24,12 +24,9 @@ export default function CtaBanner() {
         </p>
 
         <div className="pt-4">
-          <a
-            href="#support"
-            className="inline-flex items-center gap-2 rounded-full bg-white px-7 py-3  font-semibold text-slate-900 shadow-xl transition-all hover:bg-slate-100 hover:scale-[1.02]"
-          >
+          <a href="#support" className="btn btn-lg text-primary">
             <span>Talk to us</span>
-            <ArrowRight className="size-4 text-slate-900" />
+            <ArrowRight className="size-4 " />
           </a>
         </div>
       </div>
