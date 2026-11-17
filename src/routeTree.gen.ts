@@ -36,6 +36,7 @@ import { Route as HrStaffsIndexRouteImport } from './routes/hr/staffs/index'
 import { Route as HrRecruitmentIndexRouteImport } from './routes/hr/recruitment/index'
 import { Route as HrOnboardingIndexRouteImport } from './routes/hr/onboarding/index'
 import { Route as HomeProductsIndexRouteImport } from './routes/home/products.index'
+import { Route as HomeFaqIndexRouteImport } from './routes/home/faq.index'
 import { Route as HomeContactUsIndexRouteImport } from './routes/home/contact-us.index'
 import { Route as AuthVerifyIndexRouteImport } from './routes/auth/verify/index'
 import { Route as AuthStaffIndexRouteImport } from './routes/auth/staff/index'
@@ -246,6 +247,11 @@ const HrOnboardingIndexRoute = HrOnboardingIndexRouteImport.update({
 const HomeProductsIndexRoute = HomeProductsIndexRouteImport.update({
   id: '/home/products/',
   path: '/home/products/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HomeFaqIndexRoute = HomeFaqIndexRouteImport.update({
+  id: '/home/faq/',
+  path: '/home/faq/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const HomeContactUsIndexRoute = HomeContactUsIndexRouteImport.update({
@@ -705,6 +711,7 @@ export interface FileRoutesByFullPath {
   '/auth/staff': typeof AuthStaffIndexRoute
   '/auth/verify/': typeof AuthVerifyIndexRoute
   '/home/contact-us': typeof HomeContactUsIndexRoute
+  '/home/faq': typeof HomeFaqIndexRoute
   '/home/products': typeof HomeProductsIndexRoute
   '/hr/onboarding': typeof HrOnboardingIndexRoute
   '/hr/recruitment': typeof HrRecruitmentIndexRoute
@@ -801,6 +808,7 @@ export interface FileRoutesByTo {
   '/auth/staff': typeof AuthStaffIndexRoute
   '/auth/verify': typeof AuthVerifyIndexRoute
   '/home/contact-us': typeof HomeContactUsIndexRoute
+  '/home/faq': typeof HomeFaqIndexRoute
   '/home/products': typeof HomeProductsIndexRoute
   '/hr/onboarding': typeof HrOnboardingIndexRoute
   '/hr/recruitment': typeof HrRecruitmentIndexRoute
@@ -906,6 +914,7 @@ export interface FileRoutesById {
   '/auth/staff/': typeof AuthStaffIndexRoute
   '/auth/verify/': typeof AuthVerifyIndexRoute
   '/home/contact-us/': typeof HomeContactUsIndexRoute
+  '/home/faq/': typeof HomeFaqIndexRoute
   '/home/products/': typeof HomeProductsIndexRoute
   '/hr/onboarding/': typeof HrOnboardingIndexRoute
   '/hr/recruitment/': typeof HrRecruitmentIndexRoute
@@ -1012,6 +1021,7 @@ export interface FileRouteTypes {
     | '/auth/staff'
     | '/auth/verify/'
     | '/home/contact-us'
+    | '/home/faq'
     | '/home/products'
     | '/hr/onboarding'
     | '/hr/recruitment'
@@ -1108,6 +1118,7 @@ export interface FileRouteTypes {
     | '/auth/staff'
     | '/auth/verify'
     | '/home/contact-us'
+    | '/home/faq'
     | '/home/products'
     | '/hr/onboarding'
     | '/hr/recruitment'
@@ -1212,6 +1223,7 @@ export interface FileRouteTypes {
     | '/auth/staff/'
     | '/auth/verify/'
     | '/home/contact-us/'
+    | '/home/faq/'
     | '/home/products/'
     | '/hr/onboarding/'
     | '/hr/recruitment/'
@@ -1300,6 +1312,7 @@ export interface RootRouteChildren {
   AuthLoginIndexRoute: typeof AuthLoginIndexRoute
   AuthStaffIndexRoute: typeof AuthStaffIndexRoute
   HomeContactUsIndexRoute: typeof HomeContactUsIndexRoute
+  HomeFaqIndexRoute: typeof HomeFaqIndexRoute
   HomeProductsIndexRoute: typeof HomeProductsIndexRoute
 }
 
@@ -1492,6 +1505,13 @@ declare module '@tanstack/react-router' {
       path: '/home/products'
       fullPath: '/home/products'
       preLoaderRoute: typeof HomeProductsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/home/faq/': {
+      id: '/home/faq/'
+      path: '/home/faq'
+      fullPath: '/home/faq'
+      preLoaderRoute: typeof HomeFaqIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/home/contact-us/': {
@@ -2292,6 +2312,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthLoginIndexRoute: AuthLoginIndexRoute,
   AuthStaffIndexRoute: AuthStaffIndexRoute,
   HomeContactUsIndexRoute: HomeContactUsIndexRoute,
+  HomeFaqIndexRoute: HomeFaqIndexRoute,
   HomeProductsIndexRoute: HomeProductsIndexRoute,
 }
 export const routeTree = rootRouteImport

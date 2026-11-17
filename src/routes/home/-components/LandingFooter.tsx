@@ -16,7 +16,10 @@ export default function LandingFooter() {
           <a href="#" className="hover:text-slate-950 transition-colors">
             Home
           </a>
-          <a href="#faq" className="hover:text-slate-950 transition-colors">
+          <a
+            href="/home/faq"
+            className="hover:text-slate-950 transition-colors"
+          >
             FAQ
           </a>
           <a href="#support" className="hover:text-slate-950 transition-colors">
