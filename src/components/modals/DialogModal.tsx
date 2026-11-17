@@ -3,14 +3,17 @@ import {
   useImperativeHandle,
   useRef,
   type PropsWithChildren,
+  type ReactNode,
 } from "react";
 import { Toaster } from "sonner";
-import { X } from "lucide-react"; // Import the X icon
+import { X } from "lucide-react";
 
 interface ModalProps extends PropsWithChildren {
   actions?: any;
   actionName?: string;
-  title?: string; // Added title prop for better UI
+  title?: string | ReactNode;
+  maxWidth?: string;
+  onClose?: () => void;
 }
 
 export interface ModalHandle {
@@ -19,7 +22,7 @@ export interface ModalHandle {
 }
 
 const Modal = forwardRef<ModalHandle, ModalProps>(
-  ({ children, actions, title }, ref) => {
+  ({ children, actions, title, maxWidth, onClose }, ref) => {
     const modalRef = useRef<HTMLDialogElement>(null);
 
     useImperativeHandle(ref, () => ({
@@ -34,13 +37,25 @@ const Modal = forwardRef<ModalHandle, ModalProps>(
     return (
       <dialog ref={modalRef} className="modal modal-middle sm:modal-middle">
         <Toaster theme="dark" richColors />
-        <div className="modal-box max-w-4xl flex flex-col max-h-[90vh] p-6 rounded-lg shadow-xl relative">
-          <div className="flex">
-            {title && <h3 className="font-semibold text-lg ">{title}</h3>}
+        <div
+          className={`modal-box ${
+            maxWidth || "max-w-4xl"
+          } w-full flex flex-col max-h-[90vh] p-6 rounded-lg shadow-xl relative`}
+        >
+          <div className="flex items-center">
+            {title && (
+              <div className="font-semibold text-lg text-base-content">
+                {title}
+              </div>
+            )}
             <form method="dialog" className="ml-auto">
               <button
+                type="button"
                 className="btn btn-sm btn-circle btn-ghost text-gray-500 hover:text-gray-700"
-                onClick={() => modalRef.current?.close()}
+                onClick={() => {
+                  modalRef.current?.close();
+                  onClose?.();
+                }}
               >
                 <X size={20} />
               </button>

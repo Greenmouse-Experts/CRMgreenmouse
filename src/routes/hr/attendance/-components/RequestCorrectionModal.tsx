@@ -5,7 +5,7 @@ import LocalSelect from "@/components/inputs/LocalSelect";
 import { CORRECTION_TYPES } from "./attendanceData";
 import type { CorrectionRequest } from "./types";
 import { toast } from "sonner";
-import { Clock, Send } from "lucide-react";
+import { Send } from "lucide-react";
 
 interface RequestCorrectionModalProps {
   isOpen: boolean;
@@ -43,7 +43,7 @@ export default function RequestCorrectionModal({
     e.preventDefault();
 
     if (!form.employeeName.trim() || !form.reason.trim()) {
-      toast.error("Please fill in the required fields and reason");
+      toast.error("Please fill in your name and explanation reason");
       return;
     }
 
@@ -69,7 +69,8 @@ export default function RequestCorrectionModal({
 
       onSubmitCorrection(newCorrection);
       toast.success("Correction request submitted", {
-        description: "Your request has been routed to your line manager for review.",
+        description:
+          "Your request has been routed to your line manager for review.",
       });
 
       setForm({
@@ -89,138 +90,124 @@ export default function RequestCorrectionModal({
   };
 
   return (
-    <Modal ref={modalRef}>
-      <div className="w-full max-w-lg bg-base-100 rounded-2xl shadow-xl overflow-hidden border border-base-200">
-        <div className="bg-gradient-to-r from-primary/10 via-primary/5 to-transparent px-6 py-5 border-b border-base-200">
-          <div className="flex items-center gap-3">
-            <div className="size-10 rounded-xl bg-primary text-white flex items-center justify-center shadow-sm">
-              <Clock className="size-5" />
-            </div>
-            <div>
-              <h3 className="text-lg font-bold text-base-content">
-                Attendance correction
-              </h3>
-              <p className="text-xs text-base-content/60">
-                Corrections go to your manager for approval.
-              </p>
-            </div>
+    <Modal
+      ref={modalRef}
+      title="Request Attendance Correction"
+      maxWidth="max-w-xl"
+      onClose={onClose}
+    >
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <p className="text-xs text-base-content/60 -mt-1 mb-3">
+          Submit corrections for missed punches, adjusted hours, or overtime
+          claims for manager approval.
+        </p>
+
+        <div>
+          <label className="text-xs font-semibold text-base-content/80 mb-1 block">
+            Employee name <span className="text-error">*</span>
+          </label>
+          <SimpleInput
+            value={form.employeeName}
+            onChange={(e) =>
+              setForm((p) => ({ ...p, employeeName: e.target.value }))
+            }
+            placeholder="Your name"
+            required
+          />
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label className="text-xs font-semibold text-base-content/80 mb-1 block">
+              Date to correct <span className="text-error">*</span>
+            </label>
+            <input
+              type="date"
+              value={form.date}
+              onChange={(e) => setForm((p) => ({ ...p, date: e.target.value }))}
+              className="input input-bordered w-full text-xs rounded-xl bg-base-200/50"
+              required
+            />
+          </div>
+
+          <div>
+            <label className="text-xs font-semibold text-base-content/80 mb-1 block">
+              Correction type
+            </label>
+            <LocalSelect
+              value={form.kind}
+              onChange={(e) => setForm((p) => ({ ...p, kind: e.target.value }))}
+            >
+              {CORRECTION_TYPES.map((t) => (
+                <option key={t} value={t}>
+                  {t}
+                </option>
+              ))}
+            </LocalSelect>
+          </div>
+
+          <div>
+            <label className="text-xs font-semibold text-base-content/80 mb-1 block">
+              Correct Clock-in
+            </label>
+            <input
+              type="time"
+              value={form.correctIn}
+              onChange={(e) =>
+                setForm((p) => ({ ...p, correctIn: e.target.value }))
+              }
+              className="input input-bordered w-full text-xs rounded-xl bg-base-200/50"
+            />
+          </div>
+
+          <div>
+            <label className="text-xs font-semibold text-base-content/80 mb-1 block">
+              Correct Clock-out
+            </label>
+            <input
+              type="time"
+              value={form.correctOut}
+              onChange={(e) =>
+                setForm((p) => ({ ...p, correctOut: e.target.value }))
+              }
+              className="input input-bordered w-full text-xs rounded-xl bg-base-200/50"
+            />
           </div>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-6 space-y-4">
-          <div>
-            <label className="text-xs font-semibold text-base-content/80 mb-1 block">
-              Employee name <span className="text-error">*</span>
-            </label>
-            <SimpleInput
-              value={form.employeeName}
-              onChange={(e) =>
-                setForm((p) => ({ ...p, employeeName: e.target.value }))
-              }
-              placeholder="Your name"
-              required
-            />
-          </div>
+        <div>
+          <label className="text-xs font-semibold text-base-content/80 mb-1 block">
+            Reason <span className="text-error">*</span>
+          </label>
+          <textarea
+            value={form.reason}
+            onChange={(e) => setForm((p) => ({ ...p, reason: e.target.value }))}
+            placeholder="Explain reason for discrepancy or missed punch..."
+            rows={3}
+            className="textarea textarea-bordered w-full text-xs rounded-xl bg-base-200/50"
+            required
+          />
+        </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label className="text-xs font-semibold text-base-content/80 mb-1 block">
-                Date to correct <span className="text-error">*</span>
-              </label>
-              <input
-                type="date"
-                value={form.date}
-                onChange={(e) =>
-                  setForm((p) => ({ ...p, date: e.target.value }))
-                }
-                className="input input-bordered w-full text-xs rounded-xl bg-base-200/50"
-                required
-              />
-            </div>
+        <div className="flex items-center justify-end gap-2 pt-4 border-t border-base-200">
+          <button
+            type="button"
+            onClick={onClose}
+            className="btn btn-sm btn-ghost rounded-xl"
+          >
+            Cancel
+          </button>
 
-            <div>
-              <label className="text-xs font-semibold text-base-content/80 mb-1 block">
-                Correction type <span className="text-error">*</span>
-              </label>
-              <LocalSelect
-                value={form.kind}
-                onChange={(e) =>
-                  setForm((p) => ({ ...p, kind: e.target.value }))
-                }
-              >
-                {CORRECTION_TYPES.map((t) => (
-                  <option key={t} value={t}>
-                    {t}
-                  </option>
-                ))}
-              </LocalSelect>
-            </div>
-
-            <div>
-              <label className="text-xs font-semibold text-base-content/80 mb-1 block">
-                Correct clock-in
-              </label>
-              <input
-                type="time"
-                value={form.correctIn}
-                onChange={(e) =>
-                  setForm((p) => ({ ...p, correctIn: e.target.value }))
-                }
-                className="input input-bordered w-full text-xs rounded-xl bg-base-200/50"
-              />
-            </div>
-
-            <div>
-              <label className="text-xs font-semibold text-base-content/80 mb-1 block">
-                Correct clock-out
-              </label>
-              <input
-                type="time"
-                value={form.correctOut}
-                onChange={(e) =>
-                  setForm((p) => ({ ...p, correctOut: e.target.value }))
-                }
-                className="input input-bordered w-full text-xs rounded-xl bg-base-200/50"
-              />
-            </div>
-          </div>
-
-          <div>
-            <label className="text-xs font-semibold text-base-content/80 mb-1 block">
-              Reason <span className="text-error">*</span>
-            </label>
-            <textarea
-              value={form.reason}
-              onChange={(e) =>
-                setForm((p) => ({ ...p, reason: e.target.value }))
-              }
-              placeholder="Explain reason for discrepancy or missed punch..."
-              rows={3}
-              className="textarea textarea-bordered w-full text-xs rounded-xl bg-base-200/50"
-              required
-            />
-          </div>
-
-          <div className="flex items-center justify-between pt-4 border-t border-base-200">
-            <button
-              type="button"
-              onClick={onClose}
-              className="btn btn-sm btn-ghost rounded-xl"
-            >
-              Cancel
-            </button>
-
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              className="btn btn-sm bg-primary text-white hover:bg-primary/90 rounded-xl px-5 gap-1.5 shadow-sm shadow-primary/20"
-            >
-              <Send className="size-3.5" />
-              <span>Submit correction</span>
-            </button>
-          </div>
-        </form>
-      </div>
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className="btn btn-sm bg-primary text-white hover:bg-primary/90 rounded-xl px-5 gap-1.5 shadow-sm shadow-primary/20"
+          >
+            <Send className="size-3.5" />
+            <span>Submit correction</span>
+          </button>
+        </div>
+      </form>
     </Modal>
   );
 }

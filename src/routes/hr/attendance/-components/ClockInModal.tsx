@@ -5,7 +5,7 @@ import LocalSelect from "@/components/inputs/LocalSelect";
 import { SHIFT_OPTIONS, WORK_MODES, LOCATION_OPTIONS } from "./attendanceData";
 import type { AttendanceRecord } from "./types";
 import { toast } from "sonner";
-import { LogIn, Send } from "lucide-react";
+import { Send } from "lucide-react";
 
 interface ClockInModalProps {
   isOpen: boolean;
@@ -92,157 +92,147 @@ export default function ClockInModal({
   };
 
   return (
-    <Modal ref={modalRef}>
-      <div className="w-full max-w-lg bg-base-100 rounded-2xl shadow-xl border border-base-200">
-        <div className="bg-gradient-to-r from-primary/10 via-primary/5 to-transparent px-6 py-5 border-b border-base-200">
-          <div className="flex items-center gap-3">
-            <div className="size-10 rounded-xl bg-primary text-white flex items-center justify-center shadow-sm">
-              <LogIn className="size-5" />
-            </div>
-            <div>
-              <h3 className="text-lg font-bold text-base-content">Clock in</h3>
-              <p className="text-xs text-base-content/60">
-                Record the start of your work shift.
-              </p>
-            </div>
-          </div>
+    <Modal
+      ref={modalRef}
+      title="Clock In"
+      maxWidth="max-w-xl"
+      onClose={onClose}
+    >
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <p className="text-xs text-base-content/60 -mt-1 mb-3">
+          Record the official start of your work shift, schedule, and reporting
+          location.
+        </p>
+
+        <div>
+          <label className="text-xs font-semibold text-base-content/80 mb-1 block">
+            Employee name <span className="text-error">*</span>
+          </label>
+          <SimpleInput
+            value={form.name}
+            onChange={(e) => setForm((p) => ({ ...p, name: e.target.value }))}
+            placeholder="e.g. Grace Danjuma"
+            required
+          />
         </div>
 
-        <form onSubmit={handleSubmit} className="p-6 space-y-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
             <label className="text-xs font-semibold text-base-content/80 mb-1 block">
-              Employee name <span className="text-error">*</span>
+              Shift
             </label>
-            <SimpleInput
-              value={form.name}
-              onChange={(e) => setForm((p) => ({ ...p, name: e.target.value }))}
-              placeholder="e.g. Grace Danjuma"
+            <LocalSelect
+              value={form.shift}
+              onChange={(e) =>
+                setForm((p) => ({ ...p, shift: e.target.value }))
+              }
+            >
+              {SHIFT_OPTIONS.map((s) => (
+                <option key={s} value={s}>
+                  {s}
+                </option>
+              ))}
+            </LocalSelect>
+          </div>
+
+          <div>
+            <label className="text-xs font-semibold text-base-content/80 mb-1 block">
+              Work mode
+            </label>
+            <LocalSelect
+              value={form.mode}
+              onChange={(e) =>
+                setForm((p) => ({
+                  ...p,
+                  mode: e.target.value as "On-site" | "Remote" | "Field work",
+                }))
+              }
+            >
+              {WORK_MODES.map((m) => (
+                <option key={m} value={m}>
+                  {m}
+                </option>
+              ))}
+            </LocalSelect>
+          </div>
+
+          <div>
+            <label className="text-xs font-semibold text-base-content/80 mb-1 block">
+              Date <span className="text-error">*</span>
+            </label>
+            <input
+              type="date"
+              value={form.date}
+              onChange={(e) => setForm((p) => ({ ...p, date: e.target.value }))}
+              className="input input-bordered w-full text-xs rounded-xl bg-base-200/50"
               required
             />
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label className="text-xs font-semibold text-base-content/80 mb-1 block">
-                Shift
-              </label>
-              <LocalSelect
-                value={form.shift}
-                onChange={(e) =>
-                  setForm((p) => ({ ...p, shift: e.target.value }))
-                }
-              >
-                {SHIFT_OPTIONS.map((s) => (
-                  <option key={s} value={s}>
-                    {s}
-                  </option>
-                ))}
-              </LocalSelect>
-            </div>
-
-            <div>
-              <label className="text-xs font-semibold text-base-content/80 mb-1 block">
-                Work mode
-              </label>
-              <LocalSelect
-                value={form.mode}
-                onChange={(e) =>
-                  setForm((p) => ({
-                    ...p,
-                    mode: e.target.value as "On-site" | "Remote" | "Field work",
-                  }))
-                }
-              >
-                {WORK_MODES.map((m) => (
-                  <option key={m} value={m}>
-                    {m}
-                  </option>
-                ))}
-              </LocalSelect>
-            </div>
-
-            <div>
-              <label className="text-xs font-semibold text-base-content/80 mb-1 block">
-                Date <span className="text-error">*</span>
-              </label>
-              <input
-                type="date"
-                value={form.date}
-                onChange={(e) =>
-                  setForm((p) => ({ ...p, date: e.target.value }))
-                }
-                className="input input-bordered w-full text-xs rounded-xl bg-base-200/50"
-                required
-              />
-            </div>
-
-            <div>
-              <label className="text-xs font-semibold text-base-content/80 mb-1 block">
-                Clock-in time <span className="text-error">*</span>
-              </label>
-              <input
-                type="time"
-                value={form.time}
-                onChange={(e) =>
-                  setForm((p) => ({ ...p, time: e.target.value }))
-                }
-                className="input input-bordered w-full text-xs rounded-xl bg-base-200/50"
-                required
-              />
-            </div>
-
-            <div className="sm:col-span-2">
-              <label className="text-xs font-semibold text-base-content/80 mb-1 block">
-                Location
-              </label>
-              <LocalSelect
-                value={form.location}
-                onChange={(e) =>
-                  setForm((p) => ({ ...p, location: e.target.value }))
-                }
-              >
-                {LOCATION_OPTIONS.map((loc) => (
-                  <option key={loc} value={loc}>
-                    {loc}
-                  </option>
-                ))}
-              </LocalSelect>
-            </div>
-          </div>
-
           <div>
             <label className="text-xs font-semibold text-base-content/80 mb-1 block">
-              Note (optional)
+              Clock-in time <span className="text-error">*</span>
             </label>
-            <textarea
-              value={form.note}
-              onChange={(e) => setForm((p) => ({ ...p, note: e.target.value }))}
-              placeholder="Reason if late or working remotely..."
-              rows={2}
-              className="textarea textarea-bordered w-full text-xs rounded-xl bg-base-200/50"
+            <input
+              type="time"
+              value={form.time}
+              onChange={(e) => setForm((p) => ({ ...p, time: e.target.value }))}
+              className="input input-bordered w-full text-xs rounded-xl bg-base-200/50"
+              required
             />
           </div>
 
-          <div className="flex items-center justify-between pt-4 border-t border-base-200">
-            <button
-              type="button"
-              onClick={onClose}
-              className="btn btn-sm btn-ghost rounded-xl"
+          <div className="sm:col-span-2">
+            <label className="text-xs font-semibold text-base-content/80 mb-1 block">
+              Location
+            </label>
+            <LocalSelect
+              value={form.location}
+              onChange={(e) =>
+                setForm((p) => ({ ...p, location: e.target.value }))
+              }
             >
-              Cancel
-            </button>
-
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              className="btn btn-sm bg-primary text-white hover:bg-primary/90 rounded-xl px-5 gap-1.5 shadow-sm shadow-primary/20"
-            >
-              <Send className="size-3.5" />
-              <span>Clock in now</span>
-            </button>
+              {LOCATION_OPTIONS.map((loc) => (
+                <option key={loc} value={loc}>
+                  {loc}
+                </option>
+              ))}
+            </LocalSelect>
           </div>
-        </form>
-      </div>
+        </div>
+
+        <div>
+          <label className="text-xs font-semibold text-base-content/80 mb-1 block">
+            Note (optional)
+          </label>
+          <textarea
+            value={form.note}
+            onChange={(e) => setForm((p) => ({ ...p, note: e.target.value }))}
+            placeholder="Reason if late or working remotely..."
+            rows={2}
+            className="textarea textarea-bordered w-full text-xs rounded-xl bg-base-200/50"
+          />
+        </div>
+
+        <div className="flex items-center justify-end gap-2 pt-4 border-t border-base-200">
+          <button
+            type="button"
+            onClick={onClose}
+            className="btn btn-sm btn-ghost rounded-xl"
+          >
+            Cancel
+          </button>
+
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className="btn btn-sm bg-primary text-white hover:bg-primary/90 rounded-xl px-5 gap-1.5 shadow-sm shadow-primary/20"
+          >
+            <Send className="size-3.5" />
+            <span>Clock in now</span>
+          </button>
+        </div>
+      </form>
     </Modal>
   );
 }

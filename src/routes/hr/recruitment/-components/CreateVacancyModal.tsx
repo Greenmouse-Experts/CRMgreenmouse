@@ -13,12 +13,12 @@ import {
 } from "./recruitmentData";
 import type { Vacancy } from "./types";
 import { toast } from "sonner";
-import { Briefcase, Send } from "lucide-react";
+import { Send } from "lucide-react";
 
 interface CreateVacancyModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onCreateVacancy: (newVacancy: Vacancy) => void;
+  onCreateVacancy: (vacancy: Vacancy) => void;
 }
 
 export default function CreateVacancyModal({
@@ -27,6 +27,10 @@ export default function CreateVacancyModal({
   onCreateVacancy,
 }: CreateVacancyModalProps) {
   const modalRef = useRef<ModalHandle>(null);
+
+  const [activeTab, setActiveTab] = useState<"requisition" | "advert">(
+    "requisition",
+  );
 
   const [form, setForm] = useState({
     title: "",
@@ -41,14 +45,11 @@ export default function CreateVacancyModal({
     closes: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
       .toISOString()
       .slice(0, 10),
-    manager: "Grace Danjuma",
-    approver: "Head of HR",
-    channels: "All channels",
+    manager: "Tunde Adeyemi",
+    approver: APPROVER_OPTIONS[0] || "Head of HR",
+    channels: CHANNEL_OPTIONS[0] || "Careers page",
   });
 
-  const [activeTab, setActiveTab] = useState<"requisition" | "advert">(
-    "requisition",
-  );
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
@@ -67,7 +68,7 @@ export default function CreateVacancyModal({
     e.preventDefault();
 
     if (!form.title.trim()) {
-      toast.error("Please provide a job title");
+      toast.error("Please provide a vacancy job title");
       return;
     }
 
@@ -115,9 +116,9 @@ export default function CreateVacancyModal({
         closes: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
           .toISOString()
           .slice(0, 10),
-        manager: "Grace Danjuma",
-        approver: "Head of HR",
-        channels: "All channels",
+        manager: "Tunde Adeyemi",
+        approver: APPROVER_OPTIONS[0] || "Head of HR",
+        channels: CHANNEL_OPTIONS[0] || "Careers page",
       });
       setActiveTab("requisition");
       onClose();
@@ -129,27 +130,21 @@ export default function CreateVacancyModal({
   };
 
   return (
-    <Modal ref={modalRef}>
-      <div className="w-full max-w-2xl bg-base-100 rounded-2xl shadow-xl overflow-hidden border border-base-200">
-        {/* Modal Header */}
-        <div className="bg-gradient-to-r from-primary/10 via-primary/5 to-transparent px-6 py-5 border-b border-base-200">
-          <div className="flex items-center gap-3">
-            <div className="size-10 rounded-xl bg-primary text-white flex items-center justify-center shadow-sm">
-              <Briefcase className="size-5" />
-            </div>
-            <div>
-              <h3 className="text-lg font-bold text-base-content">
-                Create vacancy
-              </h3>
-              <p className="text-xs text-base-content/60">
-                Raise a requisition. It goes to the approver before it can be
-                published.
-              </p>
-            </div>
-          </div>
+    <Modal
+      ref={modalRef}
+      title="Create Vacancy"
+      maxWidth="max-w-2xl"
+      onClose={onClose}
+    >
+      <div className="space-y-4">
+        {/* Stepper Tabs & description */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 -mt-1 pb-3 border-b border-base-200">
+          <p className="text-xs text-base-content/60">
+            Raise a requisition. It goes to the approver before it can be
+            published.
+          </p>
 
-          {/* Stepper Tabs */}
-          <div className="flex gap-2 mt-4">
+          <div className="flex gap-2">
             <button
               type="button"
               onClick={() => setActiveTab("requisition")}
@@ -175,8 +170,8 @@ export default function CreateVacancyModal({
           </div>
         </div>
 
-        {/* Modal Body */}
-        <form onSubmit={handleSubmit} className="p-6 space-y-4">
+        {/* Modal Form */}
+        <form onSubmit={handleSubmit} className="space-y-4">
           {activeTab === "requisition" && (
             <div className="space-y-4 animate-in fade-in duration-200">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -200,9 +195,9 @@ export default function CreateVacancyModal({
                     value={form.dept}
                     onChange={(e) => handleChange("dept", e.target.value)}
                   >
-                    {HR_DEPARTMENTS.map((d) => (
-                      <option key={d} value={d}>
-                        {d}
+                    {HR_DEPARTMENTS.map((dept) => (
+                      <option key={dept} value={dept}>
+                        {dept}
                       </option>
                     ))}
                   </LocalSelect>
@@ -210,15 +205,15 @@ export default function CreateVacancyModal({
 
                 <div>
                   <label className="text-xs font-semibold text-base-content/80 mb-1 block">
-                    Grade
+                    Job grade / level
                   </label>
                   <LocalSelect
                     value={form.grade}
                     onChange={(e) => handleChange("grade", e.target.value)}
                   >
-                    {HR_GRADES.map((g) => (
-                      <option key={g} value={g}>
-                        {g}
+                    {HR_GRADES.map((lvl) => (
+                      <option key={lvl} value={lvl}>
+                        {lvl}
                       </option>
                     ))}
                   </LocalSelect>
@@ -226,22 +221,21 @@ export default function CreateVacancyModal({
 
                 <div>
                   <label className="text-xs font-semibold text-base-content/80 mb-1 block">
-                    Number of openings <span className="text-error">*</span>
+                    Number of openings
                   </label>
-                  <SimpleInput
+                  <input
                     type="number"
-                    value={String(form.openings)}
-                    onChange={(e) =>
-                      handleChange("openings", Number(e.target.value) || 1)
-                    }
-                    min={1}
-                    required
+                    min="1"
+                    max="50"
+                    value={form.openings}
+                    onChange={(e) => handleChange("openings", e.target.value)}
+                    className="input input-bordered w-full text-xs rounded-xl bg-base-200/50"
                   />
                 </div>
 
                 <div>
                   <label className="text-xs font-semibold text-base-content/80 mb-1 block">
-                    Employment type <span className="text-error">*</span>
+                    Employment type
                   </label>
                   <LocalSelect
                     value={form.type}
@@ -257,7 +251,7 @@ export default function CreateVacancyModal({
 
                 <div>
                   <label className="text-xs font-semibold text-base-content/80 mb-1 block">
-                    Work location
+                    Location
                   </label>
                   <LocalSelect
                     value={form.location}
@@ -273,7 +267,7 @@ export default function CreateVacancyModal({
 
                 <div>
                   <label className="text-xs font-semibold text-base-content/80 mb-1 block">
-                    Reason for hire <span className="text-error">*</span>
+                    Reason for hiring
                   </label>
                   <LocalSelect
                     value={form.reason}
@@ -289,17 +283,24 @@ export default function CreateVacancyModal({
 
                 <div className="sm:col-span-2">
                   <label className="text-xs font-semibold text-base-content/80 mb-1 block">
-                    Salary range (₦/month)
+                    Budget / Salary range
                   </label>
                   <SimpleInput
                     value={form.budget}
                     onChange={(e) => handleChange("budget", e.target.value)}
-                    placeholder="e.g. 600,000 – 850,000"
+                    placeholder="e.g. ₦1,200,000 – ₦1,600,000 / month"
                   />
                 </div>
               </div>
 
-              <div className="flex justify-end pt-2">
+              <div className="flex items-center justify-between pt-4 border-t border-base-200">
+                <button
+                  type="button"
+                  onClick={onClose}
+                  className="btn btn-sm btn-ghost rounded-xl"
+                >
+                  Cancel
+                </button>
                 <button
                   type="button"
                   onClick={() => setActiveTab("advert")}
@@ -315,35 +316,33 @@ export default function CreateVacancyModal({
             <div className="space-y-4 animate-in fade-in duration-200">
               <div>
                 <label className="text-xs font-semibold text-base-content/80 mb-1 block">
-                  Job description <span className="text-error">*</span>
+                  Job description & key requirements
                 </label>
                 <textarea
                   value={form.desc}
                   onChange={(e) => handleChange("desc", e.target.value)}
-                  placeholder="Responsibilities, requirements, benefits…"
+                  placeholder="Outline responsibilities, must-have skills, qualifications, and team fit..."
                   rows={4}
                   className="textarea textarea-bordered w-full text-xs rounded-xl bg-base-200/50"
-                  required
                 />
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="text-xs font-semibold text-base-content/80 mb-1 block">
-                    Closing date <span className="text-error">*</span>
+                    Application deadline
                   </label>
                   <input
                     type="date"
                     value={form.closes}
                     onChange={(e) => handleChange("closes", e.target.value)}
                     className="input input-bordered w-full text-xs rounded-xl bg-base-200/50"
-                    required
                   />
                 </div>
 
                 <div>
                   <label className="text-xs font-semibold text-base-content/80 mb-1 block">
-                    Approver <span className="text-error">*</span>
+                    Approver (HR Lead / VP)
                   </label>
                   <LocalSelect
                     value={form.approver}
@@ -357,20 +356,9 @@ export default function CreateVacancyModal({
                   </LocalSelect>
                 </div>
 
-                <div>
+                <div className="sm:col-span-2">
                   <label className="text-xs font-semibold text-base-content/80 mb-1 block">
-                    Hiring manager
-                  </label>
-                  <SimpleInput
-                    value={form.manager}
-                    onChange={(e) => handleChange("manager", e.target.value)}
-                    placeholder="Hiring Manager name"
-                  />
-                </div>
-
-                <div>
-                  <label className="text-xs font-semibold text-base-content/80 mb-1 block">
-                    Publishing channel
+                    Publication Channels
                   </label>
                   <LocalSelect
                     value={form.channels}

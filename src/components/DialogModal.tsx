@@ -5,6 +5,7 @@ import {
   useRef,
   useState,
   type PropsWithChildren,
+  type ReactNode,
 } from "react";
 import { Toaster } from "sonner";
 import { X } from "lucide-react";
@@ -12,7 +13,9 @@ import { X } from "lucide-react";
 interface ModalProps extends PropsWithChildren {
   actions?: any;
   actionName?: string;
-  title?: string;
+  title?: string | ReactNode;
+  maxWidth?: string;
+  onClose?: () => void;
 }
 
 export interface ModalHandle {
@@ -21,7 +24,10 @@ export interface ModalHandle {
 }
 
 const Modal = forwardRef<ModalHandle, ModalProps>(
-  ({ children, actions, actionName: _actionName, title }, ref) => {
+  (
+    { children, actions, actionName: _actionName, title, maxWidth, onClose },
+    ref,
+  ) => {
     const modalRef = useRef<HTMLDialogElement>(null);
     // Track open state so children unmount on close and remount fresh on every
     // open — prevents stale local state / cached data lingering across reopens.
@@ -41,26 +47,36 @@ const Modal = forwardRef<ModalHandle, ModalProps>(
     useEffect(() => {
       const dialog = modalRef.current;
       if (!dialog) return;
-      const handleClose = () => setIsOpen(false);
+      const handleClose = () => {
+        setIsOpen(false);
+        onClose?.();
+      };
       dialog.addEventListener("close", handleClose);
       return () => dialog.removeEventListener("close", handleClose);
-    }, []);
+    }, [onClose]);
 
     return (
       <dialog ref={modalRef} className="modal modal-middle sm:modal-middle">
         <Toaster theme="dark" richColors />
-        <div className="modal-box bg-base-100 text-base-content border border-base-300 max-w-4xl flex flex-col max-h-[90vh] rounded-2xl shadow-xl relative p-0 overflow-hidden">
+        <div
+          className={`modal-box bg-base-100 text-base-content border border-base-300 ${
+            maxWidth || "max-w-4xl"
+          } w-full flex flex-col max-h-[90vh] rounded-2xl shadow-xl relative p-0 overflow-hidden`}
+        >
           <div className="flex border-b border-base-200 py-4 items-center px-6 bg-base-100">
             {title && (
-              <h3 className="font-semibold text-lg text-base-content">
+              <div className="font-semibold text-lg text-base-content">
                 {title}
-              </h3>
+              </div>
             )}
             <form method="dialog" className="ml-auto">
               <button
                 type="button"
                 className="btn btn-sm btn-circle btn-ghost text-base-content/60 hover:text-base-content"
-                onClick={() => modalRef.current?.close()}
+                onClick={() => {
+                  modalRef.current?.close();
+                  onClose?.();
+                }}
               >
                 <X size={18} />
               </button>
@@ -76,7 +92,15 @@ const Modal = forwardRef<ModalHandle, ModalProps>(
           )}
         </div>
         <form method="dialog" className="modal-backdrop">
-          <button>close</button>
+          <button
+            type="button"
+            onClick={() => {
+              modalRef.current?.close();
+              onClose?.();
+            }}
+          >
+            close
+          </button>
         </form>
       </dialog>
     );

@@ -5,7 +5,7 @@ import LocalSelect from "@/components/inputs/LocalSelect";
 import { GRADE_OPTIONS } from "./organizationData";
 import type { Department, Position } from "./types";
 import { toast } from "sonner";
-import { Briefcase, Send } from "lucide-react";
+import { Send } from "lucide-react";
 
 interface AddPositionModalProps {
   isOpen: boolean;
@@ -81,124 +81,119 @@ export default function AddPositionModal({
   };
 
   return (
-    <Modal ref={modalRef}>
-      <div className="w-full max-w-lg bg-base-100 rounded-2xl shadow-xl overflow-hidden border border-base-200">
-        <div className="bg-gradient-to-r from-primary/10 via-primary/5 to-transparent px-6 py-5 border-b border-base-200">
-          <div className="flex items-center gap-3">
-            <div className="size-10 rounded-xl bg-primary text-white flex items-center justify-center shadow-sm">
-              <Briefcase className="size-5" />
-            </div>
-            <div>
-              <h3 className="text-lg font-bold text-base-content">
-                Add job position
-              </h3>
-              <p className="text-xs text-base-content/60">
-                Define a standardized role, pay grade, and target approved headcount.
-              </p>
-            </div>
-          </div>
+    <Modal
+      ref={modalRef}
+      title="Add Job Position"
+      maxWidth="max-w-xl"
+      onClose={onClose}
+    >
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <p className="text-xs text-base-content/60 -mt-1 mb-3">
+          Define a standardized role, department, pay grade, and target approved
+          headcount.
+        </p>
+
+        <div>
+          <label className="text-xs font-semibold text-base-content/80 mb-1 block">
+            Position title <span className="text-error">*</span>
+          </label>
+          <SimpleInput
+            value={form.title}
+            onChange={(e) => setForm((p) => ({ ...p, title: e.target.value }))}
+            placeholder="e.g. Senior Product Designer"
+            required
+          />
         </div>
 
-        <form onSubmit={handleSubmit} className="p-6 space-y-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
             <label className="text-xs font-semibold text-base-content/80 mb-1 block">
-              Position title <span className="text-error">*</span>
+              Department
             </label>
-            <SimpleInput
-              value={form.title}
-              onChange={(e) => setForm((p) => ({ ...p, title: e.target.value }))}
-              placeholder="e.g. Senior Product Designer"
+            <LocalSelect
+              value={form.dept}
+              onChange={(e) => setForm((p) => ({ ...p, dept: e.target.value }))}
+            >
+              {departments.map((d) => (
+                <option key={d.id} value={d.name}>
+                  {d.name}
+                </option>
+              ))}
+            </LocalSelect>
+          </div>
+
+          <div>
+            <label className="text-xs font-semibold text-base-content/80 mb-1 block">
+              Job grade
+            </label>
+            <LocalSelect
+              value={form.grade}
+              onChange={(e) =>
+                setForm((p) => ({ ...p, grade: e.target.value }))
+              }
+            >
+              {GRADE_OPTIONS.map((g) => (
+                <option key={g} value={g}>
+                  {g}
+                </option>
+              ))}
+            </LocalSelect>
+          </div>
+
+          <div>
+            <label className="text-xs font-semibold text-base-content/80 mb-1 block">
+              Approved headcount
+            </label>
+            <input
+              type="number"
+              min="1"
+              value={form.approved}
+              onChange={(e) =>
+                setForm((p) => ({
+                  ...p,
+                  approved: Number(e.target.value) || 1,
+                }))
+              }
+              className="input input-bordered w-full text-xs rounded-xl bg-base-200/50"
               required
             />
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label className="text-xs font-semibold text-base-content/80 mb-1 block">
-                Department
-              </label>
-              <LocalSelect
-                value={form.dept}
-                onChange={(e) =>
-                  setForm((p) => ({ ...p, dept: e.target.value }))
-                }
-              >
-                {departments.map((d) => (
-                  <option key={d.id} value={d.name}>
-                    {d.name}
-                  </option>
-                ))}
-              </LocalSelect>
-            </div>
-
-            <div>
-              <label className="text-xs font-semibold text-base-content/80 mb-1 block">
-                Job grade
-              </label>
-              <LocalSelect
-                value={form.grade}
-                onChange={(e) =>
-                  setForm((p) => ({ ...p, grade: e.target.value }))
-                }
-              >
-                {GRADE_OPTIONS.map((g) => (
-                  <option key={g} value={g}>
-                    {g}
-                  </option>
-                ))}
-              </LocalSelect>
-            </div>
-
-            <div>
-              <label className="text-xs font-semibold text-base-content/80 mb-1 block">
-                Approved headcount <span className="text-error">*</span>
-              </label>
-              <SimpleInput
-                type="number"
-                value={String(form.approved)}
-                onChange={(e) =>
-                  setForm((p) => ({ ...p, approved: Number(e.target.value) || 1 }))
-                }
-                min={1}
-                required
-              />
-            </div>
-
-            <div>
-              <label className="text-xs font-semibold text-base-content/80 mb-1 block">
-                Currently filled
-              </label>
-              <SimpleInput
-                type="number"
-                value={String(form.filled)}
-                onChange={(e) =>
-                  setForm((p) => ({ ...p, filled: Number(e.target.value) || 0 }))
-                }
-                min={0}
-              />
-            </div>
+          <div>
+            <label className="text-xs font-semibold text-base-content/80 mb-1 block">
+              Currently filled
+            </label>
+            <input
+              type="number"
+              min="0"
+              value={form.filled}
+              onChange={(e) =>
+                setForm((p) => ({ ...p, filled: Number(e.target.value) || 0 }))
+              }
+              className="input input-bordered w-full text-xs rounded-xl bg-base-200/50"
+            />
           </div>
+        </div>
 
-          <div className="flex items-center justify-between pt-4 border-t border-base-200">
-            <button
-              type="button"
-              onClick={onClose}
-              className="btn btn-sm btn-ghost rounded-xl"
-            >
-              Cancel
-            </button>
+        <div className="flex items-center justify-end gap-2 pt-4 border-t border-base-200">
+          <button
+            type="button"
+            onClick={onClose}
+            className="btn btn-sm btn-ghost rounded-xl"
+          >
+            Cancel
+          </button>
 
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              className="btn btn-sm bg-primary text-white hover:bg-primary/90 rounded-xl px-5 gap-1.5 shadow-sm shadow-primary/20"
-            >
-              <Send className="size-3.5" />
-              <span>Create position</span>
-            </button>
-          </div>
-        </form>
-      </div>
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className="btn btn-sm bg-primary text-white hover:bg-primary/90 rounded-xl px-5 gap-1.5 shadow-sm shadow-primary/20"
+          >
+            <Send className="size-3.5" />
+            <span>Create position</span>
+          </button>
+        </div>
+      </form>
     </Modal>
   );
 }
