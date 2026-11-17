@@ -9,8 +9,6 @@ import {
   Truck,
   ShoppingBag,
   ArrowUpRight,
-  ChevronLeft,
-  ChevronRight,
 } from "lucide-react";
 
 interface SolutionSession {
@@ -176,7 +174,10 @@ export default function ConnectedSessions() {
         <div className="mx-auto max-w-3xl text-center space-y-4 mb-10 sm:mb-12">
           <h2 className="text-3xl sm:text-4xl lg:text-[44px] font-medium tracking-tight text-slate-900 leading-tight">
             Three solutions. <br />
-            One <span className="text-[#5958ed] italic ">connected</span>{" "}
+            One{" "}
+            <span className="text-[#5958ed] italic font-serif">
+              connected
+            </span>{" "}
             experience.
           </h2>
           <p className="text-sm sm:text-base text-slate-600 font-normal max-w-xl mx-auto leading-relaxed">
@@ -217,7 +218,8 @@ export default function ConnectedSessions() {
           <img
             className="absolute  inset-0 w-full h-full"
             src={"/homepage/experiences/new_dark_bg.png"}
-          ></img>
+            alt=""
+          />
 
           {/* Background Ambient Glows */}
           {/*<div className="pointer-events-none absolute -right-20 -bottom-20 size-96 rounded-full bg-[#5958ed]/15 blur-3xl" />
@@ -288,6 +290,23 @@ export default function ConnectedSessions() {
                 </div>
               </div>
             </div>
+          </div>
+
+          {/* Dots Indicator */}
+          <div className="relative z-10 flex justify-center items-center gap-2 pb-6 pt-2">
+            {SESSIONS.map((_, idx) => (
+              <button
+                key={idx}
+                type="button"
+                onClick={() => setActiveIndex(idx)}
+                aria-label={`Go to slide ${idx + 1}`}
+                className={`transition-all duration-200 rounded-full cursor-pointer ${
+                  idx === activeIndex
+                    ? "w-8 h-2 bg-[#5958ed]"
+                    : "w-2 h-2 bg-white/30 hover:bg-white/60"
+                }`}
+              />
+            ))}
           </div>
         </div>
       </div>

@@ -35,6 +35,7 @@ import { Route as TenantNotificationsIndexRouteImport } from './routes/tenant/no
 import { Route as HrStaffsIndexRouteImport } from './routes/hr/staffs/index'
 import { Route as HrRecruitmentIndexRouteImport } from './routes/hr/recruitment/index'
 import { Route as HrOnboardingIndexRouteImport } from './routes/hr/onboarding/index'
+import { Route as HomeProductsIndexRouteImport } from './routes/home/products.index'
 import { Route as HomeContactUsIndexRouteImport } from './routes/home/contact-us.index'
 import { Route as AuthVerifyIndexRouteImport } from './routes/auth/verify/index'
 import { Route as AuthStaffIndexRouteImport } from './routes/auth/staff/index'
@@ -241,6 +242,11 @@ const HrOnboardingIndexRoute = HrOnboardingIndexRouteImport.update({
   id: '/onboarding/',
   path: '/onboarding/',
   getParentRoute: () => HrRouteRoute,
+} as any)
+const HomeProductsIndexRoute = HomeProductsIndexRouteImport.update({
+  id: '/home/products/',
+  path: '/home/products/',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const HomeContactUsIndexRoute = HomeContactUsIndexRouteImport.update({
   id: '/home/contact-us/',
@@ -699,6 +705,7 @@ export interface FileRoutesByFullPath {
   '/auth/staff': typeof AuthStaffIndexRoute
   '/auth/verify/': typeof AuthVerifyIndexRoute
   '/home/contact-us': typeof HomeContactUsIndexRoute
+  '/home/products': typeof HomeProductsIndexRoute
   '/hr/onboarding': typeof HrOnboardingIndexRoute
   '/hr/recruitment': typeof HrRecruitmentIndexRoute
   '/hr/staffs': typeof HrStaffsIndexRoute
@@ -794,6 +801,7 @@ export interface FileRoutesByTo {
   '/auth/staff': typeof AuthStaffIndexRoute
   '/auth/verify': typeof AuthVerifyIndexRoute
   '/home/contact-us': typeof HomeContactUsIndexRoute
+  '/home/products': typeof HomeProductsIndexRoute
   '/hr/onboarding': typeof HrOnboardingIndexRoute
   '/hr/recruitment': typeof HrRecruitmentIndexRoute
   '/hr/staffs': typeof HrStaffsIndexRoute
@@ -898,6 +906,7 @@ export interface FileRoutesById {
   '/auth/staff/': typeof AuthStaffIndexRoute
   '/auth/verify/': typeof AuthVerifyIndexRoute
   '/home/contact-us/': typeof HomeContactUsIndexRoute
+  '/home/products/': typeof HomeProductsIndexRoute
   '/hr/onboarding/': typeof HrOnboardingIndexRoute
   '/hr/recruitment/': typeof HrRecruitmentIndexRoute
   '/hr/staffs/': typeof HrStaffsIndexRoute
@@ -1003,6 +1012,7 @@ export interface FileRouteTypes {
     | '/auth/staff'
     | '/auth/verify/'
     | '/home/contact-us'
+    | '/home/products'
     | '/hr/onboarding'
     | '/hr/recruitment'
     | '/hr/staffs'
@@ -1098,6 +1108,7 @@ export interface FileRouteTypes {
     | '/auth/staff'
     | '/auth/verify'
     | '/home/contact-us'
+    | '/home/products'
     | '/hr/onboarding'
     | '/hr/recruitment'
     | '/hr/staffs'
@@ -1201,6 +1212,7 @@ export interface FileRouteTypes {
     | '/auth/staff/'
     | '/auth/verify/'
     | '/home/contact-us/'
+    | '/home/products/'
     | '/hr/onboarding/'
     | '/hr/recruitment/'
     | '/hr/staffs/'
@@ -1288,6 +1300,7 @@ export interface RootRouteChildren {
   AuthLoginIndexRoute: typeof AuthLoginIndexRoute
   AuthStaffIndexRoute: typeof AuthStaffIndexRoute
   HomeContactUsIndexRoute: typeof HomeContactUsIndexRoute
+  HomeProductsIndexRoute: typeof HomeProductsIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -1473,6 +1486,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/hr/onboarding'
       preLoaderRoute: typeof HrOnboardingIndexRouteImport
       parentRoute: typeof HrRouteRoute
+    }
+    '/home/products/': {
+      id: '/home/products/'
+      path: '/home/products'
+      fullPath: '/home/products'
+      preLoaderRoute: typeof HomeProductsIndexRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/home/contact-us/': {
       id: '/home/contact-us/'
@@ -2272,6 +2292,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthLoginIndexRoute: AuthLoginIndexRoute,
   AuthStaffIndexRoute: AuthStaffIndexRoute,
   HomeContactUsIndexRoute: HomeContactUsIndexRoute,
+  HomeProductsIndexRoute: HomeProductsIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
