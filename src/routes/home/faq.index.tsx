@@ -26,19 +26,19 @@ const faqs: FaqItem[] = [
     id: "solutions-offered",
     question: "Which solutions does KINOVIA offer?",
     answer:
-      "KINOVIA brings together five connected areas: CRM, the Ent-Ext App, Logistics, E-commerce and Service Request. They work as one suite so your teams and customer data stay in sync.",
+      "The five featured areas are CRM, Ent-Ext App, Logistics, E-commerce and Service Request.",
   },
   {
     id: "specific-product",
     question: "Can I ask about a specific product?",
     answer:
-      "Yes. Use the support section to specify the product you need help with and include a short description of your request so the right person can pick it up.",
+      "Yes. Use the support section to specify the product you need help with, and include a short description of your request so the right person can pick it up.",
   },
   {
     id: "submit-ticket",
     question: "How do I submit a support ticket?",
     answer:
-      "Complete the ticket form below with your contact details, select the relevant product and describe your request. The live version will need a connected ticket management system to deliver it.",
+      "Complete the support form with your contact details, select the relevant product, and describe your request. The live version will need a connected ticket managing system to deliver it.",
   },
   {
     id: "get-started",
@@ -50,31 +50,31 @@ const faqs: FaqItem[] = [
     id: "solutions-to-explore",
     question: "Which KINOVIA solutions can I explore?",
     answer:
-      "You can explore KINOVIA CRM for customer relationships, the Ent-Ext App for extended business workflows, Logistics for operations, E-commerce for online sales and Service Request for support handling.",
+      "You can explore three product areas: CRM, Estate Management App, and Logistics. For e-commerce, CRM is the core offering, while the other two are presented as product concepts. Visit the Solutions page to see the connections.",
   },
   {
     id: "crm-features",
     question: "What can I manage with KINOVIA CRM?",
     answer:
-      "KINOVIA CRM helps you manage contacts, accounts, orders and products, keep track of customer relationships, and review business analytics from a single connected workspace.",
+      "The CRM experience is centred around customer contact, sales opportunities, follow-ups, and visibility into team activities. The product team can confirm the feature hierarchy and flow in your version.",
   },
   {
     id: "business-sizes",
     question: "Is KINOVIA designed for businesses of different sizes?",
     answer:
-      "Yes. The platform is built to scale with your team, from growing businesses getting their first CRM in place to larger organisations coordinating multiple products and teams.",
+      "The products are designed for businesses of different sizes, with the right fit decided on your premises and needs. Contact KINOVIA to discuss your use case and solution options.",
   },
   {
     id: "estate-management-app",
     question: "What is the Estate Management App?",
     answer:
-      "The Estate Management App supports property and estate workflows, helping you organise listings, track requests and keep stakeholders connected within the wider KINOVIA ecosystem.",
+      "It's a product concept for property administration and property operations, with complete property information, maintenance requests, and appointment tracking. The final feature set is subject to confirmation in the release planning.",
   },
   {
     id: "logistics-ecommerce",
     question: "What will Logistics / E-commerce help businesses do?",
     answer:
-      "Logistics helps you coordinate movement and operations, while E-commerce supports your online sales. Together they connect orders and customers with the rest of your KINOVIA tools.",
+      "The concept is to integrate inventory, order history, fulfillment, and commerce activity in a connected workspace. Specific capabilities and availability will be confirmed as the product develops.",
   },
 ];
 
