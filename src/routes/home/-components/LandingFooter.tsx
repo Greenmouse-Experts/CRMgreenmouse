@@ -20,7 +20,7 @@ export default function LandingFooter() {
             href="/home/faq"
             className="hover:text-slate-950 transition-colors"
           >
-            FAQ
+            FAQs
           </a>
           <a href="#support" className="hover:text-slate-950 transition-colors">
             Contact Us

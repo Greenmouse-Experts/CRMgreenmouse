@@ -80,7 +80,7 @@ export default function FaqSection() {
           {/* Left: Section Header */}
           <div className="lg:col-span-4 ">
             <div className="space-y-4 ">
-              <h2 className="text-3xl sm:text-4xl lg:text-[44px] font-medium tracking-tight text-slate-900 leading-tight">
+              <h2 className="text-3xl sm:text-4xl lg:text-[44px] font-medium tracking-tight text-slate-900 leading-tight capitalize">
                 Frequently <br className="hidden sm:inline" />
                 asked questions.
               </h2>

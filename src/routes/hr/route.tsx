@@ -75,7 +75,7 @@ const nav_links: NavSection[] = [
     title: "Operations",
     items: [
       {
-        path: "/hr/attendance-time",
+        path: "/hr/attendance",
         label: "Attendance & Time",
         icon: <CalendarCheck2 size={ICON_SIZE} />,
       },
