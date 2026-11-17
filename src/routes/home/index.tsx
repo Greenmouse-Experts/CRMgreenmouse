@@ -1,9 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import HomeNav from "./-components/HomeNav";
 import Hero from "./-components/Hero";
-import SolutionsGrid from "./-components/SolutionsGrid";
+import ConnectedSessions from "./-components/ConnectedSessions";
 import TogetherInOnePlace from "./-components/TogetherInOnePlace";
-import KinoviaInAction from "./-components/KinoviaInAction";
 import SupportTicketSection from "./-components/SupportTicketSection";
 import FaqSection from "./-components/FaqSection";
 import CtaBanner from "./-components/CtaBanner";
@@ -23,26 +22,23 @@ function RouteComponent() {
         {/* Section 1: Hero */}
         <Hero />
 
-        {/* Section 2: Three Solutions. One Connected Experience */}
-        <SolutionsGrid />
+        {/* Section 2: Three Solutions. One Connected Experience (Interactive Carousel) */}
+        <ConnectedSessions />
 
         {/* Section 3: Bring Your Business Tools Together In One Place */}
         <TogetherInOnePlace />
 
-        {/* Section 4: See KINOVIA in action */}
-        <KinoviaInAction />
-
-        {/* Section 5: Tell us what you need / Support ticket */}
+        {/* Section 4: Tell us what you need / Support ticket */}
         <SupportTicketSection />
 
-        {/* Section 6: Frequently asked questions */}
+        {/* Section 5: Frequently asked questions */}
         <FaqSection />
 
-        {/* Section 7: Smarter tools banner */}
+        {/* Section 6: Smarter tools banner */}
         <CtaBanner />
       </main>
 
-      {/* Section 8: Footer */}
+      {/* Section 7: Footer */}
       <LandingFooter />
     </div>
   );
