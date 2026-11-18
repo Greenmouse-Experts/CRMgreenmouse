@@ -10,6 +10,9 @@ export default function LandingFooter() {
             KINOVIA<span className="text-[#5958ed]">.</span>
           </span>
         </Link>
+        <p className="mx-auto text-base-content/60 font-semibold">
+          @copyright2026
+        </p>
 
         {/* Links */}
         <nav className="flex items-center gap-6  sm: font-medium text-slate-600">
