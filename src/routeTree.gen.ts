@@ -40,6 +40,7 @@ import { Route as HrPayrollIndexRouteImport } from './routes/hr/payroll/index'
 import { Route as HrOrganizationIndexRouteImport } from './routes/hr/organization.index'
 import { Route as HrOnboardingIndexRouteImport } from './routes/hr/onboarding/index'
 import { Route as HrLeaveIndexRouteImport } from './routes/hr/leave/index'
+import { Route as HrDisciplinaryIndexRouteImport } from './routes/hr/disciplinary/index'
 import { Route as HrAttendanceIndexRouteImport } from './routes/hr/attendance/index'
 import { Route as HomeProductsIndexRouteImport } from './routes/home/products.index'
 import { Route as HomeFaqIndexRouteImport } from './routes/home/faq.index'
@@ -273,6 +274,11 @@ const HrOnboardingIndexRoute = HrOnboardingIndexRouteImport.update({
 const HrLeaveIndexRoute = HrLeaveIndexRouteImport.update({
   id: '/leave/',
   path: '/leave/',
+  getParentRoute: () => HrRouteRoute,
+} as any)
+const HrDisciplinaryIndexRoute = HrDisciplinaryIndexRouteImport.update({
+  id: '/disciplinary/',
+  path: '/disciplinary/',
   getParentRoute: () => HrRouteRoute,
 } as any)
 const HrAttendanceIndexRoute = HrAttendanceIndexRouteImport.update({
@@ -750,6 +756,7 @@ export interface FileRoutesByFullPath {
   '/home/faq': typeof HomeFaqIndexRoute
   '/home/products': typeof HomeProductsIndexRoute
   '/hr/attendance': typeof HrAttendanceIndexRoute
+  '/hr/disciplinary': typeof HrDisciplinaryIndexRoute
   '/hr/leave': typeof HrLeaveIndexRoute
   '/hr/onboarding': typeof HrOnboardingIndexRoute
   '/hr/organization': typeof HrOrganizationIndexRoute
@@ -853,6 +860,7 @@ export interface FileRoutesByTo {
   '/home/faq': typeof HomeFaqIndexRoute
   '/home/products': typeof HomeProductsIndexRoute
   '/hr/attendance': typeof HrAttendanceIndexRoute
+  '/hr/disciplinary': typeof HrDisciplinaryIndexRoute
   '/hr/leave': typeof HrLeaveIndexRoute
   '/hr/onboarding': typeof HrOnboardingIndexRoute
   '/hr/organization': typeof HrOrganizationIndexRoute
@@ -965,6 +973,7 @@ export interface FileRoutesById {
   '/home/faq/': typeof HomeFaqIndexRoute
   '/home/products/': typeof HomeProductsIndexRoute
   '/hr/attendance/': typeof HrAttendanceIndexRoute
+  '/hr/disciplinary/': typeof HrDisciplinaryIndexRoute
   '/hr/leave/': typeof HrLeaveIndexRoute
   '/hr/onboarding/': typeof HrOnboardingIndexRoute
   '/hr/organization/': typeof HrOrganizationIndexRoute
@@ -1078,6 +1087,7 @@ export interface FileRouteTypes {
     | '/home/faq'
     | '/home/products'
     | '/hr/attendance'
+    | '/hr/disciplinary'
     | '/hr/leave'
     | '/hr/onboarding'
     | '/hr/organization'
@@ -1181,6 +1191,7 @@ export interface FileRouteTypes {
     | '/home/faq'
     | '/home/products'
     | '/hr/attendance'
+    | '/hr/disciplinary'
     | '/hr/leave'
     | '/hr/onboarding'
     | '/hr/organization'
@@ -1292,6 +1303,7 @@ export interface FileRouteTypes {
     | '/home/faq/'
     | '/home/products/'
     | '/hr/attendance/'
+    | '/hr/disciplinary/'
     | '/hr/leave/'
     | '/hr/onboarding/'
     | '/hr/organization/'
@@ -1605,6 +1617,13 @@ declare module '@tanstack/react-router' {
       path: '/leave'
       fullPath: '/hr/leave'
       preLoaderRoute: typeof HrLeaveIndexRouteImport
+      parentRoute: typeof HrRouteRoute
+    }
+    '/hr/disciplinary/': {
+      id: '/hr/disciplinary/'
+      path: '/disciplinary'
+      fullPath: '/hr/disciplinary'
+      preLoaderRoute: typeof HrDisciplinaryIndexRouteImport
       parentRoute: typeof HrRouteRoute
     }
     '/hr/attendance/': {
@@ -2253,6 +2272,7 @@ const AdminRouteRouteWithChildren = AdminRouteRoute._addFileChildren(
 interface HrRouteRouteChildren {
   HrIndexRoute: typeof HrIndexRoute
   HrAttendanceIndexRoute: typeof HrAttendanceIndexRoute
+  HrDisciplinaryIndexRoute: typeof HrDisciplinaryIndexRoute
   HrLeaveIndexRoute: typeof HrLeaveIndexRoute
   HrOnboardingIndexRoute: typeof HrOnboardingIndexRoute
   HrOrganizationIndexRoute: typeof HrOrganizationIndexRoute
@@ -2266,6 +2286,7 @@ interface HrRouteRouteChildren {
 const HrRouteRouteChildren: HrRouteRouteChildren = {
   HrIndexRoute: HrIndexRoute,
   HrAttendanceIndexRoute: HrAttendanceIndexRoute,
+  HrDisciplinaryIndexRoute: HrDisciplinaryIndexRoute,
   HrLeaveIndexRoute: HrLeaveIndexRoute,
   HrOnboardingIndexRoute: HrOnboardingIndexRoute,
   HrOrganizationIndexRoute: HrOrganizationIndexRoute,
