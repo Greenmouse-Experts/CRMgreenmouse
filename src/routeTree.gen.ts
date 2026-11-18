@@ -32,6 +32,7 @@ import { Route as TenantSettingsIndexRouteImport } from './routes/tenant/setting
 import { Route as TenantProductsIndexRouteImport } from './routes/tenant/products/index'
 import { Route as TenantOrdersIndexRouteImport } from './routes/tenant/orders/index'
 import { Route as TenantNotificationsIndexRouteImport } from './routes/tenant/notifications.index'
+import { Route as HrTrainingIndexRouteImport } from './routes/hr/training/index'
 import { Route as HrStaffsIndexRouteImport } from './routes/hr/staffs/index'
 import { Route as HrRecruitmentIndexRouteImport } from './routes/hr/recruitment/index'
 import { Route as HrPerformanceIndexRouteImport } from './routes/hr/performance/index'
@@ -233,6 +234,11 @@ const TenantNotificationsIndexRoute =
     path: '/notifications/',
     getParentRoute: () => TenantRouteRoute,
   } as any)
+const HrTrainingIndexRoute = HrTrainingIndexRouteImport.update({
+  id: '/training/',
+  path: '/training/',
+  getParentRoute: () => HrRouteRoute,
+} as any)
 const HrStaffsIndexRoute = HrStaffsIndexRouteImport.update({
   id: '/staffs/',
   path: '/staffs/',
@@ -744,6 +750,7 @@ export interface FileRoutesByFullPath {
   '/hr/performance': typeof HrPerformanceIndexRoute
   '/hr/recruitment': typeof HrRecruitmentIndexRoute
   '/hr/staffs': typeof HrStaffsIndexRoute
+  '/hr/training': typeof HrTrainingIndexRoute
   '/tenant/notifications': typeof TenantNotificationsIndexRoute
   '/tenant/orders': typeof TenantOrdersIndexRoute
   '/tenant/products': typeof TenantProductsIndexRoute
@@ -845,6 +852,7 @@ export interface FileRoutesByTo {
   '/hr/performance': typeof HrPerformanceIndexRoute
   '/hr/recruitment': typeof HrRecruitmentIndexRoute
   '/hr/staffs': typeof HrStaffsIndexRoute
+  '/hr/training': typeof HrTrainingIndexRoute
   '/tenant/notifications': typeof TenantNotificationsIndexRoute
   '/tenant/orders': typeof TenantOrdersIndexRoute
   '/tenant/products': typeof TenantProductsIndexRoute
@@ -955,6 +963,7 @@ export interface FileRoutesById {
   '/hr/performance/': typeof HrPerformanceIndexRoute
   '/hr/recruitment/': typeof HrRecruitmentIndexRoute
   '/hr/staffs/': typeof HrStaffsIndexRoute
+  '/hr/training/': typeof HrTrainingIndexRoute
   '/tenant/notifications/': typeof TenantNotificationsIndexRoute
   '/tenant/orders/': typeof TenantOrdersIndexRoute
   '/tenant/products/': typeof TenantProductsIndexRoute
@@ -1066,6 +1075,7 @@ export interface FileRouteTypes {
     | '/hr/performance'
     | '/hr/recruitment'
     | '/hr/staffs'
+    | '/hr/training'
     | '/tenant/notifications'
     | '/tenant/orders'
     | '/tenant/products'
@@ -1167,6 +1177,7 @@ export interface FileRouteTypes {
     | '/hr/performance'
     | '/hr/recruitment'
     | '/hr/staffs'
+    | '/hr/training'
     | '/tenant/notifications'
     | '/tenant/orders'
     | '/tenant/products'
@@ -1276,6 +1287,7 @@ export interface FileRouteTypes {
     | '/hr/performance/'
     | '/hr/recruitment/'
     | '/hr/staffs/'
+    | '/hr/training/'
     | '/tenant/notifications/'
     | '/tenant/orders/'
     | '/tenant/products/'
@@ -1526,6 +1538,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/tenant/notifications'
       preLoaderRoute: typeof TenantNotificationsIndexRouteImport
       parentRoute: typeof TenantRouteRoute
+    }
+    '/hr/training/': {
+      id: '/hr/training/'
+      path: '/training'
+      fullPath: '/hr/training'
+      preLoaderRoute: typeof HrTrainingIndexRouteImport
+      parentRoute: typeof HrRouteRoute
     }
     '/hr/staffs/': {
       id: '/hr/staffs/'
@@ -2221,6 +2240,7 @@ interface HrRouteRouteChildren {
   HrPerformanceIndexRoute: typeof HrPerformanceIndexRoute
   HrRecruitmentIndexRoute: typeof HrRecruitmentIndexRoute
   HrStaffsIndexRoute: typeof HrStaffsIndexRoute
+  HrTrainingIndexRoute: typeof HrTrainingIndexRoute
 }
 
 const HrRouteRouteChildren: HrRouteRouteChildren = {
@@ -2232,6 +2252,7 @@ const HrRouteRouteChildren: HrRouteRouteChildren = {
   HrPerformanceIndexRoute: HrPerformanceIndexRoute,
   HrRecruitmentIndexRoute: HrRecruitmentIndexRoute,
   HrStaffsIndexRoute: HrStaffsIndexRoute,
+  HrTrainingIndexRoute: HrTrainingIndexRoute,
 }
 
 const HrRouteRouteWithChildren =
