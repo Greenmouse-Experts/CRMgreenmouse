@@ -80,9 +80,7 @@ const faqs: FaqItem[] = [
 
 function RouteComponent() {
   const [query, setQuery] = useState("");
-  const [openIds, setOpenIds] = useState<Set<string>>(
-    new Set([faqs[0].id]),
-  );
+  const [openIds, setOpenIds] = useState<Set<string>>(new Set([faqs[0].id]));
 
   const filteredFaqs = faqs.filter((faq) => {
     const term = query.trim().toLowerCase();
@@ -111,13 +109,15 @@ function RouteComponent() {
 
       <main>
         {/* FAQ Hero + Search */}
-        <section className="relative overflow-hidden bg-white pb-14 sm:pb-20">
+        <section
+          className="relative overflow-hidden  pb-14 sm:pb-20"
+          style={{
+            backgroundImage: "url('/homepage/hero_bg.png')",
+            backgroundSize: "100% auto",
+          }}
+        >
           <div
             className="pointer-events-none absolute inset-0 z-0 bg-top bg-no-repeat opacity-90"
-            style={{
-              backgroundImage: "url('/homepage/hero_bg.png')",
-              backgroundSize: "100% auto",
-            }}
             aria-hidden="true"
           />
 
@@ -158,8 +158,8 @@ function RouteComponent() {
         </section>
 
         {/* FAQ Accordion List */}
-        <section className="bg-white pb-20 sm:pb-28">
-          <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
+        <section className="pt-5 mt-4 pb-20 sm:pb-28">
+          <div className="mx-auto container px-4 sm:px-6 lg:px-8">
             {filteredFaqs.length > 0 ? (
               <div className="space-y-3">
                 {filteredFaqs.map((faq) => {
