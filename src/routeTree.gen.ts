@@ -34,6 +34,7 @@ import { Route as TenantOrdersIndexRouteImport } from './routes/tenant/orders/in
 import { Route as TenantNotificationsIndexRouteImport } from './routes/tenant/notifications.index'
 import { Route as HrStaffsIndexRouteImport } from './routes/hr/staffs/index'
 import { Route as HrRecruitmentIndexRouteImport } from './routes/hr/recruitment/index'
+import { Route as HrPerformanceIndexRouteImport } from './routes/hr/performance/index'
 import { Route as HrOrganizationIndexRouteImport } from './routes/hr/organization.index'
 import { Route as HrOnboardingIndexRouteImport } from './routes/hr/onboarding/index'
 import { Route as HrLeaveIndexRouteImport } from './routes/hr/leave/index'
@@ -240,6 +241,11 @@ const HrStaffsIndexRoute = HrStaffsIndexRouteImport.update({
 const HrRecruitmentIndexRoute = HrRecruitmentIndexRouteImport.update({
   id: '/recruitment/',
   path: '/recruitment/',
+  getParentRoute: () => HrRouteRoute,
+} as any)
+const HrPerformanceIndexRoute = HrPerformanceIndexRouteImport.update({
+  id: '/performance/',
+  path: '/performance/',
   getParentRoute: () => HrRouteRoute,
 } as any)
 const HrOrganizationIndexRoute = HrOrganizationIndexRouteImport.update({
@@ -735,6 +741,7 @@ export interface FileRoutesByFullPath {
   '/hr/leave': typeof HrLeaveIndexRoute
   '/hr/onboarding': typeof HrOnboardingIndexRoute
   '/hr/organization': typeof HrOrganizationIndexRoute
+  '/hr/performance': typeof HrPerformanceIndexRoute
   '/hr/recruitment': typeof HrRecruitmentIndexRoute
   '/hr/staffs': typeof HrStaffsIndexRoute
   '/tenant/notifications': typeof TenantNotificationsIndexRoute
@@ -835,6 +842,7 @@ export interface FileRoutesByTo {
   '/hr/leave': typeof HrLeaveIndexRoute
   '/hr/onboarding': typeof HrOnboardingIndexRoute
   '/hr/organization': typeof HrOrganizationIndexRoute
+  '/hr/performance': typeof HrPerformanceIndexRoute
   '/hr/recruitment': typeof HrRecruitmentIndexRoute
   '/hr/staffs': typeof HrStaffsIndexRoute
   '/tenant/notifications': typeof TenantNotificationsIndexRoute
@@ -944,6 +952,7 @@ export interface FileRoutesById {
   '/hr/leave/': typeof HrLeaveIndexRoute
   '/hr/onboarding/': typeof HrOnboardingIndexRoute
   '/hr/organization/': typeof HrOrganizationIndexRoute
+  '/hr/performance/': typeof HrPerformanceIndexRoute
   '/hr/recruitment/': typeof HrRecruitmentIndexRoute
   '/hr/staffs/': typeof HrStaffsIndexRoute
   '/tenant/notifications/': typeof TenantNotificationsIndexRoute
@@ -1054,6 +1063,7 @@ export interface FileRouteTypes {
     | '/hr/leave'
     | '/hr/onboarding'
     | '/hr/organization'
+    | '/hr/performance'
     | '/hr/recruitment'
     | '/hr/staffs'
     | '/tenant/notifications'
@@ -1154,6 +1164,7 @@ export interface FileRouteTypes {
     | '/hr/leave'
     | '/hr/onboarding'
     | '/hr/organization'
+    | '/hr/performance'
     | '/hr/recruitment'
     | '/hr/staffs'
     | '/tenant/notifications'
@@ -1262,6 +1273,7 @@ export interface FileRouteTypes {
     | '/hr/leave/'
     | '/hr/onboarding/'
     | '/hr/organization/'
+    | '/hr/performance/'
     | '/hr/recruitment/'
     | '/hr/staffs/'
     | '/tenant/notifications/'
@@ -1527,6 +1539,13 @@ declare module '@tanstack/react-router' {
       path: '/recruitment'
       fullPath: '/hr/recruitment'
       preLoaderRoute: typeof HrRecruitmentIndexRouteImport
+      parentRoute: typeof HrRouteRoute
+    }
+    '/hr/performance/': {
+      id: '/hr/performance/'
+      path: '/performance'
+      fullPath: '/hr/performance'
+      preLoaderRoute: typeof HrPerformanceIndexRouteImport
       parentRoute: typeof HrRouteRoute
     }
     '/hr/organization/': {
@@ -2199,6 +2218,7 @@ interface HrRouteRouteChildren {
   HrLeaveIndexRoute: typeof HrLeaveIndexRoute
   HrOnboardingIndexRoute: typeof HrOnboardingIndexRoute
   HrOrganizationIndexRoute: typeof HrOrganizationIndexRoute
+  HrPerformanceIndexRoute: typeof HrPerformanceIndexRoute
   HrRecruitmentIndexRoute: typeof HrRecruitmentIndexRoute
   HrStaffsIndexRoute: typeof HrStaffsIndexRoute
 }
@@ -2209,6 +2229,7 @@ const HrRouteRouteChildren: HrRouteRouteChildren = {
   HrLeaveIndexRoute: HrLeaveIndexRoute,
   HrOnboardingIndexRoute: HrOnboardingIndexRoute,
   HrOrganizationIndexRoute: HrOrganizationIndexRoute,
+  HrPerformanceIndexRoute: HrPerformanceIndexRoute,
   HrRecruitmentIndexRoute: HrRecruitmentIndexRoute,
   HrStaffsIndexRoute: HrStaffsIndexRoute,
 }

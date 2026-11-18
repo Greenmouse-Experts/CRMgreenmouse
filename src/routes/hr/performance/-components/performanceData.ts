@@ -1,0 +1,145 @@
+import type { AppraisalRecord, TeamGoal } from "./types";
+
+export const REVIEW_CYCLE_STEPS = [
+  "Goal setting",
+  "Self assessment",
+  "Manager review",
+  "Calibration",
+  "Feedback & sign-off",
+];
+
+export const INITIAL_TEAM_GOALS: TeamGoal[] = [
+  {
+    id: "GOAL-01",
+    title: "Grow Q4 revenue to ₦180m",
+    progress: 72,
+    assignedTo: "Whole team",
+    cycle: "Q4 2026",
+    category: "Business",
+    kpi: "Revenue closed",
+    target: "₦180,000,000",
+    weight: 35,
+    due: "2026-12-15",
+  },
+  {
+    id: "GOAL-02",
+    title: "CSAT ≥ 92%",
+    progress: 88,
+    assignedTo: "Whole team",
+    cycle: "Q4 2026",
+    category: "Customer",
+    kpi: "Customer satisfaction score",
+    target: "92%",
+    weight: 25,
+    due: "2026-12-15",
+  },
+  {
+    id: "GOAL-03",
+    title: "Reduce ticket backlog by 40%",
+    progress: 55,
+    assignedTo: "Whole team",
+    cycle: "Q4 2026",
+    category: "Process",
+    kpi: "Resolved support tickets",
+    target: "-40%",
+    weight: 20,
+    due: "2026-12-15",
+  },
+  {
+    id: "GOAL-04",
+    title: "Ship CRM v3 HR module",
+    progress: 64,
+    assignedTo: "Whole team",
+    cycle: "Q4 2026",
+    category: "Learning & growth",
+    kpi: "Core epics completed",
+    target: "100%",
+    weight: 20,
+    due: "2026-12-15",
+  },
+];
+
+export const INITIAL_APPRAISALS: AppraisalRecord[] = [
+  {
+    id: "APR-01",
+    employee: "Amara Okafor",
+    reviewer: "Grace Danjuma",
+    rating: "4.5",
+    status: "Completed",
+    cycle: "Q4 2026",
+    selfScore: "4.6",
+    managerScore: "4.5",
+  },
+  {
+    id: "APR-02",
+    employee: "Tunde Adeyemi",
+    reviewer: "Amara Okafor",
+    rating: "3.9",
+    status: "Completed",
+    cycle: "Q4 2026",
+    selfScore: "4.2",
+    managerScore: "3.9",
+  },
+  {
+    id: "APR-03",
+    employee: "Chiamaka Eze",
+    reviewer: "Tunde Adeyemi",
+    rating: "—",
+    status: "In Progress",
+    cycle: "Q4 2026",
+    selfScore: "4.0",
+    managerScore: "Pending",
+  },
+  {
+    id: "APR-04",
+    employee: "David Mensah",
+    reviewer: "Amara Okafor",
+    rating: "—",
+    status: "In Progress",
+    cycle: "Q4 2026",
+    selfScore: "3.8",
+    managerScore: "Pending",
+  },
+  {
+    id: "APR-05",
+    employee: "Fatima Bello",
+    reviewer: "Tunde Adeyemi",
+    rating: "—",
+    status: "Pending",
+    cycle: "Q4 2026",
+    selfScore: "Pending",
+    managerScore: "Pending",
+  },
+  {
+    id: "APR-06",
+    employee: "Kwame Asante",
+    reviewer: "Grace Danjuma",
+    rating: "—",
+    status: "Pending",
+    cycle: "Q4 2026",
+    selfScore: "Pending",
+    managerScore: "Pending",
+  },
+];
+
+export const GOAL_CATEGORIES = [
+  "Business",
+  "Customer",
+  "Process",
+  "Learning & growth",
+] as const;
+
+export const REVIEW_CYCLES = ["Q4 2026", "H1 2027", "Annual 2027"] as const;
+
+export const EMPLOYEES_SELECTION = [
+  "Whole team",
+  "Amara Okafor",
+  "Tunde Adeyemi",
+  "Chiamaka Eze",
+  "David Mensah",
+  "Fatima Bello",
+  "Kwame Asante",
+  "Grace Danjuma",
+  "Ngozi Adeleke",
+  "Samuel Mensah",
+];
