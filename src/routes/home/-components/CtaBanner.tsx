@@ -5,7 +5,7 @@ export default function CtaBanner() {
     <section className="relative overflow-hidden bg-[#5758ed] py-20 sm:py-28 text-white text-center">
       {/* Background Banner Image */}
       <div
-        className="pointer-events-none absolute inset-0 z-0 bg-cover bg-center opacity-95 mix-blend-overlay"
+        className="pointer-events-none absolute inset-0 z-0 bg-cover bg-center "
         style={{
           backgroundImage: "url('/blue_bg.png')",
         }}
