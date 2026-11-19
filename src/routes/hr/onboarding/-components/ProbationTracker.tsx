@@ -1,16 +1,19 @@
 import type { OnboardingHire } from "./types";
 import { PROBATION_STEPS } from "./onboardingData";
 import { Check, CalendarCheck, Award, ArrowRight } from "lucide-react";
-import { toast } from "sonner";
 
 interface ProbationTrackerProps {
   hire: OnboardingHire;
   onUpdateStep: (hireId: string, stepIndex: number) => void;
+  onAdvance: (hireId: string) => void;
+  onConfirm: (hireId: string) => void;
 }
 
 export default function ProbationTracker({
   hire,
   onUpdateStep,
+  onAdvance,
+  onConfirm,
 }: ProbationTrackerProps) {
   const currentStep = hire.probationStep;
 
@@ -112,10 +115,7 @@ export default function ProbationTracker({
           {currentStep < 4 ? (
             <button
               type="button"
-              onClick={() => {
-                onUpdateStep(hire.id, currentStep + 1);
-                toast.success(`Advanced probation milestone for ${hire.name}`);
-              }}
+              onClick={() => onAdvance(hire.id)}
               className="btn btn-xs bg-primary text-white hover:bg-primary/90 border-0 rounded-lg px-3 gap-1"
             >
               <span>Advance Milestone</span>
@@ -124,9 +124,7 @@ export default function ProbationTracker({
           ) : (
             <button
               type="button"
-              onClick={() =>
-                toast.success(`${hire.name} confirmed as permanent employee!`)
-              }
+              onClick={() => onConfirm(hire.id)}
               className="btn btn-xs bg-emerald-600 text-white hover:bg-emerald-700 border-0 rounded-lg px-3 gap-1"
             >
               <Award className="size-3" />

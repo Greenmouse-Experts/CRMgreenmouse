@@ -22,121 +22,155 @@ import { get_user_value } from "@/store/authStore";
 import { toast } from "sonner";
 import HrHeader from "./-components/HrHeader";
 
-interface NavItem {
+interface Links {
   path: string;
   label: string;
   icon: React.ReactNode;
-}
-
-interface NavSection {
-  title: string;
-  items: NavItem[];
+  type: "menu" | "submenu";
+  children: Links[] | null;
 }
 
 const ICON_SIZE = 14;
 
-const nav_links: NavSection[] = [
+const nav_links = [
   {
-    title: "Overview",
-    items: [
-      {
-        path: "/hr",
-        label: "HR Dashboard",
-        icon: <LayoutDashboard size={ICON_SIZE} />,
-      },
-    ],
+    path: "/hr",
+    label: "HR Dashboard",
+    icon: <LayoutDashboard size={ICON_SIZE} />,
+    type: "menu",
+    children: null,
   },
   {
-    title: "People",
-    items: [
+    path: "/hr/staffs",
+    label: "People",
+    icon: <Users size={ICON_SIZE} />,
+    type: "submenu",
+    children: [
       {
         path: "/hr/staffs",
         label: "Employees",
         icon: <Users size={ICON_SIZE} />,
+        type: "menu",
+        children: null,
       },
       {
         path: "/hr/recruitment",
         label: "Recruitment",
         icon: <UserRoundPlus size={ICON_SIZE} />,
+        type: "menu",
+        children: null,
       },
       {
         path: "/hr/onboarding",
         label: "Onboarding",
         icon: <NotebookPen size={ICON_SIZE} />,
+        type: "menu",
+        children: null,
       },
       {
         path: "/hr/organization",
         label: "Organization",
         icon: <Building2 size={ICON_SIZE} />,
+        type: "menu",
+        children: null,
       },
     ],
   },
   {
-    title: "Operations",
-    items: [
+    path: "/hr/attendance",
+    label: "Operations",
+    icon: <CalendarCheck2 size={ICON_SIZE} />,
+    type: "submenu",
+    children: [
       {
         path: "/hr/attendance",
         label: "Attendance & Time",
         icon: <CalendarCheck2 size={ICON_SIZE} />,
+        type: "menu",
+        children: null,
       },
       {
         path: "/hr/leave",
         label: "Leave",
         icon: <BriefcaseBusiness size={ICON_SIZE} />,
+        type: "menu",
+        children: null,
       },
       {
         path: "/hr/payroll",
         label: "Payroll",
         icon: <WalletCards size={ICON_SIZE} />,
+        type: "menu",
+        children: null,
       },
     ],
   },
   {
-    title: "Growth & Compliance",
-    items: [
+    path: "/hr/performance",
+    label: "Growth & Compliance",
+    icon: <BarChart3 size={ICON_SIZE} />,
+    type: "submenu",
+    children: [
       {
         path: "/hr/performance",
         label: "Performance",
         icon: <BarChart3 size={ICON_SIZE} />,
+        type: "menu",
+        children: null,
       },
       {
         path: "/hr/training",
         label: "Training",
         icon: <GraduationCap size={ICON_SIZE} />,
+        type: "menu",
+        children: null,
       },
       {
         path: "/hr/disciplinary",
         label: "Disciplinary",
         icon: <Gavel size={ICON_SIZE} />,
+        type: "menu",
+        children: null,
       },
       {
         path: "/hr/offboarding",
         label: "Offboarding",
         icon: <LogOut size={ICON_SIZE} />,
+        type: "menu",
+        children: null,
       },
     ],
   },
   {
-    title: "Workspace",
-    items: [
+    path: "/hr/self-service",
+    label: "Workspace",
+    icon: <CircleUserRound size={ICON_SIZE} />,
+    type: "submenu",
+    children: [
       {
         path: "/hr/self-service",
         label: "Self-Service",
         icon: <CircleUserRound size={ICON_SIZE} />,
+        type: "menu",
+        children: null,
       },
       {
         path: "/hr/reports",
         label: "Reports",
         icon: <Sparkles size={ICON_SIZE} />,
+        type: "menu",
+        children: null,
       },
       {
         path: "/hr/settings",
         label: "Settings",
         icon: <Settings size={ICON_SIZE} />,
+        type: "menu",
+        children: null,
       },
     ],
   },
-];
+] satisfies Links[];
 export const Route = createFileRoute("/hr")({
   component: RouteComponent,
   notFoundComponent: () => (
@@ -173,7 +207,7 @@ function RouteComponent() {
   const url = useLocation();
   const pathname = url.pathname.replace(/\/$/, "") || "/";
   const activeLinkPath = nav_links
-    .flatMap((section) => section.items.map((item) => item.path))
+    .flatMap((link) => link.children?.map((child) => child.path) ?? [link.path])
     .filter(
       (path) =>
         pathname === path ||
@@ -211,35 +245,52 @@ function RouteComponent() {
             </div>
           </div>
 
-          <ul className="menu w-full space-y-4 p-3">
-            {nav_links.map((section) => (
-              <li key={section.title} className="space-y-2">
-                <div className="px-2 text-[10px] font-semibold uppercase tracking-[0.26em] text-base-content/50">
-                  {section.title}
-                </div>
-                <ul className="space-y-1.5">
-                  {section.items.map((item) => {
-                    const isActive = item.path === activeLinkPath;
+          <ul className="menu w-full space-y-2">
+            {nav_links.map((link) => {
+              if (link.type === "submenu" && link.children) {
+                // Submenus open by default
+                return (
+                  <li key={link.path} className="mb-2">
+                    <details open>
+                      <summary className="text-md">
+                        {link.icon}
+                        {link.label}
+                      </summary>
+                      <ul className="py-1 space-y-1">
+                        {link.children.map((childLink) => {
+                          const isChildActive =
+                            childLink.path === activeLinkPath;
+                          return (
+                            <li key={childLink.path}>
+                              <Link
+                                to={childLink.path}
+                                className={`${isChildActive ? "bg-primary text-primary-content " : ""} text-md py-2 rounded-box`}
+                              >
+                                {childLink.icon}
+                                {childLink.label}
+                              </Link>
+                            </li>
+                          );
+                        })}
+                      </ul>
+                    </details>
+                  </li>
+                );
+              }
 
-                    return (
-                      <li key={item.path}>
-                        <Link
-                          to={item.path}
-                          className={`flex items-center gap-3 rounded-xl px-3 py-2 text-sm transition-colors ${
-                            isActive
-                              ? "bg-primary text-primary-content"
-                              : "text-base-content hover:bg-base-200"
-                          }`}
-                        >
-                          {item.icon}
-                          <span>{item.label}</span>
-                        </Link>
-                      </li>
-                    );
-                  })}
-                </ul>
-              </li>
-            ))}
+              const isActive = link.path === activeLinkPath;
+              return (
+                <li key={link.path} className="mb-2">
+                  <Link
+                    to={link.path}
+                    className={`${isActive ? "bg-primary text-primary-content " : ""} text-md py-2 rounded-box`}
+                  >
+                    {link.icon}
+                    {link.label}
+                  </Link>
+                </li>
+              );
+            })}
           </ul>
         </div>
       </div>

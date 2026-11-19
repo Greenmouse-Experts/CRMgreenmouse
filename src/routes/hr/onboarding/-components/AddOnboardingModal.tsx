@@ -1,43 +1,25 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useEffect } from "react";
 import Modal, { type ModalHandle } from "@/components/DialogModal";
-import SimpleInput from "@/components/inputs/SimpleInput";
 import LocalSelect from "@/components/inputs/LocalSelect";
-import type { OnboardingHire } from "./types";
-import { toast } from "sonner";
+import type { StaffMember } from "@/api/tenantApi";
+import { useRef } from "react";
 import { Send } from "lucide-react";
 
 interface AddOnboardingModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onAddHire: (newHire: OnboardingHire) => void;
+  staff: StaffMember[];
+  onStartOnboarding: (staffId: string) => Promise<void>;
 }
-
-const DEPARTMENTS = [
-  "Sales",
-  "Engineering",
-  "Finance",
-  "Operations",
-  "Marketing",
-  "Customer Success",
-  "HR",
-];
 
 export default function AddOnboardingModal({
   isOpen,
   onClose,
-  onAddHire,
+  staff,
+  onStartOnboarding,
 }: AddOnboardingModalProps) {
   const modalRef = useRef<ModalHandle>(null);
-
-  const [form, setForm] = useState({
-    name: "",
-    role: "",
-    dept: "Engineering",
-    start: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000)
-      .toISOString()
-      .slice(0, 10),
-  });
-
+  const [selectedStaffId, setSelectedStaffId] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
@@ -48,47 +30,14 @@ export default function AddOnboardingModal({
     }
   }, [isOpen]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    if (!form.name.trim() || !form.role.trim()) {
-      toast.error("Please provide hire name and job role");
-      return;
-    }
+    if (!selectedStaffId) return;
 
     setIsSubmitting(true);
-
     try {
-      const formattedStart = new Date(form.start).toLocaleDateString("en-US", {
-        month: "short",
-        day: "2-digit",
-      });
-
-      const newHire: OnboardingHire = {
-        id: `HIRE-${Date.now()}`,
-        name: form.name.trim(),
-        role: form.role.trim(),
-        dept: form.dept,
-        start: formattedStart,
-        progress: 0,
-        email: `${form.name.trim().toLowerCase().replace(/\s+/g, ".")}@kinovia.com`,
-        probationStep: 0,
-      };
-
-      onAddHire(newHire);
-      toast.success(`Onboarding initiated for ${newHire.name}`);
-
-      setForm({
-        name: "",
-        role: "",
-        dept: "Engineering",
-        start: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000)
-          .toISOString()
-          .slice(0, 10),
-      });
-      onClose();
-    } catch {
-      toast.error("Failed to add new hire");
+      await onStartOnboarding(selectedStaffId);
+      setSelectedStaffId("");
     } finally {
       setIsSubmitting(false);
     }
@@ -97,89 +46,57 @@ export default function AddOnboardingModal({
   return (
     <Modal
       ref={modalRef}
-      title="Add Onboarding Hire"
+      title="Start Onboarding"
       maxWidth="max-w-xl"
       onClose={onClose}
     >
       <form onSubmit={handleSubmit} className="space-y-4">
         <p className="text-xs text-base-content/60 -mt-1 mb-3">
-          Initiate a new onboarding pipeline and starter checklist for a
-          confirmed employee.
+          Choose an existing staff member to start their onboarding pipeline.
         </p>
 
-        <div>
-          <label className="text-xs font-semibold text-base-content/80 mb-1 block">
-            Full name <span className="text-error">*</span>
-          </label>
-          <SimpleInput
-            value={form.name}
-            onChange={(e) => setForm((p) => ({ ...p, name: e.target.value }))}
-            placeholder="e.g. Samuel Adekunle"
-            required
-          />
-        </div>
-
-        <div>
-          <label className="text-xs font-semibold text-base-content/80 mb-1 block">
-            Job role <span className="text-error">*</span>
-          </label>
-          <SimpleInput
-            value={form.role}
-            onChange={(e) => setForm((p) => ({ ...p, role: e.target.value }))}
-            placeholder="e.g. Frontend Engineer"
-            required
-          />
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        {staff.length === 0 ? (
+          <p className="text-sm text-base-content/60 py-4 text-center">
+            No staff members available. Add staff first.
+          </p>
+        ) : (
           <div>
             <label className="text-xs font-semibold text-base-content/80 mb-1 block">
-              Department
+              Staff member <span className="text-error">*</span>
             </label>
             <LocalSelect
-              value={form.dept}
-              onChange={(e) => setForm((p) => ({ ...p, dept: e.target.value }))}
+              value={selectedStaffId}
+              onChange={(e) => setSelectedStaffId(e.target.value)}
+              required
             >
-              {DEPARTMENTS.map((d) => (
-                <option key={d} value={d}>
-                  {d}
+              <option value="">Select a staff member</option>
+              {staff.map((member) => (
+                <option key={member.id} value={member.id}>
+                  {`${member.firstName ?? ""} ${member.lastName ?? ""}`.trim() ||
+                    member.email}{" "}
+                  — {member.email}
                 </option>
               ))}
             </LocalSelect>
           </div>
+        )}
 
-          <div>
-            <label className="text-xs font-semibold text-base-content/80 mb-1 block">
-              Start date <span className="text-error">*</span>
-            </label>
-            <input
-              type="date"
-              value={form.start}
-              onChange={(e) =>
-                setForm((p) => ({ ...p, start: e.target.value }))
-              }
-              className="input input-bordered w-full text-xs rounded-xl bg-base-200/50"
-              required
-            />
-          </div>
-        </div>
-
-        {/* Footer */}
         <div className="flex items-center justify-end gap-2 pt-4 border-t border-base-200">
           <button
             type="button"
             onClick={onClose}
             className="btn btn-sm btn-ghost rounded-xl"
+            disabled={isSubmitting}
           >
             Cancel
           </button>
           <button
             type="submit"
-            disabled={isSubmitting}
+            disabled={isSubmitting || !selectedStaffId}
             className="btn btn-sm bg-primary text-white hover:bg-primary/90 rounded-xl px-5 gap-1.5 shadow-sm shadow-primary/20"
           >
             <Send className="size-3.5" />
-            <span>Start Onboarding</span>
+            <span>{isSubmitting ? "Starting..." : "Start Onboarding"}</span>
           </button>
         </div>
       </form>

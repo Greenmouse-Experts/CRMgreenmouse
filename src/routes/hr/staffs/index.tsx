@@ -4,23 +4,18 @@ import PageHeader from "@/components/Headers/PageHeader";
 import PageLoader from "@/components/layout/PageLoader";
 import EmployeeStats from "./-components/EmployeeStats";
 import EmployeeFilters from "./-components/EmployeeFilters";
-import EmployeeGridView from "./-components/EmployeeGridView";
 import EmployeeTableView from "./-components/EmployeeTableView";
 import EmployeeDetailModal from "./-components/EmployeeDetailModal";
 import AddEmployeeModal from "./-components/AddEmployeeModal";
 import { exportEmployeesToCSV } from "./-components/employeeData";
-import type {
-  CreateStaffInput,
-  Employee,
-  StatusFilterOption,
-  ViewMode,
-} from "./-components/types";
+import type { Employee, StatusFilterOption } from "./-components/types";
 import {
-  useCreateStaff,
-  useDeleteStaff,
-  useStaffs,
-  type StaffMember,
-} from "@/api/tenantApi";
+  useCreateEmployee,
+  useEmployees,
+  useRemoveEmployee,
+  type CreateEmployeeInput,
+  type EmployeeRecord,
+} from "@/api/employeesApi";
 import { extract_message } from "@/helpers/auth";
 import { Download, Plus, Search } from "lucide-react";
 import { toast } from "sonner";
@@ -31,59 +26,81 @@ export const Route = createFileRoute("/hr/staffs/")({
 
 const UNKNOWN = "—";
 
-function toUiEmployee(staff: StaffMember): Employee {
-  const statusKey = staff.status?.toLowerCase();
+const titleCase = (value?: string) =>
+  value
+    ? value.charAt(0).toUpperCase() + value.slice(1).toLowerCase()
+    : UNKNOWN;
+
+const relationName = (
+  relation?: { name?: string } | string,
+  fallback?: string,
+) => {
+  if (relation && typeof relation === "object")
+    return relation.name || fallback || UNKNOWN;
+  if (typeof relation === "string" && relation) return relation;
+  return fallback || UNKNOWN;
+};
+
+const toUiEmployee = (employee: EmployeeRecord): Employee => {
+  const statusKey = employee.status?.toLowerCase();
   const status =
-    statusKey === "active"
-      ? "Active"
-      : statusKey === "inactive"
-        ? "Suspended"
-        : staff.status
-          ? staff.status.charAt(0).toUpperCase() + staff.status.slice(1)
-          : UNKNOWN;
+    statusKey === "inactive" || statusKey === "suspended"
+      ? "Suspended"
+      : statusKey === "probation"
+        ? "Probation"
+        : statusKey === "notice" || statusKey === "notice_period"
+          ? "Notice Period"
+          : statusKey === "active"
+            ? "Active"
+            : titleCase(employee.status);
 
   return {
-    id: staff.id,
-    name: `${staff.firstName ?? ""} ${staff.lastName ?? ""}`.trim() || UNKNOWN,
-    email: staff.email ?? UNKNOWN,
-    phone: staff.phoneNumber || UNKNOWN,
-    title: staff.role?.name || UNKNOWN,
-    dept: staff.role?.name || UNKNOWN,
-    location: UNKNOWN,
-    type: UNKNOWN,
+    id: employee.id,
+    name:
+      `${employee.firstName ?? ""} ${employee.lastName ?? ""}`.trim() ||
+      UNKNOWN,
+    email: employee.email ?? UNKNOWN,
+    phone: employee.phoneNumber || UNKNOWN,
+    title: relationName(
+      employee.position ?? employee.role,
+      employee.positionName,
+    ),
+    dept: relationName(employee.department, employee.departmentName),
+    location: employee.location || UNKNOWN,
+    type: titleCase(employee.employmentType),
     status,
     onLeave: false,
-    start: staff.createdAt?.slice(0, 10) || UNKNOWN,
+    manager:
+      relationName(employee.manager) === UNKNOWN
+        ? undefined
+        : relationName(employee.manager),
+    start: employee.startDate?.slice(0, 10) || employee.createdAt?.slice(0, 10),
+    grade: employee.grade,
   };
-}
+};
 
 function RouteComponent() {
-  const staffQuery = useStaffs();
-  const createStaffMutation = useCreateStaff();
-  const deleteStaffMutation = useDeleteStaff();
+  const employeesQuery = useEmployees();
+  const createEmployee = useCreateEmployee();
+  const removeEmployee = useRemoveEmployee();
 
-  // Availability is UI-only state; there is no leave field on the staff endpoint.
-  const [leaveOverrides, setLeaveOverrides] = useState<Record<string, boolean>>(
-    {},
-  );
-
-  // Employees are derived directly from the /staffs endpoint
   const employeeList = useMemo<Employee[]>(
-    () =>
-      (staffQuery.data ?? []).map((staff) => {
-        const employee = toUiEmployee(staff);
-        return {
-          ...employee,
-          onLeave: leaveOverrides[staff.id] ?? employee.onLeave,
-        };
-      }),
-    [staffQuery.data, leaveOverrides],
+    () => (employeesQuery.data ?? []).map(toUiEmployee),
+    [employeesQuery.data],
   );
+
+  const departments = useMemo(() => {
+    const unique = new Set(
+      employeeList
+        .map((emp) => emp.dept)
+        .filter((dept) => dept && dept !== UNKNOWN),
+    );
+    return [...unique].sort();
+  }, [employeeList]);
 
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<StatusFilterOption>("All");
   const [departmentFilter, setDepartmentFilter] = useState("All");
-  const [viewMode, setViewMode] = useState<ViewMode>("list");
 
   const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(
     null,
@@ -133,30 +150,27 @@ function RouteComponent() {
     }
   };
 
-  const handleAddStaff = async (payload: CreateStaffInput) => {
+  const handleAddEmployee = async (payload: CreateEmployeeInput) => {
     try {
-      await createStaffMutation.mutateAsync(payload);
+      await createEmployee.mutateAsync(payload);
       toast.success("Employee added successfully.");
       setIsAddModalOpen(false);
     } catch (error) {
       toast.error(extract_message(error as never));
+      throw error;
     }
   };
 
-  const handleDeleteStaff = (employeeId: string) => {
-    toast.promise(deleteStaffMutation.mutateAsync(employeeId), {
-      loading: "Removing employee...",
-      success: "Employee removed",
+  const handleRemoveEmployee = (employeeId: string) => {
+    toast.promise(removeEmployee.mutateAsync(employeeId), {
+      loading: "Deactivating employee...",
+      success: "Employee deactivated",
       error: (error) => extract_message(error as never),
     });
     setSelectedEmployee(null);
   };
 
   const handleToggleLeave = (employeeId: string) => {
-    setLeaveOverrides((prev) => ({
-      ...prev,
-      [employeeId]: !employeeList.find((emp) => emp.id === employeeId)?.onLeave,
-    }));
     setSelectedEmployee((prev) =>
       prev && prev.id === employeeId
         ? { ...prev, onLeave: !prev.onLeave }
@@ -195,10 +209,11 @@ function RouteComponent() {
       </div>
 
       <PageLoader
-        query={staffQuery}
+        query={employeesQuery}
         emptyState={{
           title: "No staff members yet",
-          description: "Add your first staff member to start building the directory.",
+          description:
+            "Add your first staff member to start building the directory.",
           actionText: "Add employee",
           onAction: () => setIsAddModalOpen(true),
         }}
@@ -212,9 +227,8 @@ function RouteComponent() {
           onStatusFilterChange={setStatusFilter}
           departmentFilter={departmentFilter}
           onDepartmentFilterChange={setDepartmentFilter}
-          viewMode={viewMode}
-          onViewModeChange={setViewMode}
           allEmployees={employeeList}
+          departments={departments}
         />
 
         {filteredEmployees.length === 0 ? (
@@ -241,16 +255,11 @@ function RouteComponent() {
               Reset Filters
             </button>
           </div>
-        ) : viewMode === "grid" ? (
-          <EmployeeGridView
-            employees={filteredEmployees}
-            onSelectEmployee={setSelectedEmployee}
-          />
         ) : (
           <EmployeeTableView
             employees={filteredEmployees}
             onSelectEmployee={setSelectedEmployee}
-            onDeleteEmployee={handleDeleteStaff}
+            onDeleteEmployee={handleRemoveEmployee}
           />
         )}
       </PageLoader>
@@ -265,7 +274,7 @@ function RouteComponent() {
       <AddEmployeeModal
         isOpen={isAddModalOpen}
         onClose={() => setIsAddModalOpen(false)}
-        onAddStaff={handleAddStaff}
+        onAddEmployee={handleAddEmployee}
       />
     </div>
   );

@@ -1,14 +1,17 @@
-import { useState, useRef, useEffect } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Modal, { type ModalHandle } from "@/components/DialogModal";
 import SimpleInput from "@/components/inputs/SimpleInput";
 import SimplePhoneInput from "@/components/inputs/SimplePhoneInput";
-import type { CreateStaffInput } from "./types";
+import LocalSelect from "@/components/inputs/LocalSelect";
+import { useEmployeeOrganization } from "@/api/employeesApi";
+import type { CreateEmployeeInput } from "@/api/employeesApi";
+import { HR_EMPLOYMENT_TYPES } from "./employeeData";
 import { toast } from "sonner";
 
 interface AddEmployeeModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onAddStaff: (staff: CreateStaffInput) => Promise<void>;
+  onAddEmployee: (payload: CreateEmployeeInput) => Promise<void>;
 }
 
 const EMPTY_FORM = {
@@ -16,16 +19,30 @@ const EMPTY_FORM = {
   lastName: "",
   email: "",
   phone: "",
+  departmentId: "",
+  positionId: "",
+  employmentType: "Full-time",
+  startDate: "",
 };
 
 export default function AddEmployeeModal({
   isOpen,
   onClose,
-  onAddStaff,
+  onAddEmployee,
 }: AddEmployeeModalProps) {
   const modalRef = useRef<ModalHandle>(null);
   const [form, setForm] = useState(EMPTY_FORM);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const organization = useEmployeeOrganization();
+  const departments = useMemo(
+    () => organization.data?.departments ?? [],
+    [organization.data],
+  );
+  const positions = useMemo(
+    () => organization.data?.positions ?? [],
+    [organization.data],
+  );
 
   useEffect(() => {
     if (isOpen) {
@@ -53,11 +70,15 @@ export default function AddEmployeeModal({
 
     setIsSubmitting(true);
     try {
-      await onAddStaff({
+      await onAddEmployee({
         firstName: form.firstName.trim(),
         lastName: form.lastName.trim(),
         email: form.email.trim(),
         phoneNumber: form.phone.trim(),
+        departmentId: form.departmentId || undefined,
+        positionId: form.positionId || undefined,
+        employmentType: form.employmentType,
+        startDate: form.startDate || undefined,
       });
       setForm(EMPTY_FORM);
     } finally {
@@ -66,7 +87,7 @@ export default function AddEmployeeModal({
   };
 
   return (
-    <Modal ref={modalRef} title="Add New Employee">
+    <Modal ref={modalRef} title="Add New Employee" maxWidth="max-w-xl">
       <form onSubmit={handleSubmit} className="space-y-4 pt-1">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <SimpleInput
@@ -106,9 +127,77 @@ export default function AddEmployeeModal({
           </div>
         </div>
 
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label className="label text-xs font-semibold text-base-content/70 pb-1">
+              Department
+            </label>
+            <LocalSelect
+              value={form.departmentId}
+              onChange={(e) =>
+                setForm({ ...form, departmentId: e.target.value })
+              }
+            >
+              <option value="">Unassigned</option>
+              {departments.map((dept) => (
+                <option key={dept.id} value={dept.id}>
+                  {dept.name}
+                </option>
+              ))}
+            </LocalSelect>
+          </div>
+
+          <div>
+            <label className="label text-xs font-semibold text-base-content/70 pb-1">
+              Position
+            </label>
+            <LocalSelect
+              value={form.positionId}
+              onChange={(e) => setForm({ ...form, positionId: e.target.value })}
+            >
+              <option value="">Unassigned</option>
+              {positions.map((position) => (
+                <option key={position.id} value={position.id}>
+                  {position.name}
+                </option>
+              ))}
+            </LocalSelect>
+          </div>
+
+          <div>
+            <label className="label text-xs font-semibold text-base-content/70 pb-1">
+              Employment type
+            </label>
+            <LocalSelect
+              value={form.employmentType}
+              onChange={(e) =>
+                setForm({ ...form, employmentType: e.target.value })
+              }
+            >
+              {HR_EMPLOYMENT_TYPES.map((type) => (
+                <option key={type} value={type}>
+                  {type}
+                </option>
+              ))}
+            </LocalSelect>
+          </div>
+
+          <div>
+            <label className="label text-xs font-semibold text-base-content/70 pb-1">
+              Start date
+            </label>
+            <input
+              type="date"
+              value={form.startDate}
+              onChange={(e) => setForm({ ...form, startDate: e.target.value })}
+              className="input input-md input-bordered w-full text-sm rounded-lg"
+            />
+          </div>
+        </div>
+
         <p className="text-xs text-base-content/60">
-          Department, job title, grade and salary are managed under employee
-          records once the staff profile is created.
+          Compensation and contract terms are set from the employee record after
+          creation.
         </p>
 
         <div className="flex justify-end gap-2 pt-4 border-t border-base-200">

@@ -1,16 +1,29 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import PageHeader from "@/components/Headers/PageHeader";
+import PageLoader from "@/components/layout/PageLoader";
 import OnboardingStats from "./-components/OnboardingStats";
 import NewHireCards from "./-components/NewHireCards";
 import OnboardingChecklist from "./-components/OnboardingChecklist";
 import ProbationTracker from "./-components/ProbationTracker";
 import AddOnboardingModal from "./-components/AddOnboardingModal";
+import { PROBATION_STEPS } from "./-components/onboardingData";
+import type {
+  ChecklistItem,
+  DepartmentTag,
+  OnboardingHire,
+} from "./-components/types";
 import {
-  INITIAL_HIRES,
-  INITIAL_CHECKLISTS,
-} from "./-components/onboardingData";
-import type { ChecklistItem, OnboardingHire } from "./-components/types";
+  useCompleteOnboardingTask,
+  useCompleteProbationReview,
+  useDecideProbation,
+  useOnboardingTasks,
+  useProbationReviews,
+  useStartOnboarding,
+  type OnboardingTask,
+} from "@/api/onboardingApi";
+import { useStaffs, type StaffMember } from "@/api/tenantApi";
+import { extract_message } from "@/helpers/auth";
 import { UserPlus } from "lucide-react";
 import { toast } from "sonner";
 
@@ -18,164 +31,164 @@ export const Route = createFileRoute("/hr/onboarding/")({
   component: RouteComponent,
 });
 
+const UNKNOWN = "—";
+const DEPARTMENT_MAP: Record<string, DepartmentTag> = {
+  hr: "HR",
+  human_resources: "HR",
+  it: "IT",
+  ict: "IT",
+  manager: "Manager",
+  payroll: "Payroll",
+};
+
+function toUiHire(staff: StaffMember): OnboardingHire {
+  return {
+    id: staff.id,
+    name: `${staff.firstName ?? ""} ${staff.lastName ?? ""}`.trim() || UNKNOWN,
+    role: staff.role?.name ?? UNKNOWN,
+    dept: staff.role?.name ?? UNKNOWN,
+    email: staff.email ?? UNKNOWN,
+    start: staff.createdAt
+      ? new Date(staff.createdAt).toLocaleDateString("en-US", {
+          month: "short",
+          day: "numeric",
+        })
+      : UNKNOWN,
+    progress: 0,
+    probationStep: 0,
+  };
+}
+
+function toChecklistItem(raw: OnboardingTask): ChecklistItem {
+  const deptKey = String(raw.department ?? raw.dept ?? "hr").toLowerCase();
+  const status = String(raw.status ?? "").toLowerCase();
+
+  return {
+    id: raw.id,
+    dept: DEPARTMENT_MAP[deptKey] ?? "HR",
+    text:
+      raw.title ??
+      raw.name ??
+      raw.text ??
+      raw.description ??
+      "Untitled task",
+    completed: Boolean(
+      raw.completed ??
+        raw.isCompleted ??
+        (status === "completed" || status === "done"),
+    ),
+  };
+}
+
 function RouteComponent() {
-  const [hires, setHires] = useState<OnboardingHire[]>(INITIAL_HIRES);
-  const [checklists, setChecklists] =
-    useState<Record<string, ChecklistItem[]>>(INITIAL_CHECKLISTS);
-  const [selectedHireId, setSelectedHireId] = useState<string>(
-    INITIAL_HIRES[0]?.id || "HIRE-01",
-  );
+  const staffQuery = useStaffs();
+
+  const startOnboardingMutation = useStartOnboarding();
+  const completeTaskMutation = useCompleteOnboardingTask();
+  const completeReviewMutation = useCompleteProbationReview();
+  const decideProbationMutation = useDecideProbation();
+
+  const [selectedStaffId, setSelectedStaffId] = useState("");
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [probationOverrides, setProbationOverrides] = useState<
+    Record<string, number>
+  >({});
 
-  const selectedHire =
-    hires.find((h) => h.id === selectedHireId) || hires[0] || null;
-  const selectedChecklist = selectedHire
-    ? checklists[selectedHire.id] || []
-    : [];
+  const hires = useMemo<OnboardingHire[]>(
+    () => (staffQuery.data ?? []).map(toUiHire),
+    [staffQuery.data],
+  );
 
-  // Toggle checklist item
+  const selectedBaseHire =
+    hires.find((h) => h.id === selectedStaffId) ?? hires[0] ?? null;
+  const selectedHireId = selectedBaseHire?.id;
+
+  const tasksQuery = useOnboardingTasks(selectedHireId);
+  const reviewsQuery = useProbationReviews(selectedHireId);
+
+  const checklist = useMemo<ChecklistItem[]>(
+    () => (tasksQuery.data ?? []).map(toChecklistItem),
+    [tasksQuery.data],
+  );
+
+  const selectedHire = useMemo<OnboardingHire | null>(() => {
+    if (!selectedBaseHire) return null;
+    const completed = checklist.filter((i) => i.completed).length;
+    return {
+      ...selectedBaseHire,
+      progress: checklist.length
+        ? Math.round((completed / checklist.length) * 100)
+        : 0,
+      probationStep:
+        probationOverrides[selectedBaseHire.id] ??
+        selectedBaseHire.probationStep,
+    };
+  }, [selectedBaseHire, checklist, probationOverrides]);
+
   const handleToggleItem = (itemId: string) => {
-    if (!selectedHire) return;
-
-    setChecklists((prev) => {
-      const currentList = prev[selectedHire.id] || [];
-      const updatedList = currentList.map((item) =>
-        item.id === itemId ? { ...item, completed: !item.completed } : item,
-      );
-
-      // Recalculate progress for this hire
-      const completedCount = updatedList.filter((i) => i.completed).length;
-      const progress = Math.round(
-        (completedCount / (updatedList.length || 1)) * 100,
-      );
-
-      setHires((prevHires) =>
-        prevHires.map((h) =>
-          h.id === selectedHire.id ? { ...h, progress } : h,
-        ),
-      );
-
-      return {
-        ...prev,
-        [selectedHire.id]: updatedList,
-      };
+    toast.promise(completeTaskMutation.mutateAsync({ taskId: itemId }), {
+      loading: "Updating task...",
+      success: "Onboarding task completed",
+      error: (error) => extract_message(error as never),
     });
   };
 
-  // Add new task to checklist
-  const handleAddItem = (newItem: ChecklistItem) => {
-    if (!selectedHire) return;
-
-    setChecklists((prev) => {
-      const currentList = prev[selectedHire.id] || [];
-      const updatedList = [...currentList, newItem];
-
-      const completedCount = updatedList.filter((i) => i.completed).length;
-      const progress = Math.round(
-        (completedCount / (updatedList.length || 1)) * 100,
-      );
-
-      setHires((prevHires) =>
-        prevHires.map((h) =>
-          h.id === selectedHire.id ? { ...h, progress } : h,
-        ),
-      );
-
-      return {
-        ...prev,
-        [selectedHire.id]: updatedList,
-      };
-    });
-    toast.success("Task added to checklist");
+  const handleUpdateStep = (hireId: string, stepIndex: number) => {
+    setProbationOverrides((prev) => ({
+      ...prev,
+      [hireId]: Math.min(Math.max(stepIndex, 0), PROBATION_STEPS.length - 1),
+    }));
   };
 
-  // Delete task from checklist
-  const handleDeleteItem = (itemId: string) => {
-    if (!selectedHire) return;
+  const handleAdvanceMilestone = (_hireId: string) => {
+    const pendingReview = reviewsQuery.data?.find(
+      (review) =>
+        !review.completed &&
+        String(review.status ?? "").toLowerCase() !== "completed",
+    );
 
-    setChecklists((prev) => {
-      const currentList = prev[selectedHire.id] || [];
-      const updatedList = currentList.filter((i) => i.id !== itemId);
+    if (!pendingReview) {
+      toast.info("No pending probation review available to advance.");
+      return;
+    }
 
-      const completedCount = updatedList.filter((i) => i.completed).length;
-      const progress = Math.round(
-        (completedCount / (updatedList.length || 1)) * 100,
-      );
-
-      setHires((prevHires) =>
-        prevHires.map((h) =>
-          h.id === selectedHire.id ? { ...h, progress } : h,
-        ),
-      );
-
-      return {
-        ...prev,
-        [selectedHire.id]: updatedList,
-      };
-    });
-    toast.success("Task removed");
-  };
-
-  // Update probation milestone
-  const handleUpdateProbationStep = (hireId: string, stepIndex: number) => {
-    setHires((prev) =>
-      prev.map((h) =>
-        h.id === hireId ? { ...h, probationStep: stepIndex } : h,
-      ),
+    toast.promise(
+      completeReviewMutation.mutateAsync({ reviewId: pendingReview.id }),
+      {
+        loading: "Completing review...",
+        success: "Probation review completed",
+        error: (error) => extract_message(error as never),
+      },
     );
   };
 
-  // Add new hire
-  const handleAddHire = (newHire: OnboardingHire) => {
-    setHires((prev) => [newHire, ...prev]);
-    // Create starter checklist for the new hire
-    setChecklists((prev) => ({
-      ...prev,
-      [newHire.id]: [
-        {
-          id: `CHK-${Date.now()}-1`,
-          dept: "HR",
-          text: "Collect signed contract & ID",
-          completed: false,
-        },
-        {
-          id: `CHK-${Date.now()}-2`,
-          dept: "HR",
-          text: "Issue policy acknowledgements",
-          completed: false,
-        },
-        {
-          id: `CHK-${Date.now()}-3`,
-          dept: "IT",
-          text: "Create email & CRM account",
-          completed: false,
-        },
-        {
-          id: `CHK-${Date.now()}-4`,
-          dept: "IT",
-          text: "Assign laptop",
-          completed: false,
-        },
-        {
-          id: `CHK-${Date.now()}-5`,
-          dept: "Manager",
-          text: "Orientation session",
-          completed: false,
-        },
-        {
-          id: `CHK-${Date.now()}-6`,
-          dept: "Payroll",
-          text: "Add bank & tax details",
-          completed: false,
-        },
-      ],
-    }));
-    setSelectedHireId(newHire.id);
+  const handleConfirmProbation = (hireId: string) => {
+    toast.promise(
+      decideProbationMutation.mutateAsync({
+        employeeId: hireId,
+        decision: "confirm",
+      }),
+      {
+        loading: "Confirming probation...",
+        success: "Probation confirmed",
+        error: (error) => extract_message(error as never),
+      },
+    );
+  };
+
+  const handleStartOnboarding = async (staffId: string) => {
+    try {
+      await startOnboardingMutation.mutateAsync(staffId);
+      toast.success("Onboarding started");
+      setSelectedStaffId(staffId);
+      setIsAddModalOpen(false);
+    } catch (error) {
+      toast.error(extract_message(error as never));
+    }
   };
 
   return (
     <div className="space-y-6 pb-12">
-      {/* Header */}
       <PageHeader
         title="Onboarding"
         description="Track every new hire from accepted offer through probation confirmation."
@@ -190,40 +203,64 @@ function RouteComponent() {
         </button>
       </PageHeader>
 
-      {/* Top 4 Stats */}
-      <OnboardingStats hires={hires} />
+      <PageLoader
+        query={staffQuery}
+        emptyState={{
+          title: "No staff members yet",
+          description: "Add staff before starting an onboarding pipeline.",
+          actionText: "Refresh",
+          onAction: () => staffQuery.refetch(),
+        }}
+      >
+        <OnboardingStats hires={hires} />
 
-      {/* 3-Column New Hire Cards */}
-      <NewHireCards
-        hires={hires}
-        selectedHireId={selectedHireId}
-        onSelectHire={(id) => setSelectedHireId(id)}
-      />
-
-      {/* Interactive Checklist for Selected Hire */}
-      {selectedHire && (
-        <OnboardingChecklist
-          hire={selectedHire}
-          checklist={selectedChecklist}
-          onToggleItem={handleToggleItem}
-          onAddItem={handleAddItem}
-          onDeleteItem={handleDeleteItem}
+        <NewHireCards
+          hires={hires}
+          selectedHireId={selectedHireId ?? ""}
+          onSelectHire={setSelectedStaffId}
         />
-      )}
 
-      {/* Probation Tracker for Selected Hire */}
-      {selectedHire && (
-        <ProbationTracker
-          hire={selectedHire}
-          onUpdateStep={handleUpdateProbationStep}
-        />
-      )}
+        {selectedHire && (
+          <PageLoader
+            query={tasksQuery}
+            loadingText="Loading onboarding tasks..."
+            emptyState={{
+              title: "No onboarding tasks yet",
+              description: "Tasks appear here once onboarding is started.",
+            }}
+          >
+            <OnboardingChecklist
+              hire={selectedHire}
+              checklist={checklist}
+              onToggleItem={handleToggleItem}
+            />
+          </PageLoader>
+        )}
 
-      {/* Add Hire Modal */}
+        {selectedHire && (
+          <PageLoader
+            query={reviewsQuery}
+            loadingText="Loading probation reviews..."
+            emptyState={{
+              title: "No probation reviews yet",
+              description: "Scheduled reviews will appear here.",
+            }}
+          >
+            <ProbationTracker
+              hire={selectedHire}
+              onUpdateStep={handleUpdateStep}
+              onAdvance={handleAdvanceMilestone}
+              onConfirm={handleConfirmProbation}
+            />
+          </PageLoader>
+        )}
+      </PageLoader>
+
       <AddOnboardingModal
         isOpen={isAddModalOpen}
         onClose={() => setIsAddModalOpen(false)}
-        onAddHire={handleAddHire}
+        staff={staffQuery.data ?? []}
+        onStartOnboarding={handleStartOnboarding}
       />
     </div>
   );

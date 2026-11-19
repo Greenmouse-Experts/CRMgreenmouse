@@ -1,6 +1,5 @@
-import type { Employee, StatusFilterOption, ViewMode } from "./types";
-import { HR_DEPARTMENTS } from "./employeeData";
-import { Search, LayoutGrid, List, X } from "lucide-react";
+import type { Employee, StatusFilterOption } from "./types";
+import { Search, X } from "lucide-react";
 
 interface EmployeeFiltersProps {
   searchTerm: string;
@@ -9,9 +8,8 @@ interface EmployeeFiltersProps {
   onStatusFilterChange: (status: StatusFilterOption) => void;
   departmentFilter: string;
   onDepartmentFilterChange: (dept: string) => void;
-  viewMode: ViewMode;
-  onViewModeChange: (mode: ViewMode) => void;
   allEmployees: Employee[];
+  departments: string[];
 }
 
 const statusOptions: StatusFilterOption[] = [
@@ -29,9 +27,8 @@ export default function EmployeeFilters({
   onStatusFilterChange,
   departmentFilter,
   onDepartmentFilterChange,
-  viewMode,
-  onViewModeChange,
   allEmployees,
+  departments,
 }: EmployeeFiltersProps) {
   const getStatusCount = (status: StatusFilterOption) => {
     if (status === "All") return allEmployees.length;
@@ -53,7 +50,6 @@ export default function EmployeeFilters({
 
   return (
     <div className="card bg-base-100 border border-base-200/80 shadow-xs p-4 sm:p-5 space-y-4 rounded-2xl">
-      {/* Top row: Status Filter Chips & View Mode Switcher */}
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
         {/* Status Chips */}
         <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-thin">
@@ -87,23 +83,21 @@ export default function EmployeeFilters({
           })}
         </div>
 
-        {/* Search, Dept Filter & View Switcher */}
+        {/* Search & Department Filter */}
         <div className="flex flex-wrap items-center gap-2.5">
-          {/* Department Select */}
           <select
             value={departmentFilter}
             onChange={(e) => onDepartmentFilterChange(e.target.value)}
             className="select select-sm select-bordered rounded-lg text-xs"
           >
             <option value="All">All Departments</option>
-            {HR_DEPARTMENTS.map((dept) => (
+            {departments.map((dept) => (
               <option key={dept} value={dept}>
                 {dept}
               </option>
             ))}
           </select>
 
-          {/* Search Box */}
           <div className="relative flex-1 sm:w-64">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-base-content/40 pointer-events-none" />
             <input
@@ -123,37 +117,6 @@ export default function EmployeeFilters({
             )}
           </div>
 
-          {/* View Mode Toggle */}
-          <div className="join border border-base-300 rounded-lg overflow-hidden bg-base-200/40">
-            <button
-              type="button"
-              aria-label="List view"
-              onClick={() => onViewModeChange("list")}
-              className={`join-item btn btn-sm btn-ghost px-2.5 ${
-                viewMode === "list"
-                  ? "bg-base-100 font-semibold text-primary shadow-xs"
-                  : "text-base-content/60"
-              }`}
-              title="List View"
-            >
-              <List className="size-4" />
-            </button>
-            <button
-              type="button"
-              aria-label="Grid view"
-              onClick={() => onViewModeChange("grid")}
-              className={`join-item btn btn-sm btn-ghost px-2.5 ${
-                viewMode === "grid"
-                  ? "bg-base-100 font-semibold text-primary shadow-xs"
-                  : "text-base-content/60"
-              }`}
-              title="Grid View"
-            >
-              <LayoutGrid className="size-4" />
-            </button>
-          </div>
-
-          {/* Reset Filters */}
           {hasActiveFilters && (
             <button
               type="button"

@@ -1,26 +1,21 @@
 import { useState } from "react";
 import type { ChecklistItem, DepartmentTag, OnboardingHire } from "./types";
-import { Check, Plus, Trash2 } from "lucide-react";
+import { Check } from "lucide-react";
 
 interface OnboardingChecklistProps {
   hire: OnboardingHire;
   checklist: ChecklistItem[];
   onToggleItem: (itemId: string) => void;
-  onAddItem: (item: ChecklistItem) => void;
-  onDeleteItem?: (itemId: string) => void;
 }
+
+const DEPARTMENTS: DepartmentTag[] = ["HR", "IT", "Manager", "Payroll"];
 
 export default function OnboardingChecklist({
   hire,
   checklist,
   onToggleItem,
-  onAddItem,
-  onDeleteItem,
 }: OnboardingChecklistProps) {
   const [filterDept, setFilterDept] = useState<string>("All");
-  const [isAdding, setIsAdding] = useState(false);
-  const [newTaskText, setNewTaskText] = useState("");
-  const [newTaskDept, setNewTaskDept] = useState<DepartmentTag>("HR");
 
   const completedCount = checklist.filter((i) => i.completed).length;
   const totalCount = checklist.length;
@@ -45,25 +40,8 @@ export default function OnboardingChecklist({
     }
   };
 
-  const handleAddNewTask = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newTaskText.trim()) return;
-
-    const newItem: ChecklistItem = {
-      id: `CHK-${Date.now()}`,
-      dept: newTaskDept,
-      text: newTaskText.trim(),
-      completed: false,
-    };
-
-    onAddItem(newItem);
-    setNewTaskText("");
-    setIsAdding(false);
-  };
-
   return (
     <div className="card bg-base-100 border border-base-200 shadow-sm p-4 sm:p-6 space-y-4">
-      {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2 border-b border-base-200">
         <div>
           <div className="flex items-center gap-2">
@@ -75,82 +53,28 @@ export default function OnboardingChecklist({
             </span>
           </div>
           <p className="text-xs text-base-content/60 mt-0.5">
-            Essential onboarding tasks across HR, IT hardware, orientation, and payroll
+            Onboarding tasks assigned to this employee
           </p>
         </div>
 
-        {/* Filters and Add button */}
-        <div className="flex items-center gap-2">
-          <select
-            value={filterDept}
-            onChange={(e) => setFilterDept(e.target.value)}
-            className="select select-xs bg-base-200/60 border-base-300 rounded-lg text-xs"
-          >
-            <option value="All">All Departments</option>
-            <option value="HR">HR</option>
-            <option value="IT">IT</option>
-            <option value="Manager">Manager</option>
-            <option value="Payroll">Payroll</option>
-          </select>
-
-          <button
-            type="button"
-            onClick={() => setIsAdding((prev) => !prev)}
-            className="btn btn-xs bg-primary text-white hover:bg-primary/90 border-0 rounded-lg px-2.5 font-medium gap-1"
-          >
-            <Plus className="size-3" />
-            <span>Add task</span>
-          </button>
-        </div>
+        <select
+          value={filterDept}
+          onChange={(e) => setFilterDept(e.target.value)}
+          className="select select-xs bg-base-200/60 border-base-300 rounded-lg text-xs"
+        >
+          <option value="All">All Departments</option>
+          {DEPARTMENTS.map((dept) => (
+            <option key={dept} value={dept}>
+              {dept}
+            </option>
+          ))}
+        </select>
       </div>
 
-      {/* Add Task Quick Form */}
-      {isAdding && (
-        <form
-          onSubmit={handleAddNewTask}
-          className="flex flex-col sm:flex-row items-center gap-2 p-3 bg-base-200/50 rounded-xl border border-base-300/80 animate-in fade-in duration-200"
-        >
-          <select
-            value={newTaskDept}
-            onChange={(e) => setNewTaskDept(e.target.value as DepartmentTag)}
-            className="select select-xs bg-base-100 border-base-300 rounded-lg text-xs"
-          >
-            <option value="HR">HR</option>
-            <option value="IT">IT</option>
-            <option value="Manager">Manager</option>
-            <option value="Payroll">Payroll</option>
-          </select>
-          <input
-            type="text"
-            placeholder="Describe new onboarding task..."
-            value={newTaskText}
-            onChange={(e) => setNewTaskText(e.target.value)}
-            className="input input-xs flex-1 bg-base-100 border-base-300 rounded-lg text-xs"
-            autoFocus
-          />
-          <div className="flex items-center gap-1.5 self-end sm:self-center">
-            <button
-              type="submit"
-              className="btn btn-xs bg-primary text-white hover:bg-primary/90 rounded-lg"
-            >
-              Add
-            </button>
-            <button
-              type="button"
-              onClick={() => setIsAdding(false)}
-              className="btn btn-xs btn-ghost rounded-lg"
-            >
-              Cancel
-            </button>
-          </div>
-        </form>
-      )}
-
-      {/* Checklist items */}
       <ul className="divide-y divide-base-200">
         {filteredItems.length === 0 ? (
           <li className="py-6 text-center text-xs text-base-content/40 italic">
-            No checklist tasks for this category.
+            No onboarding tasks available for this employee.
           </li>
         ) : (
           filteredItems.map((item) => (
@@ -187,20 +111,6 @@ export default function OnboardingChecklist({
               >
                 {item.dept}
               </span>
-
-              {onDeleteItem && (
-                <button
-                  type="button"
-                  title="Remove task"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onDeleteItem(item.id);
-                  }}
-                  className="opacity-0 group-hover:opacity-100 text-base-content/30 hover:text-error transition-opacity p-1"
-                >
-                  <Trash2 className="size-3.5" />
-                </button>
-              )}
             </li>
           ))
         )}

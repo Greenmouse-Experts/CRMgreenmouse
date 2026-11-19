@@ -1,17 +1,20 @@
 import { useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import PageHeader from "@/components/Headers/PageHeader";
+import {
+  useCreateDepartment,
+  useCreatePosition,
+  useDeleteDepartment,
+  useOrganization,
+  useUpdateDepartment,
+} from "@/api/organizationApi";
 import OrganizationStats from "./organization/-components/OrganizationStats";
 import OrgHierarchy from "./organization/-components/OrgHierarchy";
 import DepartmentsTable from "./organization/-components/DepartmentsTable";
 import PositionsTable from "./organization/-components/PositionsTable";
 import AddDepartmentModal from "./organization/-components/AddDepartmentModal";
 import AddPositionModal from "./organization/-components/AddPositionModal";
-import {
-  INITIAL_DEPARTMENTS,
-  INITIAL_LEADER,
-  INITIAL_POSITIONS,
-} from "./organization/-components/organizationData";
+import { INITIAL_LEADER } from "./organization/-components/organizationData";
 import type {
   Department,
   DepartmentStatus,
@@ -25,35 +28,49 @@ export const Route = createFileRoute("/hr/organization/")({
 });
 
 function RouteComponent() {
-  const [departments, setDepartments] =
-    useState<Department[]>(INITIAL_DEPARTMENTS);
-  const [positions, setPositions] = useState<Position[]>(INITIAL_POSITIONS);
+  const { data } = useOrganization();
+  const departments = data?.departments ?? [];
+  const positions = data?.positions ?? [];
   const [selectedDeptId, setSelectedDeptId] = useState<string | null>(null);
 
   // Modals state
   const [isAddDeptModalOpen, setIsAddDeptModalOpen] = useState(false);
   const [isAddPosModalOpen, setIsAddPosModalOpen] = useState(false);
 
+  // Organization mutations
+  const createDepartment = useCreateDepartment();
+  const updateDepartment = useUpdateDepartment();
+  const deleteDepartment = useDeleteDepartment();
+  const createPosition = useCreatePosition();
+
   // Department handlers
   const handleAddDepartment = (newDept: Department) => {
-    setDepartments((prev) => [newDept, ...prev]);
+    createDepartment.mutate(newDept, {
+      onError: () => toast.error("Failed to create department"),
+    });
   };
 
-  const handleUpdateDeptStatus = (deptId: string, status: DepartmentStatus) => {
-    setDepartments((prev) =>
-      prev.map((d) => (d.id === deptId ? { ...d, status } : d)),
+  const handleUpdateDeptStatus = (
+    deptId: string,
+    status: DepartmentStatus,
+  ) => {
+    updateDepartment.mutate(
+      { id: deptId, status },
+      { onError: () => toast.error("Failed to update department status") },
     );
-    toast.success(`Department status updated to ${status}`);
   };
 
   const handleDeleteDepartment = (deptId: string) => {
-    setDepartments((prev) => prev.filter((d) => d.id !== deptId));
-    toast.success("Department removed");
+    deleteDepartment.mutate(deptId, {
+      onError: () => toast.error("Failed to delete department"),
+    });
   };
 
   // Position handlers
   const handleAddPosition = (newPos: Position) => {
-    setPositions((prev) => [newPos, ...prev]);
+    createPosition.mutate(newPos, {
+      onError: () => toast.error("Failed to create position"),
+    });
   };
 
   return (
