@@ -38,3 +38,11 @@ export type StatusFilterOption =
   | "Suspended";
 
 export type ViewMode = "list" | "grid";
+
+/** Fields accepted by POST /v1/staffs. */
+export interface CreateStaffInput {
+  email: string;
+  firstName: string;
+  lastName: string;
+  phoneNumber: string;
+}

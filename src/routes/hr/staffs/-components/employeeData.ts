@@ -26,86 +26,6 @@ export const HR_STATUS_OPTIONS = [
   "Suspended",
 ] as const;
 
-const rawNames = [
-  "Amara Okafor",
-  "Tunde Adeyemi",
-  "Chiamaka Eze",
-  "David Mensah",
-  "Fatima Bello",
-  "Kwame Asante",
-  "Ngozi Obi",
-  "Samuel Johnson",
-  "Zainab Musa",
-  "Ifeanyi Nwosu",
-  "Grace Danjuma",
-  "Emeka Uche",
-  "Halima Sani",
-  "Joseph Lawal",
-  "Adaeze Ike",
-  "Peter Okon",
-  "Ruth Akande",
-  "Bola Tinubu",
-  "Kemi Adebayo",
-  "Musa Ibrahim",
-];
-
-const deptTitles: Record<string, string[]> = {
-  Sales: ["Account Executive", "Sales Manager"],
-  Engineering: ["Software Engineer", "QA Lead", "DevOps Engineer"],
-  Finance: ["Payroll Officer", "Accountant"],
-  Operations: ["Ops Analyst", "Logistics Lead"],
-  Marketing: ["Brand Manager", "Content Strategist"],
-  "Customer Success": ["CS Specialist", "CS Lead"],
-  HR: ["HR Officer", "Recruiter"],
-};
-
-const statuses = [
-  "Active",
-  "Active",
-  "Active",
-  "Probation",
-  "Active",
-  "Notice Period",
-  "Active",
-  "Active",
-  "Suspended",
-  "Active",
-];
-
-export const INITIAL_EMPLOYEES: Employee[] = rawNames.map((name, index) => {
-  const dept = HR_DEPARTMENTS[index % HR_DEPARTMENTS.length];
-  const titles = deptTitles[dept] || ["Officer"];
-  const title = titles[index % titles.length];
-  const location = HR_LOCATIONS[index % HR_LOCATIONS.length];
-  const type = HR_EMPLOYMENT_TYPES[index % HR_EMPLOYMENT_TYPES.length];
-  const status = statuses[index % statuses.length];
-  const onLeave = index % 7 === 2;
-  const manager = rawNames[(index + 3) % rawNames.length];
-  const start = `202${index % 6}-0${(index % 9) + 1}-1${index % 9}`;
-  const salary = 350000 + ((index * 73000) % 900000);
-  const grade = `G${(index % 6) + 2}`;
-  const phone = `+234 80${index}${index} 555 01${index % 10}`;
-  const birthday = `11-${String(14 + (index % 15)).padStart(2, "0")}`;
-
-  return {
-    id: `KNV-${(1001 + index).toString()}`,
-    name,
-    email: `${name.toLowerCase().replace(/\s+/g, ".")}@kinovia.com`,
-    title,
-    dept,
-    location,
-    type,
-    status,
-    onLeave,
-    manager,
-    start,
-    salary,
-    grade,
-    phone,
-    birthday,
-  };
-});
-
 export function getInitials(name: string): string {
   if (!name) return "";
   return name
@@ -177,7 +97,10 @@ export function exportEmployeesToCSV(employees: Employee[]) {
   const encodedUri = encodeURI(csvContent);
   const link = document.createElement("a");
   link.setAttribute("href", encodedUri);
-  link.setAttribute("download", `Kinovia_Employees_${new Date().toISOString().slice(0, 10)}.csv`);
+  link.setAttribute(
+    "download",
+    `Kinovia_Employees_${new Date().toISOString().slice(0, 10)}.csv`,
+  );
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);

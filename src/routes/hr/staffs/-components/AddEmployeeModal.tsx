@@ -1,45 +1,30 @@
 import { useState, useRef, useEffect } from "react";
 import Modal, { type ModalHandle } from "@/components/DialogModal";
 import SimpleInput from "@/components/inputs/SimpleInput";
-import LocalSelect from "@/components/inputs/LocalSelect";
 import SimplePhoneInput from "@/components/inputs/SimplePhoneInput";
-import {
-  HR_DEPARTMENTS,
-  HR_LOCATIONS,
-  HR_EMPLOYMENT_TYPES,
-  HR_STATUS_OPTIONS,
-} from "./employeeData";
-import type { Employee } from "./types";
+import type { CreateStaffInput } from "./types";
 import { toast } from "sonner";
 
 interface AddEmployeeModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onAddEmployee: (newEmployee: Employee) => void;
+  onAddStaff: (staff: CreateStaffInput) => Promise<void>;
 }
+
+const EMPTY_FORM = {
+  firstName: "",
+  lastName: "",
+  email: "",
+  phone: "",
+};
 
 export default function AddEmployeeModal({
   isOpen,
   onClose,
-  onAddEmployee,
+  onAddStaff,
 }: AddEmployeeModalProps) {
   const modalRef = useRef<ModalHandle>(null);
-
-  const [form, setForm] = useState({
-    firstName: "",
-    lastName: "",
-    email: "",
-    phone: "",
-    dept: "Engineering",
-    title: "",
-    type: "Full-time",
-    location: "Lagos",
-    status: "Active",
-    salary: 450000,
-    grade: "G3",
-    start: new Date().toISOString().slice(0, 10),
-  });
-
+  const [form, setForm] = useState(EMPTY_FORM);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
@@ -50,8 +35,9 @@ export default function AddEmployeeModal({
     }
   }, [isOpen]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
     if (!form.firstName.trim() || !form.lastName.trim()) {
       toast.error("Please enter first and last name.");
       return;
@@ -60,53 +46,20 @@ export default function AddEmployeeModal({
       toast.error("Please enter a valid email address.");
       return;
     }
-    if (!form.title.trim()) {
-      toast.error("Please provide a job title.");
+    if (!form.phone.trim()) {
+      toast.error("Please enter a phone number.");
       return;
     }
 
     setIsSubmitting(true);
     try {
-      const fullName = `${form.firstName.trim()} ${form.lastName.trim()}`;
-      const randomId = `KNV-${Math.floor(1000 + Math.random() * 9000)}`;
-
-      const newEmp: Employee = {
-        id: randomId,
-        name: fullName,
+      await onAddStaff({
+        firstName: form.firstName.trim(),
+        lastName: form.lastName.trim(),
         email: form.email.trim(),
-        phone: form.phone,
-        title: form.title.trim(),
-        dept: form.dept,
-        location: form.location,
-        type: form.type,
-        status: form.status,
-        onLeave: false,
-        salary: Number(form.salary) || 0,
-        grade: form.grade,
-        start: form.start,
-        birthday: "11-15",
-      };
-
-      onAddEmployee(newEmp);
-      toast.success(`Employee ${fullName} has been added successfully.`);
-      onClose();
-      // Reset form
-      setForm({
-        firstName: "",
-        lastName: "",
-        email: "",
-        phone: "",
-        dept: "Engineering",
-        title: "",
-        type: "Full-time",
-        location: "Lagos",
-        status: "Active",
-        salary: 450000,
-        grade: "G3",
-        start: new Date().toISOString().slice(0, 10),
+        phoneNumber: form.phone.trim(),
       });
-    } catch (_err) {
-      toast.error("Failed to add employee.");
+      setForm(EMPTY_FORM);
     } finally {
       setIsSubmitting(false);
     }
@@ -115,7 +68,6 @@ export default function AddEmployeeModal({
   return (
     <Modal ref={modalRef} title="Add New Employee">
       <form onSubmit={handleSubmit} className="space-y-4 pt-1">
-        {/* Name inputs */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <SimpleInput
             label="First Name"
@@ -133,7 +85,6 @@ export default function AddEmployeeModal({
           />
         </div>
 
-        {/* Contact inputs */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <SimpleInput
             label="Work Email"
@@ -155,89 +106,11 @@ export default function AddEmployeeModal({
           </div>
         </div>
 
-        {/* Department and Job Title */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <LocalSelect
-            label="Department"
-            value={form.dept}
-            onChange={(e) => setForm({ ...form, dept: e.target.value })}
-          >
-            {HR_DEPARTMENTS.map((dept) => (
-              <option key={dept} value={dept}>
-                {dept}
-              </option>
-            ))}
-          </LocalSelect>
+        <p className="text-xs text-base-content/60">
+          Department, job title, grade and salary are managed under employee
+          records once the staff profile is created.
+        </p>
 
-          <SimpleInput
-            label="Job Title"
-            placeholder="e.g. Senior Frontend Engineer"
-            required
-            value={form.title}
-            onChange={(e) => setForm({ ...form, title: e.target.value })}
-          />
-        </div>
-
-        {/* Employment Type & Location */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <LocalSelect
-            label="Employment Type"
-            value={form.type}
-            onChange={(e) => setForm({ ...form, type: e.target.value })}
-          >
-            {HR_EMPLOYMENT_TYPES.map((type) => (
-              <option key={type} value={type}>
-                {type}
-              </option>
-            ))}
-          </LocalSelect>
-
-          <LocalSelect
-            label="Work Location"
-            value={form.location}
-            onChange={(e) => setForm({ ...form, location: e.target.value })}
-          >
-            {HR_LOCATIONS.map((loc) => (
-              <option key={loc} value={loc}>
-                {loc}
-              </option>
-            ))}
-          </LocalSelect>
-        </div>
-
-        {/* Status, Start Date, Salary */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-          <LocalSelect
-            label="Employment Status"
-            value={form.status}
-            onChange={(e) => setForm({ ...form, status: e.target.value })}
-          >
-            {HR_STATUS_OPTIONS.map((status) => (
-              <option key={status} value={status}>
-                {status}
-              </option>
-            ))}
-          </LocalSelect>
-
-          <SimpleInput
-            label="Start Date"
-            type="date"
-            value={form.start}
-            onChange={(e) => setForm({ ...form, start: e.target.value })}
-          />
-
-          <SimpleInput
-            label="Monthly Salary (₦)"
-            type="number"
-            min="0"
-            value={form.salary}
-            onChange={(e) =>
-              setForm({ ...form, salary: Number(e.target.value) || 0 })
-            }
-          />
-        </div>
-
-        {/* Actions */}
         <div className="flex justify-end gap-2 pt-4 border-t border-base-200">
           <button
             type="button"
