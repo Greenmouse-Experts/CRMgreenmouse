@@ -62,7 +62,7 @@ function RouteComponent() {
 
   const handleDeleteDepartment = (deptId: string) => {
     deleteDepartment.mutate(deptId, {
-      onError: () => toast.error("Failed to delete department"),
+      onError: () => toast.error("Failed to mark department inactive"),
     });
   };
 

@@ -9,11 +9,6 @@ import type {
 /* Types                                                                      */
 /* -------------------------------------------------------------------------- */
 
-export interface OrganizationData {
-  departments: Department[];
-  positions: Position[];
-}
-
 export type CreateDepartmentPayload = Omit<Department, "id">;
 
 export interface UpdateDepartmentPayload {
@@ -30,6 +25,11 @@ export interface UpdateDepartmentPayload {
 
 export type CreatePositionPayload = Omit<Position, "id">;
 export type UpdatePositionPayload = Partial<CreatePositionPayload>;
+
+export interface OrganizationData {
+  departments: Department[];
+  positions: Position[];
+}
 
 const unwrapArray = <T,>(data: any): T[] => {
   if (Array.isArray(data)) return data as T[];
@@ -54,7 +54,7 @@ export const useOrganization = () =>
   });
 
 /* -------------------------------------------------------------------------- */
-/* Mutations — pending backend endpoints                                      */
+/* Mutations                                                                  */
 /* -------------------------------------------------------------------------- */
 
 const useInvalidateOrganization = () => {
@@ -66,7 +66,10 @@ export const useCreateDepartment = () => {
   const invalidate = useInvalidateOrganization();
   return useMutation({
     mutationFn: async (payload: CreateDepartmentPayload) => {
-      const { data } = await apiClient.post<any>("/departments", payload);
+      const { data } = await apiClient.post<any>(
+        "/employees/organization/departments",
+        payload,
+      );
       return data?.data ?? data;
     },
     onSuccess: invalidate,
@@ -81,7 +84,7 @@ export const useUpdateDepartment = () => {
       ...payload
     }: { id: string } & Partial<UpdateDepartmentPayload>) => {
       const { data } = await apiClient.patch<any>(
-        `/departments/${id}`,
+        `/employees/organization/departments/${id}`,
         payload,
       );
       return data?.data ?? data;
@@ -90,12 +93,16 @@ export const useUpdateDepartment = () => {
   });
 };
 
+/** There is no DELETE route — removing a department marks it inactive. */
 export const useDeleteDepartment = () => {
   const invalidate = useInvalidateOrganization();
   return useMutation({
     mutationFn: async (id: string) => {
-      const { data } = await apiClient.delete<any>(`/departments/${id}`);
-      return data;
+      const { data } = await apiClient.patch<any>(
+        `/employees/organization/departments/${id}`,
+        { status: "inactive" },
+      );
+      return data?.data ?? data;
     },
     onSuccess: invalidate,
   });
@@ -105,7 +112,10 @@ export const useCreatePosition = () => {
   const invalidate = useInvalidateOrganization();
   return useMutation({
     mutationFn: async (payload: CreatePositionPayload) => {
-      const { data } = await apiClient.post<any>("/positions", payload);
+      const { data } = await apiClient.post<any>(
+        "/employees/organization/positions",
+        payload,
+      );
       return data?.data ?? data;
     },
     onSuccess: invalidate,
@@ -119,7 +129,10 @@ export const useUpdatePosition = () => {
       id,
       ...payload
     }: { id: string } & UpdatePositionPayload) => {
-      const { data } = await apiClient.patch<any>(`/positions/${id}`, payload);
+      const { data } = await apiClient.patch<any>(
+        `/employees/organization/positions/${id}`,
+        payload,
+      );
       return data?.data ?? data;
     },
     onSuccess: invalidate,

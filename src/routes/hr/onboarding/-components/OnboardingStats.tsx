@@ -9,16 +9,18 @@ interface OnboardingStatsProps {
 export default function OnboardingStats({ hires }: OnboardingStatsProps) {
   const activeCount = hires.filter((h) => h.progress < 100).length;
   const completedCount = hires.filter((h) => h.progress === 100).length;
-  const avgProgress =
-    Math.round(
-      hires.reduce((acc, h) => acc + h.progress, 0) / (hires.length || 1),
-    ) || 68;
+  const startingSoonCount = hires.filter((h) => h.probationStep === 0).length;
+  const avgProgress = hires.length
+    ? Math.round(
+        hires.reduce((acc, h) => acc + h.progress, 0) / hires.length,
+      )
+    : 0;
 
   return (
     <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
       <StatCard
         title="Active Onboarding"
-        value={activeCount || 2}
+        value={activeCount}
         desc="New hires currently undergoing onboarding"
         icon={<Users className="size-5" />}
         variant="primary"
@@ -32,14 +34,14 @@ export default function OnboardingStats({ hires }: OnboardingStatsProps) {
       />
       <StatCard
         title="Starting Soon"
-        value={1}
-        desc="Scheduled to begin within 30 days"
+        value={startingSoonCount}
+        desc="At the first probation milestone"
         icon={<Calendar className="size-5" />}
         variant="warning"
       />
       <StatCard
         title="Probation Ready"
-        value={completedCount || 1}
+        value={completedCount}
         desc="Eligible for confirmation review"
         icon={<Clock className="size-5" />}
         variant="info"

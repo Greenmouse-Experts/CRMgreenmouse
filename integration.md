@@ -77,39 +77,42 @@ Notes:
   tenant currently has no departments configured, so creation is blocked until
   those options exist.
 
-### Staff / employees — `src/api/tenantApi.ts` (`/hr/staffs`)
+### Staff / employees — `src/api/employeesApi.ts` (`/hr/staffs`)
 
-Reused the existing hooks: `useStaffs`, `useStaff`, `useCreateStaff`,
-`useUpdateStaff`, `useDeleteStaff`.
+The people directory uses the working staffs endpoints:
 
-- `GET /staffs` returns `[]` for the test tenant.
-- `POST /staffs` accepts only `email`, `firstName`, `lastName`, `phoneNumber`
-  (plus optional `roleId`, `profilePic`). Extra properties are rejected, so the
-  Add Employee form only collects those fields.
-- `PATCH /staffs/:id` is implemented in the API layer but the backend returned
-  500 during probing; treat it as unverified.
+- `useEmployees()` — `GET /staffs` (the people directory endpoint;
+  `GET /v1/employees` returns 500 — see Known Backend Issues).
+- `useCreateEmployee()` — `POST /staffs` — accepts only `email`,
+  `firstName`, `lastName`, `phoneNumber` (plus optional `roleId`, `profilePic`).
+  Extra properties are rejected, so the Add Employee form collects only those
+  fields.
+- `useUpdateEmployee()` — `PATCH /v1/employees/:id`.
+- `useRemoveEmployee()` — `PATCH /v1/employees/:id` with
+  `{ status: "inactive" }` (the remove-employee pattern; there is no DELETE
+  route — see Known Backend Issues).
 
 ### Organization — `src/api/organizationApi.ts` (`/hr/organization`)
 
-The Departments and Positions data derives from `GET /employees/organization`
+The Departments and Positions data derives from `GET /v1/employees/organization`
 (200, `{ departments: [], positions: [] }`); the page derives everything from
 query data (no mock seed data). Write hooks are wired through mutations that
 invalidate the `["organization"]` query root:
 
 | Hook | Method / Endpoint |
 | --- | --- |
-| `useOrganization()` | `GET /employees/organization` |
-| `useCreateDepartment()` | `POST /departments` (backend to implement) |
-| `useUpdateDepartment()` | `PATCH /departments/:id` (backend to implement; used for status updates) |
-| `useDeleteDepartment()` | `DELETE /departments/:id` (backend to implement) |
-| `useCreatePosition()` | `POST /positions` (backend to implement) |
-| `useUpdatePosition()` | `PATCH /positions/:id` (backend to implement) |
+| `useOrganization()` | `GET /v1/employees/organization` |
+| `useCreateDepartment()` | `POST /v1/employees/organization/departments` |
+| `useUpdateDepartment()` | `PATCH /v1/employees/organization/departments/:id` (status updates) |
+| `useDeleteDepartment()` | `PATCH /v1/employees/organization/departments/:id` (`{ status: "inactive" }` — no DELETE route) |
+| `useCreatePosition()` | `POST /v1/employees/organization/positions` |
+| `useUpdatePosition()` | `PATCH /v1/employees/organization/positions/:id` |
 
 Notes:
 
 - Department status updates (the `Deactivate` / `Activate` actions in the
-  departments table) are sent as `PATCH /departments/:id` with the new
-  `status`.
+  departments table) are sent as `PATCH /v1/employees/organization/departments/:id`
+  with the new `status`.
 - The executive leader on the Org hierarchy card (`INITIAL_LEADER` in
   `organizationData.ts`) has no verified endpoint yet.
 
@@ -197,23 +200,18 @@ the employees resource appear to be separate.
 
 ## Pending Issues
 
-- **Organization write endpoints — missing on the backend.** The organization
-  page reads through `GET /v1/employees/organization` (see "Known backend
-  issues"). Backend endpoints to add:
-  - `POST /v1/departments` — create department
-  - `PATCH /v1/departments/:id` — update department (status updates)
-  - `DELETE /v1/departments/:id` — delete department
-  - `POST /v1/positions` — create position
-  - `PATCH /v1/positions/:id` — update position
-  Frontend hooks are in place (`useCreateDepartment`, `useUpdateDepartment`,
-  `useDeleteDepartment`, `useCreatePosition`, `useUpdatePosition`) in
-  `src/api/organizationApi.ts`.
-- **Employee endpoints — 500s** (see "Known backend issues"):
-  `/v1/employees`, `/v1/employees/upcoming-milestones`,
+- **Employee endpoints — 500s** (see "Known backend Issues"):
+  `GET /v1/employees` (the staffs list now uses `GET /v1/staffs`),
+  `GET /v1/employees/upcoming-milestones`,
   `GET /v1/employees/:id/onboarding/tasks`,
   `GET /v1/employees/:id/probation/reviews`,
   `POST /v1/employees/:id/onboarding/start`, `PATCH /v1/staffs/:id`.
+- **Organization writes**: `POST /v1/employees/organization/departments`,
+  `PATCH /v1/employees/organization/departments/:id`,
+  `POST /v1/employees/organization/positions`,
+  `PATCH /v1/employees/organization/positions/:id` — verified as routes
+  (401). There are no DELETE routes for departments/positions, so the
+  frontend marks inactive (see the Organization integration).
 - **Test token expired.** The `auth_cred.ts` access token has `exp` =
   2026-11-19 10:38:55 WAT; renewal is needed for authenticated probing.
-  Authenticated probing of the organization write endpoints was not possible.
 - Full probe record: `pending_apis.md` (probed on 2026-11-19).

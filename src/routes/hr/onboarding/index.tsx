@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import PageHeader from "@/components/Headers/PageHeader";
 import PageLoader from "@/components/layout/PageLoader";
+import QueryCompLayout from "@/components/layout/QueryCompLayout";
 import OnboardingStats from "./-components/OnboardingStats";
 import NewHireCards from "./-components/NewHireCards";
 import OnboardingChecklist from "./-components/OnboardingChecklist";
@@ -212,48 +213,36 @@ function RouteComponent() {
           onAction: () => staffQuery.refetch(),
         }}
       >
-        <OnboardingStats hires={hires} />
+        <div className="space-y-6">
+          <OnboardingStats hires={hires} />
 
-        <NewHireCards
-          hires={hires}
-          selectedHireId={selectedHireId ?? ""}
-          onSelectHire={setSelectedStaffId}
-        />
+          <NewHireCards
+            hires={hires}
+            selectedHireId={selectedHireId ?? ""}
+            onSelectHire={setSelectedStaffId}
+          />
 
-        {selectedHire && (
-          <PageLoader
-            query={tasksQuery}
-            loadingText="Loading onboarding tasks..."
-            emptyState={{
-              title: "No onboarding tasks yet",
-              description: "Tasks appear here once onboarding is started.",
-            }}
-          >
-            <OnboardingChecklist
-              hire={selectedHire}
-              checklist={checklist}
-              onToggleItem={handleToggleItem}
-            />
-          </PageLoader>
-        )}
+          {selectedHire && (
+            <QueryCompLayout query={tasksQuery}>
+              <OnboardingChecklist
+                hire={selectedHire}
+                checklist={checklist}
+                onToggleItem={handleToggleItem}
+              />
+            </QueryCompLayout>
+          )}
 
-        {selectedHire && (
-          <PageLoader
-            query={reviewsQuery}
-            loadingText="Loading probation reviews..."
-            emptyState={{
-              title: "No probation reviews yet",
-              description: "Scheduled reviews will appear here.",
-            }}
-          >
-            <ProbationTracker
-              hire={selectedHire}
-              onUpdateStep={handleUpdateStep}
-              onAdvance={handleAdvanceMilestone}
-              onConfirm={handleConfirmProbation}
-            />
-          </PageLoader>
-        )}
+          {selectedHire && (
+            <QueryCompLayout query={reviewsQuery}>
+              <ProbationTracker
+                hire={selectedHire}
+                onUpdateStep={handleUpdateStep}
+                onAdvance={handleAdvanceMilestone}
+                onConfirm={handleConfirmProbation}
+              />
+            </QueryCompLayout>
+          )}
+        </div>
       </PageLoader>
 
       <AddOnboardingModal
