@@ -9,6 +9,7 @@ import {
   useRecruitmentApplications,
   useRecruitmentApprovers,
   useRecruitmentDashboard,
+  useRecruitmentOffers,
   useRecruitmentOptions,
   useRecruitmentVacancies,
   useUpdateApplicationStage,
@@ -82,7 +83,11 @@ function toUiVacancy(raw: RecruitmentVacancy): Vacancy {
 }
 
 function toUiCandidate(raw: RecruitmentApplication): Candidate {
-  const stageKey = (raw.stage ?? raw.applicationStage ?? "applied").toLowerCase();
+  const stageKey = (
+    raw.stage ??
+    raw.applicationStage ??
+    "applied"
+  ).toLowerCase();
   return {
     id: raw.id,
     name:
@@ -105,6 +110,7 @@ function RouteComponent() {
   const applicationsQuery = useRecruitmentApplications();
   const departmentsQuery = useRecruitmentOptions("department");
   const approversQuery = useRecruitmentApprovers();
+  const offersQuery = useRecruitmentOffers();
 
   const createVacancyMutation = useCreateVacancy();
   const updateStageMutation = useUpdateApplicationStage();
@@ -169,7 +175,8 @@ function RouteComponent() {
     );
     const approver =
       approvers.find(
-        (a) => a.name.toLowerCase() === (newVacancy.approver ?? "").toLowerCase(),
+        (a) =>
+          a.name.toLowerCase() === (newVacancy.approver ?? "").toLowerCase(),
       ) ?? approvers[0];
     const hiringManager = approvers[0];
 
@@ -216,7 +223,10 @@ function RouteComponent() {
 
     if (status === "Closed") {
       toast.promise(
-        decideVacancyMutation.mutateAsync({ id: vacancyId, decision: "reject" }),
+        decideVacancyMutation.mutateAsync({
+          id: vacancyId,
+          decision: "reject",
+        }),
         {
           loading: "Closing vacancy...",
           success: "Vacancy closed",
@@ -236,8 +246,6 @@ function RouteComponent() {
     setVacancies((prev) => prev.filter((v) => v.id !== vacancyId));
     toast.success("Vacancy listing removed");
   };
-
-  const dashboard = dashboardQuery.data;
 
   return (
     <div className="space-y-6 pb-12">
@@ -260,14 +268,7 @@ function RouteComponent() {
         query={dashboardQuery}
         loadingText="Loading recruitment overview..."
       >
-        <RecruitmentStats
-          vacancies={
-            dashboard?.vacancies?.length
-              ? dashboard.vacancies.map(toUiVacancy)
-              : vacancies
-          }
-          candidates={candidates}
-        />
+        {(dashboard) => <RecruitmentStats stats={dashboard} />}
       </PageLoader>
 
       {/* Candidate pipeline from /recruitment/applications */}
@@ -291,7 +292,8 @@ function RouteComponent() {
         query={vacanciesQuery}
         emptyState={{
           title: "No vacancies yet",
-          description: "Create a vacancy to start tracking your hiring pipeline.",
+          description:
+            "Create a vacancy to start tracking your hiring pipeline.",
           actionText: "Create vacancy",
           onAction: () => setIsCreateVacancyOpen(true),
         }}
@@ -306,7 +308,7 @@ function RouteComponent() {
         />
       </PageLoader>
 
-      <OfferConversionSection />
+      <OfferConversionSection offers={offersQuery.data ?? []} />
 
       <CreateVacancyModal
         isOpen={isCreateVacancyOpen}

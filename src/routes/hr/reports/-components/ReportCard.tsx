@@ -1,11 +1,4 @@
-import {
-  BarChart3,
-  Download,
-  Eye,
-  FileSpreadsheet,
-  PieChart,
-  TrendingUp,
-} from "lucide-react";
+import { BarChart3, Download, Eye, PieChart, TrendingUp } from "lucide-react";
 import type { ReportItem } from "./types";
 import { exportReportToCsv } from "./reportsData";
 import { toast } from "sonner";

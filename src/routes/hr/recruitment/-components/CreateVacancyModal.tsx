@@ -45,7 +45,6 @@ export default function CreateVacancyModal({
     closes: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
       .toISOString()
       .slice(0, 10),
-    manager: "Tunde Adeyemi",
     approver: APPROVER_OPTIONS[0] || "Head of HR",
     channels: CHANNEL_OPTIONS[0] || "Careers page",
   });
@@ -91,7 +90,6 @@ export default function CreateVacancyModal({
           month: "short",
           day: "numeric",
         }),
-        manager: form.manager,
         approver: form.approver,
         channels: form.channels,
         status: "Pending Approval",
@@ -116,7 +114,6 @@ export default function CreateVacancyModal({
         closes: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
           .toISOString()
           .slice(0, 10),
-        manager: "Tunde Adeyemi",
         approver: APPROVER_OPTIONS[0] || "Head of HR",
         channels: CHANNEL_OPTIONS[0] || "Careers page",
       });
