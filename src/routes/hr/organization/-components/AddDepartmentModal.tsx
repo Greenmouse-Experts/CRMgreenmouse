@@ -1,11 +1,36 @@
-import { useState, useRef, useEffect } from "react";
+import { useEffect, useRef } from "react";
+import { FormProvider, useForm, type SubmitHandler } from "react-hook-form";
 import Modal, { type ModalHandle } from "@/components/DialogModal";
 import SimpleInput from "@/components/inputs/SimpleInput";
 import LocalSelect from "@/components/inputs/LocalSelect";
 import { AVAILABLE_HEADS, LOCATION_OPTIONS } from "./organizationData";
-import type { Department } from "./types";
+import type { Department, DepartmentStatus } from "./types";
 import { toast } from "sonner";
 import { Send } from "lucide-react";
+
+interface AddDepartmentFormValues {
+  name: string;
+  code: string;
+  head: string;
+  parent: string;
+  costCentre: string;
+  location: string;
+  headcount: string;
+  status: string;
+  description: string;
+}
+
+const DEFAULT_VALUES: AddDepartmentFormValues = {
+  name: "",
+  code: "",
+  head: AVAILABLE_HEADS[0] || "Tunde Adeyemi",
+  parent: "None (top level)",
+  costCentre: "",
+  location: "Lagos",
+  headcount: "10",
+  status: "Active",
+  description: "",
+};
 
 interface AddDepartmentModalProps {
   isOpen: boolean;
@@ -21,84 +46,41 @@ export default function AddDepartmentModal({
   existingDepartments,
 }: AddDepartmentModalProps) {
   const modalRef = useRef<ModalHandle>(null);
-
-  const [form, setForm] = useState({
-    name: "",
-    code: "",
-    head: AVAILABLE_HEADS[0] || "Tunde Adeyemi",
-    parent: "None (top level)",
-    costCentre: "",
-    location: "Lagos",
-    headcount: 10,
-    status: "Active" as const,
-    description: "",
+  const methods = useForm<AddDepartmentFormValues>({
+    mode: "onSubmit",
+    defaultValues: DEFAULT_VALUES,
   });
-
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     if (isOpen) {
       modalRef.current?.open();
+      methods.reset(DEFAULT_VALUES);
     } else {
       modalRef.current?.close();
     }
   }, [isOpen]);
 
-  const handleChange = (field: string, value: any) => {
-    setForm((prev) => ({ ...prev, [field]: value }));
-  };
+  const onSubmit: SubmitHandler<AddDepartmentFormValues> = (values) => {
+    const newDept: Department = {
+      id: `DEP-${Date.now()}`,
+      name: values.name.trim(),
+      code: values.code.trim().toUpperCase(),
+      head: values.head,
+      count: Number(values.headcount) || 0,
+      status: values.status as DepartmentStatus,
+      parent: values.parent,
+      costCentre: values.costCentre.trim() || undefined,
+      location: values.location,
+      description: values.description.trim() || undefined,
+    };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+    onAddDepartment(newDept);
+    toast.success("Department created", {
+      description: `${newDept.name} (${newDept.code}) with head ${newDept.head} has been registered.`,
+    });
 
-    if (!form.name.trim()) {
-      toast.error("Please provide a department name");
-      return;
-    }
-    if (!form.code.trim()) {
-      toast.error("Please provide a unique department code");
-      return;
-    }
-
-    setIsSubmitting(true);
-
-    try {
-      const newDept: Department = {
-        id: `DEP-${Date.now()}`,
-        name: form.name.trim(),
-        code: form.code.trim().toUpperCase(),
-        head: form.head,
-        count: Number(form.headcount) || 0,
-        status: form.status,
-        parent: form.parent,
-        costCentre: form.costCentre.trim() || undefined,
-        location: form.location,
-        description: form.description.trim() || undefined,
-      };
-
-      onAddDepartment(newDept);
-      toast.success("Department created", {
-        description: `${newDept.name} (${newDept.code}) with head ${newDept.head} has been registered.`,
-      });
-
-      // Reset
-      setForm({
-        name: "",
-        code: "",
-        head: AVAILABLE_HEADS[0] || "Tunde Adeyemi",
-        parent: "None (top level)",
-        costCentre: "",
-        location: "Lagos",
-        headcount: 10,
-        status: "Active",
-        description: "",
-      });
-      onClose();
-    } catch {
-      toast.error("Failed to create department");
-    } finally {
-      setIsSubmitting(false);
-    }
+    methods.reset(DEFAULT_VALUES);
+    onClose();
   };
 
   return (
@@ -108,161 +90,154 @@ export default function AddDepartmentModal({
       maxWidth="max-w-2xl"
       onClose={onClose}
     >
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <p className="text-xs text-base-content/60 -mt-1 mb-3">
-          Create a department and assign its reporting head and operational
-          details.
-        </p>
+      <FormProvider {...methods}>
+        <form
+          onSubmit={methods.handleSubmit(onSubmit)}
+          className="space-y-4"
+        >
+          <p className="text-xs text-base-content/60 -mt-1 mb-3">
+            Create a department and assign its reporting head and operational
+            details.
+          </p>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label className="text-xs font-semibold text-base-content/80 mb-1 block">
+                Department name <span className="text-error">*</span>
+              </label>
+              <SimpleInput
+                placeholder="e.g. Quality Assurance"
+                required
+                {...methods.register("name", {
+                  required: "Please provide a department name",
+                })}
+              />
+            </div>
+
+            <div>
+              <label className="text-xs font-semibold text-base-content/80 mb-1 block">
+                Department code <span className="text-error">*</span>
+              </label>
+              <SimpleInput
+                placeholder="e.g. QA"
+                required
+                {...methods.register("code", {
+                  required: "Please provide a unique department code",
+                })}
+              />
+              <span className="text-[10px] text-base-content/50 mt-1 block">
+                Must be unique (2-4 uppercase characters)
+              </span>
+            </div>
+
+            <div>
+              <label className="text-xs font-semibold text-base-content/80 mb-1 block">
+                Department Head <span className="text-error">*</span>
+              </label>
+              <LocalSelect {...methods.register("head")}>
+                {AVAILABLE_HEADS.map((h) => (
+                  <option key={h} value={h}>
+                    {h}
+                  </option>
+                ))}
+              </LocalSelect>
+            </div>
+
+            <div>
+              <label className="text-xs font-semibold text-base-content/80 mb-1 block">
+                Parent department
+              </label>
+              <LocalSelect {...methods.register("parent")}>
+                <option value="None (top level)">None (top level)</option>
+                {existingDepartments.map((d) => (
+                  <option key={d.id} value={d.name}>
+                    {d.name} ({d.code})
+                  </option>
+                ))}
+              </LocalSelect>
+            </div>
+
+            <div>
+              <label className="text-xs font-semibold text-base-content/80 mb-1 block">
+                Cost Centre code
+              </label>
+              <SimpleInput
+                placeholder="e.g. CC-401"
+                {...methods.register("costCentre")}
+              />
+            </div>
+
+            <div>
+              <label className="text-xs font-semibold text-base-content/80 mb-1 block">
+                Location
+              </label>
+              <LocalSelect {...methods.register("location")}>
+                {LOCATION_OPTIONS.map((loc) => (
+                  <option key={loc} value={loc}>
+                    {loc}
+                  </option>
+                ))}
+              </LocalSelect>
+            </div>
+
+            <div>
+              <label className="text-xs font-semibold text-base-content/80 mb-1 block">
+                Initial headcount
+              </label>
+              <input
+                type="number"
+                min="0"
+                {...methods.register("headcount", {
+                  valueAsNumber: true,
+                })}
+                className="input input-bordered w-full text-xs rounded-xl bg-base-200/50"
+              />
+            </div>
+
+            <div>
+              <label className="text-xs font-semibold text-base-content/80 mb-1 block">
+                Status
+              </label>
+              <LocalSelect {...methods.register("status")}>
+                <option value="Active">Active</option>
+                <option value="Inactive">Inactive</option>
+              </LocalSelect>
+            </div>
+          </div>
+
           <div>
             <label className="text-xs font-semibold text-base-content/80 mb-1 block">
-              Department name <span className="text-error">*</span>
+              Description
             </label>
-            <SimpleInput
-              value={form.name}
-              onChange={(e) => handleChange("name", e.target.value)}
-              placeholder="e.g. Quality Assurance"
-              required
+            <textarea
+              {...methods.register("description")}
+              placeholder="Responsibilities, scope, and objectives of this department..."
+              rows={3}
+              className="textarea textarea-bordered w-full text-xs rounded-xl bg-base-200/50"
             />
           </div>
 
-          <div>
-            <label className="text-xs font-semibold text-base-content/80 mb-1 block">
-              Department code <span className="text-error">*</span>
-            </label>
-            <SimpleInput
-              value={form.code}
-              onChange={(e) => handleChange("code", e.target.value)}
-              placeholder="e.g. QA"
-              required
-            />
-            <span className="text-[10px] text-base-content/50 mt-1 block">
-              Must be unique (2-4 uppercase characters)
-            </span>
-          </div>
-
-          <div>
-            <label className="text-xs font-semibold text-base-content/80 mb-1 block">
-              Department Head <span className="text-error">*</span>
-            </label>
-            <LocalSelect
-              value={form.head}
-              onChange={(e) => handleChange("head", e.target.value)}
+          {/* Action Buttons */}
+          <div className="flex items-center justify-end gap-2 pt-4 border-t border-base-200">
+            <button
+              type="button"
+              onClick={onClose}
+              className="btn btn-sm btn-ghost rounded-xl"
             >
-              {AVAILABLE_HEADS.map((h) => (
-                <option key={h} value={h}>
-                  {h}
-                </option>
-              ))}
-            </LocalSelect>
-          </div>
+              Cancel
+            </button>
 
-          <div>
-            <label className="text-xs font-semibold text-base-content/80 mb-1 block">
-              Parent department
-            </label>
-            <LocalSelect
-              value={form.parent}
-              onChange={(e) => handleChange("parent", e.target.value)}
+            <button
+              type="submit"
+              disabled={methods.formState.isSubmitting}
+              className="btn btn-sm bg-primary text-white hover:bg-primary/90 rounded-xl px-5 gap-1.5 shadow-sm shadow-primary/20"
             >
-              <option value="None (top level)">None (top level)</option>
-              {existingDepartments.map((d) => (
-                <option key={d.id} value={d.name}>
-                  {d.name} ({d.code})
-                </option>
-              ))}
-            </LocalSelect>
+              <Send className="size-3.5" />
+              <span>Create department</span>
+            </button>
           </div>
-
-          <div>
-            <label className="text-xs font-semibold text-base-content/80 mb-1 block">
-              Cost Centre code
-            </label>
-            <SimpleInput
-              value={form.costCentre}
-              onChange={(e) => handleChange("costCentre", e.target.value)}
-              placeholder="e.g. CC-401"
-            />
-          </div>
-
-          <div>
-            <label className="text-xs font-semibold text-base-content/80 mb-1 block">
-              Location
-            </label>
-            <LocalSelect
-              value={form.location}
-              onChange={(e) => handleChange("location", e.target.value)}
-            >
-              {LOCATION_OPTIONS.map((loc) => (
-                <option key={loc} value={loc}>
-                  {loc}
-                </option>
-              ))}
-            </LocalSelect>
-          </div>
-
-          <div>
-            <label className="text-xs font-semibold text-base-content/80 mb-1 block">
-              Initial headcount
-            </label>
-            <input
-              type="number"
-              min="0"
-              value={form.headcount}
-              onChange={(e) => handleChange("headcount", e.target.value)}
-              className="input input-bordered w-full text-xs rounded-xl bg-base-200/50"
-            />
-          </div>
-
-          <div>
-            <label className="text-xs font-semibold text-base-content/80 mb-1 block">
-              Status
-            </label>
-            <LocalSelect
-              value={form.status}
-              onChange={(e) => handleChange("status", e.target.value)}
-            >
-              <option value="Active">Active</option>
-              <option value="Restructuring">Restructuring</option>
-              <option value="Archived">Archived</option>
-            </LocalSelect>
-          </div>
-        </div>
-
-        <div>
-          <label className="text-xs font-semibold text-base-content/80 mb-1 block">
-            Description
-          </label>
-          <textarea
-            value={form.description}
-            onChange={(e) => handleChange("description", e.target.value)}
-            placeholder="Responsibilities, scope, and objectives of this department..."
-            rows={3}
-            className="textarea textarea-bordered w-full text-xs rounded-xl bg-base-200/50"
-          />
-        </div>
-
-        {/* Action Buttons */}
-        <div className="flex items-center justify-end gap-2 pt-4 border-t border-base-200">
-          <button
-            type="button"
-            onClick={onClose}
-            className="btn btn-sm btn-ghost rounded-xl"
-          >
-            Cancel
-          </button>
-
-          <button
-            type="submit"
-            disabled={isSubmitting}
-            className="btn btn-sm bg-primary text-white hover:bg-primary/90 rounded-xl px-5 gap-1.5 shadow-sm shadow-primary/20"
-          >
-            <Send className="size-3.5" />
-            <span>Create department</span>
-          </button>
-        </div>
-      </form>
+        </form>
+      </FormProvider>
     </Modal>
   );
 }

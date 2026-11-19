@@ -45,9 +45,14 @@ function RouteComponent() {
 
   // Department handlers
   const handleAddDepartment = (newDept: Department) => {
-    createDepartment.mutate(newDept, {
-      onError: () => toast.error("Failed to create department"),
-    });
+    createDepartment.mutate(
+      {
+        code: newDept.code,
+        name: newDept.name,
+        status: newDept.status.toLowerCase() as "active" | "inactive",
+      },
+      { onError: () => toast.error("Failed to create department") },
+    );
   };
 
   const handleUpdateDeptStatus = (
@@ -55,7 +60,7 @@ function RouteComponent() {
     status: DepartmentStatus,
   ) => {
     updateDepartment.mutate(
-      { id: deptId, status },
+      { id: deptId, status: status.toLowerCase() as "active" | "inactive" },
       { onError: () => toast.error("Failed to update department status") },
     );
   };
@@ -68,9 +73,16 @@ function RouteComponent() {
 
   // Position handlers
   const handleAddPosition = (newPos: Position) => {
-    createPosition.mutate(newPos, {
-      onError: () => toast.error("Failed to create position"),
-    });
+    createPosition.mutate(
+      {
+        title: newPos.title,
+        dept: newPos.dept,
+        grade: newPos.grade,
+        approved: newPos.approved,
+        filled: newPos.filled,
+      },
+      { onError: () => toast.error("Failed to create position") },
+    );
   };
 
   return (

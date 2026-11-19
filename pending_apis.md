@@ -34,11 +34,10 @@ working alternative is `/v1/staffs` (see below).
 | `GET` | `/v1/recruitment/vacancies`, `/applications`, `/offers`, `/interviews` | `200`, arrays |
 | `GET` | `/v1/recruitment/approvers` | `200`, array containing the tenant owner |
 
-**Code impact:** `src/routes/hr/staffs` currently uses `src/api/employeesApi.ts`
-(`/v1/employees`), which is the broken module. The previous integration used
-`useStaffs` / `useCreateStaff` / `useDeleteStaff` from `tenantApi.ts`
-(`/v1/staffs`), which worked. Switching back is the safest fix until the
-employees module returns real data.
+**Code impact (resolved):** `src/routes/hr/staffs` now uses the working staffs
+endpoints — `useEmployees` → `GET /v1/staffs` and `useCreateEmployee` →
+`POST /v1/staffs` — instead of the broken `/v1/employees` module. The people
+directory now reads from `/v1/staffs`.
 
 ## 3. Collection documentation gaps (corrected counts)
 
@@ -62,10 +61,10 @@ those were overstatements. Current collection:
 | `/v1/employees/:id/probation/decision` | POST | decision payload + allowed values |
 | `/v1/employees/probation/reviews/:reviewId/complete` | PATCH | completion payload |
 | `/v1/employees/onboarding/tasks/:taskId/assignment` | PATCH | assignee id |
-| `/v1/employees/organization/departments` | POST | department fields |
-| `/v1/employees/organization/departments/:id` | PATCH | department fields |
-| `/v1/employees/organization/positions` | POST | position fields |
-| `/v1/employees/organization/positions/:id` | PATCH | position fields |
+| `/v1/employees/organization/departments` | POST | create-contract discovered via live 400: accepts `code`, `name`, `status` (lowercase `active`/`inactive`); rejects `id`, `head`, `count`, `parent`, `location` |
+| `/v1/employees/organization/departments/:id` | PATCH | department fields — status updates use lowercase `active`/`inactive` |
+| `/v1/employees/organization/positions` | POST | position fields — `{ title, dept, grade, approved, filled }` (unverified) |
+| `/v1/employees/organization/positions/:id` | PATCH | position fields (unverified) |
 
 Needed: real example bodies, required markers, and enum values.
 
@@ -167,7 +166,27 @@ Also wired elsewhere:
   `/probation/*`) — affected by the section 1 failures
 - Staff directory fallback: `src/api/tenantApi.ts` (`/v1/staffs`)
 
-## 10. Re-verification checklist
+## 10. Organization module — partial implementation
+
+The organization endpoints are live but incompletely implemented on the
+backend. Verified via unauthenticated probes (401 = route exists, 404 =
+missing); the create-department contract was discovered via the live 400 the
+user reported:
+
+| Method | Endpoint | Status | Contract |
+| --- | --- | --- | --- |
+| `GET` | `/v1/employees/organization` | **Working** — `200` `{ departments: [], positions: [] }` | — |
+| `POST` | `/v1/employees/organization/departments` | Route exists; `400` unless the payload matches | Create contract: `{ code, name, status }` with lowercase `active`/`inactive`; rejects `id`, `head`, `count`, `parent`, `location` |
+| `PATCH` | `/v1/employees/organization/departments/:id` | Route exists (401) | Status updates — lowercase `active`/`inactive` |
+| `POST` / `PATCH` | `/v1/employees/organization/positions` / `/positions/:id` | Route exists (401) | Position fields — `{ title, dept, grade, approved, filled }` (unverified) |
+| `DELETE` | `/v1/employees/organization/departments/:id` / `/positions/:id` | **Missing** (404) | Frontend marks inactive instead |
+
+Code impact: `src/api/organizationApi.ts` and
+`src/routes/hr/organization.index.tsx` are wired to these endpoints
+(`useOrganization` → `GET /v1/employees/organization`; mutations → the write
+endpoints above).
+
+## 11. Re-verification checklist
 
 1. Obtain a fresh bearer token (do not reuse `auth_cred.ts`).
 2. Re-run GET on every endpoint in section 1 and record status codes.
@@ -176,3 +195,5 @@ Also wired elsewhere:
 4. Fill in real request/response examples for the `/v1/employees` family.
 5. Add the missing endpoints from section 5 or document the intended
    replacements.
+6. Re-verify the organization write endpoints (section 10) — the create
+   contracts need to be completed per the live 400.

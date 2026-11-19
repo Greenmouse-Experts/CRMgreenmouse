@@ -9,21 +9,26 @@ import type {
 /* Types                                                                      */
 /* -------------------------------------------------------------------------- */
 
-export type CreateDepartmentPayload = Omit<Department, "id">;
-
-export interface UpdateDepartmentPayload {
-  code?: string;
-  name?: string;
-  head?: string;
-  count?: number;
-  status?: string;
-  parent?: string;
-  costCentre?: string;
-  location?: string;
-  description?: string;
+export interface CreateDepartmentPayload {
+  code: string;
+  name: string;
+  status: "active" | "inactive";
 }
 
-export type CreatePositionPayload = Omit<Position, "id">;
+export interface UpdateDepartmentPayload {
+  status?: "active" | "inactive";
+  code?: string;
+  name?: string;
+}
+
+export interface CreatePositionPayload {
+  title: string;
+  dept: string;
+  grade: string;
+  approved: number;
+  filled: number;
+}
+
 export type UpdatePositionPayload = Partial<CreatePositionPayload>;
 
 export interface OrganizationData {

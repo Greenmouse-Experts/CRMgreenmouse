@@ -38,6 +38,9 @@ return [];
   and `QueryCompLayout` for a smaller independent section.
 - **Tables**: use `CustomTable` with `columnType[]` config and `Actions[]` for
   the row action menu. Do not hand-roll new `<table>` markup.
+- **Forms**: use `react-hook-form` for form state — `useForm` + `FormProvider`
+  + `methods.register` / `Controller` + `methods.handleSubmit(values)`. Do not
+  manage form state with `useState`.
 - **No dummy data**: never seed UI state with mock records or fallback numbers.
   Derive everything from query data. Use `—` or an explicit empty state for
   fields the API does not return.
@@ -102,17 +105,17 @@ invalidate the `["organization"]` query root:
 | Hook | Method / Endpoint |
 | --- | --- |
 | `useOrganization()` | `GET /v1/employees/organization` |
-| `useCreateDepartment()` | `POST /v1/employees/organization/departments` |
-| `useUpdateDepartment()` | `PATCH /v1/employees/organization/departments/:id` (status updates) |
+| `useCreateDepartment()` | `POST /v1/employees/organization/departments` — `{ code, name, status }` (status lowercase `active`/`inactive`) |
+| `useUpdateDepartment()` | `PATCH /v1/employees/organization/departments/:id` — `{ status }` (lowercase) |
 | `useDeleteDepartment()` | `PATCH /v1/employees/organization/departments/:id` (`{ status: "inactive" }` — no DELETE route) |
-| `useCreatePosition()` | `POST /v1/employees/organization/positions` |
+| `useCreatePosition()` | `POST /v1/employees/organization/positions` — `{ title, dept, grade, approved, filled }` (unverified) |
 | `useUpdatePosition()` | `PATCH /v1/employees/organization/positions/:id` |
 
 Notes:
 
 - Department status updates (the `Deactivate` / `Activate` actions in the
   departments table) are sent as `PATCH /v1/employees/organization/departments/:id`
-  with the new `status`.
+  with the new `status` (lowercase, e.g. `"active"` / `"inactive"`).
 - The executive leader on the Org hierarchy card (`INITIAL_LEADER` in
   `organizationData.ts`) has no verified endpoint yet.
 
@@ -210,8 +213,18 @@ the employees resource appear to be separate.
   `PATCH /v1/employees/organization/departments/:id`,
   `POST /v1/employees/organization/positions`,
   `PATCH /v1/employees/organization/positions/:id` — verified as routes
-  (401). There are no DELETE routes for departments/positions, so the
-  frontend marks inactive (see the Organization integration).
+  (401 without token).
+  - The create-department contract was discovered via a 400 from the backend:
+    it accepts `code`, `name`, `status` and rejects `id`, `head`, `count`,
+    `parent`, `location` ("property X should not exist"); `status` must be one
+    of `active`, `inactive` (lowercase). The frontend sends
+    `{ code, name, status }`.
+  - The create-position contract is unverified (no Postman sample; empty
+    `{}` sample). The frontend sends `{ title, dept, grade, approved, filled }`.
+  - There are no DELETE routes for departments/positions, so the frontend
+    marks inactive (see the Organization integration).
 - **Test token expired.** The `auth_cred.ts` access token has `exp` =
-  2026-11-19 10:38:55 WAT; renewal is needed for authenticated probing.
+  2026-11-19 10:38:55 WAT; probing with it returns
+  `401 "Invalid or expired token"` — renewal is needed for authenticated
+  probing of the organization write endpoints.
 - Full probe record: `pending_apis.md` (probed on 2026-11-19).
