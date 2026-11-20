@@ -98,7 +98,7 @@ export default function EmployeeFilters({
             ))}
           </select>
 
-          <div className="relative flex-1 sm:w-64">
+          {/*<div className="relative flex-1 sm:w-64">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-base-content/40 pointer-events-none" />
             <input
               type="text"
@@ -115,7 +115,7 @@ export default function EmployeeFilters({
                 <X className="size-3.5" />
               </button>
             )}
-          </div>
+          </div>*/}
 
           {hasActiveFilters && (
             <button
