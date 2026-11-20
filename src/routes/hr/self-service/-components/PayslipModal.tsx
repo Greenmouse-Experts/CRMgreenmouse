@@ -20,7 +20,7 @@ interface PayslipRowProps {
 function PayslipRow({ label, value, valueClassName = "" }: PayslipRowProps) {
   return (
     <div className="flex items-center justify-between py-1">
-      <span className="text-base-content/70">{label}</span>
+      <span className="text-base-content/80">{label}</span>
       <span className={`font-semibold text-base-content ${valueClassName}`}>
         {value}
       </span>
@@ -55,7 +55,7 @@ export default function PayslipModal({
       onClose={onClose}
     >
       <div className="space-y-4">
-        <div className="rounded-xl border border-base-200 bg-base-200/40 p-4">
+        <div className="rounded-xl border border-base-200 bg-base-200/80 p-4">
           <div className="flex items-center justify-between gap-3">
             <div className="font-mono text-sm font-semibold text-base-content">
               {payslip.id}

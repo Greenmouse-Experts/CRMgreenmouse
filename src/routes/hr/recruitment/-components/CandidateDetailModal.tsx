@@ -66,7 +66,7 @@ export default function CandidateDetailModal({
             <h3 className="text-lg font-bold text-base-content truncate">
               {candidate.name}
             </h3>
-            <p className=" text-base-content/70 mt-0.5">{candidate.role}</p>
+            <p className=" text-base-content/80 mt-0.5">{candidate.role}</p>
             <div className="flex items-center gap-2 mt-2">
               <span className="badge badge-sm badge-primary font-semibold">
                 {candidate.stage}
@@ -112,7 +112,7 @@ export default function CandidateDetailModal({
                 className={`px-3 py-2 rounded-xl  font-semibold text-center transition-all ${
                   selectedStage === st
                     ? "bg-primary text-white shadow-xs"
-                    : "bg-base-200 text-base-content/70 hover:bg-base-300"
+                    : "bg-base-200 text-base-content/80 hover:bg-base-300"
                 }`}
               >
                 {st}

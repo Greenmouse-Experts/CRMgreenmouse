@@ -60,7 +60,7 @@ function RouteComponent() {
                   <span className="text-[#a9a6f5]">One clear view.</span>
                 </h1>
 
-                <p className="max-w-md text-sm leading-relaxed text-white/70 sm:text-base">
+                <p className="max-w-md text-sm leading-relaxed text-white/80 sm:text-base">
                   Keep customer details, conversations, and sales opportunities
                   organized in one workspace, so your team can stay focused on
                   what matters.
@@ -69,7 +69,7 @@ function RouteComponent() {
 
               {/* Preview */}
               <div className="lg:col-span-7">
-                <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.18em] text-white/40">
+                <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.18em] text-white/80">
                   Inside Kinovia / CRM
                 </p>
                 <div className="overflow-hidden rounded-2xl border border-white/10">

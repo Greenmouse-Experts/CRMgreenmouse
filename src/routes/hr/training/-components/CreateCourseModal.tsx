@@ -160,7 +160,7 @@ export default function CreateCourseModal({
         <div className="space-y-3">
           <div className="flex items-center gap-1.5 pb-1 border-b border-base-200">
             <BookOpen className="size-3.5 text-primary" />
-            <h4 className=" font-semibold uppercase tracking-wider text-base-content/70">
+            <h4 className=" font-semibold uppercase tracking-wider text-base-content/80">
               Course Details
             </h4>
           </div>
@@ -285,7 +285,7 @@ export default function CreateCourseModal({
         <div className="space-y-3">
           <div className="flex items-center gap-1.5 pb-1 border-b border-base-200">
             <Calendar className="size-3.5 text-primary" />
-            <h4 className=" font-semibold uppercase tracking-wider text-base-content/70">
+            <h4 className=" font-semibold uppercase tracking-wider text-base-content/80">
               Schedule & Enrollment
             </h4>
           </div>

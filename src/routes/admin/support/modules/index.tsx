@@ -55,7 +55,7 @@ function RouteComponent() {
             <span className="text-sm font-medium">Module key</span>
             <input className="input input-bordered w-full" value={value} onChange={(event) => setValue(event.target.value)} placeholder="e.g. invoices" required maxLength={80} pattern="[a-zA-Z][a-zA-Z0-9_-]*" />
           </label>
-          <p className="text-xs text-base-content/70">The key is saved with tickets and should stay stable.</p>
+          <p className="text-xs text-base-content/80">The key is saved with tickets and should stay stable.</p>
           <button className="btn btn-primary" type="submit" disabled={createModule.isPending}>
             {createModule.isPending ? <span className="loading loading-spinner loading-sm" /> : <Plus className="size-4" />}
             Create module
@@ -68,13 +68,13 @@ function RouteComponent() {
           ) : modulesQuery.isError ? (
             <div className="space-y-3 p-5 text-sm"><p>Could not load modules.</p><button type="button" className="btn btn-outline btn-sm" onClick={() => modulesQuery.refetch()}>Try again</button></div>
           ) : !modulesQuery.data?.length ? (
-            <div className="flex min-h-40 flex-col items-center justify-center gap-2 p-5 text-center text-sm text-base-content/70"><Layers className="size-7" /><p>No support modules yet.</p></div>
+            <div className="flex min-h-40 flex-col items-center justify-center gap-2 p-5 text-center text-sm text-base-content/80"><Layers className="size-7" /><p>No support modules yet.</p></div>
           ) : (
             <ul className="divide-y divide-base-200">
               {modulesQuery.data.map((module) => (
                 <li key={module.value} className="flex flex-wrap items-center justify-between gap-2 px-5 py-3">
                   <span className="font-medium">{module.label}</span>
-                  <code className="text-xs text-base-content/70">{module.value}</code>
+                  <code className="text-xs text-base-content/80">{module.value}</code>
                 </li>
               ))}
             </ul>

@@ -66,7 +66,7 @@ function RouteComponent() {
         </div>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className="p-6 space-y-6 py-8 mx-auto bg-base-100/70 backdrop-blur-md rounded-box drop-shadow-xl ring ring-current/10 w-full max-w-md m-2 mb-12"
+          className="p-6 space-y-6 py-8 mx-auto bg-base-100/80 backdrop-blur-md rounded-box drop-shadow-xl ring ring-current/10 w-full max-w-md m-2 mb-12"
         >
           <div className="space-y-1">
             <h2 className="text-2xl font-semibold text-center">Reset Password</h2>

@@ -192,7 +192,7 @@ export default function NewPayrollRunModal({
           />
         </div>
 
-        <div className="flex items-start gap-2 rounded-xl border border-primary/20 bg-primary/5 p-3  text-base-content/70">
+        <div className="flex items-start gap-2 rounded-xl border border-primary/20 bg-primary/5 p-3  text-base-content/80">
           <Sparkles className="size-4 text-primary shrink-0 mt-0.5" />
           <span>
             Staff count of {ESTIMATED_STAFF} and gross of ₦

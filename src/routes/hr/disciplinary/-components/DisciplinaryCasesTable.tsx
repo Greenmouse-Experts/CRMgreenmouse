@@ -124,7 +124,7 @@ export default function DisciplinaryCasesTable({
         </div>
 
         <div className="relative w-full sm:w-64">
-          <Search className="size-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-base-content/40" />
+          <Search className="size-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-base-content/80" />
           <input
             type="text"
             value={searchTerm}
@@ -179,7 +179,7 @@ export default function DisciplinaryCasesTable({
                   <p className="font-medium text-sm">
                     No disciplinary cases found
                   </p>
-                  <p className=" text-base-content/40 mt-0.5">
+                  <p className=" text-base-content/80 mt-0.5">
                     Try adjusting your filters or search keywords
                   </p>
                 </td>
@@ -189,7 +189,7 @@ export default function DisciplinaryCasesTable({
                 <tr
                   key={c.id}
                   onClick={() => onSelectCase(c)}
-                  className="hover:bg-base-200/40 cursor-pointer transition-colors"
+                  className="hover:bg-base-200/80 cursor-pointer transition-colors"
                 >
                   <td className="py-3 font-bold text-base-content">
                     <span className="font-mono bg-base-200/80 px-2 py-0.5 rounded-md border border-base-300">
@@ -219,7 +219,7 @@ export default function DisciplinaryCasesTable({
 
                   <td>{getSeverityBadge(c.severity)}</td>
 
-                  <td className="text-base-content/70 whitespace-nowrap">
+                  <td className="text-base-content/80 whitespace-nowrap">
                     {c.openedDate}
                   </td>
 
@@ -238,7 +238,7 @@ export default function DisciplinaryCasesTable({
                         e.stopPropagation();
                         onSelectCase(c);
                       }}
-                      className="btn btn-xs btn-ghost rounded-lg gap-1 hover:bg-base-200 text-base-content/70"
+                      className="btn btn-xs btn-ghost rounded-lg gap-1 hover:bg-base-200 text-base-content/80"
                     >
                       <Eye className="size-3.5" />
                       <span>Review</span>

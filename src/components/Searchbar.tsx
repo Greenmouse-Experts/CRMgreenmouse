@@ -44,7 +44,7 @@ export default function SearchBar({
       onSubmit={handleSubmit}
       className={`relative flex items-center ${className}`}
     >
-      <SearchIcon className="absolute left-3 size-4 text-base-content/40 pointer-events-none" />
+      <SearchIcon className="absolute left-3 size-4 text-base-content/80 pointer-events-none" />
       <input
         type="text"
         value={searchTerm}
@@ -56,7 +56,7 @@ export default function SearchBar({
         <button
           type="button"
           onClick={handleClear}
-          className="absolute right-2 text-base-content/40 hover:text-base-content/70 p-0.5 rounded-full"
+          className="absolute right-2 text-base-content/80 hover:text-base-content/80 p-0.5 rounded-full"
         >
           <X className="size-3.5" />
         </button>

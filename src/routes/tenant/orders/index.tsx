@@ -308,7 +308,7 @@ function RouteComponent() {
       key: "paymentStatus",
       label: "Payment",
       render: (value: string) => (
-        <span className="text-sm capitalize text-base-content/70">
+        <span className="text-sm capitalize text-base-content/80">
           {value || "Unpaid"}
         </span>
       ),
@@ -317,7 +317,7 @@ function RouteComponent() {
       key: "createdAt",
       label: "Created",
       render: (value: string) => (
-        <span className="whitespace-nowrap text-sm text-base-content/70">
+        <span className="whitespace-nowrap text-sm text-base-content/80">
           {value ? new Date(value).toLocaleDateString() : "—"}
         </span>
       ),
@@ -391,7 +391,7 @@ function RouteComponent() {
                           <p className="truncate font-mono text-sm font-semibold text-base-content">
                             {order.orderNumber || `#${order.id.slice(0, 8)}`}
                           </p>
-                          <p className="mt-1 truncate text-sm text-base-content/70">
+                          <p className="mt-1 truncate text-sm text-base-content/80">
                             {customerName(order)}
                           </p>
                         </div>
@@ -405,7 +405,7 @@ function RouteComponent() {
                       <div className="flex items-center justify-between gap-3">
                         <div className="flex flex-wrap items-center gap-2">
                           {statusBadge(order.status)}
-                          <span className=" text-base-content/70">
+                          <span className=" text-base-content/80">
                             {order.items?.length ?? 0} items
                           </span>
                         </div>
@@ -422,7 +422,7 @@ function RouteComponent() {
                 </div>
               </>
             ) : (
-              <div className="rounded-b-box border border-base-200 bg-base-100 px-4 py-10 text-center text-sm text-base-content/70">
+              <div className="rounded-b-box border border-base-200 bg-base-100 px-4 py-10 text-center text-sm text-base-content/80">
                 No orders match your search.
               </div>
             )
@@ -463,7 +463,7 @@ function RouteComponent() {
               <div className="flex items-center justify-between gap-3">
                 <div>
                   <h4 className="text-sm font-semibold">Order items</h4>
-                  <p className=" text-base-content/70">
+                  <p className=" text-base-content/80">
                     Choose products and adjust quantities or prices.
                   </p>
                 </div>
@@ -478,7 +478,7 @@ function RouteComponent() {
                 </button>
               </div>
               {productsQuery.isLoading ? (
-                <p className="py-4 text-sm text-base-content/70">
+                <p className="py-4 text-sm text-base-content/80">
                   Loading products...
                 </p>
               ) : productsQuery.isError ? (
@@ -493,7 +493,7 @@ function RouteComponent() {
                   </button>
                 </div>
               ) : products.length === 0 ? (
-                <p className="rounded-lg bg-base-200 p-3 text-sm text-base-content/70">
+                <p className="rounded-lg bg-base-200 p-3 text-sm text-base-content/80">
                   Add a product before creating an order.{" "}
                   <Link
                     to="/tenant/products"
@@ -584,7 +584,7 @@ function RouteComponent() {
                           <Trash2 className="size-4" />
                         </button>
                       </div>
-                      <p className="mt-2 text-right  font-medium tabular-nums text-base-content/70">
+                      <p className="mt-2 text-right  font-medium tabular-nums text-base-content/80">
                         Line total:{" "}
                         {formatMoney(
                           (Number(item.qty) || 0) *
@@ -642,15 +642,15 @@ function RouteComponent() {
               )}
             />
             <div className="rounded-lg bg-base-200/80 p-3 text-sm tabular-nums">
-              <div className="flex justify-between text-base-content/70">
+              <div className="flex justify-between text-base-content/80">
                 <span>Subtotal</span>
                 <span>{formatMoney(subtotal, currency)}</span>
               </div>
-              <div className="mt-1 flex justify-between text-base-content/70">
+              <div className="mt-1 flex justify-between text-base-content/80">
                 <span>Discount</span>
                 <span>−{formatMoney(discount, currency)}</span>
               </div>
-              <div className="mt-1 flex justify-between text-base-content/70">
+              <div className="mt-1 flex justify-between text-base-content/80">
                 <span>Tax</span>
                 <span>+{formatMoney(tax, currency)}</span>
               </div>
@@ -690,7 +690,7 @@ function RouteComponent() {
 
       <Modal ref={detailsModalRef} title="Order Details">
         {detailsQuery.isLoading ? (
-          <div className="py-8 text-center text-sm text-base-content/70">
+          <div className="py-8 text-center text-sm text-base-content/80">
             Loading order details...
           </div>
         ) : detailsQuery.isError ? (
@@ -711,7 +711,7 @@ function RouteComponent() {
                 <p className="font-mono text-sm font-semibold">
                   {selectedOrder.orderNumber || selectedOrder.id}
                 </p>
-                <p className="mt-1 text-sm text-base-content/70">
+                <p className="mt-1 text-sm text-base-content/80">
                   {customerName(selectedOrder)}
                 </p>
               </div>
@@ -719,13 +719,13 @@ function RouteComponent() {
             </div>
             <div className="grid gap-3 text-sm sm:grid-cols-2">
               <div className="rounded-lg bg-base-200/80 p-3">
-                <p className=" text-base-content/70">Payment</p>
+                <p className=" text-base-content/80">Payment</p>
                 <p className="mt-1 font-medium capitalize">
                   {selectedOrder.paymentStatus || "Unpaid"}
                 </p>
               </div>
               <div className="rounded-lg bg-base-200/80 p-3">
-                <p className=" text-base-content/70">Created</p>
+                <p className=" text-base-content/80">Created</p>
                 <p className="mt-1 font-medium">
                   {selectedOrder.createdAt
                     ? new Date(selectedOrder.createdAt).toLocaleString()
@@ -750,7 +750,7 @@ function RouteComponent() {
                           <p className="font-medium">
                             {product?.name || "Product"}
                           </p>
-                          <p className=" text-base-content/70">
+                          <p className=" text-base-content/80">
                             {item.qty} ×{" "}
                             {formatMoney(
                               item.unitPrice,
@@ -768,7 +768,7 @@ function RouteComponent() {
                     );
                   })
                 ) : (
-                  <p className="p-3 text-sm text-base-content/70">
+                  <p className="p-3 text-sm text-base-content/80">
                     No item details available.
                   </p>
                 )}

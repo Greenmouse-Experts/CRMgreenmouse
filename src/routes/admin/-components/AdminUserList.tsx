@@ -30,7 +30,7 @@ export default function AdminUserList() {
       key: "phoneNumber",
       label: "Phone",
       render: (value: string) => (
-        <span className="text-xs text-base-content/70">{value || "—"}</span>
+        <span className="text-xs text-base-content/80">{value || "—"}</span>
       ),
     },
     {

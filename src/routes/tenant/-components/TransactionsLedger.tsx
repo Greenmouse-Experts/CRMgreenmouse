@@ -86,7 +86,7 @@ function MetricCard({
     <div className="min-w-0 rounded-xl border border-base-200 bg-base-100 p-4">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
-          <p className=" font-medium text-base-content/70">{label}</p>
+          <p className=" font-medium text-base-content/80">{label}</p>
           <p className="mt-2 break-words text-xl font-semibold tabular-nums text-base-content">
             {value}
           </p>
@@ -174,7 +174,7 @@ export default function TransactionsLedger({
       key: "date",
       label: "Date",
       render: (value: string) => (
-        <span className="whitespace-nowrap text-sm text-base-content/70">
+        <span className="whitespace-nowrap text-sm text-base-content/80">
           {formatDate(value)}
         </span>
       ),
@@ -348,7 +348,7 @@ export default function TransactionsLedger({
           {() =>
             displayedList.length === 0 ? (
               <div className="rounded-b-box border border-base-200 bg-base-100 px-4 py-10 text-center">
-                <p className="text-sm text-base-content/70">
+                <p className="text-sm text-base-content/80">
                   No transactions match these filters.
                 </p>
                 <button
@@ -379,7 +379,7 @@ export default function TransactionsLedger({
                             <p className="truncate text-sm font-semibold text-base-content">
                               {tx.description || "Transaction"}
                             </p>
-                            <p className="mt-1  text-base-content/70">
+                            <p className="mt-1  text-base-content/80">
                               {tx.type || "Transaction"} · {formatDate(tx.date)}
                             </p>
                           </div>
@@ -431,7 +431,7 @@ export default function TransactionsLedger({
                 <h4 className="break-words text-base font-semibold text-base-content">
                   {selectedTx.description || "Transaction"}
                 </h4>
-                <p className="mt-1 text-sm text-base-content/70">
+                <p className="mt-1 text-sm text-base-content/80">
                   {selectedTx.type || "Transaction"}
                 </p>
               </div>
@@ -439,7 +439,7 @@ export default function TransactionsLedger({
 
             <dl className="grid gap-3 sm:grid-cols-2">
               <div className="rounded-lg bg-base-200/80 p-3">
-                <dt className=" text-base-content/70">Amount</dt>
+                <dt className=" text-base-content/80">Amount</dt>
                 <dd
                   className={`mt-1 text-lg font-semibold tabular-nums ${signedAmount(selectedTx) >= 0 ? "text-success" : "text-error"}`}
                 >
@@ -448,7 +448,7 @@ export default function TransactionsLedger({
                 </dd>
               </div>
               <div className="rounded-lg bg-base-200/80 p-3">
-                <dt className=" text-base-content/70">Status</dt>
+                <dt className=" text-base-content/80">Status</dt>
                 <dd className="mt-1">
                   <span
                     className={`badge badge-sm badge-soft font-medium capitalize ${statusClass(selectedTx.status)}`}
@@ -458,19 +458,19 @@ export default function TransactionsLedger({
                 </dd>
               </div>
               <div className="rounded-lg bg-base-200/80 p-3">
-                <dt className=" text-base-content/70">Date and time</dt>
+                <dt className=" text-base-content/80">Date and time</dt>
                 <dd className="mt-1 text-sm font-medium text-base-content">
                   {formatDate(selectedTx.date, true)}
                 </dd>
               </div>
               <div className="rounded-lg bg-base-200/80 p-3">
-                <dt className=" text-base-content/70">Category</dt>
+                <dt className=" text-base-content/80">Category</dt>
                 <dd className="mt-1 break-words text-sm font-medium text-base-content">
                   {selectedTx.category || "General"}
                 </dd>
               </div>
               <div className="rounded-lg bg-base-200/80 p-3 sm:col-span-2">
-                <dt className=" text-base-content/70">Reference</dt>
+                <dt className=" text-base-content/80">Reference</dt>
                 <dd className="mt-1 break-all font-mono  text-base-content">
                   {selectedTx.reference || selectedTx.id}
                 </dd>

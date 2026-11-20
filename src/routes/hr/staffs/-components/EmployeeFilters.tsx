@@ -64,7 +64,7 @@ export default function EmployeeFilters({
                 className={`btn btn-xs rounded-full transition-all shrink-0 font-normal ${
                   isSelected
                     ? "btn-primary text-primary-content font-medium shadow-xs"
-                    : "btn-ghost border border-base-300 text-base-content/70 hover:border-base-content/30"
+                    : "btn-ghost border border-base-300 text-base-content/80 hover:border-base-content/30"
                 }`}
               >
                 {status}
@@ -98,7 +98,7 @@ export default function EmployeeFilters({
           </select>
 
           {/*<div className="relative flex-1 sm:w-64">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-base-content/40 pointer-events-none" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-base-content/80 pointer-events-none" />
             <input
               type="text"
               value={searchTerm}
@@ -109,7 +109,7 @@ export default function EmployeeFilters({
             {searchTerm && (
               <button
                 onClick={() => onSearchChange("")}
-                className="absolute right-2 top-1/2 -translate-y-1/2 text-base-content/40 hover:text-base-content"
+                className="absolute right-2 top-1/2 -translate-y-1/2 text-base-content/80 hover:text-base-content"
               >
                 <X className="size-3.5" />
               </button>

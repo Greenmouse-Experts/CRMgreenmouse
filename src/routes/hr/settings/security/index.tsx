@@ -53,7 +53,7 @@ function RouteComponent() {
         aria-labelledby="two-factor-title"
       >
         <div className="flex items-start gap-3">
-          <span className="rounded-lg bg-base-200 p-2 text-base-content/70">
+          <span className="rounded-lg bg-base-200 p-2 text-base-content/80">
             <ShieldCheck className="size-5" aria-hidden="true" />
           </span>
           <div>

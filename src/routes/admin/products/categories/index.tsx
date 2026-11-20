@@ -165,7 +165,7 @@ function RouteComponent() {
                       className={`btn btn-sm rounded-full text-sm ${
                         typeFilter === tab.key
                           ? "btn-primary text-primary-content"
-                          : "btn-ghost text-base-content/70"
+                          : "btn-ghost text-base-content/80"
                       }`}
                     >
                       {tab.label}
@@ -183,7 +183,7 @@ function RouteComponent() {
                     render: (c: any) => (
                       <div className="flex items-center gap-3">
                         <div className="avatar placeholder">
-                          <div className="bg-base-200 text-base-content/70 rounded-lg w-10 h-10 flex items-center justify-center">
+                          <div className="bg-base-200 text-base-content/80 rounded-lg w-10 h-10 flex items-center justify-center">
                             <Tag size={18} />
                           </div>
                         </div>
@@ -299,7 +299,7 @@ function RouteComponent() {
 
                   {selectedCategory.description && (
                     <div className="bg-base-200/30 p-4 rounded-lg">
-                      <span className="text-sm font-semibold text-base-content/70 block mb-1">
+                      <span className="text-sm font-semibold text-base-content/80 block mb-1">
                         Description
                       </span>
                       <p className="text-sm text-base-content/80 whitespace-pre-wrap">

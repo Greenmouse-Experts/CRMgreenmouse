@@ -135,7 +135,7 @@ function RouteComponent() {
             </button>
           </div>
         ) : notifications.length === 0 ? (
-          <div className="flex min-h-52 flex-col items-center justify-center gap-3 p-8 text-center text-base-content/70">
+          <div className="flex min-h-52 flex-col items-center justify-center gap-3 p-8 text-center text-base-content/80">
             <Bell className="size-8" />
             <p>
               {unreadOnly ? "You're all caught up." : "No notifications yet."}

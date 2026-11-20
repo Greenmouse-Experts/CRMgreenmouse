@@ -196,7 +196,7 @@ function RouteComponent() {
       key: "date",
       label: "Date",
       render: (value: string, quote: Quote) => (
-        <span className="text-sm text-base-content/70">
+        <span className="text-sm text-base-content/80">
           {value || quote.createdAt
             ? new Date(value || quote.createdAt!).toLocaleDateString()
             : "—"}
@@ -241,7 +241,7 @@ function RouteComponent() {
       label: "Description",
       render: (value: string) => (
         <span
-          className="block max-w-xs truncate text-sm text-base-content/70"
+          className="block max-w-xs truncate text-sm text-base-content/80"
           title={value || ""}
         >
           {value || "—"}
@@ -374,7 +374,7 @@ function RouteComponent() {
                 ring={false}
               />
             ) : (
-              <div className="rounded-b-box border border-base-200 bg-base-100 px-4 py-10 text-center text-sm text-base-content/70">
+              <div className="rounded-b-box border border-base-200 bg-base-100 px-4 py-10 text-center text-sm text-base-content/80">
                 No quotes match your search.
               </div>
             )

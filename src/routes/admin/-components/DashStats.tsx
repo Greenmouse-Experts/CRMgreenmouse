@@ -95,7 +95,7 @@ const TransactionCard = (props: TransactionCardProps) => {
           <div className="font-medium text-sm truncate">
             {name || (isIncome ? "Income" : "Expense")}
           </div>
-          <div className="text-xs text-current/70">{date}</div>
+          <div className="text-xs text-current/80">{date}</div>
         </div>
         <div className={`ml-3 text-base font-semibold ${textColor} shrink-0`}>
           {isIncome ? "+" : "-"}

@@ -104,7 +104,7 @@ export default function PositionsTable({
       label: "Recruit",
       render: (_value, pos) =>
         isFullyFilled(pos) ? (
-          <span className="text-[11px] text-base-content/40 italic">
+          <span className="text-[11px] text-base-content/80 italic">
             Optimal
           </span>
         ) : (
@@ -134,7 +134,7 @@ export default function PositionsTable({
         <div className="flex items-center gap-2">
           {/* Search Input */}
           <div className="relative">
-            <Search className="size-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-base-content/40" />
+            <Search className="size-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-base-content/80" />
             <input
               type="text"
               placeholder="Search positions..."

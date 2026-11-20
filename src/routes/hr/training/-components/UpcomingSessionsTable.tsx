@@ -92,7 +92,7 @@ export default function UpcomingSessionsTable({
 
         {/* Search */}
         <div className="relative w-full sm:w-64">
-          <Search className="size-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-base-content/40" />
+          <Search className="size-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-base-content/80" />
           <input
             type="text"
             value={searchTerm}
@@ -138,7 +138,7 @@ export default function UpcomingSessionsTable({
               <tr>
                 <td
                   colSpan={5}
-                  className="py-8 text-center text-base-content/40 italic"
+                  className="py-8 text-center text-base-content/80 italic"
                 >
                   No training sessions found.
                 </td>
@@ -148,14 +148,14 @@ export default function UpcomingSessionsTable({
                 <tr
                   key={session.id}
                   onClick={() => onSelectSession?.(session)}
-                  className="hover:bg-base-200/40 cursor-pointer transition-colors"
+                  className="hover:bg-base-200/80 cursor-pointer transition-colors"
                 >
                   <td className="font-bold text-base-content">
                     {session.course}
                   </td>
 
                   <td>
-                    <div className="flex items-center gap-1.5 text-base-content/70">
+                    <div className="flex items-center gap-1.5 text-base-content/80">
                       <Calendar className="size-3.5 text-primary" />
                       <span>{session.date}</span>
                     </div>

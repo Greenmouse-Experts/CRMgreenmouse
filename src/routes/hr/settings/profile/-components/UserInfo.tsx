@@ -43,9 +43,9 @@ export default function UserInfo({
         <h1 className="truncate text-xl font-semibold">
           {profile.companyName || "Company profile"}
         </h1>
-        <p className="truncate text-sm text-base-content/70">{profile.email}</p>
+        <p className="truncate text-sm text-base-content/80">{profile.email}</p>
         {location && (
-          <p className="mt-1 flex items-center gap-1 text-sm text-base-content/70">
+          <p className="mt-1 flex items-center gap-1 text-sm text-base-content/80">
             <MapPin className="size-4 shrink-0" aria-hidden="true" /> {location}
           </p>
         )}

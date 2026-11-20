@@ -288,7 +288,7 @@ function RouteComponent() {
                       className={`btn btn-sm rounded-full text-sm ${
                         statusFilter === tab.key
                           ? "btn-primary text-primary-content"
-                          : "btn-ghost text-base-content/70"
+                          : "btn-ghost text-base-content/80"
                       }`}
                     >
                       {tab.label}
@@ -376,7 +376,7 @@ function RouteComponent() {
 
                   {selectedOrder.items && selectedOrder.items.length > 0 && (
                     <div className="space-y-2">
-                      <h4 className="text-sm font-semibold text-base-content/70 uppercase">
+                      <h4 className="text-sm font-semibold text-base-content/80 uppercase">
                         Line Items ({selectedOrder.items.length})
                       </h4>
                       <div className="divide-y divide-base-200 rounded-lg border border-base-200 overflow-hidden text-sm">
@@ -409,7 +409,7 @@ function RouteComponent() {
                   )}
 
                   {selectedOrder.notes && (
-                    <div className="bg-base-200/30 p-3 rounded-lg text-sm text-base-content/70">
+                    <div className="bg-base-200/30 p-3 rounded-lg text-sm text-base-content/80">
                       <span className="font-semibold block text-sm mb-1">
                         Order Notes:
                       </span>

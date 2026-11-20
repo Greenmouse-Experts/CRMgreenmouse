@@ -97,7 +97,7 @@ export default function IncomeTable() {
       render: (_value: any, item: IncomeRecord) => {
         const d = item.date || item.createdAt;
         return (
-          <span className=" text-base-content/70">
+          <span className=" text-base-content/80">
             {d ? new Date(d).toLocaleDateString() : "—"}
           </span>
         );

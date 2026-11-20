@@ -118,7 +118,7 @@ export default function OfferConversionSection({
                   Accepted
                 </span>
               </div>
-              <p className=" text-base-content/70 mt-0.5">
+              <p className=" text-base-content/80 mt-0.5">
                 {role ?? "Offer accepted"} · Ready for staff enrollment and
                 setup
               </p>
@@ -137,7 +137,7 @@ export default function OfferConversionSection({
         </div>
       ) : (
         <div className="flex flex-col items-center gap-2 rounded-xl border border-dashed border-base-300 bg-base-200/30 px-4 py-8 text-center">
-          <Inbox className="size-6 text-base-content/40" />
+          <Inbox className="size-6 text-base-content/80" />
           <p className="text-sm font-semibold text-base-content">
             No accepted offers yet
           </p>

@@ -264,7 +264,7 @@ function RouteComponent() {
           className="drawer-overlay"
         ></label>
         <div className="min-h-full w-3xs bg-base-100 text-base-content">
-          <div className="font-semibold h-18 text-lg flex  items-center px-4 border-b border-base-300/40">
+          <div className="font-semibold h-18 text-lg flex  items-center px-4 border-b border-base-300/80">
             KINOVIA CRM
           </div>
           <ul className="menu  w-full space-y-2 ">

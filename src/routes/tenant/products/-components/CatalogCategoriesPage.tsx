@@ -138,7 +138,7 @@ export default function CatalogCategoriesPage({
       key: "createdAt",
       label: "Created",
       render: (val: any) => (
-        <span className=" text-base-content/70">
+        <span className=" text-base-content/80">
           {val ? new Date(val).toLocaleDateString() : "—"}
         </span>
       ),
@@ -198,7 +198,7 @@ export default function CatalogCategoriesPage({
       <Modal ref={addModalRef} title={`Create ${label} Category`}>
         <form onSubmit={handleSaveAdd} className="space-y-4">
           <div>
-            <label className=" font-semibold text-base-content/70">
+            <label className=" font-semibold text-base-content/80">
               Category Name *
             </label>
             <input
@@ -214,7 +214,7 @@ export default function CatalogCategoriesPage({
           </div>
 
           <div>
-            <label className=" font-semibold text-base-content/70">
+            <label className=" font-semibold text-base-content/80">
               Description
             </label>
             <textarea
@@ -253,7 +253,7 @@ export default function CatalogCategoriesPage({
       <Modal ref={editModalRef} title={`Edit ${label} Category`}>
         <form onSubmit={handleSaveEdit} className="space-y-4">
           <div>
-            <label className=" font-semibold text-base-content/70">
+            <label className=" font-semibold text-base-content/80">
               Category Name *
             </label>
             <input
@@ -266,7 +266,7 @@ export default function CatalogCategoriesPage({
           </div>
 
           <div>
-            <label className=" font-semibold text-base-content/70">
+            <label className=" font-semibold text-base-content/80">
               Description
             </label>
             <textarea

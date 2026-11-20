@@ -194,7 +194,7 @@ export default function MarkdownEditor() {
           {fieldState.error.message}
         </p>
       ) : (
-        <p id="quote-description-help" className=" text-base-content/70">
+        <p id="quote-description-help" className=" text-base-content/80">
           Use Markdown for headings, lists, links, and emphasis.
         </p>
       )}

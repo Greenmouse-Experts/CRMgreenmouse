@@ -236,7 +236,7 @@ function StaffsDirectoryContent({
 
       {filteredEmployees.length === 0 ? (
         <div className="card bg-base-100 border border-base-200/80 p-12 text-center space-y-3 rounded-2xl shadow-xs">
-          <div className="size-12 rounded-full bg-base-200 text-base-content/40 flex items-center justify-center mx-auto">
+          <div className="size-12 rounded-full bg-base-200 text-base-content/80 flex items-center justify-center mx-auto">
             <Search className="size-5" />
           </div>
           <h3 className="font-semibold text-base text-base-content">

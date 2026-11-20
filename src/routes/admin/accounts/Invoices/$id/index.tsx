@@ -82,7 +82,7 @@ function RouteComponent() {
                       <h4 className="text-xs font-semibold text-base-content/60 uppercase mb-1">
                         Payment & Terms
                       </h4>
-                      <p className="text-xs text-base-content/70">
+                      <p className="text-xs text-base-content/80">
                         Due Date:{" "}
                         {invoice.dueDate
                           ? new Date(invoice.dueDate).toLocaleDateString()
@@ -152,7 +152,7 @@ function RouteComponent() {
 
                   <div className="flex justify-end mt-6">
                     <div className="w-64 space-y-2 text-sm">
-                      <div className="flex justify-between text-base-content/70">
+                      <div className="flex justify-between text-base-content/80">
                         <span>Subtotal:</span>
                         <span>
                           {invoice.currency || "₦"}
@@ -162,7 +162,7 @@ function RouteComponent() {
                         </span>
                       </div>
                       {invoice.tax > 0 && (
-                        <div className="flex justify-between text-base-content/70">
+                        <div className="flex justify-between text-base-content/80">
                           <span>Tax:</span>
                           <span>
                             +{invoice.currency || "₦"}

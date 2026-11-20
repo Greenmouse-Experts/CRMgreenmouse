@@ -55,7 +55,7 @@ export default function CorrectionRequests({
 
       <ul className="space-y-3">
         {requests.length === 0 ? (
-          <li className="py-6 text-center  text-base-content/40 italic">
+          <li className="py-6 text-center  text-base-content/80 italic">
             No correction requests submitted.
           </li>
         ) : (
@@ -74,7 +74,7 @@ export default function CorrectionRequests({
                   {getStatusBadge(req.status)}
                 </div>
 
-                <p className=" text-base-content/70">{req.detail}</p>
+                <p className=" text-base-content/80">{req.detail}</p>
 
                 {req.reason && (
                   <p className="text-[11px] text-base-content/80 italic bg-base-200/80 p-2 rounded-lg">

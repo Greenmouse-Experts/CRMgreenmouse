@@ -38,7 +38,7 @@ function getStatusBadge(status: PayrollRunStatus) {
       );
     case "Draft":
       return (
-        <span className="inline-flex items-center gap-1.5 rounded-full bg-base-200 px-2.5 py-0.5  font-semibold text-base-content/70 border border-base-300">
+        <span className="inline-flex items-center gap-1.5 rounded-full bg-base-200 px-2.5 py-0.5  font-semibold text-base-content/80 border border-base-300">
           Draft
         </span>
       );
@@ -101,7 +101,7 @@ export default function PayrollRunsTable({
         </div>
 
         <div className="relative w-full sm:w-60">
-          <Search className="size-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-base-content/40" />
+          <Search className="size-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-base-content/80" />
           <input
             type="text"
             value={searchTerm}
@@ -148,7 +148,7 @@ export default function PayrollRunsTable({
               <tr>
                 <td
                   colSpan={8}
-                  className="py-8 text-center text-base-content/40 italic"
+                  className="py-8 text-center text-base-content/80 italic"
                 >
                   No payroll runs match this filter.
                 </td>
@@ -157,9 +157,9 @@ export default function PayrollRunsTable({
               filteredRuns.map((run) => (
                 <tr
                   key={run.id}
-                  className="hover:bg-base-200/40 transition-colors"
+                  className="hover:bg-base-200/80 transition-colors"
                 >
-                  <td className="font-mono font-medium text-base-content/70">
+                  <td className="font-mono font-medium text-base-content/80">
                     {run.id}
                   </td>
                   <td>
@@ -170,8 +170,8 @@ export default function PayrollRunsTable({
                       {run.cycle} · {run.preparedBy}
                     </div>
                   </td>
-                  <td className="text-base-content/70">{run.payDate}</td>
-                  <td className="text-base-content/70">{run.employees}</td>
+                  <td className="text-base-content/80">{run.payDate}</td>
+                  <td className="text-base-content/80">{run.employees}</td>
                   <td className="font-medium text-base-content">
                     {formatCurrency(run.gross)}
                   </td>
@@ -232,7 +232,7 @@ export default function PayrollRunsTable({
                         </button>
                       )}
                       {run.status === "Cancelled" && (
-                        <span className=" text-base-content/40">—</span>
+                        <span className=" text-base-content/80">—</span>
                       )}
                     </div>
                   </td>

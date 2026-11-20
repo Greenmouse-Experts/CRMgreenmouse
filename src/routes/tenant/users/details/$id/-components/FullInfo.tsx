@@ -107,7 +107,7 @@ export default function FullInfo({ staff }: FullInfoProps) {
               <p className=" text-base-content/80 font-semibold uppercase">
                 Staff ID
               </p>
-              <p className=" font-mono text-base-content/70 mt-1">
+              <p className=" font-mono text-base-content/80 mt-1">
                 {staff?.id || "—"}
               </p>
             </div>

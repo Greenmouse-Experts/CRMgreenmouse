@@ -45,7 +45,7 @@ export default function UserInfo({
             </span>
           </div>
 
-          <p className="text-sm text-base-content/70">
+          <p className="text-sm text-base-content/80">
             {profile.bio || "Platform Administrator & System Manager"}
           </p>
 

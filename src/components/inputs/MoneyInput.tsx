@@ -52,7 +52,7 @@ const MoneyInput = forwardRef<HTMLInputElement, MoneyInputProps>(
 
     return (
       <div>
-        <label htmlFor={id} className="text-sm font-semibold text-base-content/70">
+        <label htmlFor={id} className="text-sm font-semibold text-base-content/80">
           {label}
           {required && <span aria-hidden="true"> *</span>}
         </label>

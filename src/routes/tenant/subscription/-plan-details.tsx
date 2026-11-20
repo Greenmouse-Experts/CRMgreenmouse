@@ -50,7 +50,7 @@ export default function PlanDetails({
                 key={limit.key}
                 className="flex justify-between gap-3 border-b border-base-200 py-1"
               >
-                <dt className="text-base-content/70">{limit.label}</dt>
+                <dt className="text-base-content/80">{limit.label}</dt>
                 <dd className="font-medium tabular-nums">{limit.value}</dd>
               </div>
             ))}
@@ -59,7 +59,7 @@ export default function PlanDetails({
           <p className="text-base-content/80">No limits listed.</p>
         )}
         {typeof plan.trialDays === "number" && (
-          <p className=" text-base-content/70">
+          <p className=" text-base-content/80">
             Trial length: {plan.trialDays} days
           </p>
         )}

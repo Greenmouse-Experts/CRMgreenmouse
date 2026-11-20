@@ -51,7 +51,7 @@ function RouteComponent() {
         <h1 className="text-2xl font-semibold text-base-content">
           {tenantQuery.data?.companyName || "Tenant details"}
         </h1>
-        <p className="mt-1 text-sm text-base-content/70">
+        <p className="mt-1 text-sm text-base-content/80">
           Account, subscription, access, and onboarding information.
         </p>
       </div>

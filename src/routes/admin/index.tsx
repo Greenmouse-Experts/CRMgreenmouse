@@ -35,7 +35,7 @@ function RouteComponent() {
         <div className="flex items-center gap-3">
           <Link
             to="/admin/tenants"
-            className="hidden rounded-lg bg-base-100 px-3 py-2 text-sm text-base-content/70 hover:text-primary focus-visible:ring-2 focus-visible:ring-primary md:inline-flex"
+            className="hidden rounded-lg bg-base-100 px-3 py-2 text-sm text-base-content/80 hover:text-primary focus-visible:ring-2 focus-visible:ring-primary md:inline-flex"
           >
             Browse tenants
           </Link>
@@ -50,7 +50,7 @@ function RouteComponent() {
                 type="button"
                 aria-pressed={months === period}
                 onClick={() => setMonths(period)}
-                className={`rounded-md px-3 py-1.5 transition-colors focus-visible:ring-2 focus-visible:ring-primary ${months === period ? "bg-primary text-primary-content" : "text-base-content/70 hover:bg-base-200"}`}
+                className={`rounded-md px-3 py-1.5 transition-colors focus-visible:ring-2 focus-visible:ring-primary ${months === period ? "bg-primary text-primary-content" : "text-base-content/80 hover:bg-base-200"}`}
               >
                 {period}M
               </button>

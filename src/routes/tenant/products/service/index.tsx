@@ -64,7 +64,7 @@ function ServiceFields({
       <div>
         <label
           htmlFor="service-name"
-          className=" font-semibold text-base-content/70"
+          className=" font-semibold text-base-content/80"
         >
           Service Name *
         </label>
@@ -106,7 +106,7 @@ function ServiceFields({
         <div>
           <label
             htmlFor="service-category"
-            className=" font-semibold text-base-content/70"
+            className=" font-semibold text-base-content/80"
           >
             Category
           </label>
@@ -128,7 +128,7 @@ function ServiceFields({
       <div>
         <label
           htmlFor="service-description"
-          className=" font-semibold text-base-content/70"
+          className=" font-semibold text-base-content/80"
         >
           Description
         </label>
@@ -392,7 +392,7 @@ function RouteComponent() {
       >
         {/* Quick Summary Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-          <div className="card bg-base-100/70 backdrop-blur-md border border-base-200 p-4 shadow-sm">
+          <div className="card bg-base-100/80 backdrop-blur-md border border-base-200 p-4 shadow-sm">
             <div className="flex items-center justify-between">
               <div>
                 <p className=" font-medium text-base-content/80 uppercase">
@@ -407,7 +407,7 @@ function RouteComponent() {
               </div>
             </div>
           </div>
-          <div className="card bg-base-100/70 backdrop-blur-md border border-base-200 p-4 shadow-sm">
+          <div className="card bg-base-100/80 backdrop-blur-md border border-base-200 p-4 shadow-sm">
             <div className="flex items-center justify-between">
               <div>
                 <p className=" font-medium text-base-content/80 uppercase">
@@ -422,7 +422,7 @@ function RouteComponent() {
               </div>
             </div>
           </div>
-          <div className="card bg-base-100/70 backdrop-blur-md border border-base-200 p-4 shadow-sm">
+          <div className="card bg-base-100/80 backdrop-blur-md border border-base-200 p-4 shadow-sm">
             <div className="flex items-center justify-between">
               <div>
                 <p className=" font-medium text-base-content/80 uppercase">
@@ -541,7 +541,7 @@ function RouteComponent() {
               </div>
               <div className="p-3 bg-base-200/30 rounded-lg">
                 <span className=" text-base-content/80 block">Service ID</span>
-                <span className="font-mono  text-base-content/70">
+                <span className="font-mono  text-base-content/80">
                   {selectedService.id}
                 </span>
               </div>
@@ -549,7 +549,7 @@ function RouteComponent() {
 
             {selectedService.description && (
               <div>
-                <span className=" font-semibold text-base-content/70 block mb-1">
+                <span className=" font-semibold text-base-content/80 block mb-1">
                   Description
                 </span>
                 <p className="text-sm text-base-content/80 p-3 bg-base-200/30 rounded-lg">

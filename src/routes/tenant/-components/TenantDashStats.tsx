@@ -122,12 +122,12 @@ export default function TenantDashStats() {
                       <p className="text-base font-semibold tabular-nums text-base-content">
                         {card.value}
                       </p>
-                      <p className=" font-semibold text-base-content/70">
+                      <p className=" font-semibold text-base-content/80">
                         {card.title}
                       </p>
                       {card.change != null && Number.isFinite(card.change) && (
                         <p
-                          className={`mt-1  font-semibold tabular-nums ${card.change === 0 ? "text-base-content/70" : (card.title === "Total Expenses" ? card.change < 0 : card.change > 0) ? "text-success" : "text-error"}`}
+                          className={`mt-1  font-semibold tabular-nums ${card.change === 0 ? "text-base-content/80" : (card.title === "Total Expenses" ? card.change < 0 : card.change > 0) ? "text-success" : "text-error"}`}
                         >
                           {card.change > 0 ? "+" : ""}
                           {card.change.toLocaleString("en-NG", {

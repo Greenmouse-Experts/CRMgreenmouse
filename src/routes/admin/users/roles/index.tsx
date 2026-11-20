@@ -147,7 +147,7 @@ function RouteComponent() {
               </span>
             ))
           ) : (
-            <span className="text-sm text-base-content/40">No permissions</span>
+            <span className="text-sm text-base-content/80">No permissions</span>
           )}
           {permissions && permissions.length > 4 && (
             <span className="badge badge-xs badge-primary badge-soft">

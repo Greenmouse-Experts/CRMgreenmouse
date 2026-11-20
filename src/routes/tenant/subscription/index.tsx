@@ -234,7 +234,7 @@ function RouteComponent() {
       key: "billingCycle",
       label: "Billing Cycle",
       render: (cycle: string) => (
-        <span className="capitalize  text-base-content/70">
+        <span className="capitalize  text-base-content/80">
           {cycle || "Monthly"}
         </span>
       ),
@@ -273,7 +273,7 @@ function RouteComponent() {
       key: "createdAt",
       label: "Date",
       render: (date: string) => (
-        <span className=" text-base-content/70">
+        <span className=" text-base-content/80">
           {date ? new Date(date).toLocaleDateString() : "—"}
         </span>
       ),
@@ -316,7 +316,7 @@ function RouteComponent() {
         >
           <div className="min-w-0 space-y-1">
             <p className="font-medium">Waiting for payment confirmation</p>
-            <p className="text-sm text-base-content/70">
+            <p className="text-sm text-base-content/80">
               If you completed checkout but were not returned here, verify the
               transaction. You will not be charged again.
             </p>
@@ -367,11 +367,11 @@ function RouteComponent() {
                         <ShieldCheck className="size-6 text-primary" />
                       </h2>
                       {currentPlan?.description && (
-                        <p className="text-sm text-base-content/70">
+                        <p className="text-sm text-base-content/80">
                           {currentPlan.description}
                         </p>
                       )}
-                      <p className="text-sm text-base-content/70 flex items-center gap-3">
+                      <p className="text-sm text-base-content/80 flex items-center gap-3">
                         <span className="capitalize font-semibold text-base-content">
                           {currentSub.billingCycle
                             ? `${currentSub.billingCycle} billing`
@@ -481,7 +481,7 @@ function RouteComponent() {
               <Sparkles className="size-5 text-primary" /> Choose a Subscription
               Plan
             </h3>
-            <p className="text-sm text-base-content/70">
+            <p className="text-sm text-base-content/80">
               Upgrade or switch your workspace plan to unlock more staff,
               contacts, and features.
             </p>
@@ -495,7 +495,7 @@ function RouteComponent() {
               className={`px-4 py-1.5  font-semibold rounded-lg transition-all ${
                 billingCycle === "monthly"
                   ? "bg-base-100 text-primary shadow"
-                  : "text-base-content/70 hover:text-base-content"
+                  : "text-base-content/80 hover:text-base-content"
               }`}
             >
               Monthly Billing
@@ -506,7 +506,7 @@ function RouteComponent() {
               className={`px-4 py-1.5  font-semibold rounded-lg transition-all flex items-center gap-1 ${
                 billingCycle === "yearly"
                   ? "bg-base-100 text-primary shadow"
-                  : "text-base-content/70 hover:text-base-content"
+                  : "text-base-content/80 hover:text-base-content"
               }`}
             >
               Yearly Billing
@@ -521,7 +521,7 @@ function RouteComponent() {
           {plans.length === 0 ? (
             <div className="text-center py-12 bg-base-100 rounded-box border border-base-200 space-y-2">
               <Layers className="size-12 mx-auto text-base-content/30" />
-              <p className="text-base font-semibold text-base-content/70">
+              <p className="text-base font-semibold text-base-content/80">
                 No active subscription plans available at the moment.
               </p>
               <p className=" text-base-content/80">

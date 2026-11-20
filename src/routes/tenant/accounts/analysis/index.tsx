@@ -31,7 +31,7 @@ function RouteComponent() {
             className={`btn btn-sm gap-1.5 rounded-lg transition-all ${
               activeTab === "combined"
                 ? "btn-primary shadow-sm"
-                : "btn-ghost text-base-content/70 hover:text-base-content"
+                : "btn-ghost text-base-content/80 hover:text-base-content"
             }`}
           >
             <LayoutDashboard className="size-4" />
@@ -43,7 +43,7 @@ function RouteComponent() {
             className={`btn btn-sm gap-1.5 rounded-lg transition-all ${
               activeTab === "analytics"
                 ? "btn-primary shadow-sm"
-                : "btn-ghost text-base-content/70 hover:text-base-content"
+                : "btn-ghost text-base-content/80 hover:text-base-content"
             }`}
           >
             <BarChart3 className="size-4" />

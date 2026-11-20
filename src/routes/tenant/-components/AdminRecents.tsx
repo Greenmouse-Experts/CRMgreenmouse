@@ -12,7 +12,7 @@ export default function AdminRecents() {
       key: "date",
       label: "Date",
       render: (value: string) => (
-        <span className=" text-base-content/70">
+        <span className=" text-base-content/80">
           {value ? new Date(value).toLocaleDateString() : "—"}
         </span>
       ),

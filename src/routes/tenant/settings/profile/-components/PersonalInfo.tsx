@@ -24,7 +24,7 @@ export default function PersonalInfo({
         <h2 id="profile-business-title" className="text-lg font-semibold">
           Business information
         </h2>
-        <p className="text-sm text-base-content/70">
+        <p className="text-sm text-base-content/80">
           Update the details shown on your company profile.
         </p>
       </div>
@@ -54,7 +54,7 @@ export default function PersonalInfo({
             disabled
             aria-describedby="profile-email-help"
           />
-          <span id="profile-email-help" className="block  text-base-content/70">
+          <span id="profile-email-help" className="block  text-base-content/80">
             Email is managed separately from profile details.
           </span>
         </label>

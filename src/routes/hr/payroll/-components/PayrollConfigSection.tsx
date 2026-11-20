@@ -29,7 +29,7 @@ export default function PayrollConfigSection() {
                 description: policy.description,
               })
             }
-            className="flex items-start justify-between gap-3 p-3 rounded-xl border border-base-200 bg-base-200/30 hover:bg-base-200/70 hover:border-base-300 transition-all text-left"
+            className="flex items-start justify-between gap-3 p-3 rounded-xl border border-base-200 bg-base-200/30 hover:bg-base-200/80 hover:border-base-300 transition-all text-left"
           >
             <div className="space-y-1">
               <div className="flex items-center gap-1.5">
@@ -58,7 +58,7 @@ export default function PayrollConfigSection() {
           <Settings2 className="size-4 text-base-content/80" />
           <span>Pay schedule</span>
         </div>
-        <dl className="grid grid-cols-2 gap-2 text-[11px] text-base-content/70">
+        <dl className="grid grid-cols-2 gap-2 text-[11px] text-base-content/80">
           <div>
             <dt className="text-base-content/80">Frequency</dt>
             <dd className="font-semibold text-base-content">Monthly</dd>
@@ -80,7 +80,7 @@ export default function PayrollConfigSection() {
         </dl>
       </div>
 
-      <div className="flex items-center gap-2 p-3 rounded-xl bg-info/5 border border-info/20  text-base-content/70">
+      <div className="flex items-center gap-2 p-3 rounded-xl bg-info/5 border border-info/20  text-base-content/80">
         <Info className="size-4 text-info shrink-0" />
         <span>
           Statutory remittances (PAYE, pension, NHF) are due within 7 days of

@@ -35,7 +35,7 @@ export default function LeaveTypesSection({
                 description: item.description,
               });
             }}
-            className="p-3.5 rounded-xl border border-base-200 bg-base-200/30 hover:bg-base-200/70 hover:border-base-300 transition-all cursor-pointer space-y-1.5"
+            className="p-3.5 rounded-xl border border-base-200 bg-base-200/30 hover:bg-base-200/80 hover:border-base-300 transition-all cursor-pointer space-y-1.5"
           >
             <div className="flex items-center justify-between gap-1">
               <span className="text-sm font-bold text-base-content">
@@ -46,14 +46,14 @@ export default function LeaveTypesSection({
               </span>
             </div>
 
-            <p className="text-[11px] text-base-content/70 line-clamp-2 leading-relaxed">
+            <p className="text-[11px] text-base-content/80 line-clamp-2 leading-relaxed">
               {item.description}
             </p>
           </div>
         ))}
       </div>
 
-      <div className="flex items-center gap-2 p-3 rounded-xl bg-info/5 border border-info/20  text-base-content/70">
+      <div className="flex items-center gap-2 p-3 rounded-xl bg-info/5 border border-info/20  text-base-content/80">
         <Info className="size-4 text-info shrink-0" />
         <span>
           Supporting documents (medical report, admission slip, or certificate)

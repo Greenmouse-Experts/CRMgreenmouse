@@ -24,7 +24,7 @@ const variantStyles: Record<StatVariant, string> = {
   warning: "bg-warning/10 text-warning border-warning/20",
   error: "bg-error/10 text-error border-error/20",
   info: "bg-info/10 text-info border-info/20",
-  default: "bg-base-200 text-base-content/70 border-base-300",
+  default: "bg-base-200 text-base-content/80 border-base-300",
 };
 
 export default function StatCard({
@@ -41,7 +41,7 @@ export default function StatCard({
 
   return (
     <div
-      className={`card bg-base-100/70 backdrop-blur-md border border-base-200 shadow-sm p-4 hover:shadow-md transition-all duration-200 ${className}`}
+      className={`card bg-base-100/80 backdrop-blur-md border border-base-200 shadow-sm p-4 hover:shadow-md transition-all duration-200 ${className}`}
     >
       <div className="flex items-center justify-between gap-3">
         <div className="min-w-0 flex-1">

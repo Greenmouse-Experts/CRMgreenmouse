@@ -60,7 +60,7 @@ export default function EmployeeDetailModal({
                 onLeave={employee.onLeave}
               />
             </div>
-            <p className="text-sm font-medium text-base-content/70">
+            <p className="text-sm font-medium text-base-content/80">
               {employee.title} ·{" "}
               <span className="text-primary font-semibold">
                 {employee.dept}
@@ -68,17 +68,17 @@ export default function EmployeeDetailModal({
             </p>
             <div className="flex flex-wrap items-center justify-center sm:justify-start gap-3  text-base-content/80 pt-1">
               <span className="flex items-center gap-1">
-                <MapPin className="size-3.5 text-base-content/40" />
+                <MapPin className="size-3.5 text-base-content/80" />
                 {employee.location}
               </span>
               <span>•</span>
               <span className="flex items-center gap-1">
-                <Briefcase className="size-3.5 text-base-content/40" />
+                <Briefcase className="size-3.5 text-base-content/80" />
                 {employee.type}
               </span>
               <span>•</span>
               <span className="flex items-center gap-1">
-                <ShieldCheck className="size-3.5 text-base-content/40" />
+                <ShieldCheck className="size-3.5 text-base-content/80" />
                 Grade {employee.grade || "G2"}
               </span>
             </div>
@@ -121,7 +121,7 @@ export default function EmployeeDetailModal({
             Contact & Office Details
           </h4>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 ">
-            <div className="p-3 rounded-xl bg-base-200/40 border border-base-200 space-y-1">
+            <div className="p-3 rounded-xl bg-base-200/80 border border-base-200 space-y-1">
               <span className="text-base-content/80 flex items-center gap-1.5">
                 <Mail className="size-3.5 text-primary" /> Email Address
               </span>
@@ -130,7 +130,7 @@ export default function EmployeeDetailModal({
               </p>
             </div>
 
-            <div className="p-3 rounded-xl bg-base-200/40 border border-base-200 space-y-1">
+            <div className="p-3 rounded-xl bg-base-200/80 border border-base-200 space-y-1">
               <span className="text-base-content/80 flex items-center gap-1.5">
                 <Phone className="size-3.5 text-success" /> Phone Number
               </span>
@@ -139,14 +139,14 @@ export default function EmployeeDetailModal({
               </p>
             </div>
 
-            <div className="p-3 rounded-xl bg-base-200/40 border border-base-200 space-y-1">
+            <div className="p-3 rounded-xl bg-base-200/80 border border-base-200 space-y-1">
               <span className="text-base-content/80 flex items-center gap-1.5">
                 <Building2 className="size-3.5 text-info" /> Department
               </span>
               <p className="font-semibold text-base-content">{employee.dept}</p>
             </div>
 
-            <div className="p-3 rounded-xl bg-base-200/40 border border-base-200 space-y-1">
+            <div className="p-3 rounded-xl bg-base-200/80 border border-base-200 space-y-1">
               <span className="text-base-content/80 flex items-center gap-1.5">
                 <User className="size-3.5 text-warning" /> Direct Supervisor
               </span>

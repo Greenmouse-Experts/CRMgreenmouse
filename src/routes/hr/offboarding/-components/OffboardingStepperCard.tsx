@@ -73,7 +73,7 @@ export default function OffboardingStepperCard({
                 tabIndex={0}
                 className="dropdown-content z-20 menu p-2 shadow-lg bg-base-100 rounded-box w-56 border border-base-200  mt-1"
               >
-                <li className="menu-title px-2 py-1 text-[11px] uppercase tracking-wider text-base-content/40">
+                <li className="menu-title px-2 py-1 text-[11px] uppercase tracking-wider text-base-content/80">
                   Select offboarding record
                 </li>
                 {allCases.map((c) => (
@@ -113,7 +113,7 @@ export default function OffboardingStepperCard({
 
       {/* 8-Step Workflow Horizontal Stepper */}
       <div className="space-y-2">
-        <div className="flex items-center justify-between  font-semibold text-base-content/70">
+        <div className="flex items-center justify-between  font-semibold text-base-content/80">
           <span className="uppercase tracking-wider text-[11px]">
             Offboarding Milestone Pipeline
           </span>
@@ -135,7 +135,7 @@ export default function OffboardingStepperCard({
                   isCurrent
                     ? "bg-primary/5 border-primary shadow-xs ring-1 ring-primary/20"
                     : isCompleted
-                      ? "bg-base-200/40 border-base-200 text-base-content/80"
+                      ? "bg-base-200/80 border-base-200 text-base-content/80"
                       : "bg-base-100 border-base-200 text-base-content/80"
                 }`}
               >
@@ -171,7 +171,7 @@ export default function OffboardingStepperCard({
                 >
                   {step}
                 </span>
-                <span className="text-[9px] text-base-content/40 mt-0.5">
+                <span className="text-[9px] text-base-content/80 mt-0.5">
                   {isCompleted ? "Done" : isCurrent ? "Active" : "Pending"}
                 </span>
               </div>

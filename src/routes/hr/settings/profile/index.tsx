@@ -141,7 +141,7 @@ function RouteComponent() {
         }}
       />
       <Modal ref={logoModalRef} title="Company logo">
-        <p className="mb-4 text-sm text-base-content/70">
+        <p className="mb-4 text-sm text-base-content/80">
           Choose an image to display on your company profile.
         </p>
         <ImageUpload

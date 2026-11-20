@@ -98,7 +98,7 @@ function RouteComponent() {
       render: (_value: any, item: Customer) => {
         const companyName = item.companyName || item.company?.name;
         if (!companyName) {
-          return <span className="text-sm text-base-content/40">—</span>;
+          return <span className="text-sm text-base-content/80">—</span>;
         }
         return (
           <div className="flex items-center gap-1.5 text-sm font-medium text-base-content">
@@ -112,7 +112,7 @@ function RouteComponent() {
       key: "workPhone",
       label: "Phone",
       render: (_value: any, item: Customer) => (
-        <span className="text-sm text-base-content/70">
+        <span className="text-sm text-base-content/80">
           {item.workPhone || item.cellPhone || item.phone || "—"}
         </span>
       ),
@@ -125,7 +125,7 @@ function RouteComponent() {
           .filter(Boolean)
           .join(", ");
         return (
-          <span className="text-sm text-base-content/70">{loc || "—"}</span>
+          <span className="text-sm text-base-content/80">{loc || "—"}</span>
         );
       },
     },
@@ -200,7 +200,7 @@ function RouteComponent() {
                       className={`btn btn-sm rounded-full text-sm ${
                         filter === tab.key
                           ? "btn-primary text-primary-content"
-                          : "btn-ghost text-base-content/70"
+                          : "btn-ghost text-base-content/80"
                       }`}
                     >
                       {tab.label}

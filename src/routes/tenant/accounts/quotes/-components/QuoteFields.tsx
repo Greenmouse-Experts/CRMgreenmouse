@@ -40,9 +40,7 @@ interface QuoteFieldsProps {
   editingStatus?: string;
 }
 
-export default function QuoteFields({
-  editingStatus,
-}: QuoteFieldsProps) {
+export default function QuoteFields({ editingStatus }: QuoteFieldsProps) {
   const methods = useFormContext<QuoteFormValues>();
   const quoteDate = methods.watch("date");
 
@@ -107,9 +105,7 @@ export default function QuoteFields({
       <div className="space-y-3">
         <div>
           <h2 className="text-base font-semibold">Client details</h2>
-          <p className="text-sm text-base-content/70">
-            Who is this quote for?
-          </p>
+          <p className="text-sm text-base-content/80">Who is this quote for?</p>
         </div>
         <SimpleInput
           label="Client name"
@@ -125,7 +121,7 @@ export default function QuoteFields({
       <div className="space-y-3">
         <div>
           <h2 className="text-base font-semibold">Quote content</h2>
-          <p className="text-sm text-base-content/70">
+          <p className="text-sm text-base-content/80">
             Add the work covered by the quote and any internal notes.
           </p>
         </div>

@@ -107,10 +107,10 @@ export default function AdminMonthly() {
                   </div>
                 ) : (
                   <div className="text-center py-12 space-y-2">
-                    <div className="p-3 bg-base-200 rounded-full w-fit mx-auto text-base-content/40">
+                    <div className="p-3 bg-base-200 rounded-full w-fit mx-auto text-base-content/80">
                       <DollarSign className="size-8" />
                     </div>
-                    <p className="text-sm font-semibold text-base-content/70">
+                    <p className="text-sm font-semibold text-base-content/80">
                       No financial activity this month
                     </p>
                     <p className="text-xs text-base-content/80">

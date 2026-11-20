@@ -327,7 +327,7 @@ function OnboardingWizard() {
                 i + 1 === step
                   ? "bg-primary"
                   : i + 1 < step
-                    ? "bg-primary/40"
+                    ? "bg-primary/80"
                     : "bg-base-300"
               }`}
               onClick={() => i + 1 < step && setStep(i + 1)}
@@ -520,7 +520,7 @@ function IndustryStep({
               }`}
             >
               <span
-                className={`flex items-center justify-center w-10 h-10 rounded-full bg-white/70 shrink-0 ${ind.iconColor}`}
+                className={`flex items-center justify-center w-10 h-10 rounded-full bg-white/80 shrink-0 ${ind.iconColor}`}
               >
                 <Icon size={20} />
               </span>
@@ -959,7 +959,7 @@ function ThemeStep({
                 className={`p-3 rounded-xl shrink-0 ${
                   isSelected
                     ? "bg-primary text-primary-content"
-                    : "bg-base-200 text-base-content/70"
+                    : "bg-base-200 text-base-content/80"
                 }`}
               >
                 <Icon size={24} />

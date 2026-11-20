@@ -39,7 +39,7 @@ export default function PayslipModal({
       onClose={onClose}
     >
       <div className="space-y-4">
-        <div className="rounded-xl border border-base-200 bg-base-200/40 p-4">
+        <div className="rounded-xl border border-base-200 bg-base-200/80 p-4">
           <div className="text-sm font-bold text-base-content">
             {payslip.employee}
           </div>
@@ -53,25 +53,25 @@ export default function PayslipModal({
 
         <div className="space-y-1.5 ">
           <div className="flex items-center justify-between py-1">
-            <span className="text-base-content/70">Base salary</span>
+            <span className="text-base-content/80">Base salary</span>
             <span className="font-semibold text-base-content">
               {formatCurrency(payslip.baseSalary)}
             </span>
           </div>
           <div className="flex items-center justify-between py-1">
-            <span className="text-base-content/70">Allowances</span>
+            <span className="text-base-content/80">Allowances</span>
             <span className="font-semibold text-base-content">
               {formatCurrency(payslip.allowances)}
             </span>
           </div>
           <div className="flex items-center justify-between py-1">
-            <span className="text-base-content/70">Overtime</span>
+            <span className="text-base-content/80">Overtime</span>
             <span className="font-semibold text-base-content">
               {formatCurrency(payslip.overtime)}
             </span>
           </div>
           <div className="flex items-center justify-between py-1">
-            <span className="text-base-content/70">Bonus</span>
+            <span className="text-base-content/80">Bonus</span>
             <span className="font-semibold text-base-content">
               {formatCurrency(payslip.bonus)}
             </span>
@@ -112,7 +112,7 @@ export default function PayslipModal({
         </div>
 
         <div className="flex items-center justify-between rounded-xl bg-primary/5 border border-primary/20 p-4">
-          <span className=" font-semibold uppercase tracking-wider text-base-content/70">
+          <span className=" font-semibold uppercase tracking-wider text-base-content/80">
             Net pay
           </span>
           <span className="text-lg font-bold text-primary">

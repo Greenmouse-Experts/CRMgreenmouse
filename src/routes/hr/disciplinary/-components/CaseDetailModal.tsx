@@ -116,7 +116,7 @@ export default function CaseDetailModal({
 
         {/* Incident Summary */}
         <div className="space-y-1.5">
-          <h4 className=" font-bold uppercase tracking-wider text-base-content/70 flex items-center gap-1.5">
+          <h4 className=" font-bold uppercase tracking-wider text-base-content/80 flex items-center gap-1.5">
             <FileText className="size-3.5 text-primary" />
             <span>Incident Description</span>
           </h4>
@@ -127,10 +127,10 @@ export default function CaseDetailModal({
 
         {caseItem.witnesses && (
           <div className="space-y-1">
-            <h4 className=" font-bold uppercase tracking-wider text-base-content/70">
+            <h4 className=" font-bold uppercase tracking-wider text-base-content/80">
               Witnesses
             </h4>
-            <p className=" text-base-content/80 p-2 rounded-lg bg-base-200/40 border border-base-200">
+            <p className=" text-base-content/80 p-2 rounded-lg bg-base-200/80 border border-base-200">
               {caseItem.witnesses}
             </p>
           </div>
@@ -139,7 +139,7 @@ export default function CaseDetailModal({
         {/* Workflow Progression Stepper Mini */}
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <h4 className=" font-bold uppercase tracking-wider text-base-content/70 flex items-center gap-1.5">
+            <h4 className=" font-bold uppercase tracking-wider text-base-content/80 flex items-center gap-1.5">
               <Scale className="size-3.5 text-primary" />
               <span>Current Due Process Stage</span>
             </h4>

@@ -36,17 +36,24 @@ export default function AddressInfo({ disabled }: { disabled: boolean }) {
     }
     let active = true;
     setCitiesLoading(true);
-    import("country-state-city").then(({ City }) => {
-      if (!active) return;
-      setCities(state
-        ? City.getCitiesOfState(country.isoCode, state.isoCode)
-        : (City.getCitiesOfCountry(country.isoCode) ?? []));
-    }).catch(() => {
-      if (active) setCities([]);
-    }).finally(() => {
-      if (active) setCitiesLoading(false);
-    });
-    return () => { active = false; };
+    import("country-state-city")
+      .then(({ City }) => {
+        if (!active) return;
+        setCities(
+          state
+            ? City.getCitiesOfState(country.isoCode, state.isoCode)
+            : (City.getCitiesOfCountry(country.isoCode) ?? []),
+        );
+      })
+      .catch(() => {
+        if (active) setCities([]);
+      })
+      .finally(() => {
+        if (active) setCitiesLoading(false);
+      });
+    return () => {
+      active = false;
+    };
   }, [country?.isoCode, state?.isoCode, states.length]);
 
   return (
@@ -58,7 +65,7 @@ export default function AddressInfo({ disabled }: { disabled: boolean }) {
         <h2 id="profile-address-title" className="text-lg font-semibold">
           Company address
         </h2>
-        <p className="text-sm text-base-content/70">
+        <p className="text-sm text-base-content/80">
           Keep your business location current.
         </p>
       </div>
@@ -87,7 +94,9 @@ export default function AddressInfo({ disabled }: { disabled: boolean }) {
             })}
           >
             <option value="">Select a country</option>
-            {countryName && !country && <option value={countryName}>{countryName}</option>}
+            {countryName && !country && (
+              <option value={countryName}>{countryName}</option>
+            )}
             {countries.map((item) => (
               <option key={item.isoCode} value={item.name}>
                 {item.name}
@@ -108,7 +117,9 @@ export default function AddressInfo({ disabled }: { disabled: boolean }) {
               })}
             >
               <option value="">Select a state or region</option>
-              {stateName && !state && <option value={stateName}>{stateName}</option>}
+              {stateName && !state && (
+                <option value={stateName}>{stateName}</option>
+              )}
               {states.map((item) => (
                 <option key={item.isoCode} value={item.name}>
                   {item.name}
@@ -119,7 +130,9 @@ export default function AddressInfo({ disabled }: { disabled: boolean }) {
             <input
               className="input input-bordered w-full"
               autoComplete="address-level1"
-              placeholder={countryName ? "Enter state or region" : "Select a country first"}
+              placeholder={
+                countryName ? "Enter state or region" : "Select a country first"
+              }
               disabled={disabled || !countryName}
               {...register("companyState")}
             />
@@ -134,7 +147,9 @@ export default function AddressInfo({ disabled }: { disabled: boolean }) {
               disabled={disabled || citiesLoading}
               {...register("companyCity")}
             >
-              <option value="">{citiesLoading ? "Loading cities..." : "Select a city"}</option>
+              <option value="">
+                {citiesLoading ? "Loading cities..." : "Select a city"}
+              </option>
               {cityName && !cities.some((item) => item.name === cityName) && (
                 <option value={cityName}>{cityName}</option>
               )}
@@ -148,7 +163,9 @@ export default function AddressInfo({ disabled }: { disabled: boolean }) {
             <input
               className="input input-bordered w-full"
               autoComplete="address-level2"
-              placeholder={countryName ? "Enter city" : "Select a country first"}
+              placeholder={
+                countryName ? "Enter city" : "Select a country first"
+              }
               disabled={disabled || !countryName}
               {...register("companyCity")}
             />

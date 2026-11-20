@@ -37,7 +37,7 @@ export default function LeaveRequestModal({
       onClose={onClose}
     >
       <div className="space-y-4">
-        <div className="rounded-xl border border-base-200 bg-base-200/40 p-4">
+        <div className="rounded-xl border border-base-200 bg-base-200/80 p-4">
           <div className="flex items-center justify-between gap-3">
             <div className="font-mono text-sm font-semibold text-base-content">
               {request.id}
@@ -52,13 +52,13 @@ export default function LeaveRequestModal({
 
         <div className="space-y-1.5 text-sm">
           <div className="flex items-center justify-between py-1">
-            <span className="text-base-content/70">Start</span>
+            <span className="text-base-content/80">Start</span>
             <span className="text-base-content">
               {formatDate(request.startDate)}
             </span>
           </div>
           <div className="flex items-center justify-between py-1">
-            <span className="text-base-content/70">End</span>
+            <span className="text-base-content/80">End</span>
             <span className="text-base-content">
               {formatDate(request.endDate)}
             </span>

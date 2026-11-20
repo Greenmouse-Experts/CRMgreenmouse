@@ -54,8 +54,8 @@ export default function CaseWorkflowStepper({
                   isCurrent
                     ? "bg-primary/5 border-primary shadow-xs ring-1 ring-primary/20"
                     : isCompleted
-                      ? "bg-base-200/40 border-base-200 text-base-content/80 hover:bg-base-200/70"
-                      : "bg-base-100 border-base-200 text-base-content/80 hover:bg-base-200/40"
+                      ? "bg-base-200/80 border-base-200 text-base-content/80 hover:bg-base-200/80"
+                      : "bg-base-100 border-base-200 text-base-content/80 hover:bg-base-200/80"
                 }`}
               >
                 <div className="flex items-center justify-between w-full mb-2">
@@ -89,7 +89,7 @@ export default function CaseWorkflowStepper({
                 >
                   {step}
                 </span>
-                <span className="text-[10px] text-base-content/40 mt-0.5">
+                <span className="text-[10px] text-base-content/80 mt-0.5">
                   {isCompleted
                     ? "Completed"
                     : isCurrent

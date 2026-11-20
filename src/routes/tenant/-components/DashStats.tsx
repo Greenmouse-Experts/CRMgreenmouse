@@ -51,7 +51,7 @@ export default function DashStats() {
             </div>
           ) : recentIncome.length === 0 ? (
             <div className="text-center py-8 space-y-2">
-              <div className="p-2.5 bg-base-200 rounded-full w-fit mx-auto text-base-content/40">
+              <div className="p-2.5 bg-base-200 rounded-full w-fit mx-auto text-base-content/80">
                 <DollarSign className="size-5" />
               </div>
               <p className=" font-medium text-base-content/80">
@@ -149,7 +149,7 @@ export default function DashStats() {
             </div>
           ) : recentExpenses.length === 0 ? (
             <div className="text-center py-8 space-y-2">
-              <div className="p-2.5 bg-base-200 rounded-full w-fit mx-auto text-base-content/40">
+              <div className="p-2.5 bg-base-200 rounded-full w-fit mx-auto text-base-content/80">
                 <DollarSign className="size-5" />
               </div>
               <p className=" font-medium text-base-content/80">

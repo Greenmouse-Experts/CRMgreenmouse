@@ -485,7 +485,7 @@ export default function HrDashboard() {
                 to={item.path}
                 className="group flex items-center gap-3 py-3 transition-colors  focus-visible:rounded-box focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 ring px-4 fade rounded-md hover:bg-primary/20"
               >
-                <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-base-200 text-base-content/70">
+                <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-base-200 text-base-content/80">
                   {item.icon}
                 </span>
                 <span className="min-w-0 flex-1">
@@ -581,7 +581,7 @@ export default function HrDashboard() {
                   key={stage.name}
                   className="grid grid-cols-[7rem_1fr_2rem] items-center gap-3 "
                 >
-                  <span className="truncate text-base-content/70">
+                  <span className="truncate text-base-content/80">
                     {stage.name}
                   </span>
                   <span className="h-2 overflow-hidden rounded-full bg-base-200">

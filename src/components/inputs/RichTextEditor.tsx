@@ -220,7 +220,7 @@ const RichTextEditor = forwardRef<HTMLDivElement, RichTextProps>(
           {/* WYSIWYG Toolbar */}
           {editor && !disabled && (
             <div
-              className="flex flex-wrap items-center gap-0.5 border-b border-base-200 bg-base-200/40 p-1.5"
+              className="flex flex-wrap items-center gap-0.5 border-b border-base-200 bg-base-200/80 p-1.5"
               role="toolbar"
               aria-label={label ? `${label} formatting` : "Rich text toolbar"}
             >
@@ -232,7 +232,7 @@ const RichTextEditor = forwardRef<HTMLDivElement, RichTextProps>(
                 className={`btn btn-ghost btn-xs size-7 p-0 rounded-md ${
                   editor.isActive("bold")
                     ? "bg-primary text-white hover:bg-primary/90"
-                    : "text-base-content/70 hover:text-base-content hover:bg-base-300/60"
+                    : "text-base-content/80 hover:text-base-content hover:bg-base-300/60"
                 }`}
                 title="Bold"
                 aria-label="Bold"
@@ -248,7 +248,7 @@ const RichTextEditor = forwardRef<HTMLDivElement, RichTextProps>(
                 className={`btn btn-ghost btn-xs size-7 p-0 rounded-md ${
                   editor.isActive("italic")
                     ? "bg-primary text-white hover:bg-primary/90"
-                    : "text-base-content/70 hover:text-base-content hover:bg-base-300/60"
+                    : "text-base-content/80 hover:text-base-content hover:bg-base-300/60"
                 }`}
                 title="Italic"
                 aria-label="Italic"
@@ -264,7 +264,7 @@ const RichTextEditor = forwardRef<HTMLDivElement, RichTextProps>(
                 className={`btn btn-ghost btn-xs size-7 p-0 rounded-md ${
                   editor.isActive("underline")
                     ? "bg-primary text-white hover:bg-primary/90"
-                    : "text-base-content/70 hover:text-base-content hover:bg-base-300/60"
+                    : "text-base-content/80 hover:text-base-content hover:bg-base-300/60"
                 }`}
                 title="Underline"
                 aria-label="Underline"
@@ -280,7 +280,7 @@ const RichTextEditor = forwardRef<HTMLDivElement, RichTextProps>(
                 className={`btn btn-ghost btn-xs size-7 p-0 rounded-md ${
                   editor.isActive("strike")
                     ? "bg-primary text-white hover:bg-primary/90"
-                    : "text-base-content/70 hover:text-base-content hover:bg-base-300/60"
+                    : "text-base-content/80 hover:text-base-content hover:bg-base-300/60"
                 }`}
                 title="Strikethrough"
                 aria-label="Strikethrough"
@@ -300,7 +300,7 @@ const RichTextEditor = forwardRef<HTMLDivElement, RichTextProps>(
                 className={`btn btn-ghost btn-xs size-7 p-0 rounded-md ${
                   editor.isActive("heading", { level: 2 })
                     ? "bg-primary text-white hover:bg-primary/90"
-                    : "text-base-content/70 hover:text-base-content hover:bg-base-300/60"
+                    : "text-base-content/80 hover:text-base-content hover:bg-base-300/60"
                 }`}
                 title="Heading 2"
                 aria-label="Heading 2"
@@ -318,7 +318,7 @@ const RichTextEditor = forwardRef<HTMLDivElement, RichTextProps>(
                 className={`btn btn-ghost btn-xs size-7 p-0 rounded-md ${
                   editor.isActive("heading", { level: 3 })
                     ? "bg-primary text-white hover:bg-primary/90"
-                    : "text-base-content/70 hover:text-base-content hover:bg-base-300/60"
+                    : "text-base-content/80 hover:text-base-content hover:bg-base-300/60"
                 }`}
                 title="Heading 3"
                 aria-label="Heading 3"
@@ -336,7 +336,7 @@ const RichTextEditor = forwardRef<HTMLDivElement, RichTextProps>(
                 className={`btn btn-ghost btn-xs size-7 p-0 rounded-md ${
                   editor.isActive("bulletList")
                     ? "bg-primary text-white hover:bg-primary/90"
-                    : "text-base-content/70 hover:text-base-content hover:bg-base-300/60"
+                    : "text-base-content/80 hover:text-base-content hover:bg-base-300/60"
                 }`}
                 title="Bullet List"
                 aria-label="Bullet List"
@@ -352,7 +352,7 @@ const RichTextEditor = forwardRef<HTMLDivElement, RichTextProps>(
                 className={`btn btn-ghost btn-xs size-7 p-0 rounded-md ${
                   editor.isActive("orderedList")
                     ? "bg-primary text-white hover:bg-primary/90"
-                    : "text-base-content/70 hover:text-base-content hover:bg-base-300/60"
+                    : "text-base-content/80 hover:text-base-content hover:bg-base-300/60"
                 }`}
                 title="Numbered List"
                 aria-label="Numbered List"
@@ -368,7 +368,7 @@ const RichTextEditor = forwardRef<HTMLDivElement, RichTextProps>(
                 className={`btn btn-ghost btn-xs size-7 p-0 rounded-md ${
                   editor.isActive("blockquote")
                     ? "bg-primary text-white hover:bg-primary/90"
-                    : "text-base-content/70 hover:text-base-content hover:bg-base-300/60"
+                    : "text-base-content/80 hover:text-base-content hover:bg-base-300/60"
                 }`}
                 title="Quote"
                 aria-label="Quote"
@@ -384,7 +384,7 @@ const RichTextEditor = forwardRef<HTMLDivElement, RichTextProps>(
                 className={`btn btn-ghost btn-xs size-7 p-0 rounded-md ${
                   editor.isActive("code")
                     ? "bg-primary text-white hover:bg-primary/90"
-                    : "text-base-content/70 hover:text-base-content hover:bg-base-300/60"
+                    : "text-base-content/80 hover:text-base-content hover:bg-base-300/60"
                 }`}
                 title="Inline Code"
                 aria-label="Inline Code"
@@ -400,7 +400,7 @@ const RichTextEditor = forwardRef<HTMLDivElement, RichTextProps>(
                 onMouseDown={(e) => e.preventDefault()}
                 onClick={() => editor.chain().focus().undo().run()}
                 disabled={!editor.can().undo()}
-                className="btn btn-ghost btn-xs size-7 p-0 rounded-md text-base-content/70 hover:text-base-content disabled:opacity-30"
+                className="btn btn-ghost btn-xs size-7 p-0 rounded-md text-base-content/80 hover:text-base-content disabled:opacity-30"
                 title="Undo"
                 aria-label="Undo"
               >
@@ -413,7 +413,7 @@ const RichTextEditor = forwardRef<HTMLDivElement, RichTextProps>(
                 onMouseDown={(e) => e.preventDefault()}
                 onClick={() => editor.chain().focus().redo().run()}
                 disabled={!editor.can().redo()}
-                className="btn btn-ghost btn-xs size-7 p-0 rounded-md text-base-content/70 hover:text-base-content disabled:opacity-30"
+                className="btn btn-ghost btn-xs size-7 p-0 rounded-md text-base-content/80 hover:text-base-content disabled:opacity-30"
                 title="Redo"
                 aria-label="Redo"
               >
@@ -425,7 +425,7 @@ const RichTextEditor = forwardRef<HTMLDivElement, RichTextProps>(
           {/* Editable Content */}
           <EditorContent
             editor={editor}
-            className={`px-3 py-2.5 text-sm text-base-content outline-none ${heightClass} [&_.tiptap]:outline-none [&_.tiptap]:min-h-[inherit] [&_.tiptap_p]:my-1 [&_.tiptap_ul]:list-disc [&_.tiptap_ul]:pl-5 [&_.tiptap_ol]:list-decimal [&_.tiptap_ol]:pl-5 [&_.tiptap_blockquote]:border-l-2 [&_.tiptap_blockquote]:border-primary/80 [&_.tiptap_blockquote]:pl-3 [&_.tiptap_blockquote]:italic [&_.tiptap_blockquote]:text-base-content/70 [&_.tiptap_h2]:text-base [&_.tiptap_h2]:font-bold [&_.tiptap_h2]:my-2 [&_.tiptap_h3]:text-sm [&_.tiptap_h3]:font-semibold [&_.tiptap_h3]:my-1.5 [&_.tiptap_code]:rounded [&_.tiptap_code]:bg-base-200 [&_.tiptap_code]:px-1 [&_.tiptap_code]:py-0.5 [&_.tiptap_code]:font-mono [&_.tiptap_code]:text-xs [&_.tiptap.is-editor-empty:first-child::before]:text-base-content/40 [&_.tiptap.is-editor-empty:first-child::before]:content-[attr(data-placeholder)] [&_.tiptap.is-editor-empty:first-child::before]:float-left [&_.tiptap.is-editor-empty:first-child::before]:pointer-events-none [&_.tiptap.is-editor-empty:first-child::before]:h-0`}
+            className={`px-3 py-2.5 text-sm text-base-content outline-none ${heightClass} [&_.tiptap]:outline-none [&_.tiptap]:min-h-[inherit] [&_.tiptap_p]:my-1 [&_.tiptap_ul]:list-disc [&_.tiptap_ul]:pl-5 [&_.tiptap_ol]:list-decimal [&_.tiptap_ol]:pl-5 [&_.tiptap_blockquote]:border-l-2 [&_.tiptap_blockquote]:border-primary/80 [&_.tiptap_blockquote]:pl-3 [&_.tiptap_blockquote]:italic [&_.tiptap_blockquote]:text-base-content/80 [&_.tiptap_h2]:text-base [&_.tiptap_h2]:font-bold [&_.tiptap_h2]:my-2 [&_.tiptap_h3]:text-sm [&_.tiptap_h3]:font-semibold [&_.tiptap_h3]:my-1.5 [&_.tiptap_code]:rounded [&_.tiptap_code]:bg-base-200 [&_.tiptap_code]:px-1 [&_.tiptap_code]:py-0.5 [&_.tiptap_code]:font-mono [&_.tiptap_code]:text-xs [&_.tiptap.is-editor-empty:first-child::before]:text-base-content/80 [&_.tiptap.is-editor-empty:first-child::before]:content-[attr(data-placeholder)] [&_.tiptap.is-editor-empty:first-child::before]:float-left [&_.tiptap.is-editor-empty:first-child::before]:pointer-events-none [&_.tiptap.is-editor-empty:first-child::before]:h-0`}
           />
         </div>
 
@@ -455,7 +455,7 @@ export function RichTextContent({
 }) {
   return (
     <div
-      className={`text-sm text-base-content/80 [&_p]:my-1 [&_ol]:list-decimal [&_ol]:pl-5 [&_ul]:list-disc [&_ul]:pl-5 [&_blockquote]:border-l-2 [&_blockquote]:border-primary/40 [&_blockquote]:pl-3 [&_blockquote]:italic ${className}`}
+      className={`text-sm text-base-content/80 [&_p]:my-1 [&_ol]:list-decimal [&_ol]:pl-5 [&_ul]:list-disc [&_ul]:pl-5 [&_blockquote]:border-l-2 [&_blockquote]:border-primary/80 [&_blockquote]:pl-3 [&_blockquote]:italic ${className}`}
       dangerouslySetInnerHTML={{ __html: sanitizeRichText(value) }}
     />
   );

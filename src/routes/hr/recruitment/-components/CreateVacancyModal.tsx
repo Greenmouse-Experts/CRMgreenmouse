@@ -192,7 +192,7 @@ export default function CreateVacancyModal({
               className={`px-3 py-1.5 rounded-lg font-semibold transition-all ${
                 activeTab === "requisition"
                   ? "bg-primary text-white shadow-xs"
-                  : "bg-base-200 text-base-content/70 hover:bg-base-300"
+                  : "bg-base-200 text-base-content/80 hover:bg-base-300"
               }`}
             >
               1. Requisition Details
@@ -203,7 +203,7 @@ export default function CreateVacancyModal({
               className={`px-3 py-1.5 rounded-lg font-semibold transition-all ${
                 activeTab === "advert"
                   ? "bg-primary text-white shadow-xs"
-                  : "bg-base-200 text-base-content/70 hover:bg-base-300"
+                  : "bg-base-200 text-base-content/80 hover:bg-base-300"
               }`}
             >
               2. Advert & Approval

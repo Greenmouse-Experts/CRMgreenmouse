@@ -33,7 +33,7 @@ export default function ReportCard({
   return (
     <div
       onClick={() => onSelectReport(report)}
-      className="card bg-base-100 border border-base-200 hover:border-primary/40 hover:shadow-md transition-all p-5 rounded-2xl cursor-pointer flex flex-col justify-between group"
+      className="card bg-base-100 border border-base-200 hover:border-primary/80 hover:shadow-md transition-all p-5 rounded-2xl cursor-pointer flex flex-col justify-between group"
     >
       <div>
         <div className="flex items-start justify-between gap-3 mb-3">
@@ -55,7 +55,7 @@ export default function ReportCard({
         {/* Quick KPI preview badges */}
         <div className="grid grid-cols-2 gap-2 mt-4 pt-3 border-t border-base-200/80 ">
           {report.kpis.slice(0, 2).map((kpi) => (
-            <div key={kpi.label} className="bg-base-200/40 p-2 rounded-xl">
+            <div key={kpi.label} className="bg-base-200/80 p-2 rounded-xl">
               <span className="text-[10px] text-base-content/80 block truncate">
                 {kpi.label}
               </span>

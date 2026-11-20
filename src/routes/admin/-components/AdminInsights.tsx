@@ -71,7 +71,7 @@ const money = (value: number) => `₦${value.toLocaleString("en-NG")}`;
 
 function SampleLabel() {
   return (
-    <span className="rounded-md bg-base-200 px-2 py-1 text-[11px] font-semibold text-base-content/70">
+    <span className="rounded-md bg-base-200 px-2 py-1 text-[11px] font-semibold text-base-content/80">
       Example data
     </span>
   );
@@ -412,7 +412,7 @@ export function TenantAndSupport() {
                         {tenant.subscriptionStatus || "—"}
                       </span>
                     </td>
-                    <td className="text-right text-xs tabular-nums text-base-content/70">
+                    <td className="text-right text-xs tabular-nums text-base-content/80">
                       {tenant.createdAt &&
                       !Number.isNaN(Date.parse(tenant.createdAt))
                         ? new Date(tenant.createdAt).toLocaleDateString()

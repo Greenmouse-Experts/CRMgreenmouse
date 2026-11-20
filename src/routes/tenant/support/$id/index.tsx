@@ -446,7 +446,7 @@ function RouteComponent() {
                   {sharedWithPlatform ||
                   ticket.escalated ||
                   ticket.escalation ? (
-                    <p className="text-sm text-base-content/70">
+                    <p className="text-sm text-base-content/80">
                       This ticket is shared with platform support.
                     </p>
                   ) : (

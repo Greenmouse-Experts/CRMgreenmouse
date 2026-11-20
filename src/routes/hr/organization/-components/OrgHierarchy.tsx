@@ -87,12 +87,12 @@ export default function OrgHierarchy({
         ) : (
           <>
             {/* Vertical Trunk Line */}
-            <div className="h-7 w-0.5 bg-primary/40" />
+            <div className="h-7 w-0.5 bg-primary/80" />
 
             {/* Horizontal Cross Branch Line */}
             <div className="hidden xl:block w-[88%] h-0.5 bg-primary/20 mb-3 relative">
-              <div className="absolute left-0 top-0 size-2 rounded-full bg-primary/40 -translate-y-1/2" />
-              <div className="absolute right-0 top-0 size-2 rounded-full bg-primary/40 -translate-y-1/2" />
+              <div className="absolute left-0 top-0 size-2 rounded-full bg-primary/80 -translate-y-1/2" />
+              <div className="absolute right-0 top-0 size-2 rounded-full bg-primary/80 -translate-y-1/2" />
               <div className="absolute left-1/2 top-0 size-2.5 rounded-full bg-primary -translate-x-1/2 -translate-y-1/2" />
             </div>
 
@@ -110,7 +110,7 @@ export default function OrgHierarchy({
                     className={`group relative rounded-xl border p-3.5 text-center transition-all duration-200 cursor-pointer ${
                       isSelected
                         ? "border-primary bg-primary/5 ring-2 ring-primary/20 shadow-sm scale-[1.02]"
-                        : "border-base-200 bg-base-100 hover:border-primary/40 hover:shadow-md"
+                        : "border-base-200 bg-base-100 hover:border-primary/80 hover:shadow-md"
                     }`}
                   >
                     {/* Department Head Initials Avatar */}

@@ -39,10 +39,10 @@ export default function ReviewCycleStepper({
               key={step}
               className={`relative flex sm:flex-col items-center gap-3 p-3 rounded-xl border transition-all ${
                 isCurrent
-                  ? "bg-primary/5 border-primary/40 shadow-xs ring-1 ring-primary/20"
+                  ? "bg-primary/5 border-primary/80 shadow-xs ring-1 ring-primary/20"
                   : isCompleted
                     ? "bg-emerald-500/5 border-emerald-500/30"
-                    : "bg-base-200/40 border-base-200 text-base-content/80"
+                    : "bg-base-200/80 border-base-200 text-base-content/80"
               }`}
             >
               <div

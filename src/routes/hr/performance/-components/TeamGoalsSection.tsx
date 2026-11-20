@@ -59,7 +59,7 @@ export default function TeamGoalsSection({ goals }: TeamGoalsSectionProps) {
 
               <div className="flex flex-wrap items-center justify-between text-[11px] text-base-content/80 pt-0.5">
                 <div className="flex items-center gap-1.5">
-                  <TrendingUp className="size-3 text-base-content/40" />
+                  <TrendingUp className="size-3 text-base-content/80" />
                   <span>
                     Target: <strong>{goal.target || "100%"}</strong>
                   </span>

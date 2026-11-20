@@ -106,7 +106,7 @@ export default function AppraisalsTable({
                       {item.rating} / 5.0
                     </span>
                   ) : (
-                    <span className="text-base-content/40">—</span>
+                    <span className="text-base-content/80">—</span>
                   )}
                 </td>
 

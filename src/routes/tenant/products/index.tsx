@@ -427,7 +427,7 @@ function RouteComponent() {
           className="space-y-4 max-h-[80vh] overflow-y-auto pr-1"
         >
           <div>
-            <label className=" font-semibold text-base-content/70 mb-1 block">
+            <label className=" font-semibold text-base-content/80 mb-1 block">
               Product Images
             </label>
             <UpdateImages
@@ -438,7 +438,7 @@ function RouteComponent() {
           </div>
 
           <div>
-            <label className=" font-semibold text-base-content/70">
+            <label className=" font-semibold text-base-content/80">
               Product Name *
             </label>
             <input
@@ -490,7 +490,7 @@ function RouteComponent() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className=" font-semibold text-base-content/70">
+              <label className=" font-semibold text-base-content/80">
                 Initial Stock
               </label>
               <input
@@ -502,7 +502,7 @@ function RouteComponent() {
               />
             </div>
             <div>
-              <label className=" font-semibold text-base-content/70">
+              <label className=" font-semibold text-base-content/80">
                 Category
               </label>
               <select
@@ -520,7 +520,7 @@ function RouteComponent() {
           </div>
 
           <div>
-            <label className=" font-semibold text-base-content/70">
+            <label className=" font-semibold text-base-content/80">
               Description
             </label>
             <textarea
@@ -559,7 +559,7 @@ function RouteComponent() {
           className="space-y-4 max-h-[80vh] overflow-y-auto pr-1"
         >
           <div>
-            <label className=" font-semibold text-base-content/70 mb-1 block">
+            <label className=" font-semibold text-base-content/80 mb-1 block">
               Product Images
             </label>
             <UpdateImages
@@ -570,7 +570,7 @@ function RouteComponent() {
           </div>
 
           <div>
-            <label className=" font-semibold text-base-content/70">
+            <label className=" font-semibold text-base-content/80">
               Product Name *
             </label>
             <input
@@ -610,7 +610,7 @@ function RouteComponent() {
             </div>
 
             <div>
-              <label className=" font-semibold text-base-content/70">
+              <label className=" font-semibold text-base-content/80">
                 Category
               </label>
               <select
@@ -628,7 +628,7 @@ function RouteComponent() {
           </div>
 
           <div>
-            <label className=" font-semibold text-base-content/70">
+            <label className=" font-semibold text-base-content/80">
               Description
             </label>
             <textarea
@@ -662,7 +662,7 @@ function RouteComponent() {
       {/* Adjust Stock Modal */}
       <Modal ref={stockModalRef} title="Adjust Stock Quantity">
         <form onSubmit={handleSaveStock} className="space-y-4">
-          <p className="text-sm text-base-content/70">
+          <p className="text-sm text-base-content/80">
             Adjust inventory for{" "}
             <span className="font-semibold text-base-content">
               {selectedProduct?.name}
@@ -674,7 +674,7 @@ function RouteComponent() {
           </p>
 
           <div>
-            <label className=" font-semibold text-base-content/70">
+            <label className=" font-semibold text-base-content/80">
               Adjustment Amount (use positive to add, negative to remove)
             </label>
             <input
@@ -687,7 +687,7 @@ function RouteComponent() {
             />
           </div>
 
-          <div className="p-3 bg-base-200/80 rounded-lg  text-base-content/70">
+          <div className="p-3 bg-base-200/80 rounded-lg  text-base-content/80">
             New calculated stock:{" "}
             <span className="font-semibold text-base-content">
               {Math.max(
@@ -787,7 +787,7 @@ function RouteComponent() {
               </div>
               <div className="p-3 bg-base-200/30 rounded-lg">
                 <span className=" text-base-content/80 block">Product ID</span>
-                <span className="font-mono  text-base-content/70">
+                <span className="font-mono  text-base-content/80">
                   {selectedProduct.id}
                 </span>
               </div>
@@ -795,7 +795,7 @@ function RouteComponent() {
 
             {selectedProduct.description && (
               <div>
-                <span className=" font-semibold text-base-content/70 block mb-1">
+                <span className=" font-semibold text-base-content/80 block mb-1">
                   Description
                 </span>
                 <p className="text-sm text-base-content/80 p-3 bg-base-200/30 rounded-lg">

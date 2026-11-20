@@ -36,7 +36,7 @@ export default function OnboardingChecklist({
       case "Payroll":
         return "bg-emerald-100 text-emerald-700 border-emerald-200";
       default:
-        return "bg-base-200 text-base-content/70 border-base-300";
+        return "bg-base-200 text-base-content/80 border-base-300";
     }
   };
 
@@ -73,7 +73,7 @@ export default function OnboardingChecklist({
 
       <ul className="divide-y divide-base-200">
         {filteredItems.length === 0 ? (
-          <li className="py-6 text-center  text-base-content/40 italic">
+          <li className="py-6 text-center  text-base-content/80 italic">
             No onboarding tasks available for this employee.
           </li>
         ) : (

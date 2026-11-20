@@ -165,7 +165,7 @@ function RouteComponent() {
                   <span className="font-mono text-xs font-semibold text-primary block">
                     {perm.key}
                   </span>
-                  <p className="text-xs text-base-content/70 leading-snug">
+                  <p className="text-xs text-base-content/80 leading-snug">
                     {perm.description}
                   </p>
                 </div>

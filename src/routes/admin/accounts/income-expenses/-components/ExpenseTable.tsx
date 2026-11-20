@@ -190,7 +190,7 @@ export default function ExpenseTable({ searchTerm = "" }: ExpenseTableProps) {
             </div>
 
             {selectedExpense.description && (
-              <div className="bg-base-200/30 p-3 rounded-lg text-sm text-base-content/70">
+              <div className="bg-base-200/30 p-3 rounded-lg text-sm text-base-content/80">
                 <span className="font-semibold block text-sm mb-1">
                   Description:
                 </span>

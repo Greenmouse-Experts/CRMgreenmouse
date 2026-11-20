@@ -22,7 +22,7 @@ export default function EmployeeGridView({
         <div
           key={emp.id}
           onClick={() => onSelectEmployee(emp)}
-          className="group card bg-base-100 border border-base-200/80 hover:border-primary/40 shadow-xs hover:shadow-md transition-all duration-200 p-5 rounded-2xl cursor-pointer flex flex-col justify-between text-center relative overflow-hidden"
+          className="group card bg-base-100 border border-base-200/80 hover:border-primary/80 shadow-xs hover:shadow-md transition-all duration-200 p-5 rounded-2xl cursor-pointer flex flex-col justify-between text-center relative overflow-hidden"
         >
           {/* Top corner ID badge */}
           <div className="flex items-center justify-between w-full mb-2">
@@ -55,13 +55,13 @@ export default function EmployeeGridView({
           </div>
 
           {/* Bottom metadata */}
-          <div className="pt-3 border-t border-base-200/70 flex items-center justify-between text-[11px] text-base-content/80">
+          <div className="pt-3 border-t border-base-200/80 flex items-center justify-between text-[11px] text-base-content/80">
             <span className="flex items-center gap-1 truncate">
-              <MapPin className="size-3 shrink-0 text-base-content/40" />
+              <MapPin className="size-3 shrink-0 text-base-content/80" />
               {emp.location}
             </span>
-            <span className="flex items-center gap-1 shrink-0 font-medium text-base-content/70">
-              <Briefcase className="size-3 shrink-0 text-base-content/40" />
+            <span className="flex items-center gap-1 shrink-0 font-medium text-base-content/80">
+              <Briefcase className="size-3 shrink-0 text-base-content/80" />
               {emp.type}
             </span>
           </div>

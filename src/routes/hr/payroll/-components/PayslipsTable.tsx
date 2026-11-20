@@ -93,7 +93,7 @@ export default function PayslipsTable({
         </div>
 
         <div className="relative w-full sm:w-60">
-          <Search className="size-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-base-content/40" />
+          <Search className="size-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-base-content/80" />
           <input
             type="text"
             value={searchTerm}
@@ -142,7 +142,7 @@ export default function PayslipsTable({
               <tr>
                 <td
                   colSpan={6}
-                  className="py-8 text-center text-base-content/40 italic"
+                  className="py-8 text-center text-base-content/80 italic"
                 >
                   No payslips match this filter.
                 </td>
@@ -156,7 +156,7 @@ export default function PayslipsTable({
                   <Fragment key={slip.id}>
                     <tr
                       onClick={() => setExpandedId(isExpanded ? null : slip.id)}
-                      className="hover:bg-base-200/40 cursor-pointer transition-colors"
+                      className="hover:bg-base-200/80 cursor-pointer transition-colors"
                     >
                       <td>
                         <div className="flex items-center gap-2.5">

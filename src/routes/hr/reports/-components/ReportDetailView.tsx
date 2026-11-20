@@ -192,7 +192,7 @@ export default function ReportDetailView({
             {report.insights.map((insight, idx) => (
               <li
                 key={idx}
-                className="flex items-start gap-2.5  text-base-content/80 leading-relaxed bg-base-200/40 p-3 rounded-xl border border-base-200/80"
+                className="flex items-start gap-2.5  text-base-content/80 leading-relaxed bg-base-200/80 p-3 rounded-xl border border-base-200/80"
               >
                 <Info className="size-3.5 text-primary mt-0.5 shrink-0" />
                 <span>{insight}</span>
@@ -231,7 +231,7 @@ export default function ReportDetailView({
 
       {/* Other Reports Pill Navigation */}
       <div className="card bg-base-100 border border-base-200 shadow-sm p-5 sm:p-6 space-y-3">
-        <h4 className=" font-bold uppercase tracking-wider text-base-content/70">
+        <h4 className=" font-bold uppercase tracking-wider text-base-content/80">
           Other HR Reports & Analytics
         </h4>
         <div className="flex flex-wrap gap-2">

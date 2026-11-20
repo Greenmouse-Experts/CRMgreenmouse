@@ -81,7 +81,7 @@ const ProductSummary: React.FC<ProductSummaryProps> = ({
                 onFilterChange(isSelected ? "all" : stat.id);
               }
             }}
-            className={`card bg-base-100/70 backdrop-blur-md border shadow-sm p-4 transition-all duration-200 ${
+            className={`card bg-base-100/80 backdrop-blur-md border shadow-sm p-4 transition-all duration-200 ${
               stat.clickable
                 ? "cursor-pointer hover:shadow-md hover:border-primary/80"
                 : ""

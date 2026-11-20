@@ -65,7 +65,7 @@ export default function AdminFinanceTrend({
           >
             Revenue movement
           </h2>
-          <p className="mt-0.5 text-sm text-base-content/70">
+          <p className="mt-0.5 text-sm text-base-content/80">
             {query.data?.note ||
               `Monthly contracted MRR added, lost and net change · ${months}M. Not collected cash or operating costs.`}
           </p>
@@ -82,7 +82,7 @@ export default function AdminFinanceTrend({
       ) : query.isError ? (
         <div className="px-6 py-12 text-center" role="alert">
           <p className="font-medium">MRR trend could not be loaded.</p>
-          <p className="mt-1 text-sm text-base-content/70">
+          <p className="mt-1 text-sm text-base-content/80">
             {query.error.message}
           </p>
           <button
@@ -108,7 +108,7 @@ export default function AdminFinanceTrend({
               ] as const
             ).map(([label, value, color]) => (
               <div key={label}>
-                <p className="text-xs font-medium text-base-content/70">
+                <p className="text-xs font-medium text-base-content/80">
                   {label}
                 </p>
                 <p
@@ -120,7 +120,7 @@ export default function AdminFinanceTrend({
             ))}
           </div>
           <div className="px-3 pb-5 pt-5 sm:px-6">
-            <div className="mb-4 flex flex-wrap items-center gap-x-5 gap-y-2 px-2 text-xs font-medium text-base-content/70">
+            <div className="mb-4 flex flex-wrap items-center gap-x-5 gap-y-2 px-2 text-xs font-medium text-base-content/80">
               <span className="flex items-center gap-2">
                 <span className="size-2.5 rounded-sm bg-emerald-600" /> Added
               </span>

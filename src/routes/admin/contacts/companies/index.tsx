@@ -59,21 +59,21 @@ function RouteComponent() {
       key: "contact",
       label: "Contact Info",
       render: (company: Company) => (
-        <div className="space-y-0.5 text-sm text-base-content/70">
+        <div className="space-y-0.5 text-sm text-base-content/80">
           {company.email && (
             <div className="flex items-center gap-1.5">
-              <Mail size={12} className="text-base-content/40" />
+              <Mail size={12} className="text-base-content/80" />
               <span>{company.email}</span>
             </div>
           )}
           {company.workPhone && (
             <div className="flex items-center gap-1.5">
-              <Phone size={12} className="text-base-content/40" />
+              <Phone size={12} className="text-base-content/80" />
               <span>{company.workPhone}</span>
             </div>
           )}
           {!company.email && !company.workPhone && (
-            <span className="text-base-content/40">—</span>
+            <span className="text-base-content/80">—</span>
           )}
         </div>
       ),
@@ -97,7 +97,7 @@ function RouteComponent() {
             <span className="truncate max-w-[150px]">{company.website}</span>
           </a>
         ) : (
-          <span className="text-sm text-base-content/40">—</span>
+          <span className="text-sm text-base-content/80">—</span>
         ),
     },
     {
@@ -108,12 +108,12 @@ function RouteComponent() {
           Boolean,
         );
         return parts.length > 0 ? (
-          <div className="flex items-center gap-1.5 text-sm text-base-content/70">
-            <MapPin size={12} className="text-base-content/40 shrink-0" />
+          <div className="flex items-center gap-1.5 text-sm text-base-content/80">
+            <MapPin size={12} className="text-base-content/80 shrink-0" />
             <span>{parts.join(", ")}</span>
           </div>
         ) : (
-          <span className="text-sm text-base-content/40">—</span>
+          <span className="text-sm text-base-content/80">—</span>
         );
       },
     },

@@ -198,7 +198,7 @@ function RouteComponent() {
               </span>
             ))
           ) : (
-            <span className=" text-base-content/40">No permissions</span>
+            <span className=" text-base-content/80">No permissions</span>
           )}
           {permissions && permissions.length > 4 && (
             <span className="badge badge-xs badge-primary badge-soft">
@@ -353,7 +353,7 @@ function RouteComponent() {
                 >
                   Assigned permissions
                 </h4>
-                <p className="mt-0.5  text-base-content/70">
+                <p className="mt-0.5  text-base-content/80">
                   Choose what people with this role can access.
                 </p>
               </div>
@@ -407,14 +407,14 @@ function RouteComponent() {
               <div className="max-h-80 overflow-y-auto overscroll-contain">
                 {permissionsQuery.isLoading ? (
                   <div
-                    className="px-4 py-10 text-center text-sm text-base-content/70"
+                    className="px-4 py-10 text-center text-sm text-base-content/80"
                     role="status"
                   >
                     Loading permissions…
                   </div>
                 ) : permissionsQuery.isError ? (
                   <div className="flex flex-col items-center gap-3 px-4 py-8 text-center">
-                    <p className="text-sm text-base-content/70">
+                    <p className="text-sm text-base-content/80">
                       Permissions could not be loaded.
                     </p>
                     <button
@@ -426,7 +426,7 @@ function RouteComponent() {
                     </button>
                   </div>
                 ) : Object.keys(groupedPermissions).length === 0 ? (
-                  <div className="px-4 py-10 text-center text-sm text-base-content/70">
+                  <div className="px-4 py-10 text-center text-sm text-base-content/80">
                     {permissionFilter
                       ? "No permissions match your search."
                       : "No permissions available."}
@@ -451,7 +451,7 @@ function RouteComponent() {
                               <h5 className="truncate  font-semibold text-base-content">
                                 {category}
                               </h5>
-                              <span className=" tabular-nums text-base-content/70">
+                              <span className=" tabular-nums text-base-content/80">
                                 {selectedInCategory}/{items.length}
                               </span>
                             </div>
@@ -489,12 +489,12 @@ function RouteComponent() {
                                       {perm.name || perm.key}
                                     </span>
                                     {perm.name && perm.name !== perm.key && (
-                                      <span className="block break-all font-mono text-[11px] leading-4 text-base-content/70">
+                                      <span className="block break-all font-mono text-[11px] leading-4 text-base-content/80">
                                         {perm.key}
                                       </span>
                                     )}
                                     {perm.description && (
-                                      <span className="mt-0.5 block  leading-5 text-base-content/70">
+                                      <span className="mt-0.5 block  leading-5 text-base-content/80">
                                         {perm.description}
                                       </span>
                                     )}
@@ -510,7 +510,7 @@ function RouteComponent() {
                 )}
               </div>
               {permissionsQuery.data && filteredPermissions.length > 0 && (
-                <div className="border-t border-base-300 bg-base-200/80 px-4 py-2  tabular-nums text-base-content/70">
+                <div className="border-t border-base-300 bg-base-200/80 px-4 py-2  tabular-nums text-base-content/80">
                   {permissionFilter
                     ? `${selectedVisibleCount} of ${filteredPermissions.length} matches selected`
                     : `${selectedPermissions.length} of ${permissionsQuery.data.length} permissions selected`}

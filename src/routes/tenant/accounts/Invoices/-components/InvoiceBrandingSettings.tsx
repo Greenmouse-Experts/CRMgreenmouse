@@ -152,7 +152,7 @@ export default function InvoiceBrandingSettings() {
         <h2 id="invoice-branding-title" className="text-lg font-semibold">
           Invoice branding
         </h2>
-        <p className="mt-1 text-sm text-base-content/70">
+        <p className="mt-1 text-sm text-base-content/80">
           Set the name, logo, color, and footer note shown on your invoices.
           Saving requires invoice branding in your plan.
         </p>

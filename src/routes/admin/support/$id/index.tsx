@@ -417,7 +417,7 @@ function RouteComponent() {
                 <div className="border-t border-base-200 pt-4 space-y-3">
                   <h3 className="text-sm font-semibold">Escalation</h3>
                   {ticket.escalation?.reason && (
-                    <p className="whitespace-pre-wrap break-words text-sm text-base-content/70">
+                    <p className="whitespace-pre-wrap break-words text-sm text-base-content/80">
                       {ticket.escalation.reason}
                     </p>
                   )}

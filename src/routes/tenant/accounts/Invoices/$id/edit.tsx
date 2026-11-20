@@ -330,15 +330,15 @@ function RouteComponent() {
                       <Plus className="size-4" /> Add Item
                     </button>
 
-                    <div className="w-72 space-y-2 bg-base-200/40 p-4 rounded-xl">
+                    <div className="w-72 space-y-2 bg-base-200/80 p-4 rounded-xl">
                       <div className="flex justify-between text-sm">
-                        <span className="text-base-content/70">Subtotal:</span>
+                        <span className="text-base-content/80">Subtotal:</span>
                         <span className="font-medium">
                           {formatAmount(subtotal)}
                         </span>
                       </div>
                       <div className="flex items-center justify-between text-sm">
-                        <span className="text-base-content/70">
+                        <span className="text-base-content/80">
                           Discount ({currency}):
                         </span>
                         <input
@@ -350,7 +350,7 @@ function RouteComponent() {
                         />
                       </div>
                       <div className="flex items-center justify-between text-sm">
-                        <span className="text-base-content/70">
+                        <span className="text-base-content/80">
                           Tax ({currency}):
                         </span>
                         <input

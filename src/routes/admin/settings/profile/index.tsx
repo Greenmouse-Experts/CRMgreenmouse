@@ -111,7 +111,7 @@ function ProfileContent({ profile }: { profile: AdminProfile }) {
       />
 
       <Modal ref={photoModalRef} title="Profile picture">
-        <p className="mb-4 text-sm text-base-content/70">
+        <p className="mb-4 text-sm text-base-content/80">
           Choose an image for your administrator profile.
         </p>
         <ImageUpload

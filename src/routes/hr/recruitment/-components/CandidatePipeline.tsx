@@ -71,7 +71,7 @@ export default function CandidatePipeline({
         </div>
 
         <div className="relative w-full sm:w-64">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-base-content/40" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-base-content/80" />
           <input
             type="text"
             placeholder="Search candidates or role..."
@@ -92,12 +92,12 @@ export default function CandidatePipeline({
           return (
             <div
               key={stage}
-              className="w-64 shrink-0 rounded-2xl bg-base-200/70 border border-base-200/80 p-3.5 flex flex-col"
+              className="w-64 shrink-0 rounded-2xl bg-base-200/80 border border-base-200/80 p-3.5 flex flex-col"
             >
               {/* Column Header */}
               <div className="mb-3 flex items-center justify-between  font-semibold px-1">
                 <span className="text-base-content font-bold">{stage}</span>
-                <span className="rounded-full bg-base-100 border border-base-300/80 px-2 py-0.5 text-[11px] text-base-content/70 font-semibold shadow-2xs">
+                <span className="rounded-full bg-base-100 border border-base-300/80 px-2 py-0.5 text-[11px] text-base-content/80 font-semibold shadow-2xs">
                   {stageCandidates.length}
                 </span>
               </div>
@@ -105,7 +105,7 @@ export default function CandidatePipeline({
               {/* Cards Container */}
               <div className="space-y-2.5 flex-1 overflow-y-auto max-h-[460px] pr-0.5">
                 {stageCandidates.length === 0 ? (
-                  <div className="py-8 text-center  text-base-content/40 italic">
+                  <div className="py-8 text-center  text-base-content/80 italic">
                     No candidates
                   </div>
                 ) : (
@@ -120,7 +120,7 @@ export default function CandidatePipeline({
                       <div
                         key={candidate.id}
                         onClick={() => onSelectCandidate(candidate)}
-                        className="group relative rounded-xl border border-base-200 bg-base-100 p-3 shadow-xs hover:border-primary/40 hover:shadow-md transition-all cursor-pointer"
+                        className="group relative rounded-xl border border-base-200 bg-base-100 p-3 shadow-xs hover:border-primary/80 hover:shadow-md transition-all cursor-pointer"
                       >
                         <div className="flex items-center gap-2.5">
                           <div
@@ -170,7 +170,7 @@ export default function CandidatePipeline({
                                 e.stopPropagation();
                                 onAdvanceStage(candidate.id, nextStage);
                               }}
-                              className="btn btn-ghost btn-xs text-base-content/40 hover:text-primary hover:bg-primary/10 rounded-lg px-1.5 py-0.5 h-6 min-h-6 flex items-center gap-0.5 text-[10px]"
+                              className="btn btn-ghost btn-xs text-base-content/80 hover:text-primary hover:bg-primary/10 rounded-lg px-1.5 py-0.5 h-6 min-h-6 flex items-center gap-0.5 text-[10px]"
                             >
                               <span>Next</span>
                               <ChevronRight className="size-3" />

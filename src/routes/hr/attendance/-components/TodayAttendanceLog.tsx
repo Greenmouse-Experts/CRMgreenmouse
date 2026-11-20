@@ -75,7 +75,7 @@ export default function TodayAttendanceLog({ logs }: TodayAttendanceLogProps) {
 
         <div className="flex items-center gap-2">
           <div className="relative w-full sm:w-44">
-            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 size-3.5 text-base-content/40" />
+            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 size-3.5 text-base-content/80" />
             <input
               type="text"
               placeholder="Search employee..."
@@ -102,7 +102,7 @@ export default function TodayAttendanceLog({ logs }: TodayAttendanceLogProps) {
       <div className="overflow-x-auto rounded-xl border border-base-200">
         <table className="table table-sm w-full">
           <thead>
-            <tr className="bg-base-200/80  font-semibold text-base-content/70">
+            <tr className="bg-base-200/80  font-semibold text-base-content/80">
               <th>Employee</th>
               <th>Shift</th>
               <th className="text-center">In</th>
@@ -115,7 +115,7 @@ export default function TodayAttendanceLog({ logs }: TodayAttendanceLogProps) {
               <tr>
                 <td
                   colSpan={5}
-                  className="py-8 text-center text-base-content/40"
+                  className="py-8 text-center text-base-content/80"
                 >
                   No attendance records found matching filters.
                 </td>
@@ -124,7 +124,7 @@ export default function TodayAttendanceLog({ logs }: TodayAttendanceLogProps) {
               filteredLogs.map((log) => (
                 <tr
                   key={log.id}
-                  className="hover:bg-base-200/40 transition-colors"
+                  className="hover:bg-base-200/80 transition-colors"
                 >
                   <td className="font-semibold text-base-content">
                     <div className="flex items-center gap-2.5">

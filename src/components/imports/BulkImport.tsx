@@ -186,7 +186,7 @@ export default function BulkImport({
             className={`flex min-h-44 w-full flex-col items-center justify-center rounded-xl border-2 border-dashed px-6 py-8 text-center transition-colors focus-visible:ring-2 focus-visible:ring-primary ${
               dragging
                 ? "border-primary bg-primary/5"
-                : "border-base-300 bg-base-200/40 hover:border-primary/60 hover:bg-base-200/70"
+                : "border-base-300 bg-base-200/80 hover:border-primary/60 hover:bg-base-200/80"
             }`}
           >
             <span className="flex size-11 items-center justify-center rounded-xl bg-primary/10 text-primary">
@@ -288,7 +288,7 @@ export default function BulkImport({
             </p>
           ) : importer.contractQuery.isError ? (
             <div className="mt-3 rounded-lg bg-base-200 p-3 text-sm">
-              <p className="text-base-content/70">
+              <p className="text-base-content/80">
                 The column contract could not be loaded. You can still download
                 the template and upload a CSV.
               </p>
@@ -357,7 +357,7 @@ export default function BulkImport({
       </div>
 
       {importer.mode === "async" && (isBusy || importer.job) && (
-        <div className="mt-5 rounded-xl bg-base-200/70 p-4">
+        <div className="mt-5 rounded-xl bg-base-200/80 p-4">
           <div className="flex flex-wrap items-center justify-between gap-2">
             <p className="text-sm font-semibold">
               {jobIsRunning ? "Import in progress" : "Background import"}
@@ -396,7 +396,7 @@ export default function BulkImport({
       )}
 
       {outcome && (
-        <div className="mt-4 rounded-xl bg-base-200/70 p-4" role="status">
+        <div className="mt-4 rounded-xl bg-base-200/80 p-4" role="status">
           <div className="flex items-start gap-2">
             {outcome.failed ? (
               <TriangleAlert
@@ -418,7 +418,7 @@ export default function BulkImport({
                       ? "Import completed with some rows skipped."
                       : "Import completed."))}
               </p>
-              <dl className="mt-2 flex flex-wrap gap-x-6 gap-y-1 text-xs text-base-content/70">
+              <dl className="mt-2 flex flex-wrap gap-x-6 gap-y-1 text-xs text-base-content/80">
                 {[
                   ["Imported", outcome.imported],
                   ["Skipped", outcome.skipped],
@@ -442,7 +442,7 @@ export default function BulkImport({
           </div>
 
           {outcome.errors.length > 0 && (
-            <ul className="mt-3 space-y-1 border-t border-base-300 pt-3 text-xs text-base-content/70">
+            <ul className="mt-3 space-y-1 border-t border-base-300 pt-3 text-xs text-base-content/80">
               {outcome.errors.slice(0, 5).map((error, index) => (
                 <li key={`${error.row ?? "row"}-${index}`}>
                   {error.row !== undefined && (

@@ -140,7 +140,7 @@ export default function OpenCaseModal({
         <div className="space-y-3">
           <div className="flex items-center gap-1.5 pb-1 border-b border-base-200">
             <ShieldAlert className="size-3.5 text-primary" />
-            <h4 className=" font-semibold uppercase tracking-wider text-base-content/70">
+            <h4 className=" font-semibold uppercase tracking-wider text-base-content/80">
               Incident Details
             </h4>
           </div>
@@ -274,7 +274,7 @@ export default function OpenCaseModal({
         <div className="space-y-3">
           <div className="flex items-center gap-1.5 pb-1 border-b border-base-200">
             <FileText className="size-3.5 text-primary" />
-            <h4 className=" font-semibold uppercase tracking-wider text-base-content/70">
+            <h4 className=" font-semibold uppercase tracking-wider text-base-content/80">
               Evidence & Handling
             </h4>
           </div>

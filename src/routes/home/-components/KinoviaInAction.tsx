@@ -59,7 +59,7 @@ export default function KinoviaInAction() {
 
             {/* Right Tablet Mockup Container */}
             <div className="lg:col-span-7 flex justify-center lg:justify-end">
-              <div className="relative w-full max-w-xl rounded-2xl border border-white/10 bg-[#161c38]/70 p-3 sm:p-5 shadow-inner backdrop-blur-xs">
+              <div className="relative w-full max-w-xl rounded-2xl border border-white/10 bg-[#161c38]/80 p-3 sm:p-5 shadow-inner backdrop-blur-xs">
                 {/* Top Badge */}
                 <div className="mb-3 flex items-center gap-2">
                   <span className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-2.5 py-0.5 text-[9px] font-bold tracking-wider text-slate-300 uppercase">

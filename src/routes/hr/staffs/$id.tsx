@@ -617,7 +617,7 @@ function StaffDetailPage() {
               className={`btn btn-xs rounded-lg font-medium px-3 ${
                 activeTab === "view"
                   ? "btn-primary shadow-xs"
-                  : "btn-ghost text-base-content/70"
+                  : "btn-ghost text-base-content/80"
               }`}
             >
               <Eye className="size-3.5 mr-1" /> Profile View
@@ -628,7 +628,7 @@ function StaffDetailPage() {
               className={`btn btn-xs rounded-lg font-medium px-3 ${
                 activeTab === "edit"
                   ? "btn-primary shadow-xs"
-                  : "btn-ghost text-base-content/70"
+                  : "btn-ghost text-base-content/80"
               }`}
             >
               <Pencil className="size-3.5 mr-1" /> Edit Profile
@@ -659,7 +659,7 @@ function StaffDetailPage() {
                       </span>
                     )}
                   </div>
-                  <div className="flex flex-wrap items-center gap-y-1 gap-x-4  text-base-content/70">
+                  <div className="flex flex-wrap items-center gap-y-1 gap-x-4  text-base-content/80">
                     <span className="flex items-center gap-1.5 font-medium">
                       <Briefcase className="size-3.5 text-primary" />
                       {typeof emp.position === "object"
@@ -1041,7 +1041,7 @@ function StaffDetailPage() {
                         isCurrent
                           ? "border-primary bg-primary text-primary-content font-semibold shadow-xs"
                           : isCompleted
-                            ? "border-emerald-500/40 bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 font-medium hover:border-emerald-500/80"
+                            ? "border-emerald-500/80 bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 font-medium hover:border-emerald-500/80"
                             : "border-base-300 bg-base-100 text-base-content/80 hover:border-base-content/30 hover:text-base-content"
                       }`}
                     >
@@ -1051,7 +1051,7 @@ function StaffDetailPage() {
                             ? "bg-primary-content text-primary"
                             : isCompleted
                               ? "bg-emerald-500 text-white"
-                              : "bg-base-200 text-base-content/70"
+                              : "bg-base-200 text-base-content/80"
                         }`}
                       >
                         {isCompleted ? "✓" : idx + 1}
@@ -1543,7 +1543,7 @@ function StaffDetailPage() {
                               >
                                 {uploaded.name}
                               </span>
-                              <span className="text-base-content/40 font-mono">
+                              <span className="text-base-content/80 font-mono">
                                 {uploaded.size}
                               </span>
                             </div>
@@ -1571,7 +1571,7 @@ function StaffDetailPage() {
               <div className="space-y-6 animate-in fade-in duration-300">
                 {/* Kinova HR Checklist */}
                 <div className="card bg-base-100 border border-base-200/80 p-5 rounded-2xl shadow-xs">
-                  <h4 className=" font-bold uppercase tracking-wider text-base-content/70 mb-3">
+                  <h4 className=" font-bold uppercase tracking-wider text-base-content/80 mb-3">
                     Pre-Submission Readiness Checklist
                   </h4>
                   <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 ">

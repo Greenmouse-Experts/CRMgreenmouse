@@ -84,7 +84,7 @@ export default function ExpenseTable() {
       render: (_value: any, item: ExpenseRecord) => {
         const d = item.date || item.createdAt;
         return (
-          <span className=" text-base-content/70">
+          <span className=" text-base-content/80">
             {d ? new Date(d).toLocaleDateString() : "—"}
           </span>
         );

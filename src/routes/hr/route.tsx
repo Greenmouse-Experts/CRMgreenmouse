@@ -231,7 +231,7 @@ function RouteComponent() {
           className="drawer-overlay"
         ></label>
         <div className="min-h-full w-72 bg-base-100 text-base-content">
-          <div className="flex items-center gap-3 border-b border-base-300/40 px-4 py-4">
+          <div className="flex items-center gap-3 border-b border-base-300/80 px-4 py-4">
             <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary text-lg font-black text-primary-content">
               K
             </div>

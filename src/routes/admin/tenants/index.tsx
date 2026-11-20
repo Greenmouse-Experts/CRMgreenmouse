@@ -126,7 +126,7 @@ function RouteComponent() {
       key: "phoneNumber",
       label: "Contact",
       render: (value: string) => (
-        <span className="text-sm text-base-content/70">{value || "—"}</span>
+        <span className="text-sm text-base-content/80">{value || "—"}</span>
       ),
     },
     {
@@ -346,7 +346,7 @@ function RouteComponent() {
       >
         {selectedTenant && (
           <div className="space-y-4">
-            <p className="text-sm text-base-content/70">
+            <p className="text-sm text-base-content/80">
               Update the subscription tier and billing cycle for{" "}
               <strong className="text-base-content">
                 {selectedTenant.companyName}

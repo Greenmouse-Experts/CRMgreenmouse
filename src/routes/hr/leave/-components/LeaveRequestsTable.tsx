@@ -107,7 +107,7 @@ export default function LeaveRequestsTable({
 
         {/* Search Input */}
         <div className="relative w-full sm:w-64">
-          <Search className="size-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-base-content/40" />
+          <Search className="size-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-base-content/80" />
           <input
             type="text"
             value={searchTerm}
@@ -155,7 +155,7 @@ export default function LeaveRequestsTable({
               <tr>
                 <td
                   colSpan={7}
-                  className="py-8 text-center text-base-content/40 italic"
+                  className="py-8 text-center text-base-content/80 italic"
                 >
                   No leave requests found.
                 </td>
@@ -171,9 +171,9 @@ export default function LeaveRequestsTable({
                   <tr
                     key={req.id}
                     onClick={() => setExpandedId(isExpanded ? null : req.id)}
-                    className="hover:bg-base-200/40 cursor-pointer transition-colors"
+                    className="hover:bg-base-200/80 cursor-pointer transition-colors"
                   >
-                    <td className="font-mono font-medium text-base-content/70">
+                    <td className="font-mono font-medium text-base-content/80">
                       {req.id}
                     </td>
 
@@ -194,7 +194,7 @@ export default function LeaveRequestsTable({
                       </span>
                     </td>
 
-                    <td className="text-base-content/70">
+                    <td className="text-base-content/80">
                       {req.from} – {req.to}
                     </td>
 
@@ -228,7 +228,7 @@ export default function LeaveRequestsTable({
                           </button>
                         </div>
                       ) : (
-                        <span className=" text-base-content/40">—</span>
+                        <span className=" text-base-content/80">—</span>
                       )}
                     </td>
                   </tr>
@@ -264,10 +264,10 @@ export default function LeaveRequestsTable({
                     <span className="font-semibold">Reason:</span> {req.reason}
                   </p>
                 )}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[11px] text-base-content/70 pt-1">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[11px] text-base-content/80 pt-1">
                   {req.cover && (
                     <div className="flex items-center gap-1.5">
-                      <User className="size-3.5 text-base-content/40" />
+                      <User className="size-3.5 text-base-content/80" />
                       <span>
                         Handover covering colleague:{" "}
                         <strong>{req.cover}</strong>

@@ -216,7 +216,7 @@ const CreateTicketModal = forwardRef<CreateTicketModalHandle>(
             {!contactsQuery.isPending &&
               !contactsQuery.isError &&
               !contacts.length && (
-                <p className="text-sm text-base-content/70">
+                <p className="text-sm text-base-content/80">
                   {company
                     ? `No contacts are linked to ${company.name}. A ticket without a contact won't be linked to this company. `
                     : "You can create a ticket without a contact. "}

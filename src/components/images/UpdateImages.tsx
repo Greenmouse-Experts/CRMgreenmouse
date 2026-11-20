@@ -70,7 +70,7 @@ export default function UpdateImages({
             htmlFor={inputId}
             className="flex flex-col items-center justify-center text-center cursor-pointer h-full w-full select-none"
           >
-            <UploadCloud className="h-7 w-7 text-primary/70 mb-1" />
+            <UploadCloud className="h-7 w-7 text-primary/80 mb-1" />
             <span className="text-xs font-semibold text-base-content leading-tight">
               {fileMode ? "Add attachments" : "Upload Images"}
             </span>
@@ -84,7 +84,7 @@ export default function UpdateImages({
         {prevImages?.map((image, index) => (
           <div
             key={image.path || index}
-            className="relative min-w-0 w-full h-32 rounded-xl overflow-hidden border border-base-200 shadow-sm group bg-base-200/40"
+            className="relative min-w-0 w-full h-32 rounded-xl overflow-hidden border border-base-200 shadow-sm group bg-base-200/80"
           >
             {fileMode ? (
               <a
@@ -120,7 +120,7 @@ export default function UpdateImages({
         {newImages.map((image, index) => (
           <div
             key={`${image.name}-${index}`}
-            className="relative min-w-0 w-full h-32 rounded-xl overflow-hidden border border-base-200 shadow-sm group bg-base-200/40"
+            className="relative min-w-0 w-full h-32 rounded-xl overflow-hidden border border-base-200 shadow-sm group bg-base-200/80"
           >
             {fileMode ? (
               <div className="flex size-full flex-col items-center justify-center gap-2 p-3 text-center">

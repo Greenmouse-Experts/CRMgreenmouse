@@ -60,7 +60,7 @@ export default function ExpensesStat() {
             className={`card bg-base-100 shadow-sm rounded-xl overflow-hidden border-l-4 ${item.colorClass} transition-all duration-300 hover:shadow-md`}
           >
             <div className="p-4 flex flex-col gap-2">
-              <div className="flex items-center gap-2 text-base-content/70">
+              <div className="flex items-center gap-2 text-base-content/80">
                 <IconComponent className={`size-5 ${item.textColor}`} />
                 <span className=" font-semibold uppercase tracking-wider">
                   {item.title}

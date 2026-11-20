@@ -26,7 +26,7 @@ export default function EmployeeStatusBadge({
       case "inactive":
         return "bg-slate-500/10 text-slate-600 dark:text-slate-400 border-slate-500/20";
       default:
-        return "bg-base-200 text-base-content/70 border-base-300";
+        return "bg-base-200 text-base-content/80 border-base-300";
     }
   };
 

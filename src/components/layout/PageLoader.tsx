@@ -44,7 +44,7 @@ export default function PageLoader<TData>(props: PageLoaderProps<TData>) {
         <div className="relative flex items-center justify-center mb-8">
           {/* Animated Rings */}
           <div className="absolute h-24 w-24 rounded-full border-4 border-primary/10 border-t-primary animate-spin duration-[2000ms]" />
-          <div className="absolute h-20 w-20 rounded-full border-4 border-primary/5 border-b-primary/40 animate-spin-reverse duration-[3000ms]" />
+          <div className="absolute h-20 w-20 rounded-full border-4 border-primary/5 border-b-primary/80 animate-spin-reverse duration-[3000ms]" />
 
           {/* Center Icon */}
           <div className="relative flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary shadow-inner">
@@ -72,7 +72,9 @@ export default function PageLoader<TData>(props: PageLoaderProps<TData>) {
           <div className="mb-4 rounded-full bg-error/10 p-3 text-error">
             <ShieldOff className="h-8 w-8" />
           </div>
-          <h3 className="text-lg font-semibold text-base-content">Access Denied</h3>
+          <h3 className="text-lg font-semibold text-base-content">
+            Access Denied
+          </h3>
           <p className="mt-1 text-sm text-base-content/60 max-w-xs">
             You don't have permission to view this resource. Contact support or
             a Super Admin to request access.
@@ -108,7 +110,7 @@ export default function PageLoader<TData>(props: PageLoaderProps<TData>) {
   if (Array.isArray(query.data) && query.data.length === 0 && emptyState) {
     return (
       <div className="min-h-[40vh] w-full flex flex-col items-center justify-center p-6 text-center animate-in zoom-in-95 duration-300 bg-base-100 rounded-2xl border border-base-200">
-        <div className="mb-4 rounded-full bg-base-200 p-4 text-base-content/40">
+        <div className="mb-4 rounded-full bg-base-200 p-4 text-base-content/80">
           <Inbox className="h-8 w-8" />
         </div>
         <h3 className="text-lg font-semibold text-base-content">

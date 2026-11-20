@@ -147,7 +147,7 @@ function RouteComponent() {
       key: "issuedDate",
       label: "Issue Date",
       render: (date: string) => (
-        <span className=" text-base-content/70">
+        <span className=" text-base-content/80">
           {date ? new Date(date).toLocaleDateString() : "\u2014"}
         </span>
       ),
@@ -156,7 +156,7 @@ function RouteComponent() {
       key: "dueDate",
       label: "Due Date",
       render: (date: string) => (
-        <span className=" text-base-content/70">
+        <span className=" text-base-content/80">
           {date ? new Date(date).toLocaleDateString() : "\u2014"}
         </span>
       ),

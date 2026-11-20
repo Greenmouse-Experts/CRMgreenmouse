@@ -55,7 +55,7 @@ export default function AdminUserList() {
       key: "phoneNumber",
       label: "Phone",
       render: (value: string) => (
-        <span className=" text-base-content/70">{value || "—"}</span>
+        <span className=" text-base-content/80">{value || "—"}</span>
       ),
     },
     {
@@ -103,10 +103,10 @@ export default function AdminUserList() {
             if (recent.length === 0) {
               return (
                 <div className="text-center py-10 space-y-2">
-                  <div className="p-3 bg-base-200 rounded-full w-fit mx-auto text-base-content/40">
+                  <div className="p-3 bg-base-200 rounded-full w-fit mx-auto text-base-content/80">
                     <Users className="size-6" />
                   </div>
-                  <p className="text-sm font-semibold text-base-content/70">
+                  <p className="text-sm font-semibold text-base-content/80">
                     No team members added yet
                   </p>
                   <p className=" text-base-content/80">

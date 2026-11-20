@@ -296,7 +296,7 @@ function RouteComponent() {
       key: "limits",
       label: "Resource Limits",
       render: (_value: any, item: SubscriptionPlan) => (
-        <div className="text-sm space-y-0.5 text-base-content/70">
+        <div className="text-sm space-y-0.5 text-base-content/80">
           <div>
             Staff:{" "}
             <strong>
@@ -352,7 +352,7 @@ function RouteComponent() {
               </span>
             ))
           ) : (
-            <span className="text-sm text-base-content/40">Standard</span>
+            <span className="text-sm text-base-content/80">Standard</span>
           )}
         </div>
       ),
@@ -476,7 +476,7 @@ function RouteComponent() {
 
               {/* Toggles */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
-                <label className="flex items-center gap-3 p-3 rounded-xl border border-base-200 bg-base-100 hover:bg-base-200/40 cursor-pointer transition-colors">
+                <label className="flex items-center gap-3 p-3 rounded-xl border border-base-200 bg-base-100 hover:bg-base-200/80 cursor-pointer transition-colors">
                   <input
                     type="checkbox"
                     checked={formData.isActive}
@@ -493,7 +493,7 @@ function RouteComponent() {
                   </div>
                 </label>
 
-                <label className="flex items-center gap-3 p-3 rounded-xl border border-base-200 bg-base-100 hover:bg-base-200/40 cursor-pointer transition-colors">
+                <label className="flex items-center gap-3 p-3 rounded-xl border border-base-200 bg-base-100 hover:bg-base-200/80 cursor-pointer transition-colors">
                   <input
                     type="checkbox"
                     checked={formData.isCustomPrice}
@@ -836,7 +836,7 @@ function RouteComponent() {
             {/* Feature Search Filter & Quick Custom Add */}
             <div className="flex flex-col sm:flex-row gap-2">
               <div className="relative flex-1">
-                <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 size-3.5 text-base-content/40 pointer-events-none" />
+                <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 size-3.5 text-base-content/80 pointer-events-none" />
                 <input
                   type="text"
                   value={featureSearch}
@@ -874,7 +874,7 @@ function RouteComponent() {
             </div>
 
             <div className="overflow-hidden rounded-xl border border-base-200 bg-base-100">
-              <div className="flex items-center justify-between border-b border-base-200 bg-base-200/80 px-3 py-2 text-xs text-base-content/70">
+              <div className="flex items-center justify-between border-b border-base-200 bg-base-200/80 px-3 py-2 text-xs text-base-content/80">
                 <span>Available features</span>
                 <span>{filteredFeatures.length} shown</span>
               </div>

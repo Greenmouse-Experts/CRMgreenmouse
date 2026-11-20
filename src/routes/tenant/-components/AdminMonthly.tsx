@@ -248,7 +248,7 @@ export default function TenantMonthly() {
         description={`Income and expenses in ${year}`}
         controls={
           <div className="flex items-center gap-3">
-            <span className="hidden items-center gap-1.5  text-base-content/70 sm:inline-flex">
+            <span className="hidden items-center gap-1.5  text-base-content/80 sm:inline-flex">
               <span className="size-2 rounded-full bg-primary" /> Income
               <span className="ml-2 size-2 rounded-full bg-error" /> Expenses
             </span>

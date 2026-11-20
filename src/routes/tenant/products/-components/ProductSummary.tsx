@@ -56,7 +56,7 @@ const ProductSummary: React.FC<ProductSummaryProps> = ({ products }) => {
       {stats.map((stat, i) => (
         <div
           key={i}
-          className="card bg-base-100/70 backdrop-blur-md border border-base-200 shadow-sm p-4 hover:shadow-md transition-all duration-200"
+          className="card bg-base-100/80 backdrop-blur-md border border-base-200 shadow-sm p-4 hover:shadow-md transition-all duration-200"
         >
           <div className="flex items-center justify-between">
             <div>

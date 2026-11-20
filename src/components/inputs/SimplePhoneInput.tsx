@@ -3,8 +3,10 @@ import { PhoneInput, type CountryIso2 } from "react-international-phone";
 import "react-international-phone/style.css";
 import { useFormContext } from "react-hook-form";
 
-export interface SimplePhoneInputProps
-  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "onChange" | "size"> {
+export interface SimplePhoneInputProps extends Omit<
+  React.InputHTMLAttributes<HTMLInputElement>,
+  "onChange" | "size"
+> {
   label?: string;
   icon?: React.ReactNode;
   size?: "sm" | "md" | "lg";
@@ -124,7 +126,7 @@ const SimplePhoneInput = forwardRef<HTMLInputElement, SimplePhoneInputProps>(
               onBlur: props.onBlur,
             }}
             className="flex items-center gap-1.5 grow w-full bg-transparent border-none p-0 m-0 shadow-none h-full min-w-0"
-            inputClassName="grow bg-transparent border-none outline-none p-0 m-0 text-inherit w-full placeholder:text-base-content/40 focus:outline-none focus:ring-0 h-full"
+            inputClassName="grow bg-transparent border-none outline-none p-0 m-0 text-inherit w-full placeholder:text-base-content/80 focus:outline-none focus:ring-0 h-full"
             countrySelectorStyleProps={{
               buttonClassName:
                 "bg-transparent border-none p-0 m-0 shadow-none hover:bg-transparent focus:outline-none flex items-center h-full cursor-pointer pr-1 shrink-0",

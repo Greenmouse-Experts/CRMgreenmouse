@@ -51,7 +51,7 @@ export default function CustomTable(props: CustomTableProps) {
                 props.columns.map((column, idx) => (
                   <th
                     key={idx}
-                    className="capitalize text-left text-md font-semibold text-base-content/70"
+                    className="capitalize text-left text-md font-semibold text-base-content/80"
                   >
                     {column.label}
                   </th>
@@ -59,7 +59,7 @@ export default function CustomTable(props: CustomTableProps) {
               {!props.columns?.find((item) => item.key === "action") &&
                 props.actions &&
                 props.actions.length > 0 && (
-                  <th className="font-semibold text-md text-base-content/70">
+                  <th className="font-semibold text-md text-base-content/80">
                     Action
                   </th>
                 )}
@@ -112,7 +112,7 @@ export default function CustomTable(props: CustomTableProps) {
             <span className="font-medium">{endRange}</span> of{" "}
             <span className="font-medium">{totalCount}</span> results
             {totalCount > 0 && (
-              <span className="ml-1 text-xs text-base-content/40">
+              <span className="ml-1 text-xs text-base-content/80">
                 ({totalPages} {totalPages === 1 ? "page" : "pages"})
               </span>
             )}

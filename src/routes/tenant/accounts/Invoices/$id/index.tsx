@@ -121,7 +121,7 @@ function RouteComponent() {
                       <Calendar className="size-4 text-primary" /> Invoice
                       Schedule
                     </h3>
-                    <div className="text-sm space-y-1 text-base-content/70">
+                    <div className="text-sm space-y-1 text-base-content/80">
                       <div>
                         <span className="font-semibold">Issued Date: </span>
                         {invoice.issuedDate
@@ -149,7 +149,7 @@ function RouteComponent() {
                     <h3 className="font-semibold text-base mb-3 flex items-center gap-2 text-base-content">
                       <Building className="size-4 text-primary" /> Billed To
                     </h3>
-                    <div className="text-sm space-y-1 text-base-content/70">
+                    <div className="text-sm space-y-1 text-base-content/80">
                       <div className="font-semibold text-base-content">
                         {invoice.contact
                           ? `${invoice.contact.firstName} ${invoice.contact.lastName}`
@@ -221,7 +221,7 @@ function RouteComponent() {
                 <div className="flex justify-end">
                   <div className="w-72 space-y-2 text-sm">
                     <div className="flex justify-between">
-                      <span className="text-base-content/70">Subtotal</span>
+                      <span className="text-base-content/80">Subtotal</span>
                       <span className="font-medium">
                         $
                         {(
@@ -242,7 +242,7 @@ function RouteComponent() {
 
                     {!!invoice.tax && (
                       <div className="flex justify-between">
-                        <span className="text-base-content/70">Tax</span>
+                        <span className="text-base-content/80">Tax</span>
                         <span>+${Number(invoice.tax).toFixed(2)}</span>
                       </div>
                     )}

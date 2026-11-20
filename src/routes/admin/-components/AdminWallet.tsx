@@ -133,7 +133,7 @@ const RecentTransactionCard = ({
         </div>
         <div>
           <p className="text-xs font-medium">{description}</p>
-          <p className="text-xs text-base-content/70">{date}</p>
+          <p className="text-xs text-base-content/80">{date}</p>
         </div>
       </div>
       <p className={`text-sm font-semibold ${amountClass}`}>

@@ -162,7 +162,7 @@ function RouteComponent() {
           {tickets.length === 0 ? (
             <div className="flex flex-col items-center gap-2 px-6 py-16 text-center">
               <Inbox
-                className="size-9 text-base-content/40"
+                className="size-9 text-base-content/80"
                 aria-hidden="true"
               />
               <h2 className="font-semibold">
@@ -235,7 +235,7 @@ function RouteComponent() {
                         : ""}
                     </span>
                     <ArrowUpRight
-                      className="size-4 text-base-content/40"
+                      className="size-4 text-base-content/80"
                       aria-hidden="true"
                     />
                   </div>

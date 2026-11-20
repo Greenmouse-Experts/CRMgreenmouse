@@ -99,7 +99,7 @@ function RouteComponent() {
       key: "phone",
       label: "Phone",
       render: (_value: any, item: Contact) => (
-        <span className=" text-base-content/70">
+        <span className=" text-base-content/80">
           {item.phone || item.workPhone || item.cellPhone || "—"}
         </span>
       ),
@@ -241,7 +241,7 @@ function RouteComponent() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="bg-base-200/40 p-3 rounded-lg flex items-start gap-3">
+              <div className="bg-base-200/80 p-3 rounded-lg flex items-start gap-3">
                 <Mail className="size-4 text-primary mt-1 shrink-0" />
                 <div>
                   <div className=" text-base-content/80">Email</div>
@@ -251,7 +251,7 @@ function RouteComponent() {
                 </div>
               </div>
 
-              <div className="bg-base-200/40 p-3 rounded-lg flex items-start gap-3">
+              <div className="bg-base-200/80 p-3 rounded-lg flex items-start gap-3">
                 <Phone className="size-4 text-primary mt-1 shrink-0" />
                 <div>
                   <div className=" text-base-content/80">Phone</div>
@@ -264,7 +264,7 @@ function RouteComponent() {
                 </div>
               </div>
 
-              <div className="bg-base-200/40 p-3 rounded-lg flex items-start gap-3">
+              <div className="bg-base-200/80 p-3 rounded-lg flex items-start gap-3">
                 <Building2 className="size-4 text-primary mt-1 shrink-0" />
                 <div>
                   <div className=" text-base-content/80">Company</div>
@@ -276,7 +276,7 @@ function RouteComponent() {
                 </div>
               </div>
 
-              <div className="bg-base-200/40 p-3 rounded-lg flex items-start gap-3">
+              <div className="bg-base-200/80 p-3 rounded-lg flex items-start gap-3">
                 <MapPin className="size-4 text-primary mt-1 shrink-0" />
                 <div>
                   <div className=" text-base-content/80">Location</div>
@@ -296,7 +296,7 @@ function RouteComponent() {
 
             {selectedContact.tags && selectedContact.tags.length > 0 && (
               <div>
-                <div className=" font-semibold text-base-content/70 mb-2">
+                <div className=" font-semibold text-base-content/80 mb-2">
                   Tags
                 </div>
                 <div className="flex flex-wrap gap-1">

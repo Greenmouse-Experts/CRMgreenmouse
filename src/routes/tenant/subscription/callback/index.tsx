@@ -115,7 +115,7 @@ export function SubscriptionCallback() {
                     ? "Payment reference missing"
                     : "Payment not verified yet"}
             </h1>
-            <p className="text-sm text-base-content/70">
+            <p className="text-sm text-base-content/80">
               {state === "success"
                 ? "Your subscription payment was confirmed. Your plan details are ready to view."
                 : state === "verifying"

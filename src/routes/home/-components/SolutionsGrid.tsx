@@ -79,7 +79,7 @@ export default function SolutionsGrid() {
                   <span className="text-[10px] font-semibold tracking-wider text-slate-500 uppercase">
                     {item.number} / {item.tag}
                   </span>
-                  <div className="grid size-7 place-items-center rounded-full border border-slate-300 bg-white/70 text-slate-600 transition-colors group-hover:border-[#5958ed] group-hover:bg-[#5958ed] group-hover:text-white">
+                  <div className="grid size-7 place-items-center rounded-full border border-slate-300 bg-white/80 text-slate-600 transition-colors group-hover:border-[#5958ed] group-hover:bg-[#5958ed] group-hover:text-white">
                     <ArrowUpRight className="size-3.5" />
                   </div>
                 </div>

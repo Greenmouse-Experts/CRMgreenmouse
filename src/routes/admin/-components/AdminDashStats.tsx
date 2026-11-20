@@ -43,7 +43,7 @@ export default function AdminDashStats() {
         <Link
           key={card.title}
           to={card.to}
-          className="block rounded-xl bg-base-100 p-5 shadow-sm transition-colors hover:bg-base-200/70 focus-visible:ring-2 focus-visible:ring-primary"
+          className="block rounded-xl bg-base-100 p-5 shadow-sm transition-colors hover:bg-base-200/80 focus-visible:ring-2 focus-visible:ring-primary"
         >
           <p className="text-xs font-semibold uppercase tracking-wider text-base-content/65">
             {card.title}

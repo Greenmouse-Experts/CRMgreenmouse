@@ -65,12 +65,12 @@ export default function ImageUpload({
           >
             <UploadCloud className="size-10 text-primary" aria-hidden="true" />
             <span className="mt-2 font-semibold">Choose image</span>
-            <span className="text-sm text-base-content/70">Up to 5 MB</span>
+            <span className="text-sm text-base-content/80">Up to 5 MB</span>
           </label>
         </div>
 
         {previewUrl ? (
-          <div className="relative h-40 rounded-lg bg-base-200/40">
+          <div className="relative h-40 rounded-lg bg-base-200/80">
             <img
               className={`size-full rounded-lg ${fit === "contain" ? "object-contain" : "object-cover"}`}
               src={previewUrl}
@@ -90,7 +90,7 @@ export default function ImageUpload({
             </button>
           </div>
         ) : previousImage ? (
-          <div className="relative h-40 rounded-lg bg-base-200/40">
+          <div className="relative h-40 rounded-lg bg-base-200/80">
             <img
               className={`size-full rounded-lg ${fit === "contain" ? "object-contain" : "object-cover"}`}
               src={previousImage.url}

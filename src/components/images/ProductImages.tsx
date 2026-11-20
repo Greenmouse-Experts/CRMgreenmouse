@@ -33,8 +33,9 @@ export function ProductImageStrip({
               />
             ))}
           </span>
-          <span className="text-xs font-medium text-base-content/70">
-            {visibleImages.length} {visibleImages.length === 1 ? "image" : "images"}
+          <span className="text-xs font-medium text-base-content/80">
+            {visibleImages.length}{" "}
+            {visibleImages.length === 1 ? "image" : "images"}
           </span>
         </>
       ) : (
@@ -88,7 +89,10 @@ export function ProductImageGallery({
         />
       </div>
       {visibleImages.length > 1 && (
-        <div className="flex gap-2 overflow-x-auto pb-1" aria-label="Choose product image">
+        <div
+          className="flex gap-2 overflow-x-auto pb-1"
+          aria-label="Choose product image"
+        >
           {visibleImages.map((url, index) => (
             <button
               key={`${url}-${index}`}
@@ -100,7 +104,12 @@ export function ProductImageGallery({
                 selectedIndex === index ? "border-primary" : "border-base-200"
               }`}
             >
-              <img src={url} alt="" loading="lazy" className="size-full object-cover" />
+              <img
+                src={url}
+                alt=""
+                loading="lazy"
+                className="size-full object-cover"
+              />
             </button>
           ))}
         </div>

@@ -70,14 +70,14 @@ export default function EmployeeTableView({
       key: "type",
       label: "Type",
       render: (value: string) => (
-        <span className=" text-base-content/70">{value}</span>
+        <span className=" text-base-content/80">{value}</span>
       ),
     },
     {
       key: "location",
       label: "Location",
       render: (value: string) => (
-        <span className=" text-base-content/70">{value}</span>
+        <span className=" text-base-content/80">{value}</span>
       ),
     },
     {
@@ -104,7 +104,7 @@ export default function EmployeeTableView({
             params={{ id: emp.id }}
             search={{ mode: "edit" }}
             onClick={(e) => e.stopPropagation()}
-            className="btn btn-xs btn-ghost text-base-content/70 hover:text-primary font-medium"
+            className="btn btn-xs btn-ghost text-base-content/80 hover:text-primary font-medium"
           >
             Edit
           </Link>

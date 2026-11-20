@@ -191,7 +191,7 @@ export default function OffboardingCasesTable({
         </div>
 
         <div className="relative w-full sm:w-64">
-          <Search className="size-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-base-content/40" />
+          <Search className="size-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-base-content/80" />
           <input
             type="text"
             value={searchTerm}

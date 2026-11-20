@@ -66,7 +66,7 @@ function Fields({
   );
   if (!entries.length)
     return (
-      <p className="text-sm text-base-content/70">
+      <p className="text-sm text-base-content/80">
         No further details available.
       </p>
     );
@@ -202,7 +202,7 @@ export default function TenantRelatedPanel({
     >
       <div className="mb-5">
         <h2 className="text-lg font-semibold text-base-content">{title}</h2>
-        <p className="mt-1 text-sm text-base-content/70">{description}</p>
+        <p className="mt-1 text-sm text-base-content/80">{description}</p>
       </div>
       {query.isPending ? (
         <div
@@ -217,7 +217,7 @@ export default function TenantRelatedPanel({
           <p className="font-medium text-error">
             Could not load {title.toLowerCase()}.
           </p>
-          <p className="mt-1 text-sm text-base-content/70">
+          <p className="mt-1 text-sm text-base-content/80">
             {query.error?.message}
           </p>
           <button
@@ -229,7 +229,7 @@ export default function TenantRelatedPanel({
           </button>
         </div>
       ) : isEmpty ? (
-        <p className="rounded-xl bg-base-200/80 px-4 py-8 text-center text-sm text-base-content/70">
+        <p className="rounded-xl bg-base-200/80 px-4 py-8 text-center text-sm text-base-content/80">
           {emptyMessage}
         </p>
       ) : mode === "timeline" ? (

@@ -111,7 +111,7 @@ export default function VacanciesTable({
       key: "closes",
       label: "Closes",
       render: (value: string) => (
-        <span className="text-base-content/70">{value}</span>
+        <span className="text-base-content/80">{value}</span>
       ),
     },
     {
@@ -161,7 +161,7 @@ export default function VacanciesTable({
         {/* Filters */}
         <div className="flex flex-wrap items-center gap-2">
           <div className="relative w-full sm:w-48">
-            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 size-3.5 text-base-content/40" />
+            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 size-3.5 text-base-content/80" />
             <input
               type="text"
               placeholder="Search vacancy..."
@@ -207,7 +207,7 @@ export default function VacanciesTable({
           onRowClick={(item) => onSelectVacancy?.(item as Vacancy)}
         />
       ) : (
-        <div className="py-8 text-center  text-base-content/40">
+        <div className="py-8 text-center  text-base-content/80">
           No vacancies found matching the current filters.
         </div>
       )}

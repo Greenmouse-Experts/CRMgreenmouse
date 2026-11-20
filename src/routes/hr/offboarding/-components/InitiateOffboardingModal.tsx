@@ -173,7 +173,7 @@ export default function InitiateOffboardingModal({
         <div className="space-y-3">
           <div className="flex items-center gap-1.5 pb-1 border-b border-base-200">
             <UserMinus className="size-3.5 text-primary" />
-            <h4 className=" font-semibold uppercase tracking-wider text-base-content/70">
+            <h4 className=" font-semibold uppercase tracking-wider text-base-content/80">
               Employee & Separation Details
             </h4>
           </div>
@@ -290,7 +290,7 @@ export default function InitiateOffboardingModal({
         <div className="space-y-3">
           <div className="flex items-center gap-1.5 pb-1 border-b border-base-200">
             <FileText className="size-3.5 text-primary" />
-            <h4 className=" font-semibold uppercase tracking-wider text-base-content/70">
+            <h4 className=" font-semibold uppercase tracking-wider text-base-content/80">
               Compliance Confirmation
             </h4>
           </div>

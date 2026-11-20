@@ -244,7 +244,7 @@ function RouteComponent() {
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
                   {/* Search Input */}
                   <div className="relative flex-1 max-w-md">
-                    <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-base-content/40 pointer-events-none" />
+                    <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-base-content/80 pointer-events-none" />
                     <input
                       type="text"
                       value={searchTerm}
@@ -255,7 +255,7 @@ function RouteComponent() {
                     {searchTerm && (
                       <button
                         onClick={() => setSearchTerm("")}
-                        className="absolute right-2.5 top-1/2 -translate-y-1/2 text-base-content/40 hover:text-base-content p-0.5"
+                        className="absolute right-2.5 top-1/2 -translate-y-1/2 text-base-content/80 hover:text-base-content p-0.5"
                         title="Clear search"
                       >
                         <X className="size-3.5" />
@@ -265,7 +265,7 @@ function RouteComponent() {
 
                   {/* Filter by Plan & View Mode */}
                   <div className="flex flex-wrap items-center gap-3">
-                    <div className="flex items-center gap-2 text-xs text-base-content/70">
+                    <div className="flex items-center gap-2 text-xs text-base-content/80">
                       <span className="font-medium">Plan:</span>
                       <select
                         value={planFilter}
@@ -283,7 +283,7 @@ function RouteComponent() {
                     </div>
 
                     {/* View Switcher */}
-                    <div className="join border border-base-300 rounded-lg overflow-hidden bg-base-200/40">
+                    <div className="join border border-base-300 rounded-lg overflow-hidden bg-base-200/80">
                       <button
                         type="button"
                         onClick={() => setViewMode("grid")}
@@ -314,7 +314,7 @@ function RouteComponent() {
 
                 {/* Category Chips Filter */}
                 <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-thin pt-2 border-t border-base-200/80">
-                  <span className="text-[11px] font-semibold text-base-content/40 uppercase tracking-wider shrink-0 mr-1">
+                  <span className="text-[11px] font-semibold text-base-content/80 uppercase tracking-wider shrink-0 mr-1">
                     Category:
                   </span>
                   {categories.map((cat) => {
@@ -331,7 +331,7 @@ function RouteComponent() {
                         className={`btn btn-xs rounded-full transition-all shrink-0 font-normal ${
                           isSelected
                             ? "btn-primary text-primary-content font-medium shadow-xs"
-                            : "btn-ghost border border-base-300/80 text-base-content/70 hover:border-base-content/30"
+                            : "btn-ghost border border-base-300/80 text-base-content/80 hover:border-base-content/30"
                         }`}
                       >
                         {cat}
@@ -362,7 +362,7 @@ function RouteComponent() {
                 </div>
               ) : filteredFeatures.length === 0 ? (
                 <div className="card bg-base-100 border border-base-200 p-12 text-center space-y-3 rounded-2xl">
-                  <div className="size-12 rounded-full bg-base-200 text-base-content/40 flex items-center justify-center mx-auto">
+                  <div className="size-12 rounded-full bg-base-200 text-base-content/80 flex items-center justify-center mx-auto">
                     <Search className="size-5" />
                   </div>
                   <h3 className="font-semibold text-base text-base-content">
@@ -394,13 +394,13 @@ function RouteComponent() {
                     return (
                       <div
                         key={feat.key}
-                        className="card bg-base-100 border border-base-200/80 hover:border-primary/40 shadow-xs hover:shadow-md transition-all duration-200 flex flex-col justify-between rounded-2xl overflow-hidden group"
+                        className="card bg-base-100 border border-base-200/80 hover:border-primary/80 shadow-xs hover:shadow-md transition-all duration-200 flex flex-col justify-between rounded-2xl overflow-hidden group"
                       >
                         {/* Card Body */}
                         <div className="p-5 sm:p-6 space-y-4 flex-1 flex flex-col">
                           {/* Top Row: Category Badge & Tier Counter */}
                           <div className="flex items-center justify-between gap-2">
-                            <span className="badge badge-sm badge-ghost font-medium text-xs text-base-content/70">
+                            <span className="badge badge-sm badge-ghost font-medium text-xs text-base-content/80">
                               {feat.category}
                             </span>
                             <span
@@ -429,7 +429,7 @@ function RouteComponent() {
                                 {feat.name}
                               </h4>
                               <div
-                                className="font-mono text-xs text-base-content/40 truncate mt-0.5"
+                                className="font-mono text-xs text-base-content/80 truncate mt-0.5"
                                 title={feat.key}
                               >
                                 {feat.key}
@@ -438,18 +438,18 @@ function RouteComponent() {
                           </div>
 
                           {/* Description */}
-                          <p className="text-sm text-base-content/70 leading-relaxed line-clamp-2 min-h-[2.5rem]">
+                          <p className="text-sm text-base-content/80 leading-relaxed line-clamp-2 min-h-[2.5rem]">
                             {feat.description ||
                               "Platform entitlement rule for feature gating and subscription tier enforcement."}
                           </p>
 
                           {/* Included Tiers Section */}
-                          <div className="mt-auto pt-3.5 border-t border-base-200/70">
+                          <div className="mt-auto pt-3.5 border-t border-base-200/80">
                             <div className="text-[11px] font-semibold text-base-content/80 uppercase tracking-wider mb-2">
                               Active In Plans
                             </div>
                             {includedPlans.length === 0 ? (
-                              <p className="text-xs text-base-content/40 italic py-1">
+                              <p className="text-xs text-base-content/80 italic py-1">
                                 Not enabled in any plan yet
                               </p>
                             ) : (
@@ -469,7 +469,7 @@ function RouteComponent() {
                         </div>
 
                         {/* Card Footer */}
-                        <div className="px-5 py-3 bg-base-200/40 border-t border-base-200 flex items-center justify-between gap-2">
+                        <div className="px-5 py-3 bg-base-200/80 border-t border-base-200 flex items-center justify-between gap-2">
                           <div className="text-xs text-base-content/80 truncate">
                             {includedPlans.length === plans.length &&
                             plans.length > 0 ? (
@@ -504,7 +504,7 @@ function RouteComponent() {
                   <div className="overflow-x-auto">
                     <table className="table w-full">
                       <thead>
-                        <tr className="bg-base-200/40 text-base-content/70 text-xs uppercase tracking-wider">
+                        <tr className="bg-base-200/80 text-base-content/80 text-xs uppercase tracking-wider">
                           <th className="font-semibold py-3.5 pl-6">
                             Feature & Key
                           </th>
@@ -538,7 +538,7 @@ function RouteComponent() {
                                     <div className="font-semibold text-sm text-base-content">
                                       {feat.name}
                                     </div>
-                                    <div className="font-mono text-xs text-base-content/40">
+                                    <div className="font-mono text-xs text-base-content/80">
                                       {feat.key}
                                     </div>
                                   </div>
@@ -552,7 +552,7 @@ function RouteComponent() {
                               </td>
 
                               <td className="py-4">
-                                <div className="text-sm text-base-content/70 max-w-sm leading-relaxed">
+                                <div className="text-sm text-base-content/80 max-w-sm leading-relaxed">
                                   {feat.description || "—"}
                                 </div>
                               </td>
@@ -571,7 +571,7 @@ function RouteComponent() {
                                     ))}
                                   </div>
                                 ) : (
-                                  <span className="text-xs text-base-content/40 italic">
+                                  <span className="text-xs text-base-content/80 italic">
                                     Unassigned
                                   </span>
                                 )}
@@ -649,8 +649,8 @@ function RouteComponent() {
                         key={plan.id}
                         className={`flex items-center justify-between p-3.5 rounded-xl border cursor-pointer transition-all ${
                           isChecked
-                            ? "bg-primary/5 border-primary/40 text-base-content shadow-xs"
-                            : "bg-base-100 border-base-200 text-base-content/70 hover:bg-base-200/80"
+                            ? "bg-primary/5 border-primary/80 text-base-content shadow-xs"
+                            : "bg-base-100 border-base-200 text-base-content/80 hover:bg-base-200/80"
                         }`}
                       >
                         <div className="flex items-center gap-3">

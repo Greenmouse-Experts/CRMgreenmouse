@@ -189,7 +189,7 @@ function RouteComponent() {
                       className={`btn btn-sm rounded-full text-sm ${
                         statusFilter === tab.key
                           ? "btn-primary text-primary-content"
-                          : "btn-ghost text-base-content/70"
+                          : "btn-ghost text-base-content/80"
                       }`}
                     >
                       {tab.label}
@@ -337,7 +337,7 @@ function RouteComponent() {
 
                   {selectedService.description && (
                     <div className="bg-base-200/30 p-4 rounded-lg">
-                      <span className="text-sm font-semibold text-base-content/70 block mb-1">
+                      <span className="text-sm font-semibold text-base-content/80 block mb-1">
                         Service Scope / Description
                       </span>
                       <p className="text-sm text-base-content/80 whitespace-pre-wrap">
