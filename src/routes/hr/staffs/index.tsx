@@ -92,15 +92,23 @@ const toUiEmployee = (employee: EmployeeRecord): Employee => {
   };
 };
 
-function RouteComponent() {
+interface StaffsDirectoryContentProps {
+  employees: EmployeeRecord[];
+  onDeleteEmployee: (id: string) => void;
+}
+
+function StaffsDirectoryContent({
+  employees,
+  onDeleteEmployee,
+}: StaffsDirectoryContentProps) {
   const navigate = useNavigate();
-  const employeesQuery = useEmployees();
-  const createEmployee = useCreateEmployee();
-  const removeEmployee = useRemoveEmployee();
+  const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState<StatusFilterOption>("All");
+  const [departmentFilter, setDepartmentFilter] = useState("All");
 
   const employeeList = useMemo<Employee[]>(
-    () => (employeesQuery.data ?? []).map(toUiEmployee),
-    [employeesQuery.data],
+    () => employees.map(toUiEmployee),
+    [employees],
   );
 
   const departments = useMemo(() => {
@@ -111,12 +119,6 @@ function RouteComponent() {
     );
     return [...unique].sort();
   }, [employeeList]);
-
-  const [searchTerm, setSearchTerm] = useState("");
-  const [statusFilter, setStatusFilter] = useState<StatusFilterOption>("All");
-  const [departmentFilter, setDepartmentFilter] = useState("All");
-
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
   const filteredEmployees = useMemo(() => {
     const term = searchTerm.toLowerCase().trim();
@@ -150,12 +152,73 @@ function RouteComponent() {
     });
   }, [employeeList, searchTerm, statusFilter, departmentFilter]);
 
+  return (
+    <div className="space-y-6">
+      <EmployeeStats employees={employeeList} />
+
+      <EmployeeFilters
+        searchTerm={searchTerm}
+        onSearchChange={setSearchTerm}
+        statusFilter={statusFilter}
+        onStatusFilterChange={setStatusFilter}
+        departmentFilter={departmentFilter}
+        onDepartmentFilterChange={setDepartmentFilter}
+        allEmployees={employeeList}
+        departments={departments}
+      />
+
+      {filteredEmployees.length === 0 ? (
+        <div className="card bg-base-100 border border-base-200/80 p-12 text-center space-y-3 rounded-2xl shadow-xs">
+          <div className="size-12 rounded-full bg-base-200 text-base-content/40 flex items-center justify-center mx-auto">
+            <Search className="size-5" />
+          </div>
+          <h3 className="font-semibold text-base text-base-content">
+            No matching employees found
+          </h3>
+          <p className="text-xs text-base-content/60 max-w-sm mx-auto">
+            No records matched your filters. Try clearing your search term or
+            adjusting the status and department filters.
+          </p>
+          <button
+            type="button"
+            onClick={() => {
+              setSearchTerm("");
+              setStatusFilter("All");
+              setDepartmentFilter("All");
+            }}
+            className="btn btn-xs btn-outline rounded-lg mx-auto"
+          >
+            Reset Filters
+          </button>
+        </div>
+      ) : (
+        <EmployeeTableView
+          employees={filteredEmployees}
+          onSelectEmployee={(emp) =>
+            navigate({ to: "/hr/staffs/$id", params: { id: emp.id } })
+          }
+          onDeleteEmployee={onDeleteEmployee}
+        />
+      )}
+    </div>
+  );
+}
+
+function RouteComponent() {
+  const navigate = useNavigate();
+  const employeesQuery = useEmployees();
+  const createEmployee = useCreateEmployee();
+  const removeEmployee = useRemoveEmployee();
+
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+
+  const employeeCount = employeesQuery.data?.length ?? 0;
+
   const handleExport = () => {
     try {
-      exportEmployeesToCSV(filteredEmployees);
-      toast.success(
-        `Exported ${filteredEmployees.length} employee records to CSV.`,
-      );
+      const records = (employeesQuery.data ?? []).map(toUiEmployee);
+      exportEmployeesToCSV(records);
+      toast.success(`Exported ${records.length} employee records to CSV.`);
     } catch (_err) {
       toast.error("Failed to export employees.");
     }
@@ -188,12 +251,13 @@ function RouteComponent() {
         </p>
         <PageHeader
           title="Employees"
-          description={`${employeeList.length} records · employment status tracked separately from availability`}
+          description={`${employeeCount} records · employment status tracked separately from availability`}
         >
           <div className="flex flex-wrap items-center gap-2">
             <button
               type="button"
               onClick={handleExport}
+              disabled={!employeesQuery.data?.length}
               className="btn btn-sm btn-ghost border border-base-300 gap-1.5 rounded-lg text-xs font-medium"
             >
               <Download className="size-4" /> Export
@@ -220,49 +284,9 @@ function RouteComponent() {
             navigate({ to: "/hr/staffs/$id", params: { id: "new" } }),
         }}
       >
-        <EmployeeStats employees={employeeList} />
-
-        <EmployeeFilters
-          searchTerm={searchTerm}
-          onSearchChange={setSearchTerm}
-          statusFilter={statusFilter}
-          onStatusFilterChange={setStatusFilter}
-          departmentFilter={departmentFilter}
-          onDepartmentFilterChange={setDepartmentFilter}
-          allEmployees={employeeList}
-          departments={departments}
-        />
-
-        {filteredEmployees.length === 0 ? (
-          <div className="card bg-base-100 border border-base-200/80 p-12 text-center space-y-3 rounded-2xl shadow-xs">
-            <div className="size-12 rounded-full bg-base-200 text-base-content/40 flex items-center justify-center mx-auto">
-              <Search className="size-5" />
-            </div>
-            <h3 className="font-semibold text-base text-base-content">
-              No matching employees found
-            </h3>
-            <p className="text-xs text-base-content/60 max-w-sm mx-auto">
-              No records matched your filters. Try clearing your search term or
-              adjusting the status and department filters.
-            </p>
-            <button
-              type="button"
-              onClick={() => {
-                setSearchTerm("");
-                setStatusFilter("All");
-                setDepartmentFilter("All");
-              }}
-              className="btn btn-xs btn-outline rounded-lg mx-auto"
-            >
-              Reset Filters
-            </button>
-          </div>
-        ) : (
-          <EmployeeTableView
-            employees={filteredEmployees}
-            onSelectEmployee={(emp) =>
-              navigate({ to: "/hr/staffs/$id", params: { id: emp.id } })
-            }
+        {(data) => (
+          <StaffsDirectoryContent
+            employees={data}
             onDeleteEmployee={handleRemoveEmployee}
           />
         )}

@@ -36,11 +36,27 @@ return [];
 
 - **Loading / error / empty states**: use `PageLoader` for a page-level query,
   and `QueryCompLayout` for a smaller independent section.
+  - **`PageLoader` render prop pattern**: `PageLoader` provides a function-as-child
+    render prop `{(data: TData) => React.ReactNode}` where `data` is the non-null,
+    unwrapped query response (`query.data`). Always consume query data via
+    the `(data) => ...` callback instead of passing static JSX children that read
+    from outer query state before loading finishes:
+    ```tsx
+    <PageLoader
+      query={itemsQuery}
+      emptyState={{
+        title: "No items yet",
+        description: "Get started by adding your first item.",
+      }}
+    >
+      {(data) => <ItemsTable items={data} />}
+    </PageLoader>
+    ```
 - **Tables**: use `CustomTable` with `columnType[]` config and `Actions[]` for
   the row action menu. Do not hand-roll new `<table>` markup.
 - **Forms**: use `react-hook-form` for form state — `useForm` + `FormProvider`
-  + `methods.register` / `Controller` + `methods.handleSubmit(values)`. Do not
-  manage form state with `useState`.
+  - `methods.register` / `Controller` + `methods.handleSubmit(values)`. Do not
+    manage form state with `useState`.
 - **No dummy data**: never seed UI state with mock records or fallback numbers.
   Derive everything from query data. Use `—` or an explicit empty state for
   fields the API does not return.
@@ -55,15 +71,15 @@ return [];
 
 Reads:
 
-| Hook | Endpoint |
-| --- | --- |
-| `useRecruitmentDashboard` | `GET /recruitment/dashboard` |
-| `useRecruitmentVacancies` | `GET /recruitment/vacancies` |
-| `useRecruitmentApplications` | `GET /recruitment/applications` |
-| `useRecruitmentInterviews` | `GET /recruitment/interviews` |
-| `useRecruitmentOffers` | `GET /recruitment/offers` |
+| Hook                          | Endpoint                         |
+| ----------------------------- | -------------------------------- |
+| `useRecruitmentDashboard`     | `GET /recruitment/dashboard`     |
+| `useRecruitmentVacancies`     | `GET /recruitment/vacancies`     |
+| `useRecruitmentApplications`  | `GET /recruitment/applications`  |
+| `useRecruitmentInterviews`    | `GET /recruitment/interviews`    |
+| `useRecruitmentOffers`        | `GET /recruitment/offers`        |
 | `useRecruitmentOptions(type)` | `GET /recruitment/options/:type` |
-| `useRecruitmentApprovers` | `GET /recruitment/approvers` |
+| `useRecruitmentApprovers`     | `GET /recruitment/approvers`     |
 
 Writes: create/update/submit/decide/publish vacancy, create application, update
 application stage, create/update/cancel interview, create/decide offer, convert
@@ -102,14 +118,14 @@ The Departments and Positions data derives from `GET /v1/employees/organization`
 query data (no mock seed data). Write hooks are wired through mutations that
 invalidate the `["organization"]` query root:
 
-| Hook | Method / Endpoint |
-| --- | --- |
-| `useOrganization()` | `GET /v1/employees/organization` |
+| Hook                    | Method / Endpoint                                                                                               |
+| ----------------------- | --------------------------------------------------------------------------------------------------------------- |
+| `useOrganization()`     | `GET /v1/employees/organization`                                                                                |
 | `useCreateDepartment()` | `POST /v1/employees/organization/departments` — `{ code, name, status }` (status lowercase `active`/`inactive`) |
-| `useUpdateDepartment()` | `PATCH /v1/employees/organization/departments/:id` — `{ status }` (lowercase) |
-| `useDeleteDepartment()` | `PATCH /v1/employees/organization/departments/:id` (`{ status: "inactive" }` — no DELETE route) |
-| `useCreatePosition()` | `POST /v1/employees/organization/positions` — `{ title, dept, grade, approved, filled }` (unverified) |
-| `useUpdatePosition()` | `PATCH /v1/employees/organization/positions/:id` |
+| `useUpdateDepartment()` | `PATCH /v1/employees/organization/departments/:id` — `{ status }` (lowercase)                                   |
+| `useDeleteDepartment()` | `PATCH /v1/employees/organization/departments/:id` (`{ status: "inactive" }` — no DELETE route)                 |
+| `useCreatePosition()`   | `POST /v1/employees/organization/positions` — `{ title, dept, grade, approved, filled }` (unverified)           |
+| `useUpdatePosition()`   | `PATCH /v1/employees/organization/positions/:id`                                                                |
 
 Notes:
 
@@ -124,15 +140,15 @@ Notes:
 The new-hire list comes from the working `GET /staffs` endpoint; the
 onboarding/probation details come from the employee onboarding endpoints:
 
-| Hook | Endpoint |
-| --- | --- |
-| `useOnboardingTasks(employeeId)` | `GET /employees/:id/onboarding/tasks` |
-| `useProbationReviews(employeeId)` | `GET /employees/:id/probation/reviews` |
-| `useStartOnboarding()` | `POST /employees/:id/onboarding/start` |
-| `useCompleteOnboardingTask()` | `PATCH /employees/onboarding/tasks/:taskId/complete` (`{ notes }`) |
-| `useReassignOnboardingTask()` | `PATCH /employees/onboarding/tasks/:taskId/assignment` (`{ assignedTo }`, UUID) |
-| `useCompleteProbationReview()` | `PATCH /employees/probation/reviews/:reviewId/complete` (`{ notes }`) |
-| `useDecideProbation()` | `POST /employees/:id/probation/decision` (`confirm` / `extend`) |
+| Hook                              | Endpoint                                                                        |
+| --------------------------------- | ------------------------------------------------------------------------------- |
+| `useOnboardingTasks(employeeId)`  | `GET /employees/:id/onboarding/tasks`                                           |
+| `useProbationReviews(employeeId)` | `GET /employees/:id/probation/reviews`                                          |
+| `useStartOnboarding()`            | `POST /employees/:id/onboarding/start`                                          |
+| `useCompleteOnboardingTask()`     | `PATCH /employees/onboarding/tasks/:taskId/complete` (`{ notes }`)              |
+| `useReassignOnboardingTask()`     | `PATCH /employees/onboarding/tasks/:taskId/assignment` (`{ assignedTo }`, UUID) |
+| `useCompleteProbationReview()`    | `PATCH /employees/probation/reviews/:reviewId/complete` (`{ notes }`)           |
+| `useDecideProbation()`            | `POST /employees/:id/probation/decision` (`confirm` / `extend`)                 |
 
 Notes:
 
@@ -148,14 +164,14 @@ Full probe results live in `pending_apis.md` (probed on 2026-11-19 with the
 
 ### 500s — employee endpoints
 
-| Method | Endpoint | Observed | Expected | Notes |
-| --- | --- | --- | --- | --- |
-| `GET` | `/v1/employees` | 500 | 200 + employee list | — |
-| `GET` | `/v1/employees/upcoming-milestones` | 500 | 200 + milestones list | No milestone data in the UI yet |
-| `GET` | `/v1/employees/:id/onboarding/tasks` | 500 | 200 + task list | Onboarding checklist shows an error state |
-| `GET` | `/v1/employees/:id/probation/reviews` | 500 | 200 + reviews list | Probation tracker cannot load reviews |
-| `POST` | `/v1/employees/:id/onboarding/start` | 500 | 201 + onboarding | Starting onboarding from the UI fails |
-| `PATCH` | `/v1/staffs/:id` | 500 | 404 unknown / 200 valid | Unverified |
+| Method  | Endpoint                              | Observed | Expected                | Notes                                     |
+| ------- | ------------------------------------- | -------- | ----------------------- | ----------------------------------------- |
+| `GET`   | `/v1/employees`                       | 500      | 200 + employee list     | —                                         |
+| `GET`   | `/v1/employees/upcoming-milestones`   | 500      | 200 + milestones list   | No milestone data in the UI yet           |
+| `GET`   | `/v1/employees/:id/onboarding/tasks`  | 500      | 200 + task list         | Onboarding checklist shows an error state |
+| `GET`   | `/v1/employees/:id/probation/reviews` | 500      | 200 + reviews list      | Probation tracker cannot load reviews     |
+| `POST`  | `/v1/employees/:id/onboarding/start`  | 500      | 201 + onboarding        | Starting onboarding from the UI fails     |
+| `PATCH` | `/v1/staffs/:id`                      | 500      | 404 unknown / 200 valid | Unverified                                |
 
 The nested employee endpoints also return 500 with a **real** staff ID — the
 staff record used for probing was created and deleted; the staffs table and
