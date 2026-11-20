@@ -296,7 +296,7 @@ function RouteComponent() {
                                   message.senderType ||
                                   "Support"}
                               </span>
-                              <span className="text-xs text-base-content/50">
+                              <span className=" text-base-content/50">
                                 {dateTime(message.createdAt)}
                               </span>
                             </div>
@@ -355,7 +355,7 @@ function RouteComponent() {
               >
                 <h2 className="font-semibold">Ticket details</h2>
                 <div>
-                  <p className="mb-1 text-xs font-medium text-base-content/60">
+                  <p className="mb-1  font-medium text-base-content/60">
                     Status
                   </p>
                   <select
@@ -375,7 +375,7 @@ function RouteComponent() {
                   </select>
                 </div>
                 <div>
-                  <p className="mb-1 text-xs font-medium text-base-content/60">
+                  <p className="mb-1  font-medium text-base-content/60">
                     Priority
                   </p>
                   <span
@@ -385,7 +385,7 @@ function RouteComponent() {
                   </span>
                 </div>
                 <div>
-                  <p className="mb-1 text-xs font-medium text-base-content/60">
+                  <p className="mb-1  font-medium text-base-content/60">
                     Module
                   </p>
                   <p className="text-sm">
@@ -395,7 +395,7 @@ function RouteComponent() {
                   </p>
                 </div>
                 <div>
-                  <p className="mb-1 text-xs font-medium text-base-content/60">
+                  <p className="mb-1  font-medium text-base-content/60">
                     Assigned to
                   </p>
                   <select
@@ -417,26 +417,26 @@ function RouteComponent() {
                     ))}
                   </select>
                   {staffsQuery.isError && (
-                    <p className="mt-1 text-xs text-error">
+                    <p className="mt-1  text-error">
                       Staff could not be loaded.
                     </p>
                   )}
                 </div>
                 <div>
-                  <p className="mb-1 text-xs font-medium text-base-content/60">
+                  <p className="mb-1  font-medium text-base-content/60">
                     Contact
                   </p>
                   <p className="text-sm font-medium">
                     {nameOf(ticket.contact)}
                   </p>
                   {ticket.contact?.email && (
-                    <p className="break-all text-xs text-base-content/60">
+                    <p className="break-all  text-base-content/60">
                       {ticket.contact.email}
                     </p>
                   )}
                 </div>
                 <div>
-                  <p className="mb-1 text-xs font-medium text-base-content/60">
+                  <p className="mb-1  font-medium text-base-content/60">
                     Last updated
                   </p>
                   <p className="text-sm">{dateTime(ticket.updatedAt)}</p>
@@ -451,13 +451,13 @@ function RouteComponent() {
                     </p>
                   ) : (
                     <form onSubmit={escalate} className="space-y-2">
-                      <p className="text-xs text-base-content/60">
+                      <p className=" text-base-content/60">
                         Share this ticket and its thread with platform support
                         when your team needs help.
                       </p>
                       <label
                         htmlFor="tenant-escalation-reason"
-                        className="text-xs font-medium"
+                        className=" font-medium"
                       >
                         Reason
                       </label>

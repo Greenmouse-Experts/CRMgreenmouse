@@ -6,7 +6,9 @@ import {
 } from "@tanstack/react-router";
 import { useForm, FormProvider } from "react-hook-form";
 import SimpleInput from "@/components/inputs/SimpleInput";
-import RichTextEditor, { sanitizeRichText } from "@/components/inputs/RichTextEditor";
+import RichTextEditor, {
+  sanitizeRichText,
+} from "@/components/inputs/RichTextEditor";
 import ActionButton from "@/components/buttons/ActionButton";
 import SimpleTitle from "@/components/SimpleTitle";
 import FormWrapper from "@/components/forms/FormWrapper";
@@ -242,7 +244,7 @@ function RouteComponent() {
                 <FormWrapper title="Invoice Line Items" className="space-y-4">
                   <div className="overflow-x-auto border border-base-200 rounded-lg">
                     <table className="table w-full">
-                      <thead className="bg-base-200/50 text-xs">
+                      <thead className="bg-base-200/50 ">
                         <tr>
                           <th className="w-1/2">Item Description</th>
                           <th className="text-center w-24">Qty</th>

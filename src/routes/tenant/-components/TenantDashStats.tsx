@@ -122,12 +122,12 @@ export default function TenantDashStats() {
                       <p className="text-base font-semibold tabular-nums text-base-content">
                         {card.value}
                       </p>
-                      <p className="text-xs font-semibold text-base-content/70">
+                      <p className=" font-semibold text-base-content/70">
                         {card.title}
                       </p>
                       {card.change != null && Number.isFinite(card.change) && (
                         <p
-                          className={`mt-1 text-xs font-semibold tabular-nums ${card.change === 0 ? "text-base-content/70" : (card.title === "Total Expenses" ? card.change < 0 : card.change > 0) ? "text-success" : "text-error"}`}
+                          className={`mt-1  font-semibold tabular-nums ${card.change === 0 ? "text-base-content/70" : (card.title === "Total Expenses" ? card.change < 0 : card.change > 0) ? "text-success" : "text-error"}`}
                         >
                           {card.change > 0 ? "+" : ""}
                           {card.change.toLocaleString("en-NG", {
@@ -138,7 +138,7 @@ export default function TenantDashStats() {
                       )}
                     </div>
                     <span
-                      className={`inline-flex items-center gap-1 text-xs font-medium ${card.accent} !bg-transparent`}
+                      className={`inline-flex items-center gap-1  font-medium ${card.accent} !bg-transparent`}
                     >
                       {card.linkLabel}
                       <ArrowRight className="!size-3" aria-hidden="true" />

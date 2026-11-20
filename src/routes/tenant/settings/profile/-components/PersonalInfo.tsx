@@ -54,10 +54,7 @@ export default function PersonalInfo({
             disabled
             aria-describedby="profile-email-help"
           />
-          <span
-            id="profile-email-help"
-            className="block text-xs text-base-content/70"
-          >
+          <span id="profile-email-help" className="block  text-base-content/70">
             Email is managed separately from profile details.
           </span>
         </label>

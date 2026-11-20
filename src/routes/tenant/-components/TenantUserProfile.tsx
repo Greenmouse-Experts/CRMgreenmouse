@@ -28,9 +28,7 @@ export default function TenantUserProfile() {
     <div className="flex items-center border-l pl-4 ml-2 border-current/30">
       <div className="mr-2 md:flex flex-col text-sm text-right hidden font-semibold">
         <span className="truncate max-w-[150px]">{displayName}</span>
-        <span className="text-base-content/70 text-xs capitalize">
-          {displayRole}
-        </span>
+        <span className="text-base-content/70  capitalize">{displayRole}</span>
       </div>
       <div className="dropdown dropdown-end">
         <div className="flex gap-2 items-center">
@@ -55,7 +53,7 @@ export default function TenantUserProfile() {
               <span className="text-sm font-semibold truncate">
                 {displayName}
               </span>
-              <span className="text-xs opacity-60 truncate">{email}</span>
+              <span className=" opacity-60 truncate">{email}</span>
             </div>
           </li>
           {!isStaff && (

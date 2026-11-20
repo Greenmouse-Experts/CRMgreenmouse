@@ -91,7 +91,7 @@ function RouteComponent() {
             <div className="font-semibold text-base-content leading-tight">
               {item.name}
             </div>
-            <div className="text-xs text-base-content/60">
+            <div className=" text-base-content/60">
               {item.industry || "General Industry"}
             </div>
           </div>
@@ -102,21 +102,21 @@ function RouteComponent() {
       key: "email",
       label: "Email",
       render: (value: string) => (
-        <span className="text-xs text-base-content/70">{value || "—"}</span>
+        <span className=" text-base-content/70">{value || "—"}</span>
       ),
     },
     {
       key: "workPhone",
       label: "Phone",
       render: (value: string) => (
-        <span className="text-xs text-base-content/70">{value || "—"}</span>
+        <span className=" text-base-content/70">{value || "—"}</span>
       ),
     },
     {
       key: "location",
       label: "Location",
       render: (_value: any, item: Company) => (
-        <span className="text-xs text-base-content/60">
+        <span className=" text-base-content/60">
           {[item.city, item.state, item.country].filter(Boolean).join(", ") ||
             "—"}
         </span>
@@ -131,12 +131,12 @@ function RouteComponent() {
             href={value.startsWith("http") ? value : `https://${value}`}
             target="_blank"
             rel="noreferrer"
-            className="text-xs text-primary hover:underline flex items-center gap-1"
+            className=" text-primary hover:underline flex items-center gap-1"
           >
             <Globe className="size-3" /> Visit
           </a>
         ) : (
-          <span className="text-xs text-base-content/40">—</span>
+          <span className=" text-base-content/40">—</span>
         ),
     },
   ];
@@ -229,7 +229,7 @@ function RouteComponent() {
                 <h3 className="text-lg font-semibold text-base-content">
                   {selectedCompany.name}
                 </h3>
-                <div className="flex items-center gap-2 text-xs text-base-content/60 mt-0.5">
+                <div className="flex items-center gap-2  text-base-content/60 mt-0.5">
                   <span className="badge badge-sm badge-outline">
                     {selectedCompany.industry || "General Industry"}
                   </span>
@@ -247,9 +247,7 @@ function RouteComponent() {
               <div className="bg-base-200/40 p-3 rounded-lg flex items-start gap-3">
                 <Mail className="size-4 text-primary mt-1 shrink-0" />
                 <div>
-                  <div className="text-xs text-base-content/60">
-                    Business Email
-                  </div>
+                  <div className=" text-base-content/60">Business Email</div>
                   <div className="text-sm font-medium text-base-content break-all">
                     {selectedCompany.email || "—"}
                   </div>
@@ -259,9 +257,7 @@ function RouteComponent() {
               <div className="bg-base-200/40 p-3 rounded-lg flex items-start gap-3">
                 <Phone className="size-4 text-primary mt-1 shrink-0" />
                 <div>
-                  <div className="text-xs text-base-content/60">
-                    Phone Number
-                  </div>
+                  <div className=" text-base-content/60">Phone Number</div>
                   <div className="text-sm font-medium text-base-content">
                     {selectedCompany.workPhone || "—"}
                   </div>
@@ -271,7 +267,7 @@ function RouteComponent() {
               <div className="bg-base-200/40 p-3 rounded-lg flex items-start gap-3">
                 <Globe className="size-4 text-primary mt-1 shrink-0" />
                 <div>
-                  <div className="text-xs text-base-content/60">Website</div>
+                  <div className=" text-base-content/60">Website</div>
                   <div className="text-sm font-medium text-base-content">
                     {selectedCompany.website ? (
                       <a
@@ -296,9 +292,7 @@ function RouteComponent() {
               <div className="bg-base-200/40 p-3 rounded-lg flex items-start gap-3">
                 <MapPin className="size-4 text-primary mt-1 shrink-0" />
                 <div>
-                  <div className="text-xs text-base-content/60">
-                    Headquarters
-                  </div>
+                  <div className=" text-base-content/60">Headquarters</div>
                   <div className="text-sm font-medium text-base-content">
                     {[
                       selectedCompany.addressLine1,
@@ -314,7 +308,7 @@ function RouteComponent() {
             </div>
 
             {selectedCompany.federalIdNumber && (
-              <div className="bg-base-200/30 p-3 rounded-lg text-xs">
+              <div className="bg-base-200/30 p-3 rounded-lg ">
                 <span className="font-semibold text-base-content/70">
                   Federal Tax ID:{" "}
                 </span>

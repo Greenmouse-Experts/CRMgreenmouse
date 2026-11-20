@@ -179,7 +179,7 @@ function RouteComponent() {
             <div className="font-semibold text-base-content leading-tight">
               {item.name}
             </div>
-            <div className="text-xs text-base-content/60 max-w-sm truncate">
+            <div className=" text-base-content/60 max-w-sm truncate">
               {item.description || "No description provided"}
             </div>
           </div>
@@ -198,7 +198,7 @@ function RouteComponent() {
               </span>
             ))
           ) : (
-            <span className="text-xs text-base-content/40">No permissions</span>
+            <span className=" text-base-content/40">No permissions</span>
           )}
           {permissions && permissions.length > 4 && (
             <span className="badge badge-xs badge-primary badge-soft">
@@ -212,7 +212,7 @@ function RouteComponent() {
       key: "createdAt",
       label: "Created",
       render: (value: string) => (
-        <span className="text-xs text-base-content/60">
+        <span className=" text-base-content/60">
           {value ? new Date(value).toLocaleDateString() : "—"}
         </span>
       ),
@@ -353,7 +353,7 @@ function RouteComponent() {
                 >
                   Assigned permissions
                 </h4>
-                <p className="mt-0.5 text-xs text-base-content/70">
+                <p className="mt-0.5  text-base-content/70">
                   Choose what people with this role can access.
                 </p>
               </div>
@@ -448,17 +448,17 @@ function RouteComponent() {
                         >
                           <div className="sticky top-0 z-10 flex items-center justify-between gap-3 bg-base-200 px-4 py-2">
                             <div className="flex min-w-0 items-center gap-2">
-                              <h5 className="truncate text-xs font-semibold text-base-content">
+                              <h5 className="truncate  font-semibold text-base-content">
                                 {category}
                               </h5>
-                              <span className="text-xs tabular-nums text-base-content/70">
+                              <span className=" tabular-nums text-base-content/70">
                                 {selectedInCategory}/{items.length}
                               </span>
                             </div>
                             <button
                               type="button"
                               onClick={() => handleToggleCategory(categoryKeys)}
-                              className="rounded px-1 py-0.5 text-xs font-medium text-primary hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                              className="rounded px-1 py-0.5  font-medium text-primary hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
                             >
                               {allCatSelected ? "Clear group" : "Select group"}
                             </button>
@@ -494,7 +494,7 @@ function RouteComponent() {
                                       </span>
                                     )}
                                     {perm.description && (
-                                      <span className="mt-0.5 block text-xs leading-5 text-base-content/70">
+                                      <span className="mt-0.5 block  leading-5 text-base-content/70">
                                         {perm.description}
                                       </span>
                                     )}
@@ -510,7 +510,7 @@ function RouteComponent() {
                 )}
               </div>
               {permissionsQuery.data && filteredPermissions.length > 0 && (
-                <div className="border-t border-base-300 bg-base-200/50 px-4 py-2 text-xs tabular-nums text-base-content/70">
+                <div className="border-t border-base-300 bg-base-200/50 px-4 py-2  tabular-nums text-base-content/70">
                   {permissionFilter
                     ? `${selectedVisibleCount} of ${filteredPermissions.length} matches selected`
                     : `${selectedPermissions.length} of ${permissionsQuery.data.length} permissions selected`}

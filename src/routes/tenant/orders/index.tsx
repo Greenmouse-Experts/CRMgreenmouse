@@ -56,16 +56,18 @@ const defaultValues: OrderFormValues = {
 const emptyItem = (): OrderItem => ({ productId: "", qty: 1, unitPrice: 0 });
 
 const errorMessage = (error: unknown, fallback: string) => {
-  const message = (error as { response?: { data?: { message?: string | string[] } } })
-    ?.response?.data?.message;
+  const message = (
+    error as { response?: { data?: { message?: string | string[] } } }
+  )?.response?.data?.message;
   return (Array.isArray(message) ? message.join(". ") : message) || fallback;
 };
 
 const formatMoney = (value: number, currency: string) => {
   try {
-    return new Intl.NumberFormat(undefined, { style: "currency", currency }).format(
-      Number(value) || 0,
-    );
+    return new Intl.NumberFormat(undefined, {
+      style: "currency",
+      currency,
+    }).format(Number(value) || 0);
   } catch {
     return `${currency} ${(Number(value) || 0).toFixed(2)}`;
   }
@@ -73,16 +75,17 @@ const formatMoney = (value: number, currency: string) => {
 
 const statusBadge = (status?: string) => {
   const value = status?.toLowerCase() || "pending";
-  const color =
-    ["completed", "delivered"].includes(value)
-      ? "badge-success"
-      : value === "cancelled"
-        ? "badge-error"
-        : value === "processing" || value === "shipped"
-          ? "badge-warning"
-          : "badge-info";
+  const color = ["completed", "delivered"].includes(value)
+    ? "badge-success"
+    : value === "cancelled"
+      ? "badge-error"
+      : value === "processing" || value === "shipped"
+        ? "badge-warning"
+        : "badge-info";
   return (
-    <span className={`badge badge-sm badge-soft font-medium capitalize ${color}`}>
+    <span
+      className={`badge badge-sm badge-soft font-medium capitalize ${color}`}
+    >
       {value}
     </span>
   );
@@ -111,13 +114,15 @@ function RouteComponent() {
   const discount = Number(methods.watch("discount")) || 0;
   const tax = Number(methods.watch("tax")) || 0;
   const subtotal = items.reduce(
-    (sum, item) => sum + (Number(item.qty) || 0) * (Number(item.unitPrice) || 0),
+    (sum, item) =>
+      sum + (Number(item.qty) || 0) * (Number(item.unitPrice) || 0),
     0,
   );
   const total = Math.max(0, subtotal - discount + tax);
 
   const customerName = (order: Order) => {
-    const contact = order.contact || contacts.find((item) => item.id === order.contactId);
+    const contact =
+      order.contact || contacts.find((item) => item.id === order.contactId);
     if (!contact) return "Unassigned";
     return `${contact.firstName} ${contact.lastName}`.trim() || "Unassigned";
   };
@@ -177,13 +182,21 @@ function RouteComponent() {
     setItems((current) =>
       current.map((item, itemIndex) =>
         itemIndex === index
-          ? { ...item, productId, unitPrice: product ? Number(product.price) || 0 : 0 }
+          ? {
+              ...item,
+              productId,
+              unitPrice: product ? Number(product.price) || 0 : 0,
+            }
           : item,
       ),
     );
   };
 
-  const changeItemNumber = (index: number, field: "qty" | "unitPrice", value: number) => {
+  const changeItemNumber = (
+    index: number,
+    field: "qty" | "unitPrice",
+    value: number,
+  ) => {
     setItems((current) =>
       current.map((item, itemIndex) =>
         itemIndex === index ? { ...item, [field]: value } : item,
@@ -203,7 +216,9 @@ function RouteComponent() {
           Number(item.unitPrice) < 0,
       )
     ) {
-      toast.error("Choose a product and enter a valid quantity and price for each item.");
+      toast.error(
+        "Choose a product and enter a valid quantity and price for each item.",
+      );
       return;
     }
 
@@ -233,12 +248,15 @@ function RouteComponent() {
       formModalRef.current?.close();
       setEditingOrder(null);
     } catch (error) {
-      toast.error(errorMessage(error, "Failed to save order. Please try again."));
+      toast.error(
+        errorMessage(error, "Failed to save order. Please try again."),
+      );
     }
   };
 
   const handleDelete = async (order: Order) => {
-    if (!window.confirm(`Delete order ${order.orderNumber || order.id}?`)) return;
+    if (!window.confirm(`Delete order ${order.orderNumber || order.id}?`))
+      return;
     try {
       await deleteOrder.mutateAsync(order.id);
       toast.success("Order deleted.");
@@ -262,7 +280,9 @@ function RouteComponent() {
       key: "contactId",
       label: "Customer",
       render: (_value: string, order: Order) => (
-        <span className="font-medium text-base-content">{customerName(order)}</span>
+        <span className="font-medium text-base-content">
+          {customerName(order)}
+        </span>
       ),
     },
     {
@@ -288,7 +308,9 @@ function RouteComponent() {
       key: "paymentStatus",
       label: "Payment",
       render: (value: string) => (
-        <span className="text-sm capitalize text-base-content/70">{value || "Unpaid"}</span>
+        <span className="text-sm capitalize text-base-content/70">
+          {value || "Unpaid"}
+        </span>
       ),
     },
     {
@@ -307,7 +329,9 @@ function RouteComponent() {
     {
       key: "delete",
       label: "Delete Order",
-      render: () => <span className="font-medium text-error">Delete Order</span>,
+      render: () => (
+        <span className="font-medium text-error">Delete Order</span>
+      ),
       action: handleDelete,
     },
   ];
@@ -317,19 +341,33 @@ function RouteComponent() {
 
   return (
     <div className="space-y-4 pb-12">
-      <PageHeader title="Orders" description="Track customer orders, fulfillment, and payment status.">
-        <button type="button" onClick={openCreate} className="btn btn-primary btn-sm">
+      <PageHeader
+        title="Orders"
+        description="Track customer orders, fulfillment, and payment status."
+      >
+        <button
+          type="button"
+          onClick={openCreate}
+          className="btn btn-primary btn-sm"
+        >
           <Plus className="size-4" /> Create Order
         </button>
       </PageHeader>
 
-      <SimpleContainer title={<>Order Management {ordersQuery.data && `(${orders.length})`}</>}>
-        <ContainerRow searchProps={searchProps} showSearch searchPlaceholder="Search orders..." />
+      <SimpleContainer
+        title={<>Order Management {ordersQuery.data && `(${orders.length})`}</>}
+      >
+        <ContainerRow
+          searchProps={searchProps}
+          showSearch
+          searchPlaceholder="Search orders..."
+        />
         <PageLoader
           query={ordersQuery}
           emptyState={{
             title: "No Orders Yet",
-            description: "Create an order to start tracking purchases and fulfillment.",
+            description:
+              "Create an order to start tracking purchases and fulfillment.",
             actionText: "Create Order",
             onAction: openCreate,
           }}
@@ -338,7 +376,12 @@ function RouteComponent() {
             filteredOrders.length ? (
               <>
                 <div className="hidden lg:block">
-                  <CustomTable ring={false} data={filteredOrders} columns={columns} actions={actions} />
+                  <CustomTable
+                    ring={false}
+                    data={filteredOrders}
+                    columns={columns}
+                    actions={actions}
+                  />
                 </div>
                 <div className="divide-y divide-base-200 rounded-b-box border border-base-200 bg-base-100 lg:hidden">
                   {filteredOrders.map((order) => (
@@ -348,20 +391,29 @@ function RouteComponent() {
                           <p className="truncate font-mono text-sm font-semibold text-base-content">
                             {order.orderNumber || `#${order.id.slice(0, 8)}`}
                           </p>
-                          <p className="mt-1 truncate text-sm text-base-content/70">{customerName(order)}</p>
+                          <p className="mt-1 truncate text-sm text-base-content/70">
+                            {customerName(order)}
+                          </p>
                         </div>
                         <span className="max-w-[55%] break-all text-right text-sm font-semibold tabular-nums">
-                          {formatMoney(Number(order.total) || 0, order.currency || "NGN")}
+                          {formatMoney(
+                            Number(order.total) || 0,
+                            order.currency || "NGN",
+                          )}
                         </span>
                       </div>
                       <div className="flex items-center justify-between gap-3">
                         <div className="flex flex-wrap items-center gap-2">
                           {statusBadge(order.status)}
-                          <span className="text-xs text-base-content/70">
+                          <span className=" text-base-content/70">
                             {order.items?.length ?? 0} items
                           </span>
                         </div>
-                        <button type="button" onClick={() => openDetails(order)} className="btn btn-sm btn-ghost text-primary">
+                        <button
+                          type="button"
+                          onClick={() => openDetails(order)}
+                          className="btn btn-sm btn-ghost text-primary"
+                        >
                           View details
                         </button>
                       </div>
@@ -378,7 +430,10 @@ function RouteComponent() {
         </PageLoader>
       </SimpleContainer>
 
-      <Modal ref={formModalRef} title={editingOrder ? "Edit Order" : "Create Order"}>
+      <Modal
+        ref={formModalRef}
+        title={editingOrder ? "Edit Order" : "Create Order"}
+      >
         <FormProvider {...methods}>
           <form onSubmit={methods.handleSubmit(onSubmit)} className="space-y-5">
             <div className="grid gap-4 sm:grid-cols-2">
@@ -398,41 +453,76 @@ function RouteComponent() {
               </LocalSelect>
             </div>
             {contactsQuery.isError && (
-              <p className="text-sm text-error">Customers could not be loaded. You can still create an unassigned order.</p>
+              <p className="text-sm text-error">
+                Customers could not be loaded. You can still create an
+                unassigned order.
+              </p>
             )}
 
             <div className="space-y-3 border-t border-base-200 pt-4">
               <div className="flex items-center justify-between gap-3">
                 <div>
                   <h4 className="text-sm font-semibold">Order items</h4>
-                  <p className="text-xs text-base-content/70">Choose products and adjust quantities or prices.</p>
+                  <p className=" text-base-content/70">
+                    Choose products and adjust quantities or prices.
+                  </p>
                 </div>
-                <button type="button" className="btn btn-sm btn-ghost text-primary" onClick={() => setItems((current) => [...current, emptyItem()])}>
+                <button
+                  type="button"
+                  className="btn btn-sm btn-ghost text-primary"
+                  onClick={() =>
+                    setItems((current) => [...current, emptyItem()])
+                  }
+                >
                   <Plus className="size-4" /> Add item
                 </button>
               </div>
               {productsQuery.isLoading ? (
-                <p className="py-4 text-sm text-base-content/70">Loading products...</p>
+                <p className="py-4 text-sm text-base-content/70">
+                  Loading products...
+                </p>
               ) : productsQuery.isError ? (
                 <div className="flex items-center justify-between gap-3 rounded-lg bg-error/10 p-3 text-sm text-error">
                   <span>Products could not be loaded.</span>
-                  <button type="button" className="btn btn-sm btn-outline" onClick={() => productsQuery.refetch()}>Try again</button>
+                  <button
+                    type="button"
+                    className="btn btn-sm btn-outline"
+                    onClick={() => productsQuery.refetch()}
+                  >
+                    Try again
+                  </button>
                 </div>
               ) : products.length === 0 ? (
                 <p className="rounded-lg bg-base-200 p-3 text-sm text-base-content/70">
-                  Add a product before creating an order. <Link to="/tenant/products" className="font-medium text-primary underline">View products</Link>
+                  Add a product before creating an order.{" "}
+                  <Link
+                    to="/tenant/products"
+                    className="font-medium text-primary underline"
+                  >
+                    View products
+                  </Link>
                 </p>
               ) : (
                 <div className="space-y-2">
                   {items.map((item, index) => (
-                    <div key={index} className="rounded-lg border border-base-200 bg-base-200/30 p-3">
+                    <div
+                      key={index}
+                      className="rounded-lg border border-base-200 bg-base-200/30 p-3"
+                    >
                       <div className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_5rem_10rem_auto] sm:items-end">
                         <div>
-                          <label className="mb-1 block text-xs font-medium" htmlFor={`order-product-${index}`}>Product</label>
+                          <label
+                            className="mb-1 block  font-medium"
+                            htmlFor={`order-product-${index}`}
+                          >
+                            Product
+                          </label>
                           <select
                             id={`order-product-${index}`}
                             value={item.productId}
-                            onChange={(event) => changeProduct(index, event.target.value)}
+                            onChange={(event) =>
+                              changeProduct(index, event.target.value)
+                            }
                             className="select select-sm select-bordered w-full"
                             required
                           >
@@ -445,14 +535,25 @@ function RouteComponent() {
                           </select>
                         </div>
                         <div>
-                          <label className="mb-1 block text-xs font-medium" htmlFor={`order-qty-${index}`}>Qty</label>
+                          <label
+                            className="mb-1 block  font-medium"
+                            htmlFor={`order-qty-${index}`}
+                          >
+                            Qty
+                          </label>
                           <input
                             id={`order-qty-${index}`}
                             type="number"
                             min="1"
                             step="1"
                             value={item.qty}
-                            onChange={(event) => changeItemNumber(index, "qty", Number(event.target.value))}
+                            onChange={(event) =>
+                              changeItemNumber(
+                                index,
+                                "qty",
+                                Number(event.target.value),
+                              )
+                            }
                             className="input input-sm input-bordered w-full"
                             required
                           />
@@ -460,7 +561,9 @@ function RouteComponent() {
                         <MoneyInput
                           label={`Unit price (${currency})`}
                           value={item.unitPrice}
-                          onChange={(value) => changeItemNumber(index, "unitPrice", value ?? 0)}
+                          onChange={(value) =>
+                            changeItemNumber(index, "unitPrice", value ?? 0)
+                          }
                           className="input input-sm input-bordered w-full mt-1"
                           required
                         />
@@ -469,14 +572,25 @@ function RouteComponent() {
                           aria-label={`Remove item ${index + 1}`}
                           title="Remove item"
                           disabled={items.length === 1}
-                          onClick={() => setItems((current) => current.filter((_, itemIndex) => itemIndex !== index))}
+                          onClick={() =>
+                            setItems((current) =>
+                              current.filter(
+                                (_, itemIndex) => itemIndex !== index,
+                              ),
+                            )
+                          }
                           className="btn btn-sm btn-ghost justify-self-end text-error"
                         >
                           <Trash2 className="size-4" />
                         </button>
                       </div>
-                      <p className="mt-2 text-right text-xs font-medium tabular-nums text-base-content/70">
-                        Line total: {formatMoney((Number(item.qty) || 0) * (Number(item.unitPrice) || 0), currency)}
+                      <p className="mt-2 text-right  font-medium tabular-nums text-base-content/70">
+                        Line total:{" "}
+                        {formatMoney(
+                          (Number(item.qty) || 0) *
+                            (Number(item.unitPrice) || 0),
+                          currency,
+                        )}
                       </p>
                     </div>
                   ))}
@@ -507,7 +621,10 @@ function RouteComponent() {
                 <option value="completed">Completed</option>
                 <option value="cancelled">Cancelled</option>
               </LocalSelect>
-              <LocalSelect label="Payment status" {...methods.register("paymentStatus")}>
+              <LocalSelect
+                label="Payment status"
+                {...methods.register("paymentStatus")}
+              >
                 <option value="unpaid">Unpaid</option>
                 <option value="partial">Partially paid</option>
                 <option value="paid">Paid</option>
@@ -517,19 +634,54 @@ function RouteComponent() {
               name="notes"
               control={methods.control}
               render={({ field }) => (
-                <RichTextEditor label="Notes" value={field.value} onChange={field.onChange} />
+                <RichTextEditor
+                  label="Notes"
+                  value={field.value}
+                  onChange={field.onChange}
+                />
               )}
             />
             <div className="rounded-lg bg-base-200/60 p-3 text-sm tabular-nums">
-              <div className="flex justify-between text-base-content/70"><span>Subtotal</span><span>{formatMoney(subtotal, currency)}</span></div>
-              <div className="mt-1 flex justify-between text-base-content/70"><span>Discount</span><span>−{formatMoney(discount, currency)}</span></div>
-              <div className="mt-1 flex justify-between text-base-content/70"><span>Tax</span><span>+{formatMoney(tax, currency)}</span></div>
-              <div className="mt-2 flex justify-between border-t border-base-300 pt-2 font-semibold"><span>Total</span><span>{formatMoney(total, currency)}</span></div>
+              <div className="flex justify-between text-base-content/70">
+                <span>Subtotal</span>
+                <span>{formatMoney(subtotal, currency)}</span>
+              </div>
+              <div className="mt-1 flex justify-between text-base-content/70">
+                <span>Discount</span>
+                <span>−{formatMoney(discount, currency)}</span>
+              </div>
+              <div className="mt-1 flex justify-between text-base-content/70">
+                <span>Tax</span>
+                <span>+{formatMoney(tax, currency)}</span>
+              </div>
+              <div className="mt-2 flex justify-between border-t border-base-300 pt-2 font-semibold">
+                <span>Total</span>
+                <span>{formatMoney(total, currency)}</span>
+              </div>
             </div>
             <div className="flex justify-end gap-2 border-t border-base-200 pt-4">
-              <button type="button" className="btn btn-sm btn-ghost" onClick={() => formModalRef.current?.close()}>Cancel</button>
-              <button type="submit" className="btn btn-sm btn-primary" disabled={isSaving || productsQuery.isLoading || productsQuery.isError || products.length === 0}>
-                {isSaving ? "Saving..." : editingOrder ? "Save Changes" : "Create Order"}
+              <button
+                type="button"
+                className="btn btn-sm btn-ghost"
+                onClick={() => formModalRef.current?.close()}
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                className="btn btn-sm btn-primary"
+                disabled={
+                  isSaving ||
+                  productsQuery.isLoading ||
+                  productsQuery.isError ||
+                  products.length === 0
+                }
+              >
+                {isSaving
+                  ? "Saving..."
+                  : editingOrder
+                    ? "Save Changes"
+                    : "Create Order"}
               </button>
             </div>
           </form>
@@ -538,37 +690,88 @@ function RouteComponent() {
 
       <Modal ref={detailsModalRef} title="Order Details">
         {detailsQuery.isLoading ? (
-          <div className="py-8 text-center text-sm text-base-content/70">Loading order details...</div>
+          <div className="py-8 text-center text-sm text-base-content/70">
+            Loading order details...
+          </div>
         ) : detailsQuery.isError ? (
           <div className="flex flex-col items-center gap-3 py-8 text-center text-sm">
             <span>Order details could not be loaded.</span>
-            <button type="button" className="btn btn-sm btn-outline" onClick={() => detailsQuery.refetch()}>Try again</button>
+            <button
+              type="button"
+              className="btn btn-sm btn-outline"
+              onClick={() => detailsQuery.refetch()}
+            >
+              Try again
+            </button>
           </div>
         ) : selectedOrder ? (
           <div className="space-y-4">
             <div className="flex flex-wrap items-start justify-between gap-3">
               <div>
-                <p className="font-mono text-sm font-semibold">{selectedOrder.orderNumber || selectedOrder.id}</p>
-                <p className="mt-1 text-sm text-base-content/70">{customerName(selectedOrder)}</p>
+                <p className="font-mono text-sm font-semibold">
+                  {selectedOrder.orderNumber || selectedOrder.id}
+                </p>
+                <p className="mt-1 text-sm text-base-content/70">
+                  {customerName(selectedOrder)}
+                </p>
               </div>
               {statusBadge(selectedOrder.status)}
             </div>
             <div className="grid gap-3 text-sm sm:grid-cols-2">
-              <div className="rounded-lg bg-base-200/50 p-3"><p className="text-xs text-base-content/70">Payment</p><p className="mt-1 font-medium capitalize">{selectedOrder.paymentStatus || "Unpaid"}</p></div>
-              <div className="rounded-lg bg-base-200/50 p-3"><p className="text-xs text-base-content/70">Created</p><p className="mt-1 font-medium">{selectedOrder.createdAt ? new Date(selectedOrder.createdAt).toLocaleString() : "—"}</p></div>
+              <div className="rounded-lg bg-base-200/50 p-3">
+                <p className=" text-base-content/70">Payment</p>
+                <p className="mt-1 font-medium capitalize">
+                  {selectedOrder.paymentStatus || "Unpaid"}
+                </p>
+              </div>
+              <div className="rounded-lg bg-base-200/50 p-3">
+                <p className=" text-base-content/70">Created</p>
+                <p className="mt-1 font-medium">
+                  {selectedOrder.createdAt
+                    ? new Date(selectedOrder.createdAt).toLocaleString()
+                    : "—"}
+                </p>
+              </div>
             </div>
             <div>
               <h4 className="mb-2 text-sm font-semibold">Items</h4>
               <div className="divide-y divide-base-200 rounded-lg border border-base-200">
-                {selectedOrder.items?.length ? selectedOrder.items.map((item, index) => {
-                  const product = item.product || products.find((entry) => entry.id === item.productId);
-                  return (
-                    <div key={`${item.productId}-${index}`} className="flex items-start justify-between gap-3 p-3 text-sm">
-                      <div className="min-w-0"><p className="font-medium">{product?.name || "Product"}</p><p className="text-xs text-base-content/70">{item.qty} × {formatMoney(item.unitPrice, selectedOrder.currency || "NGN")}</p></div>
-                      <span className="shrink-0 font-medium tabular-nums">{formatMoney(item.qty * item.unitPrice, selectedOrder.currency || "NGN")}</span>
-                    </div>
-                  );
-                }) : <p className="p-3 text-sm text-base-content/70">No item details available.</p>}
+                {selectedOrder.items?.length ? (
+                  selectedOrder.items.map((item, index) => {
+                    const product =
+                      item.product ||
+                      products.find((entry) => entry.id === item.productId);
+                    return (
+                      <div
+                        key={`${item.productId}-${index}`}
+                        className="flex items-start justify-between gap-3 p-3 text-sm"
+                      >
+                        <div className="min-w-0">
+                          <p className="font-medium">
+                            {product?.name || "Product"}
+                          </p>
+                          <p className=" text-base-content/70">
+                            {item.qty} ×{" "}
+                            {formatMoney(
+                              item.unitPrice,
+                              selectedOrder.currency || "NGN",
+                            )}
+                          </p>
+                        </div>
+                        <span className="shrink-0 font-medium tabular-nums">
+                          {formatMoney(
+                            item.qty * item.unitPrice,
+                            selectedOrder.currency || "NGN",
+                          )}
+                        </span>
+                      </div>
+                    );
+                  })
+                ) : (
+                  <p className="p-3 text-sm text-base-content/70">
+                    No item details available.
+                  </p>
+                )}
               </div>
             </div>
             {selectedOrder.notes && (
@@ -577,10 +780,27 @@ function RouteComponent() {
               </div>
             )}
             <div className="flex items-center justify-between border-t border-base-200 pt-4">
-              <span className="font-semibold tabular-nums">{formatMoney(selectedOrder.total || 0, selectedOrder.currency || "NGN")}</span>
+              <span className="font-semibold tabular-nums">
+                {formatMoney(
+                  selectedOrder.total || 0,
+                  selectedOrder.currency || "NGN",
+                )}
+              </span>
               <div className="flex gap-2">
-                <button type="button" className="btn btn-sm btn-ghost" onClick={() => detailsModalRef.current?.close()}>Close</button>
-                <button type="button" className="btn btn-sm btn-primary" onClick={() => openEdit(selectedOrder)}>Edit Order</button>
+                <button
+                  type="button"
+                  className="btn btn-sm btn-ghost"
+                  onClick={() => detailsModalRef.current?.close()}
+                >
+                  Close
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-sm btn-primary"
+                  onClick={() => openEdit(selectedOrder)}
+                >
+                  Edit Order
+                </button>
               </div>
             </div>
           </div>

@@ -15,7 +15,10 @@ import {
   type ExpensesReport,
   type RevenueReport,
 } from "@/api/reportsApi";
-import { useDashboardIncomeExpense, type DashboardIncomeExpense } from "@/api/tenantApi";
+import {
+  useDashboardIncomeExpense,
+  type DashboardIncomeExpense,
+} from "@/api/tenantApi";
 import QueryCompLayout from "@/components/layout/QueryCompLayout";
 
 const money = (value: number) =>
@@ -52,7 +55,7 @@ function ChartCard({
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
           <h2 className="text-base font-semibold text-base-content">{title}</h2>
-          <p className="mt-0.5 text-xs text-base-content/60">{description}</p>
+          <p className="mt-0.5  text-base-content/60">{description}</p>
         </div>
         {controls}
       </div>
@@ -245,7 +248,7 @@ export default function TenantMonthly() {
         description={`Income and expenses in ${year}`}
         controls={
           <div className="flex items-center gap-3">
-            <span className="hidden items-center gap-1.5 text-xs text-base-content/70 sm:inline-flex">
+            <span className="hidden items-center gap-1.5  text-base-content/70 sm:inline-flex">
               <span className="size-2 rounded-full bg-primary" /> Income
               <span className="ml-2 size-2 rounded-full bg-error" /> Expenses
             </span>

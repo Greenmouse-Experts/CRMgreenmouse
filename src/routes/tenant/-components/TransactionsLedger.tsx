@@ -6,7 +6,12 @@ import type { Actions } from "@/components/tables/pop-up";
 import Modal, { type ModalHandle } from "@/components/DialogModal";
 import PageLoader from "@/components/layout/PageLoader";
 import { useTransactions, type Transaction } from "@/api/financeApi";
-import { ArrowUpRight, ArrowDownLeft, Activity, CreditCard } from "lucide-react";
+import {
+  ArrowUpRight,
+  ArrowDownLeft,
+  Activity,
+  CreditCard,
+} from "lucide-react";
 
 interface TransactionsLedgerProps {
   title?: string;
@@ -81,13 +86,15 @@ function MetricCard({
     <div className="min-w-0 rounded-xl border border-base-200 bg-base-100 p-4">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
-          <p className="text-xs font-medium text-base-content/70">{label}</p>
+          <p className=" font-medium text-base-content/70">{label}</p>
           <p className="mt-2 break-words text-xl font-semibold tabular-nums text-base-content">
             {value}
           </p>
-          {detail && <p className="mt-1 text-xs text-base-content/60">{detail}</p>}
+          {detail && <p className="mt-1  text-base-content/60">{detail}</p>}
         </div>
-        <div className={`flex size-9 shrink-0 items-center justify-center rounded-lg ${tone}`}>
+        <div
+          className={`flex size-9 shrink-0 items-center justify-center rounded-lg ${tone}`}
+        >
           {icon}
         </div>
       </div>
@@ -150,7 +157,8 @@ export default function TransactionsLedger({
   }, [transactionsList, search, typeFilter, statusFilter]);
 
   const displayedList = limit ? filtered.slice(0, limit) : filtered;
-  const hasFilters = !!search.trim() || typeFilter !== "all" || statusFilter !== "all";
+  const hasFilters =
+    !!search.trim() || typeFilter !== "all" || statusFilter !== "all";
   const openDetails = (tx: Transaction) => {
     setSelectedTx(tx);
     detailsModalRef.current?.open();
@@ -178,8 +186,14 @@ export default function TransactionsLedger({
         const inflow = signedAmount(tx) >= 0;
         return (
           <div className="flex items-center gap-2">
-            <span className={`flex size-8 shrink-0 items-center justify-center rounded-lg ${inflow ? "bg-success/10 text-success" : "bg-error/10 text-error"}`}>
-              {inflow ? <ArrowDownLeft className="size-4" /> : <ArrowUpRight className="size-4" />}
+            <span
+              className={`flex size-8 shrink-0 items-center justify-center rounded-lg ${inflow ? "bg-success/10 text-success" : "bg-error/10 text-error"}`}
+            >
+              {inflow ? (
+                <ArrowDownLeft className="size-4" />
+              ) : (
+                <ArrowUpRight className="size-4" />
+              )}
             </span>
             <span className="whitespace-nowrap text-sm font-medium text-base-content">
               {value || (inflow ? "Inflow" : "Outflow")}
@@ -193,10 +207,15 @@ export default function TransactionsLedger({
       label: "Description",
       render: (value: string, tx: Transaction) => (
         <div className="min-w-0">
-          <p className="truncate text-sm font-medium text-base-content" title={value || ""}>
+          <p
+            className="truncate text-sm font-medium text-base-content"
+            title={value || ""}
+          >
             {value || "Transaction"}
           </p>
-          {tx.category && <p className="truncate text-xs text-base-content/60">{tx.category}</p>}
+          {tx.category && (
+            <p className="truncate  text-base-content/60">{tx.category}</p>
+          )}
         </div>
       ),
     },
@@ -204,7 +223,9 @@ export default function TransactionsLedger({
       key: "status",
       label: "Status",
       render: (value: string) => (
-        <span className={`badge badge-sm badge-soft font-medium capitalize ${statusClass(value)}`}>
+        <span
+          className={`badge badge-sm badge-soft font-medium capitalize ${statusClass(value)}`}
+        >
           {value || "Unknown"}
         </span>
       ),
@@ -215,8 +236,11 @@ export default function TransactionsLedger({
       render: (_value: number, tx: Transaction) => {
         const amount = signedAmount(tx);
         return (
-          <span className={`whitespace-nowrap text-sm font-semibold tabular-nums ${amount >= 0 ? "text-success" : "text-error"}`}>
-            {amount >= 0 ? "+" : "−"}{formatAmount(amount)}
+          <span
+            className={`whitespace-nowrap text-sm font-semibold tabular-nums ${amount >= 0 ? "text-success" : "text-error"}`}
+          >
+            {amount >= 0 ? "+" : "−"}
+            {formatAmount(amount)}
           </span>
         );
       },
@@ -231,10 +255,32 @@ export default function TransactionsLedger({
     <div className="space-y-5">
       {showHeaderMetrics && (
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
-          <MetricCard label="Total records" value={String(transactionsList.length)} icon={<Activity className="size-5" />} />
-          <MetricCard label="Total inflow" value={`+${formatAmount(totals.inflow)}`} detail="Completed transactions" icon={<ArrowDownLeft className="size-5" />} tone="bg-success/10 text-success" />
-          <MetricCard label="Total outflow" value={`−${formatAmount(totals.outflow)}`} detail="Completed transactions" icon={<ArrowUpRight className="size-5" />} tone="bg-error/10 text-error" />
-          <MetricCard label="Net cashflow" value={`${totals.inflow - totals.outflow >= 0 ? "+" : "−"}${formatAmount(totals.inflow - totals.outflow)}`} detail="Completed transactions" icon={<CreditCard className="size-5" />} tone="bg-primary/10 text-primary" />
+          <MetricCard
+            label="Total records"
+            value={String(transactionsList.length)}
+            icon={<Activity className="size-5" />}
+          />
+          <MetricCard
+            label="Total inflow"
+            value={`+${formatAmount(totals.inflow)}`}
+            detail="Completed transactions"
+            icon={<ArrowDownLeft className="size-5" />}
+            tone="bg-success/10 text-success"
+          />
+          <MetricCard
+            label="Total outflow"
+            value={`−${formatAmount(totals.outflow)}`}
+            detail="Completed transactions"
+            icon={<ArrowUpRight className="size-5" />}
+            tone="bg-error/10 text-error"
+          />
+          <MetricCard
+            label="Net cashflow"
+            value={`${totals.inflow - totals.outflow >= 0 ? "+" : "−"}${formatAmount(totals.inflow - totals.outflow)}`}
+            detail="Completed transactions"
+            icon={<CreditCard className="size-5" />}
+            tone="bg-primary/10 text-primary"
+          />
         </div>
       )}
 
@@ -280,7 +326,11 @@ export default function TransactionsLedger({
               <option value="failed">Failed</option>
             </select>
             {hasFilters && (
-              <button type="button" className="btn btn-sm btn-ghost" onClick={clearFilters}>
+              <button
+                type="button"
+                className="btn btn-sm btn-ghost"
+                onClick={clearFilters}
+              >
                 Clear filters
               </button>
             )}
@@ -291,21 +341,33 @@ export default function TransactionsLedger({
           query={query}
           emptyState={{
             title: "No Transactions Found",
-            description: "Income and expense records will appear here automatically.",
+            description:
+              "Income and expense records will appear here automatically.",
           }}
         >
           {() =>
             displayedList.length === 0 ? (
               <div className="rounded-b-box border border-base-200 bg-base-100 px-4 py-10 text-center">
-                <p className="text-sm text-base-content/70">No transactions match these filters.</p>
-                <button type="button" onClick={clearFilters} className="btn btn-sm btn-ghost mt-2 text-primary">
+                <p className="text-sm text-base-content/70">
+                  No transactions match these filters.
+                </p>
+                <button
+                  type="button"
+                  onClick={clearFilters}
+                  className="btn btn-sm btn-ghost mt-2 text-primary"
+                >
                   Clear filters
                 </button>
               </div>
             ) : (
               <>
                 <div className="hidden lg:block">
-                  <CustomTable ring={false} data={displayedList} columns={columns} actions={actions} />
+                  <CustomTable
+                    ring={false}
+                    data={displayedList}
+                    columns={columns}
+                    actions={actions}
+                  />
                 </div>
                 <div className="divide-y divide-base-200 rounded-b-box border border-base-200 bg-base-100 lg:hidden">
                   {displayedList.map((tx) => {
@@ -314,18 +376,31 @@ export default function TransactionsLedger({
                       <div key={tx.id} className="space-y-3 p-4">
                         <div className="flex items-start justify-between gap-3">
                           <div className="min-w-0">
-                            <p className="truncate text-sm font-semibold text-base-content">{tx.description || "Transaction"}</p>
-                            <p className="mt-1 text-xs text-base-content/70">{tx.type || "Transaction"} · {formatDate(tx.date)}</p>
+                            <p className="truncate text-sm font-semibold text-base-content">
+                              {tx.description || "Transaction"}
+                            </p>
+                            <p className="mt-1  text-base-content/70">
+                              {tx.type || "Transaction"} · {formatDate(tx.date)}
+                            </p>
                           </div>
-                          <span className={`max-w-[55%] break-all text-right text-sm font-semibold tabular-nums ${amount >= 0 ? "text-success" : "text-error"}`}>
-                            {amount >= 0 ? "+" : "−"}{formatAmount(amount)}
+                          <span
+                            className={`max-w-[55%] break-all text-right text-sm font-semibold tabular-nums ${amount >= 0 ? "text-success" : "text-error"}`}
+                          >
+                            {amount >= 0 ? "+" : "−"}
+                            {formatAmount(amount)}
                           </span>
                         </div>
                         <div className="flex items-center justify-between gap-3">
-                          <span className={`badge badge-sm badge-soft font-medium capitalize ${statusClass(tx.status)}`}>
+                          <span
+                            className={`badge badge-sm badge-soft font-medium capitalize ${statusClass(tx.status)}`}
+                          >
                             {tx.status || "Unknown"}
                           </span>
-                          <button type="button" onClick={() => openDetails(tx)} className="btn btn-sm btn-ghost text-primary">
+                          <button
+                            type="button"
+                            onClick={() => openDetails(tx)}
+                            className="btn btn-sm btn-ghost text-primary"
+                          >
                             View details
                           </button>
                         </div>
@@ -343,48 +418,71 @@ export default function TransactionsLedger({
         {selectedTx && (
           <div className="space-y-5">
             <div className="flex items-start gap-3 rounded-xl bg-base-200/60 p-4">
-              <span className={`flex size-11 shrink-0 items-center justify-center rounded-lg ${signedAmount(selectedTx) >= 0 ? "bg-success/10 text-success" : "bg-error/10 text-error"}`}>
-                {signedAmount(selectedTx) >= 0 ? <ArrowDownLeft className="size-5" /> : <ArrowUpRight className="size-5" />}
+              <span
+                className={`flex size-11 shrink-0 items-center justify-center rounded-lg ${signedAmount(selectedTx) >= 0 ? "bg-success/10 text-success" : "bg-error/10 text-error"}`}
+              >
+                {signedAmount(selectedTx) >= 0 ? (
+                  <ArrowDownLeft className="size-5" />
+                ) : (
+                  <ArrowUpRight className="size-5" />
+                )}
               </span>
               <div className="min-w-0">
                 <h4 className="break-words text-base font-semibold text-base-content">
                   {selectedTx.description || "Transaction"}
                 </h4>
-                <p className="mt-1 text-sm text-base-content/70">{selectedTx.type || "Transaction"}</p>
+                <p className="mt-1 text-sm text-base-content/70">
+                  {selectedTx.type || "Transaction"}
+                </p>
               </div>
             </div>
 
             <dl className="grid gap-3 sm:grid-cols-2">
               <div className="rounded-lg bg-base-200/50 p-3">
-                <dt className="text-xs text-base-content/70">Amount</dt>
-                <dd className={`mt-1 text-lg font-semibold tabular-nums ${signedAmount(selectedTx) >= 0 ? "text-success" : "text-error"}`}>
-                  {signedAmount(selectedTx) >= 0 ? "+" : "−"}{formatAmount(signedAmount(selectedTx))}
+                <dt className=" text-base-content/70">Amount</dt>
+                <dd
+                  className={`mt-1 text-lg font-semibold tabular-nums ${signedAmount(selectedTx) >= 0 ? "text-success" : "text-error"}`}
+                >
+                  {signedAmount(selectedTx) >= 0 ? "+" : "−"}
+                  {formatAmount(signedAmount(selectedTx))}
                 </dd>
               </div>
               <div className="rounded-lg bg-base-200/50 p-3">
-                <dt className="text-xs text-base-content/70">Status</dt>
+                <dt className=" text-base-content/70">Status</dt>
                 <dd className="mt-1">
-                  <span className={`badge badge-sm badge-soft font-medium capitalize ${statusClass(selectedTx.status)}`}>
+                  <span
+                    className={`badge badge-sm badge-soft font-medium capitalize ${statusClass(selectedTx.status)}`}
+                  >
                     {selectedTx.status || "Unknown"}
                   </span>
                 </dd>
               </div>
               <div className="rounded-lg bg-base-200/50 p-3">
-                <dt className="text-xs text-base-content/70">Date and time</dt>
-                <dd className="mt-1 text-sm font-medium text-base-content">{formatDate(selectedTx.date, true)}</dd>
+                <dt className=" text-base-content/70">Date and time</dt>
+                <dd className="mt-1 text-sm font-medium text-base-content">
+                  {formatDate(selectedTx.date, true)}
+                </dd>
               </div>
               <div className="rounded-lg bg-base-200/50 p-3">
-                <dt className="text-xs text-base-content/70">Category</dt>
-                <dd className="mt-1 break-words text-sm font-medium text-base-content">{selectedTx.category || "General"}</dd>
+                <dt className=" text-base-content/70">Category</dt>
+                <dd className="mt-1 break-words text-sm font-medium text-base-content">
+                  {selectedTx.category || "General"}
+                </dd>
               </div>
               <div className="rounded-lg bg-base-200/50 p-3 sm:col-span-2">
-                <dt className="text-xs text-base-content/70">Reference</dt>
-                <dd className="mt-1 break-all font-mono text-xs text-base-content">{selectedTx.reference || selectedTx.id}</dd>
+                <dt className=" text-base-content/70">Reference</dt>
+                <dd className="mt-1 break-all font-mono  text-base-content">
+                  {selectedTx.reference || selectedTx.id}
+                </dd>
               </div>
             </dl>
 
             <div className="flex justify-end">
-              <button type="button" onClick={() => detailsModalRef.current?.close()} className="btn btn-sm btn-primary">
+              <button
+                type="button"
+                onClick={() => detailsModalRef.current?.close()}
+                className="btn btn-sm btn-primary"
+              >
                 Close
               </button>
             </div>

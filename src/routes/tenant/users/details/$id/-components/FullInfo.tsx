@@ -21,7 +21,7 @@ export default function FullInfo({ staff }: FullInfoProps) {
         {props.tab.name === "Employee Information" && (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <div>
-              <p className="text-xs text-base-content/60 font-semibold uppercase">
+              <p className=" text-base-content/60 font-semibold uppercase">
                 First Name
               </p>
               <p className="text-base font-medium text-base-content mt-1">
@@ -29,7 +29,7 @@ export default function FullInfo({ staff }: FullInfoProps) {
               </p>
             </div>
             <div>
-              <p className="text-xs text-base-content/60 font-semibold uppercase">
+              <p className=" text-base-content/60 font-semibold uppercase">
                 Last Name
               </p>
               <p className="text-base font-medium text-base-content mt-1">
@@ -37,7 +37,7 @@ export default function FullInfo({ staff }: FullInfoProps) {
               </p>
             </div>
             <div>
-              <p className="text-xs text-base-content/60 font-semibold uppercase">
+              <p className=" text-base-content/60 font-semibold uppercase">
                 Email Address
               </p>
               <p className="text-base font-medium text-base-content mt-1">
@@ -45,7 +45,7 @@ export default function FullInfo({ staff }: FullInfoProps) {
               </p>
             </div>
             <div>
-              <p className="text-xs text-base-content/60 font-semibold uppercase">
+              <p className=" text-base-content/60 font-semibold uppercase">
                 Phone Number
               </p>
               <p className="text-base font-medium text-base-content mt-1">
@@ -58,14 +58,14 @@ export default function FullInfo({ staff }: FullInfoProps) {
         {props.tab.name === "Role & Access" && (
           <div className="space-y-4">
             <div>
-              <p className="text-xs text-base-content/60 font-semibold uppercase">
+              <p className=" text-base-content/60 font-semibold uppercase">
                 Assigned Role
               </p>
               <p className="text-base font-semibold text-base-content mt-1">
                 {staff?.role?.name || "Standard Staff"}
               </p>
               {staff?.role?.description && (
-                <p className="text-xs text-base-content/60 mt-1">
+                <p className=" text-base-content/60 mt-1">
                   {staff.role.description}
                 </p>
               )}
@@ -73,7 +73,7 @@ export default function FullInfo({ staff }: FullInfoProps) {
 
             {staff?.role?.permissions && staff.role.permissions.length > 0 && (
               <div>
-                <p className="text-xs text-base-content/60 font-semibold uppercase mb-2">
+                <p className=" text-base-content/60 font-semibold uppercase mb-2">
                   Privileges & Permissions ({staff.role.permissions.length})
                 </p>
                 <div className="flex flex-wrap gap-1.5">
@@ -94,7 +94,7 @@ export default function FullInfo({ staff }: FullInfoProps) {
         {props.tab.name === "Audit Timestamps" && (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <div>
-              <p className="text-xs text-base-content/60 font-semibold uppercase">
+              <p className=" text-base-content/60 font-semibold uppercase">
                 Created At
               </p>
               <p className="text-sm font-medium text-base-content mt-1">
@@ -104,10 +104,10 @@ export default function FullInfo({ staff }: FullInfoProps) {
               </p>
             </div>
             <div>
-              <p className="text-xs text-base-content/60 font-semibold uppercase">
+              <p className=" text-base-content/60 font-semibold uppercase">
                 Staff ID
               </p>
-              <p className="text-xs font-mono text-base-content/70 mt-1">
+              <p className=" font-mono text-base-content/70 mt-1">
                 {staff?.id || "—"}
               </p>
             </div>

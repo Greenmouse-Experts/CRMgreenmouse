@@ -26,7 +26,7 @@ export default function DashStats() {
           </div>
           <Link
             to="/tenant/accounts/income-expenses"
-            className="text-xs font-semibold text-primary hover:underline flex items-center gap-1"
+            className=" font-semibold text-primary hover:underline flex items-center gap-1"
           >
             View all
             <ArrowRight className="size-3" />
@@ -54,7 +54,7 @@ export default function DashStats() {
               <div className="p-2.5 bg-base-200 rounded-full w-fit mx-auto text-base-content/40">
                 <DollarSign className="size-5" />
               </div>
-              <p className="text-xs font-medium text-base-content/60">
+              <p className=" font-medium text-base-content/60">
                 No income records yet
               </p>
               <Link
@@ -86,9 +86,7 @@ export default function DashStats() {
                         <p className="text-sm font-semibold truncate text-base-content">
                           {item.source || item.category?.name || "Income"}
                         </p>
-                        <p className="text-xs text-base-content/60">
-                          {dateStr}
-                        </p>
+                        <p className=" text-base-content/60">{dateStr}</p>
                       </div>
                     </div>
                     <div className="text-right shrink-0 ml-3">
@@ -126,7 +124,7 @@ export default function DashStats() {
           </div>
           <Link
             to="/tenant/accounts/income-expenses"
-            className="text-xs font-semibold text-primary hover:underline flex items-center gap-1"
+            className=" font-semibold text-primary hover:underline flex items-center gap-1"
           >
             View all
             <ArrowRight className="size-3" />
@@ -154,7 +152,7 @@ export default function DashStats() {
               <div className="p-2.5 bg-base-200 rounded-full w-fit mx-auto text-base-content/40">
                 <DollarSign className="size-5" />
               </div>
-              <p className="text-xs font-medium text-base-content/60">
+              <p className=" font-medium text-base-content/60">
                 No expense records yet
               </p>
               <Link
@@ -186,9 +184,7 @@ export default function DashStats() {
                         <p className="text-sm font-semibold truncate text-base-content">
                           {item.paidTo || item.category?.name || "Expense"}
                         </p>
-                        <p className="text-xs text-base-content/60">
-                          {dateStr}
-                        </p>
+                        <p className=" text-base-content/60">{dateStr}</p>
                       </div>
                     </div>
                     <div className="text-right shrink-0 ml-3">

@@ -84,7 +84,7 @@ export default function ExpenseTable() {
       render: (_value: any, item: ExpenseRecord) => {
         const d = item.date || item.createdAt;
         return (
-          <span className="text-xs text-base-content/70">
+          <span className=" text-base-content/70">
             {d ? new Date(d).toLocaleDateString() : "—"}
           </span>
         );
@@ -142,7 +142,7 @@ export default function ExpenseTable() {
       key: "description",
       label: "Description",
       render: (value: string) => (
-        <span className="text-xs text-base-content/60 max-w-xs truncate block">
+        <span className=" text-base-content/60 max-w-xs truncate block">
           {value || "—"}
         </span>
       ),

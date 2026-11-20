@@ -12,7 +12,7 @@ export default function AdminRecents() {
       key: "date",
       label: "Date",
       render: (value: string) => (
-        <span className="text-xs text-base-content/70">
+        <span className=" text-base-content/70">
           {value ? new Date(value).toLocaleDateString() : "—"}
         </span>
       ),
@@ -26,7 +26,7 @@ export default function AdminRecents() {
             {value || "Transaction"}
           </div>
           {item.category && (
-            <div className="text-xs text-base-content/60">{item.category}</div>
+            <div className=" text-base-content/60">{item.category}</div>
           )}
         </div>
       ),

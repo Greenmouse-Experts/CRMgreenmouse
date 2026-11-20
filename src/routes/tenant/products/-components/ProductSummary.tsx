@@ -12,7 +12,7 @@ const ProductSummary: React.FC<ProductSummaryProps> = ({ products }) => {
     (p) =>
       (p.stock !== undefined && p.stock > 0) ||
       (p.quantity !== undefined && p.quantity > 0) ||
-      p.inStock === true
+      p.inStock === true,
   ).length;
   const outOfStockProducts = totalProducts - inStockProducts;
   const totalValue = products.reduce((sum, p) => {
@@ -60,15 +60,13 @@ const ProductSummary: React.FC<ProductSummaryProps> = ({ products }) => {
         >
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-xs font-medium text-base-content/60 uppercase tracking-wider">
+              <p className=" font-medium text-base-content/60 uppercase tracking-wider">
                 {stat.title}
               </p>
               <h3 className="text-2xl font-semibold text-base-content mt-1">
                 {stat.value}
               </h3>
-              <p className="text-xs text-base-content/50 mt-0.5">
-                {stat.description}
-              </p>
+              <p className=" text-base-content/50 mt-0.5">{stat.description}</p>
             </div>
             <div className={`p-3 rounded-xl border ${stat.color}`}>
               {stat.icon}

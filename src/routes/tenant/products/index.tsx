@@ -13,7 +13,10 @@ import PageHeader from "@/components/Headers/PageHeader";
 import PageLoader from "@/components/layout/PageLoader";
 import ProductSummary from "./-components/ProductSummary";
 import UpdateImages from "@/components/images/UpdateImages";
-import { ProductImageGallery, ProductImageStrip } from "@/components/images/ProductImages";
+import {
+  ProductImageGallery,
+  ProductImageStrip,
+} from "@/components/images/ProductImages";
 import MoneyInput from "@/components/inputs/MoneyInput";
 import { useUploadImage, uploadedFileUrl } from "@/api/imageApi";
 import {
@@ -177,7 +180,11 @@ function RouteComponent() {
       toast.success("Product created successfully");
       addModalRef.current?.close();
     } catch (err: any) {
-      toast.error(err?.response?.data?.message || err?.message || "Failed to create product");
+      toast.error(
+        err?.response?.data?.message ||
+          err?.message ||
+          "Failed to create product",
+      );
     }
   };
 
@@ -206,7 +213,11 @@ function RouteComponent() {
       toast.success("Product updated successfully");
       editModalRef.current?.close();
     } catch (err: any) {
-      toast.error(err?.response?.data?.message || err?.message || "Failed to update product");
+      toast.error(
+        err?.response?.data?.message ||
+          err?.message ||
+          "Failed to update product",
+      );
     }
   };
 
@@ -254,7 +265,7 @@ function RouteComponent() {
         <div className="flex items-center gap-3">
           <div>
             <div className="font-semibold text-base-content">{item.name}</div>
-            <div className="text-xs text-base-content/60 line-clamp-1 max-w-[200px]">
+            <div className=" text-base-content/60 line-clamp-1 max-w-[200px]">
               {item.description || "No description"}
             </div>
           </div>
@@ -282,7 +293,7 @@ function RouteComponent() {
             {Number(val || 0).toLocaleString()}
           </span>
           {item.cost ? (
-            <div className="text-xs text-base-content/50">
+            <div className=" text-base-content/50">
               Cost: {item.currency || "₦"}
               {Number(item.cost).toLocaleString()}
             </div>
@@ -416,7 +427,7 @@ function RouteComponent() {
           className="space-y-4 max-h-[80vh] overflow-y-auto pr-1"
         >
           <div>
-            <label className="text-xs font-semibold text-base-content/70 mb-1 block">
+            <label className=" font-semibold text-base-content/70 mb-1 block">
               Product Images
             </label>
             <UpdateImages
@@ -427,7 +438,7 @@ function RouteComponent() {
           </div>
 
           <div>
-            <label className="text-xs font-semibold text-base-content/70">
+            <label className=" font-semibold text-base-content/70">
               Product Name *
             </label>
             <input
@@ -439,7 +450,7 @@ function RouteComponent() {
               })}
             />
             {addMethods.formState.errors.name && (
-              <span className="text-xs text-error mt-1 block">
+              <span className=" text-error mt-1 block">
                 {addMethods.formState.errors.name.message}
               </span>
             )}
@@ -479,7 +490,7 @@ function RouteComponent() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="text-xs font-semibold text-base-content/70">
+              <label className=" font-semibold text-base-content/70">
                 Initial Stock
               </label>
               <input
@@ -491,7 +502,7 @@ function RouteComponent() {
               />
             </div>
             <div>
-              <label className="text-xs font-semibold text-base-content/70">
+              <label className=" font-semibold text-base-content/70">
                 Category
               </label>
               <select
@@ -509,7 +520,7 @@ function RouteComponent() {
           </div>
 
           <div>
-            <label className="text-xs font-semibold text-base-content/70">
+            <label className=" font-semibold text-base-content/70">
               Description
             </label>
             <textarea
@@ -548,7 +559,7 @@ function RouteComponent() {
           className="space-y-4 max-h-[80vh] overflow-y-auto pr-1"
         >
           <div>
-            <label className="text-xs font-semibold text-base-content/70 mb-1 block">
+            <label className=" font-semibold text-base-content/70 mb-1 block">
               Product Images
             </label>
             <UpdateImages
@@ -559,7 +570,7 @@ function RouteComponent() {
           </div>
 
           <div>
-            <label className="text-xs font-semibold text-base-content/70">
+            <label className=" font-semibold text-base-content/70">
               Product Name *
             </label>
             <input
@@ -570,7 +581,7 @@ function RouteComponent() {
               })}
             />
             {editMethods.formState.errors.name && (
-              <span className="text-xs text-error mt-1 block">
+              <span className=" text-error mt-1 block">
                 {editMethods.formState.errors.name.message}
               </span>
             )}
@@ -599,7 +610,7 @@ function RouteComponent() {
             </div>
 
             <div>
-              <label className="text-xs font-semibold text-base-content/70">
+              <label className=" font-semibold text-base-content/70">
                 Category
               </label>
               <select
@@ -617,7 +628,7 @@ function RouteComponent() {
           </div>
 
           <div>
-            <label className="text-xs font-semibold text-base-content/70">
+            <label className=" font-semibold text-base-content/70">
               Description
             </label>
             <textarea
@@ -663,7 +674,7 @@ function RouteComponent() {
           </p>
 
           <div>
-            <label className="text-xs font-semibold text-base-content/70">
+            <label className=" font-semibold text-base-content/70">
               Adjustment Amount (use positive to add, negative to remove)
             </label>
             <input
@@ -676,7 +687,7 @@ function RouteComponent() {
             />
           </div>
 
-          <div className="p-3 bg-base-200/50 rounded-lg text-xs text-base-content/70">
+          <div className="p-3 bg-base-200/50 rounded-lg  text-base-content/70">
             New calculated stock:{" "}
             <span className="font-semibold text-base-content">
               {Math.max(
@@ -753,7 +764,7 @@ function RouteComponent() {
 
             <div className="grid grid-cols-2 gap-4 text-sm">
               <div className="p-3 bg-base-200/30 rounded-lg">
-                <span className="text-xs text-base-content/60 block">
+                <span className=" text-base-content/60 block">
                   Selling Price
                 </span>
                 <span className="font-semibold text-base-content text-base">
@@ -761,15 +772,13 @@ function RouteComponent() {
                 </span>
               </div>
               <div className="p-3 bg-base-200/30 rounded-lg">
-                <span className="text-xs text-base-content/60 block">
-                  Cost Price
-                </span>
+                <span className=" text-base-content/60 block">Cost Price</span>
                 <span className="font-semibold text-base-content text-base">
                   ₦{Number(selectedProduct.cost || 0).toLocaleString()}
                 </span>
               </div>
               <div className="p-3 bg-base-200/30 rounded-lg">
-                <span className="text-xs text-base-content/60 block">
+                <span className=" text-base-content/60 block">
                   Current Stock
                 </span>
                 <span className="font-semibold text-base-content text-base">
@@ -777,10 +786,8 @@ function RouteComponent() {
                 </span>
               </div>
               <div className="p-3 bg-base-200/30 rounded-lg">
-                <span className="text-xs text-base-content/60 block">
-                  Product ID
-                </span>
-                <span className="font-mono text-xs text-base-content/70">
+                <span className=" text-base-content/60 block">Product ID</span>
+                <span className="font-mono  text-base-content/70">
                   {selectedProduct.id}
                 </span>
               </div>
@@ -788,7 +795,7 @@ function RouteComponent() {
 
             {selectedProduct.description && (
               <div>
-                <span className="text-xs font-semibold text-base-content/70 block mb-1">
+                <span className=" font-semibold text-base-content/70 block mb-1">
                   Description
                 </span>
                 <p className="text-sm text-base-content/80 p-3 bg-base-200/30 rounded-lg">

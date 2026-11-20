@@ -36,7 +36,7 @@ export default function AdminUserList() {
               <div className="font-semibold text-sm text-base-content leading-tight">
                 {fullName}
               </div>
-              <div className="text-xs text-base-content/60">{item.email}</div>
+              <div className=" text-base-content/60">{item.email}</div>
             </div>
           </div>
         );
@@ -55,7 +55,7 @@ export default function AdminUserList() {
       key: "phoneNumber",
       label: "Phone",
       render: (value: string) => (
-        <span className="text-xs text-base-content/70">{value || "—"}</span>
+        <span className=" text-base-content/70">{value || "—"}</span>
       ),
     },
     {
@@ -80,7 +80,7 @@ export default function AdminUserList() {
       key: "createdAt",
       label: "Joined",
       render: (value: string) => (
-        <span className="text-xs text-base-content/60">
+        <span className=" text-base-content/60">
           {value ? new Date(value).toLocaleDateString() : "—"}
         </span>
       ),
@@ -109,7 +109,7 @@ export default function AdminUserList() {
                   <p className="text-sm font-semibold text-base-content/70">
                     No team members added yet
                   </p>
-                  <p className="text-xs text-base-content/50">
+                  <p className=" text-base-content/50">
                     Invite colleagues and assign roles to collaborate across
                     your workspace.
                   </p>

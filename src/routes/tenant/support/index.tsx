@@ -50,20 +50,17 @@ function RouteComponent() {
   const [module, setModule] = useState("all");
   const openCreate = () => modalRef.current?.open();
 
-  const modules = useMemo(
-    () => {
-      const values = new Map(
-        (modulesQuery.data ?? []).map((option) => [option.value, option.label]),
-      );
-      for (const ticket of ticketsQuery.data ?? []) {
-        if (ticket.module && !values.has(ticket.module)) {
-          values.set(ticket.module, ticketModuleLabel(ticket.module));
-        }
+  const modules = useMemo(() => {
+    const values = new Map(
+      (modulesQuery.data ?? []).map((option) => [option.value, option.label]),
+    );
+    for (const ticket of ticketsQuery.data ?? []) {
+      if (ticket.module && !values.has(ticket.module)) {
+        values.set(ticket.module, ticketModuleLabel(ticket.module));
       }
-      return [...values].sort(([first], [second]) => first.localeCompare(second));
-    },
-    [modulesQuery.data, ticketsQuery.data],
-  );
+    }
+    return [...values].sort(([first], [second]) => first.localeCompare(second));
+  }, [modulesQuery.data, ticketsQuery.data]);
 
   const tickets = useMemo(() => {
     const term = search.trim().toLowerCase();
@@ -205,7 +202,7 @@ function RouteComponent() {
                       <h2 className="truncate font-semibold group-hover:text-primary">
                         {ticket.subject}
                       </h2>
-                      <span className="text-xs text-base-content/50">
+                      <span className=" text-base-content/50">
                         {ticket.ticketNumber || `#${ticket.id.slice(0, 8)}`}
                       </span>
                     </div>
@@ -232,7 +229,7 @@ function RouteComponent() {
                     >
                       {displayStatus(ticket.status)}
                     </span>
-                    <span className="ml-auto text-xs text-base-content/50 sm:ml-2">
+                    <span className="ml-auto  text-base-content/50 sm:ml-2">
                       {ticket.createdAt
                         ? new Date(ticket.createdAt).toLocaleDateString()
                         : ""}

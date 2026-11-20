@@ -83,7 +83,7 @@ export default function EmployeeFilters({
         </div>
 
         {/* Search & Department Filter */}
-        <div className="flex flex-wrap items-center gap-2.5 flex-1 justify-end">
+        <div className="flex flex-wrap items-center gap-2.5 sm:flex-1 justify-end">
           <select
             value={departmentFilter}
             onChange={(e) => onDepartmentFilterChange(e.target.value)}

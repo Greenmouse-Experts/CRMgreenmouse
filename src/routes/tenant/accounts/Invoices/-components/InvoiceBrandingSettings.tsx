@@ -220,7 +220,7 @@ export default function InvoiceBrandingSettings() {
                 }
               }}
             />
-            <span className="mt-1 text-xs text-base-content/60">
+            <span className="mt-1  text-base-content/60">
               {logoFile
                 ? `${logoFile.name} will be uploaded when you save.`
                 : "Upload an image or enter a logo URL."}
@@ -283,7 +283,7 @@ export default function InvoiceBrandingSettings() {
             ) : (
               <div className="flex flex-col items-center gap-2 text-base-content/50">
                 <ImagePlus className="size-8" />
-                <span className="text-xs">Logo preview</span>
+                <span className="">Logo preview</span>
               </div>
             )}
           </div>

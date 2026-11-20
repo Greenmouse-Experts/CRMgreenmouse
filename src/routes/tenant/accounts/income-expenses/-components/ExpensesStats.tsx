@@ -62,7 +62,7 @@ export default function ExpensesStat() {
             <div className="p-4 flex flex-col gap-2">
               <div className="flex items-center gap-2 text-base-content/70">
                 <IconComponent className={`size-5 ${item.textColor}`} />
-                <span className="text-xs font-semibold uppercase tracking-wider">
+                <span className=" font-semibold uppercase tracking-wider">
                   {item.title}
                 </span>
               </div>

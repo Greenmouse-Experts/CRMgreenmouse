@@ -137,9 +137,7 @@ function RouteComponent() {
               {name}
             </div>
             {item.contact?.email && (
-              <div className="text-xs text-base-content/60">
-                {item.contact.email}
-              </div>
+              <div className=" text-base-content/60">{item.contact.email}</div>
             )}
           </div>
         );
@@ -149,7 +147,7 @@ function RouteComponent() {
       key: "issuedDate",
       label: "Issue Date",
       render: (date: string) => (
-        <span className="text-xs text-base-content/70">
+        <span className=" text-base-content/70">
           {date ? new Date(date).toLocaleDateString() : "\u2014"}
         </span>
       ),
@@ -158,7 +156,7 @@ function RouteComponent() {
       key: "dueDate",
       label: "Due Date",
       render: (date: string) => (
-        <span className="text-xs text-base-content/70">
+        <span className=" text-base-content/70">
           {date ? new Date(date).toLocaleDateString() : "\u2014"}
         </span>
       ),
@@ -173,7 +171,7 @@ function RouteComponent() {
             minimumFractionDigits: 2,
             maximumFractionDigits: 2,
           })}{" "}
-          <span className="text-xs text-base-content/50 font-normal">
+          <span className=" text-base-content/50 font-normal">
             {item.currency || "USD"}
           </span>
         </span>

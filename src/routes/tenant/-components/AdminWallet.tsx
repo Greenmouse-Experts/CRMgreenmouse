@@ -68,8 +68,8 @@ export default function AdminWallet() {
             <ArrowBigUp className="text-success" />
           </div>
           <div className="flex-1 space-y-1">
-            <h2 className="text-success text-xs">Income</h2>
-            <p className="text-xs font-semibold">7,200,3455</p>
+            <h2 className="text-success ">Income</h2>
+            <p className=" font-semibold">7,200,3455</p>
           </div>
         </div>
         <div className="flex gap-2 items-center justify-items-end justify-end">
@@ -77,8 +77,8 @@ export default function AdminWallet() {
             <ArrowBigDown className="text-error" />
           </div>
           <div className=" space-y-1">
-            <h2 className="text-error text-xs">Expense</h2>
-            <p className="text-xs font-semibold">7,200,3455</p>
+            <h2 className="text-error ">Expense</h2>
+            <p className=" font-semibold">7,200,3455</p>
           </div>
         </div>
       </section>
@@ -132,8 +132,8 @@ const RecentTransactionCard = ({
           <IconComponent className={`${iconClass} w-4 h-4`} />
         </div>
         <div>
-          <p className="text-xs font-medium">{description}</p>
-          <p className="text-xs text-base-content/70">{date}</p>
+          <p className=" font-medium">{description}</p>
+          <p className=" text-base-content/70">{date}</p>
         </div>
       </div>
       <p className={`text-sm font-semibold ${amountClass}`}>

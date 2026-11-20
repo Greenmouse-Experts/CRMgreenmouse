@@ -127,7 +127,7 @@ export default function CatalogCategoriesPage({
           </div>
           <div>
             <div className="font-semibold text-base-content">{item.name}</div>
-            <div className="text-xs text-base-content/60">
+            <div className=" text-base-content/60">
               {item.description || "No description"}
             </div>
           </div>
@@ -138,7 +138,7 @@ export default function CatalogCategoriesPage({
       key: "createdAt",
       label: "Created",
       render: (val: any) => (
-        <span className="text-xs text-base-content/70">
+        <span className=" text-base-content/70">
           {val ? new Date(val).toLocaleDateString() : "—"}
         </span>
       ),
@@ -198,21 +198,23 @@ export default function CatalogCategoriesPage({
       <Modal ref={addModalRef} title={`Create ${label} Category`}>
         <form onSubmit={handleSaveAdd} className="space-y-4">
           <div>
-            <label className="text-xs font-semibold text-base-content/70">
+            <label className=" font-semibold text-base-content/70">
               Category Name *
             </label>
             <input
               type="text"
               required
               className="input input-bordered w-full mt-1"
-              placeholder={isService ? "e.g. Consulting" : "e.g. Office Supplies"}
+              placeholder={
+                isService ? "e.g. Consulting" : "e.g. Office Supplies"
+              }
               value={form.name}
               onChange={(e) => setForm({ ...form, name: e.target.value })}
             />
           </div>
 
           <div>
-            <label className="text-xs font-semibold text-base-content/70">
+            <label className=" font-semibold text-base-content/70">
               Description
             </label>
             <textarea
@@ -239,7 +241,9 @@ export default function CatalogCategoriesPage({
               className="btn btn-primary"
               disabled={createCategory.isPending}
             >
-              {createCategory.isPending ? "Creating..." : `Create ${label} Category`}
+              {createCategory.isPending
+                ? "Creating..."
+                : `Create ${label} Category`}
             </button>
           </div>
         </form>
@@ -249,7 +253,7 @@ export default function CatalogCategoriesPage({
       <Modal ref={editModalRef} title={`Edit ${label} Category`}>
         <form onSubmit={handleSaveEdit} className="space-y-4">
           <div>
-            <label className="text-xs font-semibold text-base-content/70">
+            <label className=" font-semibold text-base-content/70">
               Category Name *
             </label>
             <input
@@ -262,7 +266,7 @@ export default function CatalogCategoriesPage({
           </div>
 
           <div>
-            <label className="text-xs font-semibold text-base-content/70">
+            <label className=" font-semibold text-base-content/70">
               Description
             </label>
             <textarea

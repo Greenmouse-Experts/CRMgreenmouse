@@ -90,7 +90,7 @@ function RouteComponent() {
             <div className="font-semibold text-base-content leading-tight">
               {item.firstName} {item.lastName}
             </div>
-            <div className="text-xs text-base-content/60">{item.email}</div>
+            <div className=" text-base-content/60">{item.email}</div>
           </div>
         </div>
       ),
@@ -99,7 +99,7 @@ function RouteComponent() {
       key: "phone",
       label: "Phone",
       render: (_value: any, item: Contact) => (
-        <span className="text-xs text-base-content/70">
+        <span className=" text-base-content/70">
           {item.phone || item.workPhone || item.cellPhone || "—"}
         </span>
       ),
@@ -108,7 +108,7 @@ function RouteComponent() {
       key: "company",
       label: "Company",
       render: (_value: any, item: Contact) => (
-        <span className="text-xs font-medium text-base-content/80">
+        <span className=" font-medium text-base-content/80">
           {item.companyName || item.company?.name || "Individual"}
         </span>
       ),
@@ -137,7 +137,7 @@ function RouteComponent() {
       key: "location",
       label: "Location",
       render: (_value: any, item: Contact) => (
-        <span className="text-xs text-base-content/60">
+        <span className=" text-base-content/60">
           {[item.city, item.state, item.country].filter(Boolean).join(", ") ||
             "—"}
         </span>
@@ -230,7 +230,7 @@ function RouteComponent() {
                 <h3 className="text-lg font-semibold text-base-content">
                   {selectedContact.firstName} {selectedContact.lastName}
                 </h3>
-                <div className="flex items-center gap-2 text-xs text-base-content/60 mt-0.5">
+                <div className="flex items-center gap-2  text-base-content/60 mt-0.5">
                   <span className="badge badge-sm badge-outline">
                     {selectedContact.type || "Individual"}
                   </span>
@@ -244,7 +244,7 @@ function RouteComponent() {
               <div className="bg-base-200/40 p-3 rounded-lg flex items-start gap-3">
                 <Mail className="size-4 text-primary mt-1 shrink-0" />
                 <div>
-                  <div className="text-xs text-base-content/60">Email</div>
+                  <div className=" text-base-content/60">Email</div>
                   <div className="text-sm font-medium text-base-content break-all">
                     {selectedContact.email || "—"}
                   </div>
@@ -254,7 +254,7 @@ function RouteComponent() {
               <div className="bg-base-200/40 p-3 rounded-lg flex items-start gap-3">
                 <Phone className="size-4 text-primary mt-1 shrink-0" />
                 <div>
-                  <div className="text-xs text-base-content/60">Phone</div>
+                  <div className=" text-base-content/60">Phone</div>
                   <div className="text-sm font-medium text-base-content">
                     {selectedContact.phone ||
                       selectedContact.workPhone ||
@@ -267,7 +267,7 @@ function RouteComponent() {
               <div className="bg-base-200/40 p-3 rounded-lg flex items-start gap-3">
                 <Building2 className="size-4 text-primary mt-1 shrink-0" />
                 <div>
-                  <div className="text-xs text-base-content/60">Company</div>
+                  <div className=" text-base-content/60">Company</div>
                   <div className="text-sm font-medium text-base-content">
                     {selectedContact.companyName ||
                       selectedContact.company?.name ||
@@ -279,7 +279,7 @@ function RouteComponent() {
               <div className="bg-base-200/40 p-3 rounded-lg flex items-start gap-3">
                 <MapPin className="size-4 text-primary mt-1 shrink-0" />
                 <div>
-                  <div className="text-xs text-base-content/60">Location</div>
+                  <div className=" text-base-content/60">Location</div>
                   <div className="text-sm font-medium text-base-content">
                     {[
                       selectedContact.address || selectedContact.addressLine1,
@@ -296,7 +296,7 @@ function RouteComponent() {
 
             {selectedContact.tags && selectedContact.tags.length > 0 && (
               <div>
-                <div className="text-xs font-semibold text-base-content/70 mb-2">
+                <div className=" font-semibold text-base-content/70 mb-2">
                   Tags
                 </div>
                 <div className="flex flex-wrap gap-1">

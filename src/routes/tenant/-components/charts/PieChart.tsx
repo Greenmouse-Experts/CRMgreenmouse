@@ -36,7 +36,7 @@ export default function PieChartExample() {
       <div className="bg-base-100 border border-base-200 rounded-b-box p-4 flex flex-col items-center">
         <div className="flex gap-2 flex-wrap justify-center mb-4">
           {chartData.map((item, index) => (
-            <div key={index} className="flex items-center text-xs">
+            <div key={index} className="flex items-center ">
               <div
                 className="size-3 rounded-full mr-1.5"
                 style={{ backgroundColor: item.color }}

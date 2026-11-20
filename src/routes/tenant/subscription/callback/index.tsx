@@ -1,6 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { AlertCircle, CheckCircle2, LoaderCircle, RefreshCw } from "lucide-react";
+import {
+  AlertCircle,
+  CheckCircle2,
+  LoaderCircle,
+  RefreshCw,
+} from "lucide-react";
 import { useTenantSubscriptionVerify } from "@/api/tenantApi";
 
 export const Route = createFileRoute("/tenant/subscription/callback/")({
@@ -33,9 +38,14 @@ export function SubscriptionCallback() {
         verification?.success === false ||
         verification?.verified === false ||
         verification?.status === false ||
-        ["failed", "pending", "abandoned", "reversed", "declined", "error"].includes(
-          paymentStatus,
-        )
+        [
+          "failed",
+          "pending",
+          "abandoned",
+          "reversed",
+          "declined",
+          "error",
+        ].includes(paymentStatus)
       ) {
         throw new Error("Your payment has not been confirmed yet.");
       }
@@ -86,7 +96,10 @@ export function SubscriptionCallback() {
             {state === "success" ? (
               <CheckCircle2 className="size-8" aria-hidden="true" />
             ) : state === "verifying" ? (
-              <LoaderCircle className="size-8 animate-spin" aria-hidden="true" />
+              <LoaderCircle
+                className="size-8 animate-spin"
+                aria-hidden="true"
+              />
             ) : (
               <AlertCircle className="size-8" aria-hidden="true" />
             )}
@@ -114,7 +127,7 @@ export function SubscriptionCallback() {
           </div>
 
           {reference && (
-            <p className="max-w-full break-all rounded-lg bg-base-200/60 px-3 py-2 font-mono text-xs text-base-content/60">
+            <p className="max-w-full break-all rounded-lg bg-base-200/60 px-3 py-2 font-mono  text-base-content/60">
               Reference: {reference}
             </p>
           )}

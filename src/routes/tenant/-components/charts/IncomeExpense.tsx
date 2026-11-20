@@ -31,8 +31,8 @@ export default function IncomeExpense() {
           </select>
         </div>
         <div className="text-sm flex items-center gap-2">
-          <span className="badge badge-soft badge-primary text-xs">Income</span>
-          <span className="badge badge-soft badge-error text-xs">Expense</span>
+          <span className="badge badge-soft badge-primary ">Income</span>
+          <span className="badge badge-soft badge-error ">Expense</span>
         </div>
       </div>
 
@@ -71,12 +71,12 @@ export default function IncomeExpense() {
                 <XAxis
                   dataKey="name"
                   stroke="currentColor"
-                  className="text-xs text-base-content/60"
+                  className=" text-base-content/60"
                 />
                 <YAxis
                   width={60}
                   stroke="currentColor"
-                  className="text-xs text-base-content/60"
+                  className=" text-base-content/60"
                 />
                 <Tooltip
                   contentStyle={{

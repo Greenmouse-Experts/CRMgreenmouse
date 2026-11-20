@@ -178,7 +178,7 @@ function RouteComponent() {
 
                 <div className="overflow-x-auto">
                   <table className="table w-full">
-                    <thead className="bg-base-200/50 text-xs">
+                    <thead className="bg-base-200/50 ">
                       <tr>
                         <th>ITEM / DESCRIPTION</th>
                         <th className="text-center">QTY</th>

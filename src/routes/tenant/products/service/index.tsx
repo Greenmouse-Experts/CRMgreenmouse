@@ -64,7 +64,7 @@ function ServiceFields({
       <div>
         <label
           htmlFor="service-name"
-          className="text-xs font-semibold text-base-content/70"
+          className=" font-semibold text-base-content/70"
         >
           Service Name *
         </label>
@@ -81,7 +81,7 @@ function ServiceFields({
           })}
         />
         {errors.name && (
-          <p className="mt-1 text-xs text-error">{errors.name.message}</p>
+          <p className="mt-1  text-error">{errors.name.message}</p>
         )}
       </div>
 
@@ -106,7 +106,7 @@ function ServiceFields({
         <div>
           <label
             htmlFor="service-category"
-            className="text-xs font-semibold text-base-content/70"
+            className=" font-semibold text-base-content/70"
           >
             Category
           </label>
@@ -128,7 +128,7 @@ function ServiceFields({
       <div>
         <label
           htmlFor="service-description"
-          className="text-xs font-semibold text-base-content/70"
+          className=" font-semibold text-base-content/70"
         >
           Description
         </label>
@@ -285,7 +285,7 @@ function RouteComponent() {
           </div>
           <div>
             <div className="font-semibold text-base-content">{item.name}</div>
-            <div className="text-xs text-base-content/60 line-clamp-1 max-w-[200px]">
+            <div className=" text-base-content/60 line-clamp-1 max-w-[200px]">
               {item.description || "No description"}
             </div>
           </div>
@@ -395,7 +395,7 @@ function RouteComponent() {
           <div className="card bg-base-100/70 backdrop-blur-md border border-base-200 p-4 shadow-sm">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs font-medium text-base-content/60 uppercase">
+                <p className=" font-medium text-base-content/60 uppercase">
                   Total Services
                 </p>
                 <h3 className="text-2xl font-semibold text-base-content mt-1">
@@ -410,7 +410,7 @@ function RouteComponent() {
           <div className="card bg-base-100/70 backdrop-blur-md border border-base-200 p-4 shadow-sm">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs font-medium text-base-content/60 uppercase">
+                <p className=" font-medium text-base-content/60 uppercase">
                   Active Services
                 </p>
                 <h3 className="text-2xl font-semibold text-base-content mt-1">
@@ -425,7 +425,7 @@ function RouteComponent() {
           <div className="card bg-base-100/70 backdrop-blur-md border border-base-200 p-4 shadow-sm">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs font-medium text-base-content/60 uppercase">
+                <p className=" font-medium text-base-content/60 uppercase">
                   Average Service Rate
                 </p>
                 <h3 className="text-2xl font-semibold text-base-content mt-1">
@@ -532,7 +532,7 @@ function RouteComponent() {
 
             <div className="grid grid-cols-2 gap-4 text-sm">
               <div className="p-3 bg-base-200/30 rounded-lg">
-                <span className="text-xs text-base-content/60 block">
+                <span className=" text-base-content/60 block">
                   Service Rate
                 </span>
                 <span className="font-semibold text-base-content text-base">
@@ -540,10 +540,8 @@ function RouteComponent() {
                 </span>
               </div>
               <div className="p-3 bg-base-200/30 rounded-lg">
-                <span className="text-xs text-base-content/60 block">
-                  Service ID
-                </span>
-                <span className="font-mono text-xs text-base-content/70">
+                <span className=" text-base-content/60 block">Service ID</span>
+                <span className="font-mono  text-base-content/70">
                   {selectedService.id}
                 </span>
               </div>
@@ -551,7 +549,7 @@ function RouteComponent() {
 
             {selectedService.description && (
               <div>
-                <span className="text-xs font-semibold text-base-content/70 block mb-1">
+                <span className=" font-semibold text-base-content/70 block mb-1">
                   Description
                 </span>
                 <p className="text-sm text-base-content/80 p-3 bg-base-200/30 rounded-lg">
