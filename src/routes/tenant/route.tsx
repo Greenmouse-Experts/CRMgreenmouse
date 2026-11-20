@@ -253,7 +253,7 @@ function RouteComponent() {
       <input id="tenant-drawer" type="checkbox" className="drawer-toggle" />
       <div className="drawer-content bg-base-200 isolate">
         <AdminHeader />
-        <main className=" min-h-screen bg-base-200 pt-4 space-y-4 px-4">
+        <main className=" min-h-screen bg-base-300 pt-4 space-y-4 px-4">
           <Outlet />
         </main>
       </div>
