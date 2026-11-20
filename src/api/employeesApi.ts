@@ -81,8 +81,8 @@ export interface CreateEmployeeInput {
   firstName: string;
   lastName: string;
   email: string;
-  phoneNumber?: string;
   phone?: string;
+  phoneNumber?: string;
   employeeNumber?: string;
   middleName?: string;
   dateOfBirth?: string;
@@ -134,6 +134,55 @@ export type UpdateEmployeeInput = Partial<CreateEmployeeInput> &
 /* -------------------------------------------------------------------------- */
 /* Helpers                                                                     */
 /* -------------------------------------------------------------------------- */
+
+/**
+ * Strip keys that the backend validator forbids:
+ * - phoneNumber -> phone
+ * - departmentId -> department (or stripped)
+ * - positionId -> jobTitle (or stripped)
+ * - employmentType -> employeeType
+ * - status -> employmentStatus
+ * - location -> workLocation
+ * Also strips empty strings ("") or undefined so empty UUIDs or fields don't cause 400.
+ */
+export const sanitizeEmployeePayload = (
+  input: Record<string, any>,
+): Record<string, any> => {
+  const payload = { ...input };
+
+  if (payload.phoneNumber !== undefined) {
+    if (!payload.phone) payload.phone = payload.phoneNumber;
+    delete payload.phoneNumber;
+  }
+  if (payload.departmentId !== undefined) {
+    if (!payload.department) payload.department = payload.departmentId;
+    delete payload.departmentId;
+  }
+  if (payload.positionId !== undefined) {
+    if (!payload.jobTitle) payload.jobTitle = payload.positionId;
+    delete payload.positionId;
+  }
+  if (payload.employmentType !== undefined) {
+    if (!payload.employeeType) payload.employeeType = payload.employmentType;
+    delete payload.employmentType;
+  }
+  if (payload.status !== undefined) {
+    if (!payload.employmentStatus) payload.employmentStatus = payload.status;
+    delete payload.status;
+  }
+  if (payload.location !== undefined) {
+    if (!payload.workLocation) payload.workLocation = payload.location;
+    delete payload.location;
+  }
+
+  for (const key of Object.keys(payload)) {
+    if (payload[key] === undefined || payload[key] === "") {
+      delete payload[key];
+    }
+  }
+
+  return payload;
+};
 
 /**
  * The employee API lives on the tenant session. Fall back to the seeded
@@ -280,9 +329,10 @@ export const useCreateEmployee = () => {
   const invalidate = useInvalidateEmployees();
   return useMutation({
     mutationFn: async (payload: CreateEmployeeInput) => {
+      const sanitized = sanitizeEmployeePayload(payload);
       const { data } = await apiClient.post<any>(
         "/employees",
-        payload,
+        sanitized,
         authConfig(),
       );
       return unwrapOne<EmployeeRecord>(data);
@@ -298,9 +348,10 @@ export const useUpdateEmployee = () => {
       id,
       ...payload
     }: { id: string } & UpdateEmployeeInput) => {
+      const sanitized = sanitizeEmployeePayload(payload);
       const { data } = await apiClient.patch<any>(
         `/employees/${id}`,
-        payload,
+        sanitized,
         authConfig(),
       );
       return unwrapOne<EmployeeRecord>(data);
@@ -316,7 +367,7 @@ export const useRemoveEmployee = () => {
     mutationFn: async (id: string) => {
       const { data } = await apiClient.patch<any>(
         `/employees/${id}`,
-        { status: "inactive" },
+        { employmentStatus: "inactive" },
         authConfig(),
       );
       return unwrapOne<EmployeeRecord>(data);

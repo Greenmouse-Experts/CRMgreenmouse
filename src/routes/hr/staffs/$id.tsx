@@ -84,13 +84,7 @@ const DEFAULT_DEPARTMENTS = [
 ];
 
 const DEFAULT_GRADES = ["G1", "G2", "G3", "G4", "G5", "G6", "G7"];
-const EMPLOYMENT_TYPES = [
-  "Full-time",
-  "Part-time",
-  "Contract",
-  "Intern",
-  "Casual",
-];
+const EMPLOYMENT_TYPES = ["Full-time", "Part-time", "Contract", "Intern", "Casual"];
 const EMPLOYMENT_STATUSES = [
   { value: "active", label: "Active" },
   { value: "probation", label: "Probation" },
@@ -98,19 +92,8 @@ const EMPLOYMENT_STATUSES = [
   { value: "notice", label: "Notice Period" },
   { value: "inactive", label: "Inactive" },
 ];
-const WORK_LOCATIONS = [
-  "Remote",
-  "On-site (Lagos)",
-  "On-site (Abuja)",
-  "Hybrid",
-];
-const CONTRACT_TYPES = [
-  "Permanent",
-  "Fixed-term",
-  "Probationary",
-  "Contract",
-  "Seasonal",
-];
+const WORK_LOCATIONS = ["Remote", "On-site (Lagos)", "On-site (Abuja)", "Hybrid"];
+const CONTRACT_TYPES = ["Permanent", "Fixed-term", "Probationary", "Contract", "Seasonal"];
 const PAY_FREQUENCIES = ["Monthly", "Bi-weekly", "Weekly", "Annually"];
 
 function StaffFormPage() {
@@ -183,27 +166,27 @@ function StaffFormPage() {
       const deptName =
         typeof emp.department === "object"
           ? emp.department?.name
-          : (emp.departmentName ?? emp.department ?? "");
+          : emp.departmentName ?? emp.department ?? "";
 
       const deptId =
         typeof emp.department === "object"
           ? emp.department?.id
-          : (emp.departmentId ?? "");
+          : emp.departmentId ?? "";
 
       const posTitle =
         typeof emp.position === "object"
           ? emp.position?.name
-          : (emp.positionName ?? emp.jobTitle ?? emp.position ?? "");
+          : emp.positionName ?? emp.jobTitle ?? emp.position ?? "";
 
       const posId =
         typeof emp.position === "object"
           ? emp.position?.id
-          : (emp.positionId ?? "");
+          : emp.positionId ?? "";
 
       const mgrId =
         typeof emp.manager === "object"
           ? emp.manager?.id
-          : (emp.managerId ?? "");
+          : emp.managerId ?? "";
 
       reset({
         firstName: emp.firstName ?? "",
@@ -220,8 +203,10 @@ function StaffFormPage() {
         departmentId: deptId,
         jobTitle: posTitle,
         positionId: posId,
-        employeeType: emp.employeeType ?? emp.employmentType ?? "Full-time",
-        employmentStatus: emp.employmentStatus ?? emp.status ?? "active",
+        employeeType:
+          emp.employeeType ?? emp.employmentType ?? "Full-time",
+        employmentStatus:
+          emp.employmentStatus ?? emp.status ?? "active",
         workLocation: emp.workLocation ?? emp.location ?? "Remote",
         grade: emp.grade ?? "G2",
         managerId: mgrId,
@@ -281,11 +266,12 @@ function StaffFormPage() {
         values.department ||
         values.departmentId ||
         undefined;
-      const deptId = selectedDept?.id || values.departmentId || undefined;
 
       const jobTitle =
-        selectedPos?.name || values.jobTitle || values.positionId || undefined;
-      const positionId = selectedPos?.id || values.positionId || undefined;
+        selectedPos?.name ||
+        values.jobTitle ||
+        values.positionId ||
+        undefined;
 
       const payload: CreateEmployeeInput = {
         firstName: values.firstName.trim(),
@@ -293,26 +279,20 @@ function StaffFormPage() {
         lastName: values.lastName.trim(),
         email: values.email.trim(),
         phone: values.phone?.trim() || undefined,
-        phoneNumber: values.phone?.trim() || undefined,
         employeeNumber: values.employeeNumber?.trim() || undefined,
         dateOfBirth: values.dateOfBirth || undefined,
         gender: values.gender || undefined,
         nationality: values.nationality?.trim() || undefined,
         residentialAddress: values.residentialAddress?.trim() || undefined,
         department: deptName,
-        departmentId: deptId,
         jobTitle,
-        positionId,
         employeeType: values.employeeType || undefined,
-        employmentType: values.employeeType || undefined,
         employmentStatus: values.employmentStatus || undefined,
-        status: values.employmentStatus || undefined,
         workLocation: values.workLocation || undefined,
-        location: values.workLocation || undefined,
         grade: values.grade || undefined,
-        managerId: values.managerId || undefined,
+        managerId: values.managerId?.trim() || undefined,
         startDate: values.startDate || undefined,
-        workSchedule: values.workSchedule || undefined,
+        workSchedule: values.workSchedule?.trim() || undefined,
         isOnProbation: Boolean(values.isOnProbation),
         probationEndDate: values.isOnProbation
           ? values.probationEndDate || undefined
@@ -325,9 +305,10 @@ function StaffFormPage() {
           values.emergencyContactRelationship?.trim() || undefined,
         emergencyContactPhone:
           values.emergencyContactPhone?.trim() || undefined,
-        basicSalary: values.basicSalary
-          ? Number(values.basicSalary)
-          : undefined,
+        basicSalary:
+          values.basicSalary !== "" && values.basicSalary !== undefined
+            ? Number(values.basicSalary)
+            : undefined,
         payFrequency: values.payFrequency || undefined,
         bankName: values.bankName?.trim() || undefined,
         bankAccountNumber: values.bankAccountNumber?.trim() || undefined,
@@ -549,8 +530,7 @@ function StaffFormPage() {
                   Employment & Organizational Details
                 </h3>
                 <p className="text-xs text-base-content/60">
-                  Role assignment, department affiliation, reporting line, and
-                  status
+                  Role assignment, department affiliation, reporting line, and status
                 </p>
               </div>
             </div>
@@ -576,10 +556,7 @@ function StaffFormPage() {
                 >
                   <option value="">Select Department</option>
                   {departmentsList.map((dept) => (
-                    <option
-                      key={dept.id || dept.name}
-                      value={dept.id || dept.name}
-                    >
+                    <option key={dept.id || dept.name} value={dept.id || dept.name}>
                       {dept.name}
                     </option>
                   ))}
@@ -750,8 +727,7 @@ function StaffFormPage() {
                       Probation Period
                     </p>
                     <p className="text-xs text-base-content/60">
-                      Enable if this hire is currently undergoing probationary
-                      review.
+                      Enable if this hire is currently undergoing probationary review.
                     </p>
                   </div>
                   <input
@@ -822,8 +798,7 @@ function StaffFormPage() {
                   Compensation & Banking Details
                 </h3>
                 <p className="text-xs text-base-content/60">
-                  Payroll salary configuration and disbursement banking
-                  credentials
+                  Payroll salary configuration and disbursement banking credentials
                 </p>
               </div>
             </div>

@@ -49,7 +49,7 @@ export default function AddEmployeeModal({
         firstName: values.firstName.trim(),
         lastName: values.lastName.trim(),
         email: values.email.trim(),
-        phoneNumber: values.phone.trim(),
+        phone: values.phone.trim(),
       });
       methods.reset();
     } catch {
@@ -120,19 +120,18 @@ export default function AddEmployeeModal({
             after creation.
           </p>
 
-          <div className="flex justify-end gap-2 pt-4 border-t border-base-200">
+          <div className="flex justify-end gap-2 pt-2">
             <button
               type="button"
               onClick={onClose}
-              className="btn btn-sm btn-ghost text-xs"
-              disabled={methods.formState.isSubmitting}
+              className="btn btn-sm btn-ghost rounded-lg text-xs"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="btn btn-sm btn-primary text-xs"
               disabled={methods.formState.isSubmitting}
+              className="btn btn-sm btn-primary rounded-lg text-xs"
             >
               {methods.formState.isSubmitting ? "Adding..." : "Add Employee"}
             </button>
