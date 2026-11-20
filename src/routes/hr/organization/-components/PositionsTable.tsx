@@ -41,7 +41,7 @@ export default function PositionsTable({
           <span className="font-semibold text-base-content">
             {pos.title || "Untitled Position"}
           </span>
-          <span className="text-[11px] text-base-content/50 font-normal">
+          <span className="text-[11px] text-base-content/80 font-normal">
             {pos.dept || "General"}
           </span>
         </div>
@@ -51,7 +51,7 @@ export default function PositionsTable({
       key: "grade",
       label: "Grade",
       render: (value) => (
-        <span className="rounded-md bg-base-200 px-2 py-0.5 text-xs font-mono font-semibold text-base-content/80">
+        <span className="rounded-md bg-base-200 px-2 py-0.5  font-mono font-semibold text-base-content/80">
           {value || "—"}
         </span>
       ),
@@ -125,7 +125,7 @@ export default function PositionsTable({
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
           <h3 className="text-base font-bold text-base-content">Positions</h3>
-          <p className="text-xs text-base-content/60">
+          <p className=" text-base-content/80">
             {filteredPositions.length} defined job role
             {filteredPositions.length === 1 ? "" : "s"}
           </p>
@@ -140,7 +140,7 @@ export default function PositionsTable({
               placeholder="Search positions..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="input input-sm input-bordered pl-8 text-xs rounded-xl w-44 sm:w-52"
+              className="input input-sm input-bordered pl-8  rounded-xl w-44 sm:w-52"
             />
           </div>
 

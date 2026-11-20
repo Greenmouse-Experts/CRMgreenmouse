@@ -44,8 +44,9 @@ export default function LeaveRequestModal({
             </div>
             {getLeaveStatusBadge(request.status)}
           </div>
-          <div className="mt-1 text-xs text-base-content/60">
-            {request.type} · {request.days} {request.days === 1 ? "day" : "days"}
+          <div className="mt-1  text-base-content/80">
+            {request.type} · {request.days}{" "}
+            {request.days === 1 ? "day" : "days"}
           </div>
         </div>
 

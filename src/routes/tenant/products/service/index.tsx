@@ -505,7 +505,7 @@ function RouteComponent() {
       <Modal ref={detailsModalRef} title="Service Details">
         {selectedService && (
           <div className="space-y-4">
-            <div className="flex items-center gap-4 p-4 bg-base-200/50 rounded-xl">
+            <div className="flex items-center gap-4 p-4 bg-base-200/80 rounded-xl">
               <div className="size-14 rounded-xl bg-secondary/10 flex items-center justify-center text-secondary">
                 <Wrench className="size-7" />
               </div>

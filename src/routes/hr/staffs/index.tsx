@@ -81,7 +81,9 @@ const toUiEmployee = (employee: EmployeeRecord): Employee => {
   const empNumber =
     employee.employeeNumber ||
     employee.employee_number ||
-    (employee.id && employee.id.length > 8 ? employee.id.slice(0, 8) : employee.id) ||
+    (employee.id && employee.id.length > 8
+      ? employee.id.slice(0, 8)
+      : employee.id) ||
     UNKNOWN;
 
   const rawTitle = relationName(
@@ -240,7 +242,7 @@ function StaffsDirectoryContent({
           <h3 className="font-semibold text-base text-base-content">
             No matching employees found
           </h3>
-          <p className="text-xs text-base-content/60 max-w-sm mx-auto">
+          <p className=" text-base-content/80 max-w-sm mx-auto">
             No records matched your filters. Try clearing your search term or
             adjusting the status and department filters.
           </p>
@@ -311,7 +313,7 @@ function RouteComponent() {
   return (
     <div className="space-y-6 pb-16">
       <div>
-        <p className="mb-1 text-xs font-semibold uppercase tracking-[0.18em] text-primary">
+        <p className="mb-1  font-semibold uppercase tracking-[0.18em] text-primary">
           People
         </p>
         <PageHeader
@@ -323,14 +325,14 @@ function RouteComponent() {
               type="button"
               onClick={handleExport}
               disabled={!employeesQuery.data?.length}
-              className="btn btn-sm btn-ghost border border-base-300 gap-1.5 rounded-lg text-xs font-medium"
+              className="btn btn-sm btn-ghost border border-base-300 gap-1.5 rounded-lg  font-medium"
             >
               <Download className="size-4" /> Export
             </button>
             <Link
               to="/hr/staffs/$id"
               params={{ id: "new" }}
-              className="btn btn-sm btn-primary gap-1.5 rounded-lg text-xs font-medium shadow-xs"
+              className="btn btn-sm btn-primary gap-1.5 rounded-lg  font-medium shadow-xs"
             >
               <Plus className="size-4" /> Add employee
             </Link>

@@ -44,28 +44,28 @@ export default function VacanciesTable({
     switch (status) {
       case "Published":
         return (
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-700 border border-emerald-200">
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-1  font-semibold text-emerald-700 border border-emerald-200">
             <span className="size-1.5 rounded-full bg-emerald-500 animate-pulse" />
             Published
           </span>
         );
       case "Pending Approval":
         return (
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-50 px-2.5 py-1 text-xs font-semibold text-amber-700 border border-amber-200">
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-50 px-2.5 py-1  font-semibold text-amber-700 border border-amber-200">
             <span className="size-1.5 rounded-full bg-amber-500" />
             Pending Approval
           </span>
         );
       case "Draft":
         return (
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-100 px-2.5 py-1 text-xs font-semibold text-slate-700 border border-slate-200">
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-100 px-2.5 py-1  font-semibold text-slate-700 border border-slate-200">
             <span className="size-1.5 rounded-full bg-slate-400" />
             Draft
           </span>
         );
       case "Closed":
         return (
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-rose-50 px-2.5 py-1 text-xs font-semibold text-rose-700 border border-rose-200">
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-rose-50 px-2.5 py-1  font-semibold text-rose-700 border border-rose-200">
             <span className="size-1.5 rounded-full bg-rose-500" />
             Closed
           </span>
@@ -80,7 +80,7 @@ export default function VacanciesTable({
       key: "id",
       label: "ID",
       render: (value: string) => (
-        <span className="font-mono text-xs font-bold text-primary">{value}</span>
+        <span className="font-mono  font-bold text-primary">{value}</span>
       ),
     },
     {
@@ -153,7 +153,7 @@ export default function VacanciesTable({
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h2 className="text-lg font-bold text-base-content">Vacancies</h2>
-          <p className="text-xs text-base-content/60">
+          <p className=" text-base-content/80">
             Job requisitions, active job board postings, and applicant tallies
           </p>
         </div>
@@ -167,14 +167,14 @@ export default function VacanciesTable({
               placeholder="Search vacancy..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="input input-xs w-full pl-8 bg-base-200/60 border-base-300 rounded-lg text-xs"
+              className="input input-xs w-full pl-8 bg-base-200/80 border-base-300 rounded-lg "
             />
           </div>
 
           <select
             value={departmentFilter}
             onChange={(e) => setDepartmentFilter(e.target.value)}
-            className="select select-xs bg-base-200/60 border-base-300 rounded-lg text-xs"
+            className="select select-xs bg-base-200/80 border-base-300 rounded-lg "
           >
             <option value="All">All Depts</option>
             {HR_DEPARTMENTS.map((dept) => (
@@ -187,7 +187,7 @@ export default function VacanciesTable({
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="select select-xs bg-base-200/60 border-base-300 rounded-lg text-xs"
+            className="select select-xs bg-base-200/80 border-base-300 rounded-lg "
           >
             <option value="All">All Statuses</option>
             <option value="Published">Published</option>
@@ -207,7 +207,7 @@ export default function VacanciesTable({
           onRowClick={(item) => onSelectVacancy?.(item as Vacancy)}
         />
       ) : (
-        <div className="py-8 text-center text-xs text-base-content/40">
+        <div className="py-8 text-center  text-base-content/40">
           No vacancies found matching the current filters.
         </div>
       )}

@@ -185,7 +185,7 @@ function RouteComponent() {
                   </div>
 
                   <div className="grid grid-cols-2 gap-4">
-                    <div className="bg-base-200/50 p-3 rounded-lg">
+                    <div className="bg-base-200/80 p-3 rounded-lg">
                       <span className="text-sm text-base-content/60 block">
                         Email
                       </span>
@@ -193,7 +193,7 @@ function RouteComponent() {
                         {selectedCompany.email || "—"}
                       </span>
                     </div>
-                    <div className="bg-base-200/50 p-3 rounded-lg">
+                    <div className="bg-base-200/80 p-3 rounded-lg">
                       <span className="text-sm text-base-content/60 block">
                         Phone
                       </span>
@@ -201,7 +201,7 @@ function RouteComponent() {
                         {selectedCompany.workPhone || "—"}
                       </span>
                     </div>
-                    <div className="bg-base-200/50 p-3 rounded-lg">
+                    <div className="bg-base-200/80 p-3 rounded-lg">
                       <span className="text-sm text-base-content/60 block">
                         Website
                       </span>
@@ -209,7 +209,7 @@ function RouteComponent() {
                         {selectedCompany.website || "—"}
                       </span>
                     </div>
-                    <div className="bg-base-200/50 p-3 rounded-lg">
+                    <div className="bg-base-200/80 p-3 rounded-lg">
                       <span className="text-sm text-base-content/60 block">
                         Location
                       </span>

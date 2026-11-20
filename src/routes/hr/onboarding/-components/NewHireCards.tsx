@@ -61,7 +61,7 @@ export default function NewHireCards({
                       <CheckCircle2 className="size-3.5 text-emerald-500 shrink-0" />
                     )}
                   </div>
-                  <p className="text-xs text-base-content/60 truncate">
+                  <p className=" text-base-content/80 truncate">
                     {hire.role} · starts {hire.start}
                   </p>
                 </div>
@@ -69,7 +69,9 @@ export default function NewHireCards({
 
               <ChevronRight
                 className={`size-4 transition-transform ${
-                  isSelected ? "text-primary translate-x-0.5" : "text-base-content/30"
+                  isSelected
+                    ? "text-primary translate-x-0.5"
+                    : "text-base-content/30"
                 }`}
               />
             </div>
@@ -89,7 +91,7 @@ export default function NewHireCards({
                 />
               </div>
               <span
-                className={`text-xs font-bold font-mono ${
+                className={` font-bold font-mono ${
                   isFinished ? "text-emerald-600" : "text-base-content/80"
                 }`}
               >

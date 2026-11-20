@@ -180,7 +180,7 @@ export default function CreateVacancyModal({
       <div className="space-y-4">
         {/* Stepper Tabs & description */}
         <div className="flex flex-col gap-3 -mt-1 pb-3 border-b border-base-200">
-          <p className="text-base-content/60">
+          <p className="text-base-content/80">
             Raise a requisition. It goes to the approver before it can be
             published.
           </p>
@@ -270,7 +270,7 @@ export default function CreateVacancyModal({
                     max="50"
                     value={form.openings}
                     onChange={(e) => handleChange("openings", e.target.value)}
-                    className="input input-bordered w-full rounded-xl bg-base-200/50"
+                    className="input input-bordered w-full rounded-xl bg-base-200/80"
                   />
                 </div>
 
@@ -372,7 +372,7 @@ export default function CreateVacancyModal({
                     type="date"
                     value={form.closes}
                     onChange={(e) => handleChange("closes", e.target.value)}
-                    className="input input-bordered w-full rounded-xl bg-base-200/50"
+                    className="input input-bordered w-full rounded-xl bg-base-200/80"
                   />
                 </div>
 

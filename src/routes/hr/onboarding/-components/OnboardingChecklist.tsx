@@ -48,11 +48,11 @@ export default function OnboardingChecklist({
             <h2 className="text-lg font-bold text-base-content">
               Checklist — {hire.name}
             </h2>
-            <span className="badge badge-sm badge-ghost text-xs font-semibold">
+            <span className="badge badge-sm badge-ghost  font-semibold">
               {completedCount} of {totalCount} completed
             </span>
           </div>
-          <p className="text-xs text-base-content/60 mt-0.5">
+          <p className=" text-base-content/80 mt-0.5">
             Onboarding tasks assigned to this employee
           </p>
         </div>
@@ -60,7 +60,7 @@ export default function OnboardingChecklist({
         <select
           value={filterDept}
           onChange={(e) => setFilterDept(e.target.value)}
-          className="select select-xs bg-base-200/60 border-base-300 rounded-lg text-xs"
+          className="select select-xs bg-base-200/80 border-base-300 rounded-lg "
         >
           <option value="All">All Departments</option>
           {DEPARTMENTS.map((dept) => (
@@ -73,7 +73,7 @@ export default function OnboardingChecklist({
 
       <ul className="divide-y divide-base-200">
         {filteredItems.length === 0 ? (
-          <li className="py-6 text-center text-xs text-base-content/40 italic">
+          <li className="py-6 text-center  text-base-content/40 italic">
             No onboarding tasks available for this employee.
           </li>
         ) : (
@@ -95,9 +95,9 @@ export default function OnboardingChecklist({
               </button>
 
               <span
-                className={`flex-1 text-xs sm:text-sm transition-colors ${
+                className={`flex-1  sm:text-sm transition-colors ${
                   item.completed
-                    ? "text-base-content/50 line-through"
+                    ? "text-base-content/80 line-through"
                     : "text-base-content font-medium"
                 }`}
               >

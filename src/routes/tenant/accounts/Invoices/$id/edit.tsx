@@ -244,7 +244,7 @@ function RouteComponent() {
                 <FormWrapper title="Invoice Line Items" className="space-y-4">
                   <div className="overflow-x-auto border border-base-200 rounded-lg">
                     <table className="table w-full">
-                      <thead className="bg-base-200/50 ">
+                      <thead className="bg-base-200/80 ">
                         <tr>
                           <th className="w-1/2">Item Description</th>
                           <th className="text-center w-24">Qty</th>

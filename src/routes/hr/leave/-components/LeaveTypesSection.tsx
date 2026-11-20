@@ -15,12 +15,13 @@ export default function LeaveTypesSection({
       <div>
         <div className="flex items-center gap-2">
           <h2 className="text-lg font-bold text-base-content">Leave types</h2>
-          <span className="badge badge-sm badge-ghost text-xs font-semibold">
+          <span className="badge badge-sm badge-ghost  font-semibold">
             {LEAVE_TYPES.length} policies
           </span>
         </div>
-        <p className="text-xs text-base-content/60 mt-0.5">
-          Company leave policies, standard allowances, and document requirement rules.
+        <p className=" text-base-content/80 mt-0.5">
+          Company leave policies, standard allowances, and document requirement
+          rules.
         </p>
       </div>
 
@@ -52,10 +53,12 @@ export default function LeaveTypesSection({
         ))}
       </div>
 
-      <div className="flex items-center gap-2 p-3 rounded-xl bg-info/5 border border-info/20 text-xs text-base-content/70">
+      <div className="flex items-center gap-2 p-3 rounded-xl bg-info/5 border border-info/20  text-base-content/70">
         <Info className="size-4 text-info shrink-0" />
         <span>
-          Supporting documents (medical report, admission slip, or certificate) are required for sick leave exceeding 2 days, maternity leave, and study leave.
+          Supporting documents (medical report, admission slip, or certificate)
+          are required for sick leave exceeding 2 days, maternity leave, and
+          study leave.
         </span>
       </div>
     </div>

@@ -33,7 +33,7 @@ export default function EmployeeStatusBadge({
   return (
     <div className={`inline-flex flex-wrap items-center gap-1.5 ${className}`}>
       <span
-        className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-medium border ${getStatusStyle(
+        className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5  font-medium border ${getStatusStyle(
           status,
         )}`}
       >
@@ -41,7 +41,7 @@ export default function EmployeeStatusBadge({
         {status}
       </span>
       {onLeave && (
-        <span className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-medium bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-500/20">
+        <span className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5  font-medium bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-500/20">
           <span className="size-1.5 rounded-full bg-amber-500" />
           On Leave
         </span>

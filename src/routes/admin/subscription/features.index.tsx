@@ -313,7 +313,7 @@ function RouteComponent() {
                 </div>
 
                 {/* Category Chips Filter */}
-                <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-thin pt-2 border-t border-base-200/50">
+                <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-thin pt-2 border-t border-base-200/80">
                   <span className="text-[11px] font-semibold text-base-content/40 uppercase tracking-wider shrink-0 mr-1">
                     Category:
                   </span>
@@ -445,7 +445,7 @@ function RouteComponent() {
 
                           {/* Included Tiers Section */}
                           <div className="mt-auto pt-3.5 border-t border-base-200/70">
-                            <div className="text-[11px] font-semibold text-base-content/50 uppercase tracking-wider mb-2">
+                            <div className="text-[11px] font-semibold text-base-content/80 uppercase tracking-wider mb-2">
                               Active In Plans
                             </div>
                             {includedPlans.length === 0 ? (
@@ -470,7 +470,7 @@ function RouteComponent() {
 
                         {/* Card Footer */}
                         <div className="px-5 py-3 bg-base-200/40 border-t border-base-200 flex items-center justify-between gap-2">
-                          <div className="text-xs text-base-content/50 truncate">
+                          <div className="text-xs text-base-content/80 truncate">
                             {includedPlans.length === plans.length &&
                             plans.length > 0 ? (
                               <span className="text-success font-medium flex items-center gap-1">
@@ -610,12 +610,12 @@ function RouteComponent() {
       >
         {activeFeature && (
           <div className="space-y-5">
-            <div className="p-4 rounded-xl bg-base-200/50 border border-base-200 space-y-2">
+            <div className="p-4 rounded-xl bg-base-200/80 border border-base-200 space-y-2">
               <div className="flex items-center justify-between">
                 <span className="badge badge-sm badge-primary badge-outline">
                   {activeFeature.category}
                 </span>
-                <span className="font-mono text-xs text-base-content/50">
+                <span className="font-mono text-xs text-base-content/80">
                   key: {activeFeature.key}
                 </span>
               </div>
@@ -631,13 +631,13 @@ function RouteComponent() {
                 <span className="label-text font-semibold text-base-content">
                   Enable Feature for Selected Subscription Plans:
                 </span>
-                <span className="text-xs text-base-content/50">
+                <span className="text-xs text-base-content/80">
                   {selectedPlanIds.length} of {plans.length} selected
                 </span>
               </label>
 
               {plans.length === 0 ? (
-                <div className="p-6 text-center text-sm text-base-content/50 border border-dashed border-base-300 rounded-xl">
+                <div className="p-6 text-center text-sm text-base-content/80 border border-dashed border-base-300 rounded-xl">
                   No subscription plans created yet. Create a plan first.
                 </div>
               ) : (
@@ -650,7 +650,7 @@ function RouteComponent() {
                         className={`flex items-center justify-between p-3.5 rounded-xl border cursor-pointer transition-all ${
                           isChecked
                             ? "bg-primary/5 border-primary/40 text-base-content shadow-xs"
-                            : "bg-base-100 border-base-200 text-base-content/70 hover:bg-base-200/50"
+                            : "bg-base-100 border-base-200 text-base-content/70 hover:bg-base-200/80"
                         }`}
                       >
                         <div className="flex items-center gap-3">
@@ -664,7 +664,7 @@ function RouteComponent() {
                             <div className="font-semibold text-sm">
                               {plan.name}
                             </div>
-                            <div className="text-xs text-base-content/50">
+                            <div className="text-xs text-base-content/80">
                               {plan.isCustomPrice
                                 ? "Custom Pricing"
                                 : `₦${plan.priceMonthly?.toLocaleString() || 0}/mo · ₦${plan.priceYearly?.toLocaleString() || 0}/yr`}

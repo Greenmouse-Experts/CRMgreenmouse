@@ -91,18 +91,15 @@ export default function AddDepartmentModal({
       onClose={onClose}
     >
       <FormProvider {...methods}>
-        <form
-          onSubmit={methods.handleSubmit(onSubmit)}
-          className="space-y-4"
-        >
-          <p className="text-xs text-base-content/60 -mt-1 mb-3">
+        <form onSubmit={methods.handleSubmit(onSubmit)} className="space-y-4">
+          <p className=" text-base-content/80 -mt-1 mb-3">
             Create a department and assign its reporting head and operational
             details.
           </p>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="text-xs font-semibold text-base-content/80 mb-1 block">
+              <label className=" font-semibold text-base-content/80 mb-1 block">
                 Department name <span className="text-error">*</span>
               </label>
               <SimpleInput
@@ -115,7 +112,7 @@ export default function AddDepartmentModal({
             </div>
 
             <div>
-              <label className="text-xs font-semibold text-base-content/80 mb-1 block">
+              <label className=" font-semibold text-base-content/80 mb-1 block">
                 Department code <span className="text-error">*</span>
               </label>
               <SimpleInput
@@ -125,13 +122,13 @@ export default function AddDepartmentModal({
                   required: "Please provide a unique department code",
                 })}
               />
-              <span className="text-[10px] text-base-content/50 mt-1 block">
+              <span className="text-[10px] text-base-content/80 mt-1 block">
                 Must be unique (2-4 uppercase characters)
               </span>
             </div>
 
             <div>
-              <label className="text-xs font-semibold text-base-content/80 mb-1 block">
+              <label className=" font-semibold text-base-content/80 mb-1 block">
                 Department Head <span className="text-error">*</span>
               </label>
               <LocalSelect {...methods.register("head")}>
@@ -144,7 +141,7 @@ export default function AddDepartmentModal({
             </div>
 
             <div>
-              <label className="text-xs font-semibold text-base-content/80 mb-1 block">
+              <label className=" font-semibold text-base-content/80 mb-1 block">
                 Parent department
               </label>
               <LocalSelect {...methods.register("parent")}>
@@ -158,7 +155,7 @@ export default function AddDepartmentModal({
             </div>
 
             <div>
-              <label className="text-xs font-semibold text-base-content/80 mb-1 block">
+              <label className=" font-semibold text-base-content/80 mb-1 block">
                 Cost Centre code
               </label>
               <SimpleInput
@@ -168,7 +165,7 @@ export default function AddDepartmentModal({
             </div>
 
             <div>
-              <label className="text-xs font-semibold text-base-content/80 mb-1 block">
+              <label className=" font-semibold text-base-content/80 mb-1 block">
                 Location
               </label>
               <LocalSelect {...methods.register("location")}>
@@ -181,7 +178,7 @@ export default function AddDepartmentModal({
             </div>
 
             <div>
-              <label className="text-xs font-semibold text-base-content/80 mb-1 block">
+              <label className=" font-semibold text-base-content/80 mb-1 block">
                 Initial headcount
               </label>
               <input
@@ -190,12 +187,12 @@ export default function AddDepartmentModal({
                 {...methods.register("headcount", {
                   valueAsNumber: true,
                 })}
-                className="input input-bordered w-full text-xs rounded-xl bg-base-200/50"
+                className="input input-bordered w-full  rounded-xl bg-base-200/80"
               />
             </div>
 
             <div>
-              <label className="text-xs font-semibold text-base-content/80 mb-1 block">
+              <label className=" font-semibold text-base-content/80 mb-1 block">
                 Status
               </label>
               <LocalSelect {...methods.register("status")}>
@@ -206,14 +203,14 @@ export default function AddDepartmentModal({
           </div>
 
           <div>
-            <label className="text-xs font-semibold text-base-content/80 mb-1 block">
+            <label className=" font-semibold text-base-content/80 mb-1 block">
               Description
             </label>
             <textarea
               {...methods.register("description")}
               placeholder="Responsibilities, scope, and objectives of this department..."
               rows={3}
-              className="textarea textarea-bordered w-full text-xs rounded-xl bg-base-200/50"
+              className="textarea textarea-bordered w-full  rounded-xl bg-base-200/80"
             />
           </div>
 

@@ -10,7 +10,7 @@ export default function DropDownBtn(props: DropDownProps) {
         <button className="btn btn-primary  btn-outline">
           {props.title ?? "Title"}
         </button>
-        <ul className="dropdown-content menu -mx-12 min-w-32 ring rounded-box ring-current/10  bg-base-200/50 backdrop-blur-md shadow ">
+        <ul className="dropdown-content menu -mx-12 min-w-32 ring rounded-box ring-current/10  bg-base-200/80 backdrop-blur-md shadow ">
           {props.items.map((item) => (
             <li key={item.name}>
               <a onClick={() => item.action(item)}>{item.name}</a>

@@ -318,7 +318,7 @@ function RouteComponent() {
                   );
                 })
               ) : (
-                <div className="col-span-2 text-center py-4 text-sm text-base-content/50">
+                <div className="col-span-2 text-center py-4 text-sm text-base-content/80">
                   Loading permissions...
                 </div>
               )}

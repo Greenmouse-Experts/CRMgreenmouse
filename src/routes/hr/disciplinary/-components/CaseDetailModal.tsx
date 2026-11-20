@@ -42,7 +42,7 @@ export default function CaseDetailModal({
       title={
         <div className="flex items-center gap-2">
           <span>Case {caseItem.id}</span>
-          <span className="badge badge-sm badge-outline font-mono text-xs">
+          <span className="badge badge-sm badge-outline font-mono ">
             {caseItem.category}
           </span>
         </div>
@@ -55,25 +55,25 @@ export default function CaseDetailModal({
         <div className="rounded-xl border border-base-200 bg-base-200/30 p-4 space-y-3">
           <div className="flex flex-wrap items-center justify-between gap-2">
             <div className="flex items-center gap-2">
-              <div className="size-8 rounded-full bg-primary/10 text-primary font-bold flex items-center justify-center text-xs">
+              <div className="size-8 rounded-full bg-primary/10 text-primary font-bold flex items-center justify-center ">
                 {caseItem.employee.slice(0, 2).toUpperCase()}
               </div>
               <div>
                 <h3 className="font-bold text-base-content text-sm">
                   {caseItem.employee}
                 </h3>
-                <p className="text-[11px] text-base-content/60">
+                <p className="text-[11px] text-base-content/80">
                   {caseItem.department} · Opened on {caseItem.openedDate}
                 </p>
               </div>
             </div>
 
             <div className="flex items-center gap-2">
-              <span className="badge badge-sm badge-ghost text-xs">
+              <span className="badge badge-sm badge-ghost ">
                 Severity: {caseItem.severity}
               </span>
               <span
-                className={`badge badge-sm text-xs font-semibold ${
+                className={`badge badge-sm  font-semibold ${
                   caseItem.status === "Closed"
                     ? "badge-success"
                     : caseItem.status === "Under Review"
@@ -86,9 +86,9 @@ export default function CaseDetailModal({
             </div>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5 text-xs pt-2 border-t border-base-200/60">
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5  pt-2 border-t border-base-200/80">
             <div>
-              <span className="text-base-content/50 block text-[10px]">
+              <span className="text-base-content/80 block text-[10px]">
                 Reported by
               </span>
               <span className="font-semibold text-base-content">
@@ -96,7 +96,7 @@ export default function CaseDetailModal({
               </span>
             </div>
             <div>
-              <span className="text-base-content/50 block text-[10px]">
+              <span className="text-base-content/80 block text-[10px]">
                 Investigator
               </span>
               <span className="font-semibold text-base-content">
@@ -104,7 +104,7 @@ export default function CaseDetailModal({
               </span>
             </div>
             <div>
-              <span className="text-base-content/50 block text-[10px]">
+              <span className="text-base-content/80 block text-[10px]">
                 Interim action
               </span>
               <span className="font-semibold text-base-content">
@@ -116,21 +116,21 @@ export default function CaseDetailModal({
 
         {/* Incident Summary */}
         <div className="space-y-1.5">
-          <h4 className="text-xs font-bold uppercase tracking-wider text-base-content/70 flex items-center gap-1.5">
+          <h4 className=" font-bold uppercase tracking-wider text-base-content/70 flex items-center gap-1.5">
             <FileText className="size-3.5 text-primary" />
             <span>Incident Description</span>
           </h4>
-          <div className="p-3.5 rounded-xl border border-base-200 bg-base-100 text-xs text-base-content/90 leading-relaxed">
+          <div className="p-3.5 rounded-xl border border-base-200 bg-base-100  text-base-content/90 leading-relaxed">
             {caseItem.description}
           </div>
         </div>
 
         {caseItem.witnesses && (
           <div className="space-y-1">
-            <h4 className="text-xs font-bold uppercase tracking-wider text-base-content/70">
+            <h4 className=" font-bold uppercase tracking-wider text-base-content/70">
               Witnesses
             </h4>
-            <p className="text-xs text-base-content/80 p-2 rounded-lg bg-base-200/40 border border-base-200">
+            <p className=" text-base-content/80 p-2 rounded-lg bg-base-200/40 border border-base-200">
               {caseItem.witnesses}
             </p>
           </div>
@@ -139,7 +139,7 @@ export default function CaseDetailModal({
         {/* Workflow Progression Stepper Mini */}
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <h4 className="text-xs font-bold uppercase tracking-wider text-base-content/70 flex items-center gap-1.5">
+            <h4 className=" font-bold uppercase tracking-wider text-base-content/70 flex items-center gap-1.5">
               <Scale className="size-3.5 text-primary" />
               <span>Current Due Process Stage</span>
             </h4>
@@ -148,7 +148,7 @@ export default function CaseDetailModal({
             </span>
           </div>
 
-          <div className="flex items-center gap-1 w-full bg-base-200/60 p-1.5 rounded-xl">
+          <div className="flex items-center gap-1 w-full bg-base-200/80 p-1.5 rounded-xl">
             {WORKFLOW_STEPS.map((s, idx) => {
               const done = idx <= currentStepIdx;
               return (
@@ -186,7 +186,7 @@ export default function CaseDetailModal({
                   onCloseCase(caseItem.id);
                   onClose();
                 }}
-                className="btn btn-sm btn-outline btn-error rounded-xl gap-1 text-xs"
+                className="btn btn-sm btn-outline btn-error rounded-xl gap-1 "
               >
                 <CheckCircle2 className="size-3.5" />
                 <span>Mark Concluded</span>
@@ -200,7 +200,7 @@ export default function CaseDetailModal({
                   onAdvanceStep(caseItem.id, nextStep);
                   onClose();
                 }}
-                className="btn btn-sm bg-primary text-white hover:bg-primary/90 rounded-xl px-4 gap-1.5 shadow-sm shadow-primary/20 text-xs"
+                className="btn btn-sm bg-primary text-white hover:bg-primary/90 rounded-xl px-4 gap-1.5 shadow-sm shadow-primary/20 "
               >
                 <span>Advance to {nextStep}</span>
                 <ArrowRight className="size-3.5" />

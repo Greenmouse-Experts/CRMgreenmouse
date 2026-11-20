@@ -10,11 +10,11 @@ export default function PayrollConfigSection() {
           <h2 className="text-lg font-bold text-base-content">
             Deduction & earning rules
           </h2>
-          <span className="badge badge-sm badge-ghost text-xs font-semibold">
+          <span className="badge badge-sm badge-ghost  font-semibold">
             {PAYROLL_POLICIES.length} rules
           </span>
         </div>
-        <p className="text-xs text-base-content/60 mt-0.5">
+        <p className=" text-base-content/80 mt-0.5">
           Statutory and company rules applied automatically during calculation.
         </p>
       </div>
@@ -33,7 +33,7 @@ export default function PayrollConfigSection() {
           >
             <div className="space-y-1">
               <div className="flex items-center gap-1.5">
-                <span className="text-xs font-bold text-base-content">
+                <span className=" font-bold text-base-content">
                   {policy.name}
                 </span>
                 <span
@@ -42,7 +42,7 @@ export default function PayrollConfigSection() {
                   {policy.basis}
                 </span>
               </div>
-              <p className="text-[11px] leading-relaxed text-base-content/60">
+              <p className="text-[11px] leading-relaxed text-base-content/80">
                 {policy.description}
               </p>
             </div>
@@ -54,31 +54,33 @@ export default function PayrollConfigSection() {
       </div>
 
       <div className="space-y-2.5 rounded-xl border border-base-200 bg-base-200/30 p-3">
-        <div className="flex items-center gap-2 text-xs font-bold text-base-content">
-          <Settings2 className="size-4 text-base-content/60" />
+        <div className="flex items-center gap-2  font-bold text-base-content">
+          <Settings2 className="size-4 text-base-content/80" />
           <span>Pay schedule</span>
         </div>
         <dl className="grid grid-cols-2 gap-2 text-[11px] text-base-content/70">
           <div>
-            <dt className="text-base-content/50">Frequency</dt>
+            <dt className="text-base-content/80">Frequency</dt>
             <dd className="font-semibold text-base-content">Monthly</dd>
           </div>
           <div>
-            <dt className="text-base-content/50">Cut-off</dt>
+            <dt className="text-base-content/80">Cut-off</dt>
             <dd className="font-semibold text-base-content">24th</dd>
           </div>
           <div>
-            <dt className="text-base-content/50">Pay date</dt>
+            <dt className="text-base-content/80">Pay date</dt>
             <dd className="font-semibold text-base-content">28th</dd>
           </div>
           <div>
-            <dt className="text-base-content/50">Approver</dt>
-            <dd className="font-semibold text-base-content">Finance director</dd>
+            <dt className="text-base-content/80">Approver</dt>
+            <dd className="font-semibold text-base-content">
+              Finance director
+            </dd>
           </div>
         </dl>
       </div>
 
-      <div className="flex items-center gap-2 p-3 rounded-xl bg-info/5 border border-info/20 text-xs text-base-content/70">
+      <div className="flex items-center gap-2 p-3 rounded-xl bg-info/5 border border-info/20  text-base-content/70">
         <Info className="size-4 text-info shrink-0" />
         <span>
           Statutory remittances (PAYE, pension, NHF) are due within 7 days of

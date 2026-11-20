@@ -221,7 +221,7 @@ function RouteComponent() {
       <Modal ref={detailsModalRef} title="Company Account Profile">
         {selectedCompany && (
           <div className="space-y-6 pt-2">
-            <div className="flex items-center gap-4 bg-base-200/50 p-4 rounded-xl">
+            <div className="flex items-center gap-4 bg-base-200/80 p-4 rounded-xl">
               <div className="size-14 rounded-xl bg-primary/20 text-primary flex items-center justify-center font-semibold text-xl">
                 <Building2 className="size-7" />
               </div>

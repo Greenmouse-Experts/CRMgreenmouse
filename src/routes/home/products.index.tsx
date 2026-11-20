@@ -48,7 +48,7 @@ function RouteComponent() {
                   Available now
                 </span>
 
-                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-white/50">
+                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-white/80">
                   Kinovia CRM
                 </p>
 

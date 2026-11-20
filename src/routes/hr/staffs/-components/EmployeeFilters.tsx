@@ -87,7 +87,7 @@ export default function EmployeeFilters({
           <select
             value={departmentFilter}
             onChange={(e) => onDepartmentFilterChange(e.target.value)}
-            className="select select-sm select-bordered rounded-lg text-xs"
+            className="select select-sm select-bordered rounded-lg "
           >
             <option value="All">All Departments</option>
             {departments.map((dept) => (
@@ -104,7 +104,7 @@ export default function EmployeeFilters({
               value={searchTerm}
               onChange={(e) => onSearchChange(e.target.value)}
               placeholder="Search name, ID, department..."
-              className="input input-sm input-bordered w-full pl-9 pr-7 rounded-lg text-xs"
+              className="input input-sm input-bordered w-full pl-9 pr-7 rounded-lg "
             />
             {searchTerm && (
               <button
@@ -120,7 +120,7 @@ export default function EmployeeFilters({
             <button
               type="button"
               onClick={handleReset}
-              className="btn btn-sm btn-ghost text-xs text-base-content/60 hover:text-base-content"
+              className="btn btn-sm btn-ghost  text-base-content/80 hover:text-base-content"
             >
               Clear
             </button>

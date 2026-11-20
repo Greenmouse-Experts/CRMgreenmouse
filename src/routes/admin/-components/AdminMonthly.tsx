@@ -113,7 +113,7 @@ export default function AdminMonthly() {
                     <p className="text-sm font-semibold text-base-content/70">
                       No financial activity this month
                     </p>
-                    <p className="text-xs text-base-content/50">
+                    <p className="text-xs text-base-content/80">
                       Income and expenses recorded this month will appear here.
                     </p>
                   </div>
@@ -142,7 +142,7 @@ export default function AdminMonthly() {
                     return (
                       <div
                         key={index}
-                        className="flex flex-col p-4 bg-base-200/50 rounded-xl border border-base-200 hover:border-base-300 transition-colors"
+                        className="flex flex-col p-4 bg-base-200/80 rounded-xl border border-base-200 hover:border-base-300 transition-colors"
                       >
                         <div className="flex items-center justify-between">
                           <span className="text-xs text-base-content/60 font-medium">

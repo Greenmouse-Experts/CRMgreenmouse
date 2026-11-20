@@ -62,7 +62,7 @@ function RouteComponent() {
             <span className="font-semibold text-base-content block">
               {val || `INV-${item.id.slice(0, 8).toUpperCase()}`}
             </span>
-            <span className="text-sm text-base-content/50">
+            <span className="text-sm text-base-content/80">
               {item.items?.length || 0} line items
             </span>
           </div>
@@ -77,7 +77,7 @@ function RouteComponent() {
           <div className="font-medium text-base-content">
             {val ? `${val.firstName} ${val.lastName}` : "Direct Client"}
           </div>
-          <div className="text-sm text-base-content/50">
+          <div className="text-sm text-base-content/80">
             {val?.email || item.billingAddress || "—"}
           </div>
         </div>
@@ -91,7 +91,7 @@ function RouteComponent() {
           <div className="text-base-content/80">
             Issued: {val ? new Date(val).toLocaleDateString() : "—"}
           </div>
-          <div className="text-base-content/50">
+          <div className="text-base-content/80">
             Due:{" "}
             {item.dueDate ? new Date(item.dueDate).toLocaleDateString() : "—"}
           </div>
@@ -240,7 +240,7 @@ function RouteComponent() {
                   </div>
 
                   <div className="grid grid-cols-2 gap-4">
-                    <div className="bg-base-200/50 p-3 rounded-lg">
+                    <div className="bg-base-200/80 p-3 rounded-lg">
                       <span className="text-sm text-base-content/60 block">
                         Customer
                       </span>
@@ -250,7 +250,7 @@ function RouteComponent() {
                           : "Direct Client"}
                       </span>
                     </div>
-                    <div className="bg-base-200/50 p-3 rounded-lg">
+                    <div className="bg-base-200/80 p-3 rounded-lg">
                       <span className="text-sm text-base-content/60 block">
                         Total Amount
                       </span>
@@ -269,7 +269,7 @@ function RouteComponent() {
                         ).toLocaleString()}
                       </span>
                     </div>
-                    <div className="bg-base-200/50 p-3 rounded-lg">
+                    <div className="bg-base-200/80 p-3 rounded-lg">
                       <span className="text-sm text-base-content/60 block">
                         Tenant Scope
                       </span>
@@ -277,7 +277,7 @@ function RouteComponent() {
                         {(selectedInvoice as any).tenantId || "Platform Tenant"}
                       </span>
                     </div>
-                    <div className="bg-base-200/50 p-3 rounded-lg">
+                    <div className="bg-base-200/80 p-3 rounded-lg">
                       <span className="text-sm text-base-content/60 block">
                         Due Date
                       </span>
@@ -305,14 +305,16 @@ function RouteComponent() {
                             >
                               <div>
                                 <div className="font-medium text-base-content">
-                                  {it.product?.name && <div>{it.product.name}</div>}
+                                  {it.product?.name && (
+                                    <div>{it.product.name}</div>
+                                  )}
                                   {it.description ? (
                                     <RichTextContent value={it.description} />
                                   ) : !it.product?.name ? (
                                     `Item #${idx + 1}`
                                   ) : null}
                                 </div>
-                                <span className="text-sm text-base-content/50">
+                                <span className="text-sm text-base-content/80">
                                   {it.qty} × {selectedInvoice.currency || "₦"}
                                   {Number(it.unitPrice || 0).toLocaleString()}
                                 </span>

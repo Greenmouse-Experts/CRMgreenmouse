@@ -108,10 +108,10 @@ function RouteComponent() {
               key={cat}
               type="button"
               onClick={() => setSelectedCategory(cat)}
-              className={`px-3 py-1.5 text-xs font-semibold rounded-xl transition-all ${
+              className={`px-3 py-1.5  font-semibold rounded-xl transition-all ${
                 selectedCategory === cat
                   ? "bg-primary text-white shadow-2xs"
-                  : "bg-base-100 border border-base-200 text-base-content/60 hover:bg-base-200"
+                  : "bg-base-100 border border-base-200 text-base-content/80 hover:bg-base-200"
               }`}
             >
               {cat}
@@ -126,7 +126,7 @@ function RouteComponent() {
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             placeholder="Search report titles or metrics..."
-            className="input input-sm input-bordered w-full pl-9 text-xs rounded-xl bg-base-100"
+            className="input input-sm input-bordered w-full pl-9  rounded-xl bg-base-100"
           />
         </div>
       </div>

@@ -2,15 +2,8 @@ import { useState, useRef, useEffect } from "react";
 import Modal, { type ModalHandle } from "@/components/DialogModal";
 import SimpleInput from "@/components/inputs/SimpleInput";
 import LocalSelect from "@/components/inputs/LocalSelect";
-import {
-  EMPLOYEES_SELECTION,
-  SEPARATION_TYPES,
-} from "./offboardingData";
-import type {
-  ClearanceItem,
-  OffboardingCase,
-  SeparationType,
-} from "./types";
+import { EMPLOYEES_SELECTION, SEPARATION_TYPES } from "./offboardingData";
+import type { ClearanceItem, OffboardingCase, SeparationType } from "./types";
 import { toast } from "sonner";
 import { FileText, Plus, UserMinus } from "lucide-react";
 
@@ -35,7 +28,9 @@ export default function InitiateOffboardingModal({
     role: "Software Engineer",
     separationType: "Resignation" as SeparationType,
     resignationDate: new Date().toISOString().slice(0, 10),
-    lastWorkingDay: new Date(Date.now() + 30 * 86400000).toISOString().slice(0, 10),
+    lastWorkingDay: new Date(Date.now() + 30 * 86400000)
+      .toISOString()
+      .slice(0, 10),
     handoverTo: EMPLOYEES_SELECTION[3] || "Folake Adeleke",
     notes: "",
     confirm: false,
@@ -59,7 +54,9 @@ export default function InitiateOffboardingModal({
     e.preventDefault();
 
     if (!form.confirm) {
-      toast.error("Please confirm that separation notice has been acknowledged");
+      toast.error(
+        "Please confirm that separation notice has been acknowledged",
+      );
       return;
     }
 
@@ -143,7 +140,9 @@ export default function InitiateOffboardingModal({
         role: "Software Engineer",
         separationType: "Resignation",
         resignationDate: new Date().toISOString().slice(0, 10),
-        lastWorkingDay: new Date(Date.now() + 30 * 86400000).toISOString().slice(0, 10),
+        lastWorkingDay: new Date(Date.now() + 30 * 86400000)
+          .toISOString()
+          .slice(0, 10),
         handoverTo: EMPLOYEES_SELECTION[3] || "Folake Adeleke",
         notes: "",
         confirm: false,
@@ -165,22 +164,23 @@ export default function InitiateOffboardingModal({
       onClose={onClose}
     >
       <form onSubmit={handleSubmit} className="space-y-4">
-        <p className="text-xs text-base-content/60 -mt-1">
-          Initiate exit pipeline, assign clearance milestones, and schedule system access revocation.
+        <p className=" text-base-content/80 -mt-1">
+          Initiate exit pipeline, assign clearance milestones, and schedule
+          system access revocation.
         </p>
 
         {/* Section 1: Employee & Separation */}
         <div className="space-y-3">
           <div className="flex items-center gap-1.5 pb-1 border-b border-base-200">
             <UserMinus className="size-3.5 text-primary" />
-            <h4 className="text-xs font-semibold uppercase tracking-wider text-base-content/70">
+            <h4 className=" font-semibold uppercase tracking-wider text-base-content/70">
               Employee & Separation Details
             </h4>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
             <div>
-              <label className="text-xs font-semibold text-base-content/80 mb-1 block">
+              <label className=" font-semibold text-base-content/80 mb-1 block">
                 Employee <span className="text-error">*</span>
               </label>
               <LocalSelect
@@ -196,13 +196,16 @@ export default function InitiateOffboardingModal({
             </div>
 
             <div>
-              <label className="text-xs font-semibold text-base-content/80 mb-1 block">
+              <label className=" font-semibold text-base-content/80 mb-1 block">
                 Separation Type <span className="text-error">*</span>
               </label>
               <LocalSelect
                 value={form.separationType}
                 onChange={(e) =>
-                  handleChange("separationType", e.target.value as SeparationType)
+                  handleChange(
+                    "separationType",
+                    e.target.value as SeparationType,
+                  )
                 }
               >
                 {SEPARATION_TYPES.map((type) => (
@@ -214,33 +217,35 @@ export default function InitiateOffboardingModal({
             </div>
 
             <div>
-              <label className="text-xs font-semibold text-base-content/80 mb-1 block">
+              <label className=" font-semibold text-base-content/80 mb-1 block">
                 Notice / Resignation Date <span className="text-error">*</span>
               </label>
               <input
                 type="date"
                 value={form.resignationDate}
-                onChange={(e) => handleChange("resignationDate", e.target.value)}
-                className="input input-bordered w-full text-xs rounded-xl bg-base-200/50"
+                onChange={(e) =>
+                  handleChange("resignationDate", e.target.value)
+                }
+                className="input input-bordered w-full  rounded-xl bg-base-200/80"
                 required
               />
             </div>
 
             <div>
-              <label className="text-xs font-semibold text-base-content/80 mb-1 block">
+              <label className=" font-semibold text-base-content/80 mb-1 block">
                 Last Working Day <span className="text-error">*</span>
               </label>
               <input
                 type="date"
                 value={form.lastWorkingDay}
                 onChange={(e) => handleChange("lastWorkingDay", e.target.value)}
-                className="input input-bordered w-full text-xs rounded-xl bg-base-200/50"
+                className="input input-bordered w-full  rounded-xl bg-base-200/80"
                 required
               />
             </div>
 
             <div>
-              <label className="text-xs font-semibold text-base-content/80 mb-1 block">
+              <label className=" font-semibold text-base-content/80 mb-1 block">
                 Handover Colleague <span className="text-error">*</span>
               </label>
               <LocalSelect
@@ -256,7 +261,7 @@ export default function InitiateOffboardingModal({
             </div>
 
             <div>
-              <label className="text-xs font-semibold text-base-content/80 mb-1 block">
+              <label className=" font-semibold text-base-content/80 mb-1 block">
                 Department
               </label>
               <SimpleInput
@@ -267,7 +272,7 @@ export default function InitiateOffboardingModal({
             </div>
 
             <div className="sm:col-span-2">
-              <label className="text-xs font-semibold text-base-content/80 mb-1 block">
+              <label className=" font-semibold text-base-content/80 mb-1 block">
                 Notes / Reason for exit
               </label>
               <textarea
@@ -275,7 +280,7 @@ export default function InitiateOffboardingModal({
                 onChange={(e) => handleChange("notes", e.target.value)}
                 rows={2}
                 placeholder="Brief summary of resignation or handover agreement..."
-                className="textarea textarea-bordered w-full text-xs rounded-xl bg-base-200/50"
+                className="textarea textarea-bordered w-full  rounded-xl bg-base-200/80"
               />
             </div>
           </div>
@@ -285,12 +290,12 @@ export default function InitiateOffboardingModal({
         <div className="space-y-3">
           <div className="flex items-center gap-1.5 pb-1 border-b border-base-200">
             <FileText className="size-3.5 text-primary" />
-            <h4 className="text-xs font-semibold uppercase tracking-wider text-base-content/70">
+            <h4 className=" font-semibold uppercase tracking-wider text-base-content/70">
               Compliance Confirmation
             </h4>
           </div>
 
-          <label className="label cursor-pointer justify-start gap-2.5 p-3 rounded-xl border border-base-200 bg-base-200/30 hover:bg-base-200/50 transition-colors">
+          <label className="label cursor-pointer justify-start gap-2.5 p-3 rounded-xl border border-base-200 bg-base-200/30 hover:bg-base-200/80 transition-colors">
             <input
               type="checkbox"
               checked={form.confirm}
@@ -298,8 +303,10 @@ export default function InitiateOffboardingModal({
               className="checkbox checkbox-sm checkbox-primary rounded"
               required
             />
-            <span className="text-xs text-base-content font-medium leading-tight">
-              I confirm that notice has been acknowledged, records will be retained, and system credentials will be scheduled for revocation upon final day.
+            <span className=" text-base-content font-medium leading-tight">
+              I confirm that notice has been acknowledged, records will be
+              retained, and system credentials will be scheduled for revocation
+              upon final day.
             </span>
           </label>
         </div>

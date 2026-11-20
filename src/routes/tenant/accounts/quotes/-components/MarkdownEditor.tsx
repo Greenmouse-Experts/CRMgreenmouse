@@ -108,7 +108,7 @@ export default function MarkdownEditor() {
         {mode === "write" ? (
           <>
             <div
-              className="flex flex-wrap gap-1 border-b border-base-300 bg-base-200/50 p-2"
+              className="flex flex-wrap gap-1 border-b border-base-300 bg-base-200/80 p-2"
               role="toolbar"
               aria-label="Markdown formatting"
             >

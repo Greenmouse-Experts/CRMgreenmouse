@@ -115,7 +115,7 @@ export default function AddEmployeeModal({
             />
           </div>
 
-          <p className="text-xs text-base-content/60">
+          <p className=" text-base-content/80">
             Compensation and contract terms are set from the employee record
             after creation.
           </p>
@@ -124,14 +124,14 @@ export default function AddEmployeeModal({
             <button
               type="button"
               onClick={onClose}
-              className="btn btn-sm btn-ghost rounded-lg text-xs"
+              className="btn btn-sm btn-ghost rounded-lg "
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={methods.formState.isSubmitting}
-              className="btn btn-sm btn-primary rounded-lg text-xs"
+              className="btn btn-sm btn-primary rounded-lg "
             >
               {methods.formState.isSubmitting ? "Adding..." : "Add Employee"}
             </button>

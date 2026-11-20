@@ -51,7 +51,7 @@ export default function ExpenseTable({ searchTerm = "" }: ExpenseTableProps) {
               {paidTo || "General Expense"}
             </span>
             {item.description && (
-              <span className="text-sm text-base-content/50 truncate max-w-xs block">
+              <span className="text-sm text-base-content/80 truncate max-w-xs block">
                 {item.description}
               </span>
             )}
@@ -155,7 +155,7 @@ export default function ExpenseTable({ searchTerm = "" }: ExpenseTableProps) {
             </div>
 
             <div className="grid grid-cols-2 gap-4">
-              <div className="bg-base-200/50 p-3 rounded-lg">
+              <div className="bg-base-200/80 p-3 rounded-lg">
                 <span className="text-sm text-base-content/60 block">
                   Amount
                 </span>
@@ -163,7 +163,7 @@ export default function ExpenseTable({ searchTerm = "" }: ExpenseTableProps) {
                   -₦{Number(selectedExpense.amount || 0).toLocaleString()}
                 </span>
               </div>
-              <div className="bg-base-200/50 p-3 rounded-lg">
+              <div className="bg-base-200/80 p-3 rounded-lg">
                 <span className="text-sm text-base-content/60 block">
                   Category
                 </span>
@@ -171,7 +171,7 @@ export default function ExpenseTable({ searchTerm = "" }: ExpenseTableProps) {
                   {selectedExpense.category?.name || "—"}
                 </span>
               </div>
-              <div className="bg-base-200/50 p-3 rounded-lg">
+              <div className="bg-base-200/80 p-3 rounded-lg">
                 <span className="text-sm text-base-content/60 block">
                   Payee / Vendor
                 </span>
@@ -179,7 +179,7 @@ export default function ExpenseTable({ searchTerm = "" }: ExpenseTableProps) {
                   {selectedExpense.paidTo || "General Payee"}
                 </span>
               </div>
-              <div className="bg-base-200/50 p-3 rounded-lg">
+              <div className="bg-base-200/80 p-3 rounded-lg">
                 <span className="text-sm text-base-content/60 block">
                   Tenant Scope
                 </span>

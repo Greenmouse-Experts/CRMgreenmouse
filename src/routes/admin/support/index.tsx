@@ -211,7 +211,7 @@ function RouteComponent() {
                   key={ticket.id}
                   to="/admin/support/$id"
                   params={{ id: ticket.id }}
-                  className="group flex flex-col gap-3 px-4 py-4 transition-colors hover:bg-base-200/50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary sm:flex-row sm:items-center sm:px-5"
+                  className="group flex flex-col gap-3 px-4 py-4 transition-colors hover:bg-base-200/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary sm:flex-row sm:items-center sm:px-5"
                 >
                   <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
                     <ShieldCheck className="size-5" aria-hidden="true" />
@@ -221,7 +221,7 @@ function RouteComponent() {
                       <h2 className="truncate font-semibold group-hover:text-primary">
                         {ticket.subject}
                       </h2>
-                      <span className="text-xs text-base-content/50">
+                      <span className="text-xs text-base-content/80">
                         {ticket.ticketNumber || `#${ticket.id.slice(0, 8)}`}
                       </span>
                     </div>
@@ -250,7 +250,7 @@ function RouteComponent() {
                     >
                       {label(ticket.status)}
                     </span>
-                    <span className="ml-auto text-xs text-base-content/50 sm:ml-2">
+                    <span className="ml-auto text-xs text-base-content/80 sm:ml-2">
                       {ticket.createdAt
                         ? new Date(ticket.createdAt).toLocaleDateString()
                         : ""}

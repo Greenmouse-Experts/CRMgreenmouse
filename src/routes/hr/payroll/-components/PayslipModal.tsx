@@ -43,15 +43,15 @@ export default function PayslipModal({
           <div className="text-sm font-bold text-base-content">
             {payslip.employee}
           </div>
-          <div className="text-xs text-base-content/60">
+          <div className=" text-base-content/80">
             {payslip.role} · {payslip.department}
           </div>
-          <div className="mt-1 text-[11px] text-base-content/50">
+          <div className="mt-1 text-[11px] text-base-content/80">
             {payslip.bank} {payslip.accountMasked} · Nov 2026
           </div>
         </div>
 
-        <div className="space-y-1.5 text-xs">
+        <div className="space-y-1.5 ">
           <div className="flex items-center justify-between py-1">
             <span className="text-base-content/70">Base salary</span>
             <span className="font-semibold text-base-content">
@@ -85,7 +85,9 @@ export default function PayslipModal({
 
           <div className="flex items-center justify-between py-1 text-rose-600">
             <span>PAYE tax</span>
-            <span className="font-semibold">−{formatCurrency(payslip.tax)}</span>
+            <span className="font-semibold">
+              −{formatCurrency(payslip.tax)}
+            </span>
           </div>
           <div className="flex items-center justify-between py-1 text-rose-600">
             <span>Pension (8%)</span>
@@ -95,7 +97,9 @@ export default function PayslipModal({
           </div>
           <div className="flex items-center justify-between py-1 text-rose-600">
             <span>Loan recovery</span>
-            <span className="font-semibold">−{formatCurrency(payslip.loan)}</span>
+            <span className="font-semibold">
+              −{formatCurrency(payslip.loan)}
+            </span>
           </div>
           <div className="flex items-center justify-between border-t border-base-200 py-1.5">
             <span className="font-semibold text-base-content">
@@ -108,7 +112,7 @@ export default function PayslipModal({
         </div>
 
         <div className="flex items-center justify-between rounded-xl bg-primary/5 border border-primary/20 p-4">
-          <span className="text-xs font-semibold uppercase tracking-wider text-base-content/70">
+          <span className=" font-semibold uppercase tracking-wider text-base-content/70">
             Net pay
           </span>
           <span className="text-lg font-bold text-primary">

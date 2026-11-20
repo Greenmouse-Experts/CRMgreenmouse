@@ -160,7 +160,7 @@ function RouteComponent() {
               {permissions.map((perm) => (
                 <div
                   key={perm.key}
-                  className="p-3 bg-base-200/50 rounded-lg border border-base-200 space-y-1"
+                  className="p-3 bg-base-200/80 rounded-lg border border-base-200 space-y-1"
                 >
                   <span className="font-mono text-xs font-semibold text-primary block">
                     {perm.key}

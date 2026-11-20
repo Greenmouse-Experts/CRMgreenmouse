@@ -155,7 +155,7 @@ const INDUSTRIES = [
   {
     label: Industry.OTHER,
     color: "bg-base-200 border-base-300",
-    iconColor: "text-base-content/50",
+    iconColor: "text-base-content/80",
     icon: HelpCircle,
   },
 ];
@@ -780,7 +780,7 @@ function CompanyWebsiteStep({
             placeholder="https://yourcompany.com"
             className="input input-bordered w-full"
           />
-          <p className="text-xs text-base-content/50">
+          <p className="text-xs text-base-content/80">
             Optional: Leave blank if your company does not have a website yet.
           </p>
         </div>

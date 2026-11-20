@@ -59,7 +59,7 @@ export function ProductImageGallery({
 
   if (!selectedImage) {
     return (
-      <div className="flex h-40 items-center justify-center gap-2 rounded-xl bg-base-200/50 text-sm text-base-content/60">
+      <div className="flex h-40 items-center justify-center gap-2 rounded-xl bg-base-200/80 text-sm text-base-content/60">
         <Package className="size-5" aria-hidden="true" /> No product images
       </div>
     );
@@ -80,7 +80,7 @@ export function ProductImageGallery({
           Open full size
         </a>
       </div>
-      <div className="flex h-56 items-center justify-center overflow-hidden rounded-xl bg-base-200/50 sm:h-72">
+      <div className="flex h-56 items-center justify-center overflow-hidden rounded-xl bg-base-200/80 sm:h-72">
         <img
           src={selectedImage}
           alt={`${productName} image ${selectedIndex + 1}`}

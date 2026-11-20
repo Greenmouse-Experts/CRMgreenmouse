@@ -206,7 +206,7 @@ function RouteComponent() {
                                   note
                                 </span>
                               )}
-                              <span className="text-xs text-base-content/50">
+                              <span className="text-xs text-base-content/80">
                                 {dateTime(message.createdAt)}
                               </span>
                             </div>

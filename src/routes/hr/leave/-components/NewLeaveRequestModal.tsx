@@ -137,19 +137,20 @@ export default function NewLeaveRequestModal({
       onClose={onClose}
     >
       <form onSubmit={handleSubmit} className="space-y-4">
-        <p className="text-xs text-base-content/60 -mt-1 mb-3">
-          Available balance: 13 days annual leave. Requests go to your manager, then HR.
+        <p className=" text-base-content/80 -mt-1 mb-3">
+          Available balance: 13 days annual leave. Requests go to your manager,
+          then HR.
         </p>
 
         {/* Section 1: Leave details */}
         <div className="space-y-3">
-          <h4 className="text-xs font-bold uppercase tracking-wider text-base-content/60">
+          <h4 className=" font-bold uppercase tracking-wider text-base-content/80">
             Leave Details
           </h4>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label className="text-xs font-semibold text-base-content/80 mb-1 block">
+              <label className=" font-semibold text-base-content/80 mb-1 block">
                 Employee <span className="text-error">*</span>
               </label>
               <LocalSelect
@@ -167,7 +168,7 @@ export default function NewLeaveRequestModal({
             </div>
 
             <div>
-              <label className="text-xs font-semibold text-base-content/80 mb-1 block">
+              <label className=" font-semibold text-base-content/80 mb-1 block">
                 Leave type <span className="text-error">*</span>
               </label>
               <LocalSelect
@@ -185,7 +186,7 @@ export default function NewLeaveRequestModal({
             </div>
 
             <div>
-              <label className="text-xs font-semibold text-base-content/80 mb-1 block">
+              <label className=" font-semibold text-base-content/80 mb-1 block">
                 Start date <span className="text-error">*</span>
               </label>
               <input
@@ -194,26 +195,26 @@ export default function NewLeaveRequestModal({
                 onChange={(e) =>
                   setForm((p) => ({ ...p, from: e.target.value }))
                 }
-                className="input input-bordered w-full text-xs rounded-xl bg-base-200/50"
+                className="input input-bordered w-full  rounded-xl bg-base-200/80"
                 required
               />
             </div>
 
             <div>
-              <label className="text-xs font-semibold text-base-content/80 mb-1 block">
+              <label className=" font-semibold text-base-content/80 mb-1 block">
                 End date <span className="text-error">*</span>
               </label>
               <input
                 type="date"
                 value={form.to}
                 onChange={(e) => setForm((p) => ({ ...p, to: e.target.value }))}
-                className="input input-bordered w-full text-xs rounded-xl bg-base-200/50"
+                className="input input-bordered w-full  rounded-xl bg-base-200/80"
                 required
               />
             </div>
 
             <div>
-              <label className="text-xs font-semibold text-base-content/80 mb-1 block">
+              <label className=" font-semibold text-base-content/80 mb-1 block">
                 Half day
               </label>
               <LocalSelect
@@ -232,7 +233,7 @@ export default function NewLeaveRequestModal({
             </div>
 
             <div>
-              <label className="text-xs font-semibold text-base-content/80 mb-1 block">
+              <label className=" font-semibold text-base-content/80 mb-1 block">
                 Covering colleague (handover)
               </label>
               <LocalSelect
@@ -251,7 +252,7 @@ export default function NewLeaveRequestModal({
           </div>
 
           <div>
-            <label className="text-xs font-semibold text-base-content/80 mb-1 block">
+            <label className=" font-semibold text-base-content/80 mb-1 block">
               Reason <span className="text-error">*</span>
             </label>
             <textarea
@@ -261,7 +262,7 @@ export default function NewLeaveRequestModal({
               }
               placeholder="State the purpose of this leave request..."
               rows={2}
-              className="textarea textarea-bordered w-full text-xs rounded-xl bg-base-200/50"
+              className="textarea textarea-bordered w-full  rounded-xl bg-base-200/80"
               required
             />
           </div>
@@ -269,13 +270,13 @@ export default function NewLeaveRequestModal({
 
         {/* Section 2: Contact & Documents */}
         <div className="space-y-3 pt-3 border-t border-base-200">
-          <h4 className="text-xs font-bold uppercase tracking-wider text-base-content/60">
+          <h4 className=" font-bold uppercase tracking-wider text-base-content/80">
             Contact & Documents
           </h4>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label className="text-xs font-semibold text-base-content/80 mb-1 block">
+              <label className=" font-semibold text-base-content/80 mb-1 block">
                 Contact while away
               </label>
               <SimpleInput
@@ -288,7 +289,7 @@ export default function NewLeaveRequestModal({
             </div>
 
             <div>
-              <label className="text-xs font-semibold text-base-content/80 mb-1 block">
+              <label className=" font-semibold text-base-content/80 mb-1 block">
                 Address while on leave
               </label>
               <SimpleInput
@@ -302,7 +303,7 @@ export default function NewLeaveRequestModal({
           </div>
 
           <div>
-            <label className="text-xs font-semibold text-base-content/80 mb-1 block">
+            <label className=" font-semibold text-base-content/80 mb-1 block">
               Supporting document
             </label>
             <div className="flex items-center gap-3">
@@ -322,12 +323,10 @@ export default function NewLeaveRequestModal({
                 />
               </label>
               {fileName && (
-                <span className="text-xs font-medium text-primary">
-                  {fileName}
-                </span>
+                <span className=" font-medium text-primary">{fileName}</span>
               )}
             </div>
-            <span className="text-[10px] text-base-content/50 mt-1 block">
+            <span className="text-[10px] text-base-content/80 mt-1 block">
               Required for sick leave over 2 days, maternity and study leave
             </span>
           </div>

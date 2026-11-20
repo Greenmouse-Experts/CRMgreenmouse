@@ -37,11 +37,11 @@ export default function ReportCard({
     >
       <div>
         <div className="flex items-start justify-between gap-3 mb-3">
-          <div className="p-2.5 rounded-xl bg-base-200/60 border border-base-200 group-hover:bg-primary/10 transition-colors">
+          <div className="p-2.5 rounded-xl bg-base-200/80 border border-base-200 group-hover:bg-primary/10 transition-colors">
             {getIcon(report.chart.type)}
           </div>
           {report.category && (
-            <span className="badge badge-sm badge-ghost text-[10px] font-semibold text-base-content/60">
+            <span className="badge badge-sm badge-ghost text-[10px] font-semibold text-base-content/80">
               {report.category}
             </span>
           )}
@@ -50,15 +50,13 @@ export default function ReportCard({
         <h3 className="font-bold text-base text-base-content group-hover:text-primary transition-colors">
           {report.title}
         </h3>
-        <p className="text-xs text-base-content/60 mt-1 line-clamp-2">
-          {report.desc}
-        </p>
+        <p className=" text-base-content/80 mt-1 line-clamp-2">{report.desc}</p>
 
         {/* Quick KPI preview badges */}
-        <div className="grid grid-cols-2 gap-2 mt-4 pt-3 border-t border-base-200/60 text-xs">
+        <div className="grid grid-cols-2 gap-2 mt-4 pt-3 border-t border-base-200/80 ">
           {report.kpis.slice(0, 2).map((kpi) => (
             <div key={kpi.label} className="bg-base-200/40 p-2 rounded-xl">
-              <span className="text-[10px] text-base-content/50 block truncate">
+              <span className="text-[10px] text-base-content/80 block truncate">
                 {kpi.label}
               </span>
               <span className="font-bold text-base-content mt-0.5 block truncate">
@@ -70,11 +68,11 @@ export default function ReportCard({
       </div>
 
       {/* Action Footer */}
-      <div className="flex items-center gap-2 mt-5 pt-3 border-t border-base-200/60">
+      <div className="flex items-center gap-2 mt-5 pt-3 border-t border-base-200/80">
         <button
           type="button"
           onClick={() => onSelectReport(report)}
-          className="btn btn-sm btn-ghost hover:bg-primary/10 hover:text-primary flex-1 rounded-xl text-xs font-semibold gap-1.5"
+          className="btn btn-sm btn-ghost hover:bg-primary/10 hover:text-primary flex-1 rounded-xl  font-semibold gap-1.5"
         >
           <Eye className="size-3.5" />
           <span>View Report</span>
@@ -83,7 +81,7 @@ export default function ReportCard({
           type="button"
           onClick={handleExport}
           title="Export CSV"
-          className="btn btn-sm btn-ghost hover:bg-base-200 rounded-xl px-2.5 text-base-content/60 hover:text-base-content"
+          className="btn btn-sm btn-ghost hover:bg-base-200 rounded-xl px-2.5 text-base-content/80 hover:text-base-content"
         >
           <Download className="size-3.5" />
         </button>

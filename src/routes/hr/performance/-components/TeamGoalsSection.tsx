@@ -24,13 +24,13 @@ export default function TeamGoalsSection({ goals }: TeamGoalsSectionProps) {
             <h2 className="text-base sm:text-lg font-bold text-base-content">
               Team goals
             </h2>
-            <p className="text-xs text-base-content/60">
+            <p className=" text-base-content/80">
               Strategic Q4 objectives, target metrics, and real-time pace.
             </p>
           </div>
         </div>
 
-        <span className="badge badge-sm badge-ghost text-xs font-semibold">
+        <span className="badge badge-sm badge-ghost  font-semibold">
           {goals.length} active
         </span>
       </div>
@@ -40,9 +40,9 @@ export default function TeamGoalsSection({ goals }: TeamGoalsSectionProps) {
           return (
             <div
               key={goal.id}
-              className="p-3.5 rounded-xl border border-base-200/80 bg-base-200/30 hover:bg-base-200/50 transition-colors space-y-2"
+              className="p-3.5 rounded-xl border border-base-200/80 bg-base-200/30 hover:bg-base-200/80 transition-colors space-y-2"
             >
-              <div className="flex items-center justify-between text-xs sm:text-sm font-medium">
+              <div className="flex items-center justify-between  sm:text-sm font-medium">
                 <span className="text-base-content font-semibold truncate pr-2">
                   {goal.title}
                 </span>
@@ -57,10 +57,12 @@ export default function TeamGoalsSection({ goals }: TeamGoalsSectionProps) {
                 max="100"
               />
 
-              <div className="flex flex-wrap items-center justify-between text-[11px] text-base-content/60 pt-0.5">
+              <div className="flex flex-wrap items-center justify-between text-[11px] text-base-content/80 pt-0.5">
                 <div className="flex items-center gap-1.5">
                   <TrendingUp className="size-3 text-base-content/40" />
-                  <span>Target: <strong>{goal.target || "100%"}</strong></span>
+                  <span>
+                    Target: <strong>{goal.target || "100%"}</strong>
+                  </span>
                 </div>
                 {goal.category && (
                   <span className="badge badge-xs badge-ghost font-medium">

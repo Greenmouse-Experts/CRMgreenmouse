@@ -46,7 +46,7 @@ export default function CustomTable(props: CustomTableProps) {
       <div className="relative overflow-x-scroll">
         <table className="table w-full text-md">
           <thead>
-            <tr className="rounded-2xl bg-base-200/50">
+            <tr className="rounded-2xl bg-base-200/80">
               {props.columns &&
                 props.columns.map((column, idx) => (
                   <th

@@ -79,17 +79,14 @@ export default function AddPositionModal({
       onClose={onClose}
     >
       <FormProvider {...methods}>
-        <form
-          onSubmit={methods.handleSubmit(onSubmit)}
-          className="space-y-4"
-        >
-          <p className="text-xs text-base-content/60 -mt-1 mb-3">
+        <form onSubmit={methods.handleSubmit(onSubmit)} className="space-y-4">
+          <p className=" text-base-content/80 -mt-1 mb-3">
             Define a standardized role, department, pay grade, and target
             approved headcount.
           </p>
 
           <div>
-            <label className="text-xs font-semibold text-base-content/80 mb-1 block">
+            <label className=" font-semibold text-base-content/80 mb-1 block">
               Position title <span className="text-error">*</span>
             </label>
             <SimpleInput
@@ -103,7 +100,7 @@ export default function AddPositionModal({
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="text-xs font-semibold text-base-content/80 mb-1 block">
+              <label className=" font-semibold text-base-content/80 mb-1 block">
                 Department
               </label>
               <LocalSelect {...methods.register("dept")}>
@@ -116,7 +113,7 @@ export default function AddPositionModal({
             </div>
 
             <div>
-              <label className="text-xs font-semibold text-base-content/80 mb-1 block">
+              <label className=" font-semibold text-base-content/80 mb-1 block">
                 Job grade
               </label>
               <LocalSelect {...methods.register("grade")}>
@@ -129,7 +126,7 @@ export default function AddPositionModal({
             </div>
 
             <div>
-              <label className="text-xs font-semibold text-base-content/80 mb-1 block">
+              <label className=" font-semibold text-base-content/80 mb-1 block">
                 Approved headcount
               </label>
               <input
@@ -142,19 +139,19 @@ export default function AddPositionModal({
                   validate: (v) =>
                     Number(v) >= 1 || "Approved headcount must be at least 1",
                 })}
-                className="input input-bordered w-full text-xs rounded-xl bg-base-200/50"
+                className="input input-bordered w-full  rounded-xl bg-base-200/80"
               />
             </div>
 
             <div>
-              <label className="text-xs font-semibold text-base-content/80 mb-1 block">
+              <label className=" font-semibold text-base-content/80 mb-1 block">
                 Currently filled
               </label>
               <input
                 type="number"
                 min="0"
                 {...methods.register("filled", { valueAsNumber: true })}
-                className="input input-bordered w-full text-xs rounded-xl bg-base-200/50"
+                className="input input-bordered w-full  rounded-xl bg-base-200/80"
               />
             </div>
           </div>

@@ -102,7 +102,7 @@ function RouteComponent() {
         }
         return (
           <div className="flex items-center gap-1.5 text-sm font-medium text-base-content">
-            <Building2 className="size-3.5 text-base-content/50" />
+            <Building2 className="size-3.5 text-base-content/80" />
             <span>{companyName}</span>
           </div>
         );
@@ -253,7 +253,7 @@ function RouteComponent() {
                   </div>
 
                   <div className="grid grid-cols-2 gap-4">
-                    <div className="bg-base-200/50 p-3 rounded-lg">
+                    <div className="bg-base-200/80 p-3 rounded-lg">
                       <span className="text-sm text-base-content/60 block">
                         Email Address
                       </span>
@@ -261,7 +261,7 @@ function RouteComponent() {
                         {selectedCustomer.email || "—"}
                       </span>
                     </div>
-                    <div className="bg-base-200/50 p-3 rounded-lg">
+                    <div className="bg-base-200/80 p-3 rounded-lg">
                       <span className="text-sm text-base-content/60 block">
                         Phone
                       </span>
@@ -272,7 +272,7 @@ function RouteComponent() {
                           "—"}
                       </span>
                     </div>
-                    <div className="bg-base-200/50 p-3 rounded-lg">
+                    <div className="bg-base-200/80 p-3 rounded-lg">
                       <span className="text-sm text-base-content/60 block">
                         Company Name
                       </span>
@@ -282,7 +282,7 @@ function RouteComponent() {
                           "—"}
                       </span>
                     </div>
-                    <div className="bg-base-200/50 p-3 rounded-lg">
+                    <div className="bg-base-200/80 p-3 rounded-lg">
                       <span className="text-sm text-base-content/60 block">
                         Location
                       </span>
@@ -297,7 +297,7 @@ function RouteComponent() {
                           .join(", ") || "—"}
                       </span>
                     </div>
-                    <div className="bg-base-200/50 p-3 rounded-lg">
+                    <div className="bg-base-200/80 p-3 rounded-lg">
                       <span className="text-sm text-base-content/60 block">
                         Created At
                       </span>
@@ -309,7 +309,7 @@ function RouteComponent() {
                           : "—"}
                       </span>
                     </div>
-                    <div className="bg-base-200/50 p-3 rounded-lg">
+                    <div className="bg-base-200/80 p-3 rounded-lg">
                       <span className="text-sm text-base-content/60 block">
                         Tenant Scope
                       </span>

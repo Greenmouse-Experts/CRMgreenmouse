@@ -97,13 +97,13 @@ export default function RequestCorrectionModal({
       onClose={onClose}
     >
       <form onSubmit={handleSubmit} className="space-y-4">
-        <p className="text-xs text-base-content/60 -mt-1 mb-3">
+        <p className=" text-base-content/80 -mt-1 mb-3">
           Submit corrections for missed punches, adjusted hours, or overtime
           claims for manager approval.
         </p>
 
         <div>
-          <label className="text-xs font-semibold text-base-content/80 mb-1 block">
+          <label className=" font-semibold text-base-content/80 mb-1 block">
             Employee name <span className="text-error">*</span>
           </label>
           <SimpleInput
@@ -118,20 +118,20 @@ export default function RequestCorrectionModal({
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label className="text-xs font-semibold text-base-content/80 mb-1 block">
+            <label className=" font-semibold text-base-content/80 mb-1 block">
               Date to correct <span className="text-error">*</span>
             </label>
             <input
               type="date"
               value={form.date}
               onChange={(e) => setForm((p) => ({ ...p, date: e.target.value }))}
-              className="input input-bordered w-full text-xs rounded-xl bg-base-200/50"
+              className="input input-bordered w-full  rounded-xl bg-base-200/80"
               required
             />
           </div>
 
           <div>
-            <label className="text-xs font-semibold text-base-content/80 mb-1 block">
+            <label className=" font-semibold text-base-content/80 mb-1 block">
               Correction type
             </label>
             <LocalSelect
@@ -147,7 +147,7 @@ export default function RequestCorrectionModal({
           </div>
 
           <div>
-            <label className="text-xs font-semibold text-base-content/80 mb-1 block">
+            <label className=" font-semibold text-base-content/80 mb-1 block">
               Correct Clock-in
             </label>
             <input
@@ -156,12 +156,12 @@ export default function RequestCorrectionModal({
               onChange={(e) =>
                 setForm((p) => ({ ...p, correctIn: e.target.value }))
               }
-              className="input input-bordered w-full text-xs rounded-xl bg-base-200/50"
+              className="input input-bordered w-full  rounded-xl bg-base-200/80"
             />
           </div>
 
           <div>
-            <label className="text-xs font-semibold text-base-content/80 mb-1 block">
+            <label className=" font-semibold text-base-content/80 mb-1 block">
               Correct Clock-out
             </label>
             <input
@@ -170,13 +170,13 @@ export default function RequestCorrectionModal({
               onChange={(e) =>
                 setForm((p) => ({ ...p, correctOut: e.target.value }))
               }
-              className="input input-bordered w-full text-xs rounded-xl bg-base-200/50"
+              className="input input-bordered w-full  rounded-xl bg-base-200/80"
             />
           </div>
         </div>
 
         <div>
-          <label className="text-xs font-semibold text-base-content/80 mb-1 block">
+          <label className=" font-semibold text-base-content/80 mb-1 block">
             Reason <span className="text-error">*</span>
           </label>
           <textarea
@@ -184,7 +184,7 @@ export default function RequestCorrectionModal({
             onChange={(e) => setForm((p) => ({ ...p, reason: e.target.value }))}
             placeholder="Explain reason for discrepancy or missed punch..."
             rows={3}
-            className="textarea textarea-bordered w-full text-xs rounded-xl bg-base-200/50"
+            className="textarea textarea-bordered w-full  rounded-xl bg-base-200/80"
             required
           />
         </div>

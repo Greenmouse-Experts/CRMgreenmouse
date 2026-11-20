@@ -25,8 +25,9 @@ export default function CaseWorkflowStepper({
           <h2 className="text-base font-bold text-base-content">
             Mandatory Due-Process Workflow
           </h2>
-          <p className="text-xs text-base-content/60">
-            Every formal complaint follows strict fair-hearing and statutory compliance stages.
+          <p className=" text-base-content/80">
+            Every formal complaint follows strict fair-hearing and statutory
+            compliance stages.
           </p>
         </div>
         <div className="flex items-center gap-1.5 self-start sm:self-auto">
@@ -54,32 +55,36 @@ export default function CaseWorkflowStepper({
                     ? "bg-primary/5 border-primary shadow-xs ring-1 ring-primary/20"
                     : isCompleted
                       ? "bg-base-200/40 border-base-200 text-base-content/80 hover:bg-base-200/70"
-                      : "bg-base-100 border-base-200 text-base-content/50 hover:bg-base-200/40"
+                      : "bg-base-100 border-base-200 text-base-content/80 hover:bg-base-200/40"
                 }`}
               >
                 <div className="flex items-center justify-between w-full mb-2">
                   <span
-                    className={`inline-flex items-center justify-center size-6 rounded-full text-xs font-bold ${
+                    className={`inline-flex items-center justify-center size-6 rounded-full  font-bold ${
                       isCurrent
                         ? "bg-primary text-white"
                         : isCompleted
                           ? "bg-emerald-500 text-white"
-                          : "bg-base-200 text-base-content/60"
+                          : "bg-base-200 text-base-content/80"
                     }`}
                   >
-                    {isCompleted ? <Check className="size-3.5 stroke-[3]" /> : idx + 1}
+                    {isCompleted ? (
+                      <Check className="size-3.5 stroke-[3]" />
+                    ) : (
+                      idx + 1
+                    )}
                   </span>
                   {isCurrent && (
                     <span className="size-2 rounded-full bg-primary animate-ping" />
                   )}
                 </div>
                 <span
-                  className={`text-xs font-semibold leading-tight ${
+                  className={` font-semibold leading-tight ${
                     isCurrent
                       ? "text-primary"
                       : isCompleted
                         ? "text-base-content font-medium"
-                        : "text-base-content/60 font-normal"
+                        : "text-base-content/80 font-normal"
                   }`}
                 >
                   {step}

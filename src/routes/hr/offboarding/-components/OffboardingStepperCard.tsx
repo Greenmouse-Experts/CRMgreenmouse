@@ -21,10 +21,9 @@ export default function OffboardingStepperCard({
       ? OFFBOARDING_STEPS[currentStepIndex + 1]
       : null;
 
-  const formattedLastDay = new Date(activeCase.lastWorkingDay).toLocaleDateString(
-    "en-US",
-    { month: "short", day: "numeric" },
-  );
+  const formattedLastDay = new Date(
+    activeCase.lastWorkingDay,
+  ).toLocaleDateString("en-US", { month: "short", day: "numeric" });
 
   return (
     <div className="card bg-base-100 border border-base-200 shadow-sm p-5 sm:p-6 space-y-5">
@@ -42,12 +41,12 @@ export default function OffboardingStepperCard({
               <span className="badge badge-sm badge-outline text-[11px] font-medium">
                 {activeCase.role} · {activeCase.department}
               </span>
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-50 px-2.5 py-0.5 text-xs font-semibold text-amber-700 border border-amber-200">
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-50 px-2.5 py-0.5  font-semibold text-amber-700 border border-amber-200">
                 <span className="size-1.5 rounded-full bg-amber-500 animate-pulse" />
                 {activeCase.status}
               </span>
             </div>
-            <p className="text-xs text-base-content/60 mt-0.5">
+            <p className=" text-base-content/80 mt-0.5">
               Notice period active · Last working day:{" "}
               <span className="font-semibold text-base-content">
                 {formattedLastDay}
@@ -64,15 +63,15 @@ export default function OffboardingStepperCard({
               <div
                 tabIndex={0}
                 role="button"
-                className="btn btn-sm btn-ghost border border-base-200 rounded-xl px-3 text-xs gap-1"
+                className="btn btn-sm btn-ghost border border-base-200 rounded-xl px-3  gap-1"
               >
-                <UserMinus className="size-3.5 text-base-content/60" />
+                <UserMinus className="size-3.5 text-base-content/80" />
                 <span className="hidden md:inline">Switch Employee</span>
-                <ChevronDown className="size-3 text-base-content/50" />
+                <ChevronDown className="size-3 text-base-content/80" />
               </div>
               <ul
                 tabIndex={0}
-                className="dropdown-content z-20 menu p-2 shadow-lg bg-base-100 rounded-box w-56 border border-base-200 text-xs mt-1"
+                className="dropdown-content z-20 menu p-2 shadow-lg bg-base-100 rounded-box w-56 border border-base-200  mt-1"
               >
                 <li className="menu-title px-2 py-1 text-[11px] uppercase tracking-wider text-base-content/40">
                   Select offboarding record
@@ -82,11 +81,13 @@ export default function OffboardingStepperCard({
                     <button
                       type="button"
                       onClick={() => onSelectCase(c)}
-                      className={c.id === activeCase.id ? "active font-bold" : ""}
+                      className={
+                        c.id === activeCase.id ? "active font-bold" : ""
+                      }
                     >
                       <div className="flex flex-col items-start text-left">
                         <span>{c.employee}</span>
-                        <span className="text-[10px] text-base-content/60">
+                        <span className="text-[10px] text-base-content/80">
                           {c.department} · {c.status}
                         </span>
                       </div>
@@ -101,7 +102,7 @@ export default function OffboardingStepperCard({
             <button
               type="button"
               onClick={() => onAdvanceStep(nextStep)}
-              className="btn btn-sm bg-primary text-white hover:bg-primary/90 rounded-xl px-3.5 gap-1.5 text-xs shadow-sm shadow-primary/20"
+              className="btn btn-sm bg-primary text-white hover:bg-primary/90 rounded-xl px-3.5 gap-1.5  shadow-sm shadow-primary/20"
             >
               <span>Advance to {nextStep}</span>
               <ArrowRight className="size-3.5" />
@@ -112,7 +113,7 @@ export default function OffboardingStepperCard({
 
       {/* 8-Step Workflow Horizontal Stepper */}
       <div className="space-y-2">
-        <div className="flex items-center justify-between text-xs font-semibold text-base-content/70">
+        <div className="flex items-center justify-between  font-semibold text-base-content/70">
           <span className="uppercase tracking-wider text-[11px]">
             Offboarding Milestone Pipeline
           </span>
@@ -135,7 +136,7 @@ export default function OffboardingStepperCard({
                     ? "bg-primary/5 border-primary shadow-xs ring-1 ring-primary/20"
                     : isCompleted
                       ? "bg-base-200/40 border-base-200 text-base-content/80"
-                      : "bg-base-100 border-base-200 text-base-content/50"
+                      : "bg-base-100 border-base-200 text-base-content/80"
                 }`}
               >
                 <div className="flex items-center justify-between w-full mb-1.5">
@@ -145,10 +146,14 @@ export default function OffboardingStepperCard({
                         ? "bg-primary text-white"
                         : isCompleted
                           ? "bg-emerald-500 text-white"
-                          : "bg-base-200 text-base-content/60"
+                          : "bg-base-200 text-base-content/80"
                     }`}
                   >
-                    {isCompleted ? <Check className="size-3 stroke-[3]" /> : idx + 1}
+                    {isCompleted ? (
+                      <Check className="size-3 stroke-[3]" />
+                    ) : (
+                      idx + 1
+                    )}
                   </span>
                   {isCurrent && (
                     <span className="size-1.5 rounded-full bg-primary animate-ping" />
@@ -160,18 +165,14 @@ export default function OffboardingStepperCard({
                       ? "text-primary"
                       : isCompleted
                         ? "text-base-content font-medium"
-                        : "text-base-content/60 font-normal"
+                        : "text-base-content/80 font-normal"
                   }`}
                   title={step}
                 >
                   {step}
                 </span>
                 <span className="text-[9px] text-base-content/40 mt-0.5">
-                  {isCompleted
-                    ? "Done"
-                    : isCurrent
-                      ? "Active"
-                      : "Pending"}
+                  {isCompleted ? "Done" : isCurrent ? "Active" : "Pending"}
                 </span>
               </div>
             );

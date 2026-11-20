@@ -275,7 +275,7 @@ function RouteComponent() {
                   </div>
 
                   <div className="grid grid-cols-2 gap-4">
-                    <div className="bg-base-200/50 p-3 rounded-lg">
+                    <div className="bg-base-200/80 p-3 rounded-lg">
                       <span className="text-sm text-base-content/60 block">
                         Tenant Scope
                       </span>
@@ -283,7 +283,7 @@ function RouteComponent() {
                         {selectedCategory.tenantId || "Global / System"}
                       </span>
                     </div>
-                    <div className="bg-base-200/50 p-3 rounded-lg">
+                    <div className="bg-base-200/80 p-3 rounded-lg">
                       <span className="text-sm text-base-content/60 block">
                         Created At
                       </span>

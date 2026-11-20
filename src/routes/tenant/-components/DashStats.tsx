@@ -98,7 +98,7 @@ export default function DashStats() {
                         })}
                       </span>
                       {item.status && (
-                        <p className=" text-base-content/50 uppercase font-medium">
+                        <p className=" text-base-content/80 uppercase font-medium">
                           {item.status}
                         </p>
                       )}
@@ -196,7 +196,7 @@ export default function DashStats() {
                         })}
                       </span>
                       {item.status && (
-                        <p className=" text-base-content/50 uppercase font-medium">
+                        <p className=" text-base-content/80 uppercase font-medium">
                           {item.status}
                         </p>
                       )}

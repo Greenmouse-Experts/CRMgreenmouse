@@ -283,7 +283,7 @@ function RouteComponent() {
               <span className="font-semibold text-base-content">
                 ${Number(item.priceMonthly).toLocaleString()}
               </span>
-              <span className="text-sm text-base-content/50">/mo</span>
+              <span className="text-sm text-base-content/80">/mo</span>
               <div className="text-sm text-base-content/60">
                 ${Number(item.priceYearly).toLocaleString()}/yr
               </div>
@@ -320,19 +320,21 @@ function RouteComponent() {
             <strong>
               {item.maxFinancialRecordsPerMonth === -1
                 ? "Unlimited"
-                : item.maxFinancialRecordsPerMonth ?? "—"}
+                : (item.maxFinancialRecordsPerMonth ?? "—")}
             </strong>
           </div>
           <div>
             Leads:{" "}
-            <strong>{item.maxLeads === -1 ? "Unlimited" : item.maxLeads ?? "—"}</strong>
+            <strong>
+              {item.maxLeads === -1 ? "Unlimited" : (item.maxLeads ?? "—")}
+            </strong>
           </div>
           <div>
             Companies:{" "}
             <strong>
               {item.maxCompanies === -1
                 ? "Unlimited"
-                : item.maxCompanies ?? "—"}
+                : (item.maxCompanies ?? "—")}
             </strong>
           </div>
         </div>
@@ -593,7 +595,7 @@ function RouteComponent() {
               <h4 className="text-xs font-semibold uppercase tracking-wider text-base-content/60">
                 Resource Allocations
               </h4>
-              <span className="text-xs text-base-content/50 flex items-center gap-1">
+              <span className="text-xs text-base-content/80 flex items-center gap-1">
                 <HelpCircle className="size-3" /> Set -1 for unlimited
               </span>
             </div>
@@ -714,7 +716,10 @@ function RouteComponent() {
               </div>
 
               <div>
-                <label className="label py-1" htmlFor="maxFinancialRecordsPerMonth">
+                <label
+                  className="label py-1"
+                  htmlFor="maxFinancialRecordsPerMonth"
+                >
                   <span className="label-text text-xs font-medium">
                     Financial Records / Mo
                   </span>
@@ -765,7 +770,10 @@ function RouteComponent() {
                   min={-1}
                   value={formData.maxLeads}
                   onChange={(e) =>
-                    setFormData({ ...formData, maxLeads: Number(e.target.value) })
+                    setFormData({
+                      ...formData,
+                      maxLeads: Number(e.target.value),
+                    })
                   }
                   className="input input-sm input-bordered w-full"
                 />
@@ -866,7 +874,7 @@ function RouteComponent() {
             </div>
 
             <div className="overflow-hidden rounded-xl border border-base-200 bg-base-100">
-              <div className="flex items-center justify-between border-b border-base-200 bg-base-200/50 px-3 py-2 text-xs text-base-content/70">
+              <div className="flex items-center justify-between border-b border-base-200 bg-base-200/80 px-3 py-2 text-xs text-base-content/70">
                 <span>Available features</span>
                 <span>{filteredFeatures.length} shown</span>
               </div>

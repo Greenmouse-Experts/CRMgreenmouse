@@ -46,12 +46,12 @@ export default function OrgHierarchy({
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2 border-b border-base-200">
         <div>
           <h2 className="text-lg font-bold text-base-content">Hierarchy</h2>
-          <p className="text-xs text-base-content/60">
+          <p className=" text-base-content/80">
             Executive leadership structure, functional department heads, and
             reporting channels
           </p>
         </div>
-        <div className="flex items-center gap-1.5 text-xs text-base-content/60">
+        <div className="flex items-center gap-1.5  text-base-content/80">
           <Users className="size-3.5" />
           <span>{totalHeadcount} Total Reporting Headcount</span>
         </div>
@@ -74,13 +74,13 @@ export default function OrgHierarchy({
           <p className="font-bold text-sm sm:text-base text-base-content">
             {safeLeader.name}
           </p>
-          <p className="text-xs text-primary font-semibold tracking-wide">
+          <p className=" text-primary font-semibold tracking-wide">
             {safeLeader.title}
           </p>
         </div>
 
         {departments.length === 0 ? (
-          <div className="pt-6 text-center text-xs text-base-content/50">
+          <div className="pt-6 text-center  text-base-content/80">
             No departments configured yet. Click "Add department" above to start
             building your organizational structure.
           </div>
@@ -116,7 +116,7 @@ export default function OrgHierarchy({
                     {/* Department Head Initials Avatar */}
                     <div className="flex justify-center mb-2">
                       <div
-                        className={`size-9 rounded-full flex items-center justify-center font-bold text-xs border ${colorClass}`}
+                        className={`size-9 rounded-full flex items-center justify-center font-bold  border ${colorClass}`}
                       >
                         {getInitials(
                           headText !== "Unassigned" ? headText : dept.name,
@@ -128,7 +128,7 @@ export default function OrgHierarchy({
                     <p className="text-sm font-bold text-base-content group-hover:text-primary transition-colors truncate">
                       {dept.name || "Department"}
                     </p>
-                    <p className="text-xs text-base-content/60 truncate mt-0.5">
+                    <p className=" text-base-content/80 truncate mt-0.5">
                       {headText}
                     </p>
 

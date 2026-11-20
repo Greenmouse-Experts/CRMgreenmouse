@@ -155,7 +155,7 @@ function RouteComponent() {
               </span>
             )}
             {item.billingCycle && (
-              <span className="text-[10px] text-base-content/50 capitalize">
+              <span className="text-[10px] text-base-content/80 capitalize">
                 {item.billingCycle} billing
               </span>
             )}

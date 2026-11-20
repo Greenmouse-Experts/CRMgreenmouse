@@ -45,7 +45,7 @@ export default function OfferConversionSection({
         <h2 className="text-lg font-bold text-base-content">
           Offer & conversion
         </h2>
-        <p className="text-xs text-base-content/60">
+        <p className=" text-base-content/80">
           Track offer approvals, candidate acceptances, and seamless HR
           onboarding provisioning
         </p>
@@ -71,12 +71,12 @@ export default function OfferConversionSection({
                   className="relative z-10 flex flex-col items-center gap-2"
                 >
                   <div
-                    className={`size-8 rounded-full flex items-center justify-center font-bold text-xs transition-all duration-200 ${
+                    className={`size-8 rounded-full flex items-center justify-center font-bold  transition-all duration-200 ${
                       isCompleted
                         ? "bg-primary text-white shadow-xs"
                         : isCurrent
                           ? "bg-primary text-white ring-4 ring-primary/20 shadow-md scale-105"
-                          : "bg-base-200 text-base-content/50 border border-base-300"
+                          : "bg-base-200 text-base-content/80 border border-base-300"
                     }`}
                   >
                     {isCompleted ? (
@@ -86,12 +86,12 @@ export default function OfferConversionSection({
                     )}
                   </div>
                   <span
-                    className={`text-xs text-center font-medium max-w-[90px] leading-tight ${
+                    className={` text-center font-medium max-w-[90px] leading-tight ${
                       isCurrent
                         ? "text-primary font-bold"
                         : isCompleted
                           ? "text-base-content"
-                          : "text-base-content/50"
+                          : "text-base-content/80"
                     }`}
                   >
                     {step.name}
@@ -118,7 +118,7 @@ export default function OfferConversionSection({
                   Accepted
                 </span>
               </div>
-              <p className="text-xs text-base-content/70 mt-0.5">
+              <p className=" text-base-content/70 mt-0.5">
                 {role ?? "Offer accepted"} · Ready for staff enrollment and
                 setup
               </p>
@@ -128,7 +128,7 @@ export default function OfferConversionSection({
           <div className="flex items-center gap-2">
             <Link
               to="/hr/onboarding"
-              className="btn btn-sm bg-primary text-white hover:bg-primary/90 border-0 rounded-xl px-4 text-xs font-semibold gap-1.5 shadow-sm shadow-primary/20"
+              className="btn btn-sm bg-primary text-white hover:bg-primary/90 border-0 rounded-xl px-4  font-semibold gap-1.5 shadow-sm shadow-primary/20"
             >
               <span>Continue to onboarding</span>
               <ArrowRight className="size-3.5" />
@@ -141,7 +141,7 @@ export default function OfferConversionSection({
           <p className="text-sm font-semibold text-base-content">
             No accepted offers yet
           </p>
-          <p className="text-xs text-base-content/60">
+          <p className=" text-base-content/80">
             Accepted offers will appear here, ready for employee conversion and
             onboarding.
           </p>

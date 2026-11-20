@@ -43,11 +43,11 @@ export default function CorrectionRequests({
           <h2 className="text-lg font-bold text-base-content">
             Correction requests
           </h2>
-          <span className="badge badge-sm badge-ghost text-xs font-semibold">
+          <span className="badge badge-sm badge-ghost  font-semibold">
             {requests.filter((r) => r.status === "Pending").length} pending
           </span>
         </div>
-        <p className="text-xs text-base-content/60 mt-0.5">
+        <p className=" text-base-content/80 mt-0.5">
           Pending adjustments, missed punches, and overtime claims requiring
           manager sign-off
         </p>
@@ -55,7 +55,7 @@ export default function CorrectionRequests({
 
       <ul className="space-y-3">
         {requests.length === 0 ? (
-          <li className="py-6 text-center text-xs text-base-content/40 italic">
+          <li className="py-6 text-center  text-base-content/40 italic">
             No correction requests submitted.
           </li>
         ) : (
@@ -74,10 +74,10 @@ export default function CorrectionRequests({
                   {getStatusBadge(req.status)}
                 </div>
 
-                <p className="text-xs text-base-content/70">{req.detail}</p>
+                <p className=" text-base-content/70">{req.detail}</p>
 
                 {req.reason && (
-                  <p className="text-[11px] text-base-content/50 italic bg-base-200/50 p-2 rounded-lg">
+                  <p className="text-[11px] text-base-content/80 italic bg-base-200/80 p-2 rounded-lg">
                     &ldquo;{req.reason}&rdquo;
                   </p>
                 )}

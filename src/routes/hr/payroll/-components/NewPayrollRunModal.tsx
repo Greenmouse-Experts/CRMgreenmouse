@@ -101,14 +101,14 @@ export default function NewPayrollRunModal({
       onClose={onClose}
     >
       <form onSubmit={handleSubmit} className="space-y-4">
-        <p className="text-xs text-base-content/60 -mt-1">
+        <p className=" text-base-content/80 -mt-1">
           The run is created as a draft. Figures are provisional until Finance
           approval.
         </p>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
-            <label className="text-xs font-semibold text-base-content/80 mb-1 block">
+            <label className=" font-semibold text-base-content/80 mb-1 block">
               Pay period <span className="text-error">*</span>
             </label>
             <input
@@ -117,13 +117,13 @@ export default function NewPayrollRunModal({
               onChange={(e) =>
                 setForm((prev) => ({ ...prev, period: e.target.value }))
               }
-              className="input input-bordered w-full text-xs rounded-xl bg-base-200/50"
+              className="input input-bordered w-full  rounded-xl bg-base-200/80"
               required
             />
           </div>
 
           <div>
-            <label className="text-xs font-semibold text-base-content/80 mb-1 block">
+            <label className=" font-semibold text-base-content/80 mb-1 block">
               Cycle <span className="text-error">*</span>
             </label>
             <LocalSelect
@@ -144,7 +144,7 @@ export default function NewPayrollRunModal({
           </div>
 
           <div>
-            <label className="text-xs font-semibold text-base-content/80 mb-1 block">
+            <label className=" font-semibold text-base-content/80 mb-1 block">
               Pay date <span className="text-error">*</span>
             </label>
             <input
@@ -153,13 +153,13 @@ export default function NewPayrollRunModal({
               onChange={(e) =>
                 setForm((prev) => ({ ...prev, payDate: e.target.value }))
               }
-              className="input input-bordered w-full text-xs rounded-xl bg-base-200/50"
+              className="input input-bordered w-full  rounded-xl bg-base-200/80"
               required
             />
           </div>
 
           <div>
-            <label className="text-xs font-semibold text-base-content/80 mb-1 block">
+            <label className=" font-semibold text-base-content/80 mb-1 block">
               Scope
             </label>
             <LocalSelect
@@ -178,7 +178,7 @@ export default function NewPayrollRunModal({
         </div>
 
         <div>
-          <label className="text-xs font-semibold text-base-content/80 mb-1 block">
+          <label className=" font-semibold text-base-content/80 mb-1 block">
             Notes
           </label>
           <textarea
@@ -188,11 +188,11 @@ export default function NewPayrollRunModal({
             }
             rows={2}
             placeholder="Adjustments, bonuses, or approvals context..."
-            className="textarea textarea-bordered w-full text-xs rounded-xl bg-base-200/50"
+            className="textarea textarea-bordered w-full  rounded-xl bg-base-200/80"
           />
         </div>
 
-        <div className="flex items-start gap-2 rounded-xl border border-primary/20 bg-primary/5 p-3 text-xs text-base-content/70">
+        <div className="flex items-start gap-2 rounded-xl border border-primary/20 bg-primary/5 p-3  text-base-content/70">
           <Sparkles className="size-4 text-primary shrink-0 mt-0.5" />
           <span>
             Staff count of {ESTIMATED_STAFF} and gross of ₦

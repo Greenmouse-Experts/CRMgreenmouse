@@ -64,9 +64,7 @@ export default function PayrollStats({ runs, payslips }: PayrollStatsProps) {
         value={
           <div className="flex items-baseline gap-1.5">
             <span>{pendingApprovals + onHold}</span>
-            <span className="text-xs font-normal text-base-content/60">
-              items
-            </span>
+            <span className=" font-normal text-base-content/80">items</span>
           </div>
         }
         desc={

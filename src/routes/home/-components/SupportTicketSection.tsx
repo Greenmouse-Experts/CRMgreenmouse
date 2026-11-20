@@ -144,7 +144,7 @@ export default function SupportTicketSection() {
                         onChange={(e) =>
                           setForm({ ...form, fullName: e.target.value })
                         }
-                        className="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-3.5 py-2.5  text-slate-900 transition focus:border-[#5958ed] focus:bg-white focus:outline-none"
+                        className="w-full rounded-xl border border-slate-200 bg-slate-50/80 px-3.5 py-2.5  text-slate-900 transition focus:border-[#5958ed] focus:bg-white focus:outline-none"
                       />
                     </div>
 
@@ -160,7 +160,7 @@ export default function SupportTicketSection() {
                         onChange={(e) =>
                           setForm({ ...form, email: e.target.value })
                         }
-                        className="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-3.5 py-2.5  text-slate-900 transition focus:border-[#5958ed] focus:bg-white focus:outline-none"
+                        className="w-full rounded-xl border border-slate-200 bg-slate-50/80 px-3.5 py-2.5  text-slate-900 transition focus:border-[#5958ed] focus:bg-white focus:outline-none"
                       />
                     </div>
                   </div>
@@ -176,7 +176,7 @@ export default function SupportTicketSection() {
                         onChange={(e) =>
                           setForm({ ...form, product: e.target.value })
                         }
-                        className="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-3.5 py-2.5  text-slate-700 transition focus:border-[#5958ed] focus:bg-white focus:outline-none"
+                        className="w-full rounded-xl border border-slate-200 bg-slate-50/80 px-3.5 py-2.5  text-slate-700 transition focus:border-[#5958ed] focus:bg-white focus:outline-none"
                       >
                         <option value="">Select a product</option>
                         <option value="Kinovia CRM">KINOVIA CRM</option>
@@ -197,7 +197,7 @@ export default function SupportTicketSection() {
                         onChange={(e) =>
                           setForm({ ...form, subject: e.target.value })
                         }
-                        className="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-3.5 py-2.5  text-slate-900 transition focus:border-[#5958ed] focus:bg-white focus:outline-none"
+                        className="w-full rounded-xl border border-slate-200 bg-slate-50/80 px-3.5 py-2.5  text-slate-900 transition focus:border-[#5958ed] focus:bg-white focus:outline-none"
                       />
                     </div>
                   </div>
@@ -215,7 +215,7 @@ export default function SupportTicketSection() {
                       onChange={(e) =>
                         setForm({ ...form, message: e.target.value })
                       }
-                      className="w-full rounded-xl border border-slate-200 bg-slate-50/50 p-3.5  text-slate-900 transition focus:border-[#5958ed] focus:bg-white focus:outline-none resize-none"
+                      className="w-full rounded-xl border border-slate-200 bg-slate-50/80 p-3.5  text-slate-900 transition focus:border-[#5958ed] focus:bg-white focus:outline-none resize-none"
                     />
                   </div>
 

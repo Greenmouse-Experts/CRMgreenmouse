@@ -11,7 +11,10 @@ import PageHeader from "@/components/Headers/PageHeader";
 import PageLoader from "@/components/layout/PageLoader";
 import ProductSummary from "./-components/ProductSummary";
 import ProductNav from "./-components/ProductNav";
-import { ProductImageGallery, ProductImageStrip } from "@/components/images/ProductImages";
+import {
+  ProductImageGallery,
+  ProductImageStrip,
+} from "@/components/images/ProductImages";
 import type { Product } from "@/api/catalogApi";
 import { useAdminCrossProducts, useAdminCrossCategories } from "@/api/adminApi";
 
@@ -217,7 +220,7 @@ function RouteComponent() {
                       const price = Number(product.price) || 0;
                       if (!cost) {
                         return (
-                          <span className="text-sm text-base-content/50">
+                          <span className="text-sm text-base-content/80">
                             —
                           </span>
                         );
@@ -328,7 +331,7 @@ function RouteComponent() {
                   />
 
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                    <div className="bg-base-200/50 p-3 rounded-lg">
+                    <div className="bg-base-200/80 p-3 rounded-lg">
                       <span className="text-sm text-base-content/60 block">
                         Selling Price
                       </span>
@@ -337,7 +340,7 @@ function RouteComponent() {
                         {Number(selectedProduct.price).toLocaleString()}
                       </span>
                     </div>
-                    <div className="bg-base-200/50 p-3 rounded-lg">
+                    <div className="bg-base-200/80 p-3 rounded-lg">
                       <span className="text-sm text-base-content/60 block">
                         Cost Price
                       </span>
@@ -346,7 +349,7 @@ function RouteComponent() {
                         {Number(selectedProduct.cost || 0).toLocaleString()}
                       </span>
                     </div>
-                    <div className="bg-base-200/50 p-3 rounded-lg">
+                    <div className="bg-base-200/80 p-3 rounded-lg">
                       <span className="text-sm text-base-content/60 block">
                         Profit Margin
                       </span>
@@ -361,7 +364,7 @@ function RouteComponent() {
                           : "N/A"}
                       </span>
                     </div>
-                    <div className="bg-base-200/50 p-3 rounded-lg">
+                    <div className="bg-base-200/80 p-3 rounded-lg">
                       <span className="text-sm text-base-content/60 block">
                         Stock Count
                       </span>

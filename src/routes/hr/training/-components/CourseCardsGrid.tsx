@@ -36,7 +36,8 @@ export default function CourseCardsGrid({
 
   const totalEnrolled = courses.reduce((sum, c) => sum + c.enrolled, 0);
   const avgCompletion = Math.round(
-    courses.reduce((sum, c) => sum + c.completionRate, 0) / (courses.length || 1),
+    courses.reduce((sum, c) => sum + c.completionRate, 0) /
+      (courses.length || 1),
   );
 
   return (
@@ -64,7 +65,7 @@ export default function CourseCardsGrid({
           value={
             <div className="flex items-baseline gap-1">
               <span>{avgCompletion}</span>
-              <span className="text-xs font-normal text-base-content/60">%</span>
+              <span className=" font-normal text-base-content/80">%</span>
             </div>
           }
           desc="Overall course progress rate"
@@ -86,11 +87,11 @@ export default function CourseCardsGrid({
         <div className="flex items-center justify-between mb-4">
           <div>
             <h2 className="text-lg font-bold text-base-content">Courses</h2>
-            <p className="text-xs text-base-content/60">
+            <p className=" text-base-content/80">
               Active company learning curriculums and completion progress.
             </p>
           </div>
-          <span className="badge badge-sm badge-ghost text-xs font-semibold">
+          <span className="badge badge-sm badge-ghost  font-semibold">
             {courses.length} programs
           </span>
         </div>
@@ -122,14 +123,14 @@ export default function CourseCardsGrid({
                   {course.title}
                 </p>
 
-                <p className="text-xs text-base-content/60 mt-0.5">
+                <p className=" text-base-content/80 mt-0.5">
                   {course.enrolled} enrolled
                 </p>
               </div>
 
               <div className="mt-5 space-y-1.5 pt-3 border-t border-base-200">
-                <div className="flex items-center justify-between text-xs">
-                  <span className="text-base-content/60 font-medium">
+                <div className="flex items-center justify-between ">
+                  <span className="text-base-content/80 font-medium">
                     Completion rate
                   </span>
                   <span className="font-bold text-primary">

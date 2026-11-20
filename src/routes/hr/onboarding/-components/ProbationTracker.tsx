@@ -24,12 +24,13 @@ export default function ProbationTracker({
           <h2 className="text-lg font-bold text-base-content">
             Probation tracker
           </h2>
-          <p className="text-xs text-base-content/60">
-            Performance checkpoints, evaluation reviews, and employment confirmation for {hire.name}
+          <p className=" text-base-content/80">
+            Performance checkpoints, evaluation reviews, and employment
+            confirmation for {hire.name}
           </p>
         </div>
 
-        <span className="badge badge-sm badge-outline text-xs font-semibold self-start sm:self-auto">
+        <span className="badge badge-sm badge-outline  font-semibold self-start sm:self-auto">
           Current: {PROBATION_STEPS[currentStep] || "Day 1"}
         </span>
       </div>
@@ -59,12 +60,12 @@ export default function ProbationTracker({
                   className="relative z-10 flex flex-col items-center gap-2 group cursor-pointer focus:outline-none"
                 >
                   <div
-                    className={`size-8 rounded-full flex items-center justify-center font-bold text-xs transition-all duration-200 ${
+                    className={`size-8 rounded-full flex items-center justify-center font-bold  transition-all duration-200 ${
                       isCompleted
                         ? "bg-primary text-white shadow-xs"
                         : isCurrent
                           ? "bg-primary text-white ring-4 ring-primary/20 shadow-md scale-105"
-                          : "bg-base-200 text-base-content/50 border border-base-300 group-hover:border-primary/50"
+                          : "bg-base-200 text-base-content/80 border border-base-300 group-hover:border-primary/80"
                     }`}
                   >
                     {isCompleted ? (
@@ -74,12 +75,12 @@ export default function ProbationTracker({
                     )}
                   </div>
                   <span
-                    className={`text-xs text-center font-medium max-w-[90px] leading-tight ${
+                    className={` text-center font-medium max-w-[90px] leading-tight ${
                       isCurrent
                         ? "text-primary font-bold"
                         : isCompleted
                           ? "text-base-content"
-                          : "text-base-content/50 group-hover:text-base-content/80"
+                          : "text-base-content/80 group-hover:text-base-content/80"
                     }`}
                   >
                     {step}
@@ -92,21 +93,21 @@ export default function ProbationTracker({
       </div>
 
       {/* Milestone Actions */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 rounded-xl bg-base-200/50 p-4 border border-base-200">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 rounded-xl bg-base-200/80 p-4 border border-base-200">
         <div className="flex items-center gap-3">
           <div className="size-9 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
             <CalendarCheck className="size-4" />
           </div>
           <div>
-            <p className="text-xs font-bold text-base-content">
+            <p className=" font-bold text-base-content">
               {currentStep >= 4
                 ? `${hire.name} has completed probation milestones`
                 : `Next evaluation: ${PROBATION_STEPS[currentStep + 1] || "Confirmation"}`}
             </p>
-            <p className="text-[11px] text-base-content/60">
+            <p className="text-[11px] text-base-content/80">
               {currentStep >= 4
                 ? "Ready to formalize permanent employment contract."
-                : "Schedule check-in with line manager and review 30/60/90-day objectives."}
+                : "Schedule check-in with line manager and review 30/80/90-day objectives."}
             </p>
           </div>
         </div>

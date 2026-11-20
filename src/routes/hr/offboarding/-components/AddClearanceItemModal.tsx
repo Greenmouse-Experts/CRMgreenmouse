@@ -107,19 +107,23 @@ export default function AddClearanceItemModal({
       onClose={onClose}
     >
       <form onSubmit={handleSubmit} className="space-y-4">
-        <p className="text-xs text-base-content/60 -mt-1">
-          Create an inter-departmental checklist item for asset return or sign-off.
+        <p className=" text-base-content/80 -mt-1">
+          Create an inter-departmental checklist item for asset return or
+          sign-off.
         </p>
 
         <div className="space-y-3">
           <div>
-            <label className="text-xs font-semibold text-base-content/80 mb-1 block">
+            <label className=" font-semibold text-base-content/80 mb-1 block">
               Department <span className="text-error">*</span>
             </label>
             <LocalSelect
               value={form.department}
               onChange={(e) =>
-                handleChange("department", e.target.value as ClearanceDepartment)
+                handleChange(
+                  "department",
+                  e.target.value as ClearanceDepartment,
+                )
               }
             >
               {CLEARANCE_DEPARTMENTS.map((dept) => (
@@ -131,7 +135,7 @@ export default function AddClearanceItemModal({
           </div>
 
           <div>
-            <label className="text-xs font-semibold text-base-content/80 mb-1 block">
+            <label className=" font-semibold text-base-content/80 mb-1 block">
               Item / Task Description <span className="text-error">*</span>
             </label>
             <SimpleInput
@@ -143,7 +147,7 @@ export default function AddClearanceItemModal({
           </div>
 
           <div>
-            <label className="text-xs font-semibold text-base-content/80 mb-1 block">
+            <label className=" font-semibold text-base-content/80 mb-1 block">
               Responsible Owner <span className="text-error">*</span>
             </label>
             <SimpleInput
@@ -155,19 +159,19 @@ export default function AddClearanceItemModal({
           </div>
 
           <div>
-            <label className="text-xs font-semibold text-base-content/80 mb-1 block">
+            <label className=" font-semibold text-base-content/80 mb-1 block">
               Due Date
             </label>
             <input
               type="date"
               value={form.dueDate}
               onChange={(e) => handleChange("dueDate", e.target.value)}
-              className="input input-bordered w-full text-xs rounded-xl bg-base-200/50"
+              className="input input-bordered w-full  rounded-xl bg-base-200/80"
             />
           </div>
 
           <div>
-            <label className="text-xs font-semibold text-base-content/80 mb-1 block">
+            <label className=" font-semibold text-base-content/80 mb-1 block">
               Notes (optional)
             </label>
             <textarea
@@ -175,7 +179,7 @@ export default function AddClearanceItemModal({
               onChange={(e) => handleChange("notes", e.target.value)}
               rows={2}
               placeholder="Asset serial numbers or handover link..."
-              className="textarea textarea-bordered w-full text-xs rounded-xl bg-base-200/50"
+              className="textarea textarea-bordered w-full  rounded-xl bg-base-200/80"
             />
           </div>
         </div>

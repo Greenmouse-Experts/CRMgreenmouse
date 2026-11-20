@@ -38,7 +38,7 @@ export default function EmployeeTableView({
                 </span>
               )}
             </div>
-            <div className="flex items-center gap-1.5 text-xs text-base-content/60 truncate">
+            <div className="flex items-center gap-1.5  text-base-content/80 truncate">
               {emp.title !== "—" && <span>{emp.title}</span>}
               {emp.title !== "—" && emp.email !== "—" && <span>·</span>}
               {emp.email !== "—" && (
@@ -53,7 +53,7 @@ export default function EmployeeTableView({
       key: "employeeNumber",
       label: "Employee ID",
       render: (_value: string, emp: Employee) => (
-        <span className="bg-base-200/80 px-2 py-0.5 rounded-md font-mono text-xs text-base-content/80 font-medium">
+        <span className="bg-base-200/80 px-2 py-0.5 rounded-md font-mono  text-base-content/80 font-medium">
           {emp.employeeNumber ||
             (emp.id && emp.id.length > 8 ? emp.id.slice(0, 8) : emp.id)}
         </span>
@@ -63,23 +63,21 @@ export default function EmployeeTableView({
       key: "dept",
       label: "Department",
       render: (value: string) => (
-        <span className="font-medium text-xs text-base-content/80">
-          {value}
-        </span>
+        <span className="font-medium  text-base-content/80">{value}</span>
       ),
     },
     {
       key: "type",
       label: "Type",
       render: (value: string) => (
-        <span className="text-xs text-base-content/70">{value}</span>
+        <span className=" text-base-content/70">{value}</span>
       ),
     },
     {
       key: "location",
       label: "Location",
       render: (value: string) => (
-        <span className="text-xs text-base-content/70">{value}</span>
+        <span className=" text-base-content/70">{value}</span>
       ),
     },
     {
@@ -93,9 +91,7 @@ export default function EmployeeTableView({
       key: "start",
       label: "Start Date",
       render: (value: string) => (
-        <span className="font-mono text-xs text-base-content/60">
-          {value || "—"}
-        </span>
+        <span className="font-mono  text-base-content/80">{value || "—"}</span>
       ),
     },
     {

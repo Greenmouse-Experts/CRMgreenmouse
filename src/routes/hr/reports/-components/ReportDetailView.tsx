@@ -73,13 +73,9 @@ export default function ReportDetailView({
     label: col,
     render: (val: any) => {
       if (idx === 0) {
-        return (
-          <span className="font-semibold text-xs text-base-content">
-            {val}
-          </span>
-        );
+        return <span className="font-semibold  text-base-content">{val}</span>;
       }
-      return <span className="text-xs text-base-content/80">{val}</span>;
+      return <span className=" text-base-content/80">{val}</span>;
     },
   }));
 
@@ -90,7 +86,7 @@ export default function ReportDetailView({
         <button
           type="button"
           onClick={onBack}
-          className="inline-flex items-center gap-1.5 text-xs font-semibold text-base-content/60 hover:text-primary transition-colors"
+          className="inline-flex items-center gap-1.5  font-semibold text-base-content/80 hover:text-primary transition-colors"
         >
           <ArrowLeft className="size-3.5" />
           <span>All reports catalog</span>
@@ -187,14 +183,16 @@ export default function ReportDetailView({
         <div className="card bg-base-100 border border-base-200 shadow-sm p-5 sm:p-6 space-y-4">
           <div className="flex items-center gap-2">
             <Lightbulb className="size-4 text-amber-500" />
-            <h3 className="font-bold text-sm text-base-content">Key Insights</h3>
+            <h3 className="font-bold text-sm text-base-content">
+              Key Insights
+            </h3>
           </div>
 
           <ul className="space-y-3">
             {report.insights.map((insight, idx) => (
               <li
                 key={idx}
-                className="flex items-start gap-2.5 text-xs text-base-content/80 leading-relaxed bg-base-200/40 p-3 rounded-xl border border-base-200/50"
+                className="flex items-start gap-2.5  text-base-content/80 leading-relaxed bg-base-200/40 p-3 rounded-xl border border-base-200/80"
               >
                 <Info className="size-3.5 text-primary mt-0.5 shrink-0" />
                 <span>{insight}</span>
@@ -202,11 +200,9 @@ export default function ReportDetailView({
             ))}
           </ul>
 
-          <div className="pt-2 text-[11px] text-base-content/50 border-t border-base-200/60">
+          <div className="pt-2 text-[11px] text-base-content/80 border-t border-base-200/80">
             Showing filtered analytics for:{" "}
-            <span className="font-semibold text-base-content">
-              {timeframe}
-            </span>{" "}
+            <span className="font-semibold text-base-content">{timeframe}</span>{" "}
             ·{" "}
             <span className="font-semibold text-base-content">
               {department}
@@ -222,7 +218,7 @@ export default function ReportDetailView({
             <h3 className="font-bold text-base text-base-content">
               Detailed Data Breakdown
             </h3>
-            <p className="text-xs text-base-content/60 mt-0.5">
+            <p className=" text-base-content/80 mt-0.5">
               Granular numerical records corresponding to {report.title}.
             </p>
           </div>
@@ -235,7 +231,7 @@ export default function ReportDetailView({
 
       {/* Other Reports Pill Navigation */}
       <div className="card bg-base-100 border border-base-200 shadow-sm p-5 sm:p-6 space-y-3">
-        <h4 className="text-xs font-bold uppercase tracking-wider text-base-content/70">
+        <h4 className=" font-bold uppercase tracking-wider text-base-content/70">
           Other HR Reports & Analytics
         </h4>
         <div className="flex flex-wrap gap-2">
@@ -246,7 +242,7 @@ export default function ReportDetailView({
                 key={r.slug}
                 type="button"
                 onClick={() => onSelectOtherReport(r)}
-                className="px-3 py-1.5 rounded-full text-xs font-medium bg-base-200 hover:bg-primary hover:text-white transition-all"
+                className="px-3 py-1.5 rounded-full  font-medium bg-base-200 hover:bg-primary hover:text-white transition-all"
               >
                 {r.title}
               </button>

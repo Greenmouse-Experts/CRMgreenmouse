@@ -65,7 +65,7 @@ export default function CandidatePipeline({
           <h2 className="text-lg font-bold text-base-content">
             Candidate pipeline
           </h2>
-          <p className="text-xs text-base-content/60">
+          <p className=" text-base-content/80">
             Track candidates across each stage of hiring and review evaluations
           </p>
         </div>
@@ -77,7 +77,7 @@ export default function CandidatePipeline({
             placeholder="Search candidates or role..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="input input-sm w-full pl-9 bg-base-200/60 border-base-300 rounded-lg text-xs"
+            className="input input-sm w-full pl-9 bg-base-200/80 border-base-300 rounded-lg "
           />
         </div>
       </div>
@@ -95,7 +95,7 @@ export default function CandidatePipeline({
               className="w-64 shrink-0 rounded-2xl bg-base-200/70 border border-base-200/80 p-3.5 flex flex-col"
             >
               {/* Column Header */}
-              <div className="mb-3 flex items-center justify-between text-xs font-semibold px-1">
+              <div className="mb-3 flex items-center justify-between  font-semibold px-1">
                 <span className="text-base-content font-bold">{stage}</span>
                 <span className="rounded-full bg-base-100 border border-base-300/80 px-2 py-0.5 text-[11px] text-base-content/70 font-semibold shadow-2xs">
                   {stageCandidates.length}
@@ -105,7 +105,7 @@ export default function CandidatePipeline({
               {/* Cards Container */}
               <div className="space-y-2.5 flex-1 overflow-y-auto max-h-[460px] pr-0.5">
                 {stageCandidates.length === 0 ? (
-                  <div className="py-8 text-center text-xs text-base-content/40 italic">
+                  <div className="py-8 text-center  text-base-content/40 italic">
                     No candidates
                   </div>
                 ) : (
@@ -132,14 +132,14 @@ export default function CandidatePipeline({
                             <p className="text-sm font-semibold text-base-content truncate group-hover:text-primary transition-colors">
                               {candidate.name}
                             </p>
-                            <p className="text-xs text-base-content/60 truncate">
+                            <p className=" text-base-content/80 truncate">
                               {candidate.role}
                             </p>
                           </div>
                         </div>
 
                         {/* Bottom Score & Action */}
-                        <div className="mt-3 flex items-center justify-between gap-2 pt-2 border-t border-base-200/60">
+                        <div className="mt-3 flex items-center justify-between gap-2 pt-2 border-t border-base-200/80">
                           <div className="flex items-center gap-1.5 flex-1 min-w-0">
                             <div className="w-16 h-1.5 bg-base-200 rounded-full overflow-hidden">
                               <div

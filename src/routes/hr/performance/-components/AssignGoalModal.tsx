@@ -109,13 +109,14 @@ export default function AssignGoalModal({
       onClose={onClose}
     >
       <form onSubmit={handleSubmit} className="space-y-4">
-        <p className="text-xs text-base-content/60 -mt-1 mb-3">
-          Goals should be specific, measurable, achievable, relevant and time-bound.
+        <p className=" text-base-content/80 -mt-1 mb-3">
+          Goals should be specific, measurable, achievable, relevant and
+          time-bound.
         </p>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label className="text-xs font-semibold text-base-content/80 mb-1 block">
+            <label className=" font-semibold text-base-content/80 mb-1 block">
               Assign to <span className="text-error">*</span>
             </label>
             <LocalSelect
@@ -131,7 +132,7 @@ export default function AssignGoalModal({
           </div>
 
           <div>
-            <label className="text-xs font-semibold text-base-content/80 mb-1 block">
+            <label className=" font-semibold text-base-content/80 mb-1 block">
               Review cycle <span className="text-error">*</span>
             </label>
             <LocalSelect
@@ -147,7 +148,7 @@ export default function AssignGoalModal({
           </div>
 
           <div className="sm:col-span-2">
-            <label className="text-xs font-semibold text-base-content/80 mb-1 block">
+            <label className=" font-semibold text-base-content/80 mb-1 block">
               Goal title <span className="text-error">*</span>
             </label>
             <SimpleInput
@@ -159,7 +160,7 @@ export default function AssignGoalModal({
           </div>
 
           <div>
-            <label className="text-xs font-semibold text-base-content/80 mb-1 block">
+            <label className=" font-semibold text-base-content/80 mb-1 block">
               Category <span className="text-error">*</span>
             </label>
             <LocalSelect
@@ -175,7 +176,7 @@ export default function AssignGoalModal({
           </div>
 
           <div>
-            <label className="text-xs font-semibold text-base-content/80 mb-1 block">
+            <label className=" font-semibold text-base-content/80 mb-1 block">
               Measure (KPI)
             </label>
             <SimpleInput
@@ -186,7 +187,7 @@ export default function AssignGoalModal({
           </div>
 
           <div>
-            <label className="text-xs font-semibold text-base-content/80 mb-1 block">
+            <label className=" font-semibold text-base-content/80 mb-1 block">
               Target value <span className="text-error">*</span>
             </label>
             <SimpleInput
@@ -198,7 +199,7 @@ export default function AssignGoalModal({
           </div>
 
           <div>
-            <label className="text-xs font-semibold text-base-content/80 mb-1 block">
+            <label className=" font-semibold text-base-content/80 mb-1 block">
               Weight (%) <span className="text-error">*</span>
             </label>
             <input
@@ -207,41 +208,41 @@ export default function AssignGoalModal({
               max="100"
               value={form.weight}
               onChange={(e) => handleChange("weight", e.target.value)}
-              className="input input-bordered w-full text-xs rounded-xl bg-base-200/50"
+              className="input input-bordered w-full  rounded-xl bg-base-200/80"
               required
             />
-            <span className="text-[10px] text-base-content/50 mt-1 block">
+            <span className="text-[10px] text-base-content/80 mt-1 block">
               All goals for one person should total 100%
             </span>
           </div>
 
           <div>
-            <label className="text-xs font-semibold text-base-content/80 mb-1 block">
+            <label className=" font-semibold text-base-content/80 mb-1 block">
               Start date
             </label>
             <input
               type="date"
               value={form.start}
               onChange={(e) => handleChange("start", e.target.value)}
-              className="input input-bordered w-full text-xs rounded-xl bg-base-200/50"
+              className="input input-bordered w-full  rounded-xl bg-base-200/80"
             />
           </div>
 
           <div>
-            <label className="text-xs font-semibold text-base-content/80 mb-1 block">
+            <label className=" font-semibold text-base-content/80 mb-1 block">
               Due date <span className="text-error">*</span>
             </label>
             <input
               type="date"
               value={form.due}
               onChange={(e) => handleChange("due", e.target.value)}
-              className="input input-bordered w-full text-xs rounded-xl bg-base-200/50"
+              className="input input-bordered w-full  rounded-xl bg-base-200/80"
               required
             />
           </div>
 
           <div className="sm:col-span-2">
-            <label className="text-xs font-semibold text-base-content/80 mb-1 block">
+            <label className=" font-semibold text-base-content/80 mb-1 block">
               Description & success criteria
             </label>
             <textarea
@@ -249,7 +250,7 @@ export default function AssignGoalModal({
               onChange={(e) => handleChange("desc", e.target.value)}
               placeholder="Detail expected milestones, quality standards, and dependencies..."
               rows={3}
-              className="textarea textarea-bordered w-full text-xs rounded-xl bg-base-200/50"
+              className="textarea textarea-bordered w-full  rounded-xl bg-base-200/80"
             />
           </div>
         </div>

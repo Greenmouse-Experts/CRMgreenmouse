@@ -204,7 +204,7 @@ function RouteComponent() {
                           onChange={(e) =>
                             setForm({ ...form, fullName: e.target.value })
                           }
-                          className="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-3.5 py-2.5 text-sm text-slate-900 transition focus:border-[#5958ed] focus:bg-white focus:outline-none"
+                          className="w-full rounded-xl border border-slate-200 bg-slate-50/80 px-3.5 py-2.5 text-sm text-slate-900 transition focus:border-[#5958ed] focus:bg-white focus:outline-none"
                         />
                       </div>
 
@@ -223,7 +223,7 @@ function RouteComponent() {
                           onChange={(e) =>
                             setForm({ ...form, email: e.target.value })
                           }
-                          className="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-3.5 py-2.5 text-sm text-slate-900 transition focus:border-[#5958ed] focus:bg-white focus:outline-none"
+                          className="w-full rounded-xl border border-slate-200 bg-slate-50/80 px-3.5 py-2.5 text-sm text-slate-900 transition focus:border-[#5958ed] focus:bg-white focus:outline-none"
                         />
                       </div>
                     </div>
@@ -242,7 +242,7 @@ function RouteComponent() {
                         onChange={(e) =>
                           setForm({ ...form, enquiry: e.target.value })
                         }
-                        className="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-3.5 py-2.5 text-sm text-slate-700 transition focus:border-[#5958ed] focus:bg-white focus:outline-none"
+                        className="w-full rounded-xl border border-slate-200 bg-slate-50/80 px-3.5 py-2.5 text-sm text-slate-700 transition focus:border-[#5958ed] focus:bg-white focus:outline-none"
                       >
                         <option value="">Select an enquiry type</option>
                         {enquiryTypes.map((type) => (
@@ -269,7 +269,7 @@ function RouteComponent() {
                         onChange={(e) =>
                           setForm({ ...form, message: e.target.value })
                         }
-                        className="w-full rounded-xl border border-slate-200 bg-slate-50/50 p-3.5 text-sm text-slate-900 transition focus:border-[#5958ed] focus:bg-white focus:outline-none resize-none"
+                        className="w-full rounded-xl border border-slate-200 bg-slate-50/80 p-3.5 text-sm text-slate-900 transition focus:border-[#5958ed] focus:bg-white focus:outline-none resize-none"
                       />
                     </div>
 

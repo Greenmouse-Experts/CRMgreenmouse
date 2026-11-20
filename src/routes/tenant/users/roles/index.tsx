@@ -363,7 +363,7 @@ function RouteComponent() {
             </div>
 
             <div className="overflow-hidden rounded-xl border border-base-300">
-              <div className="flex flex-col gap-2 border-b border-base-300 bg-base-200/50 p-3 sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex flex-col gap-2 border-b border-base-300 bg-base-200/80 p-3 sm:flex-row sm:items-center sm:justify-between">
                 <div className="relative min-w-0 flex-1">
                   <Search
                     aria-hidden="true"
@@ -510,7 +510,7 @@ function RouteComponent() {
                 )}
               </div>
               {permissionsQuery.data && filteredPermissions.length > 0 && (
-                <div className="border-t border-base-300 bg-base-200/50 px-4 py-2  tabular-nums text-base-content/70">
+                <div className="border-t border-base-300 bg-base-200/80 px-4 py-2  tabular-nums text-base-content/70">
                   {permissionFilter
                     ? `${selectedVisibleCount} of ${filteredPermissions.length} matches selected`
                     : `${selectedPermissions.length} of ${permissionsQuery.data.length} permissions selected`}

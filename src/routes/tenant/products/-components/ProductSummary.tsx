@@ -66,7 +66,7 @@ const ProductSummary: React.FC<ProductSummaryProps> = ({ products }) => {
               <h3 className="text-2xl font-semibold text-base-content mt-1">
                 {stat.value}
               </h3>
-              <p className=" text-base-content/50 mt-0.5">{stat.description}</p>
+              <p className=" text-base-content/80 mt-0.5">{stat.description}</p>
             </div>
             <div className={`p-3 rounded-xl border ${stat.color}`}>
               {stat.icon}

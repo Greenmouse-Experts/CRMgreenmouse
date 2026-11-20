@@ -83,7 +83,7 @@ function RouteComponent() {
             <span className="font-semibold text-base-content block">
               {val || `ORD-${item.id.slice(0, 8).toUpperCase()}`}
             </span>
-            <span className="text-sm text-base-content/50">
+            <span className="text-sm text-base-content/80">
               {item.items?.length || 0} line item(s)
             </span>
           </div>
@@ -107,7 +107,7 @@ function RouteComponent() {
                 : "Direct Customer"}
             </span>
             {contact?.email && (
-              <span className="text-sm text-base-content/50 block">
+              <span className="text-sm text-base-content/80 block">
                 {contact.email}
               </span>
             )}
@@ -335,7 +335,7 @@ function RouteComponent() {
                   </div>
 
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                    <div className="bg-base-200/50 p-3 rounded-lg">
+                    <div className="bg-base-200/80 p-3 rounded-lg">
                       <span className="text-sm text-base-content/60 block">
                         Customer
                       </span>
@@ -345,7 +345,7 @@ function RouteComponent() {
                           : "Direct Customer"}
                       </span>
                     </div>
-                    <div className="bg-base-200/50 p-3 rounded-lg">
+                    <div className="bg-base-200/80 p-3 rounded-lg">
                       <span className="text-sm text-base-content/60 block">
                         Payment Status
                       </span>
@@ -353,7 +353,7 @@ function RouteComponent() {
                         {selectedOrder.paymentStatus || "Unpaid"}
                       </span>
                     </div>
-                    <div className="bg-base-200/50 p-3 rounded-lg">
+                    <div className="bg-base-200/80 p-3 rounded-lg">
                       <span className="text-sm text-base-content/60 block">
                         Total Amount
                       </span>
@@ -390,7 +390,7 @@ function RouteComponent() {
                                 {it.product?.name ||
                                   `Product ID: ${it.productId}`}
                               </span>
-                              <span className="text-sm text-base-content/50">
+                              <span className="text-sm text-base-content/80">
                                 {it.qty} × {selectedOrder.currency || "₦"}
                                 {Number(it.unitPrice || 0).toLocaleString()}
                               </span>

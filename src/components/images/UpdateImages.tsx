@@ -74,7 +74,7 @@ export default function UpdateImages({
             <span className="text-xs font-semibold text-base-content leading-tight">
               {fileMode ? "Add attachments" : "Upload Images"}
             </span>
-            <span className="text-[10px] text-base-content/50 mt-0.5">
+            <span className="text-[10px] text-base-content/80 mt-0.5">
               {fileMode ? "Images, PDFs, or videos" : "Click or drag"}
             </span>
           </label>

@@ -67,7 +67,7 @@ export default function DepartmentsTable({
       key: "code",
       label: "Code",
       render: (value, dept) => (
-        <span className="font-mono text-xs font-bold text-primary">
+        <span className="font-mono  font-bold text-primary">
           {value || dept.code || "—"}
         </span>
       ),
@@ -85,7 +85,7 @@ export default function DepartmentsTable({
       key: "staffCount",
       label: "Staff Count",
       render: (value, dept) => (
-        <span className="rounded-md bg-base-200/80 px-2 py-0.5 text-xs font-bold text-base-content">
+        <span className="rounded-md bg-base-200/80 px-2 py-0.5  font-bold text-base-content">
           {Number(value ?? dept.staffCount ?? dept.count ?? 0)}
         </span>
       ),
@@ -129,7 +129,7 @@ export default function DepartmentsTable({
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
           <h3 className="text-base font-bold text-base-content">Departments</h3>
-          <p className="text-xs text-base-content/60">
+          <p className=" text-base-content/80">
             {filteredDepartments.length} functional business unit
             {filteredDepartments.length === 1 ? "" : "s"}
           </p>
@@ -144,7 +144,7 @@ export default function DepartmentsTable({
               placeholder="Search departments..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="input input-sm input-bordered pl-8 text-xs rounded-xl w-44 sm:w-52"
+              className="input input-sm input-bordered pl-8  rounded-xl w-44 sm:w-52"
             />
           </div>
 
@@ -152,7 +152,7 @@ export default function DepartmentsTable({
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="select select-sm select-bordered text-xs rounded-xl"
+            className="select select-sm select-bordered  rounded-xl"
           >
             <option value="All">All statuses</option>
             <option value="Active">Active</option>

@@ -281,7 +281,7 @@ export default function InvoiceBrandingSettings() {
                 alt="Invoice logo preview"
               />
             ) : (
-              <div className="flex flex-col items-center gap-2 text-base-content/50">
+              <div className="flex flex-col items-center gap-2 text-base-content/80">
                 <ImagePlus className="size-8" />
                 <span className="">Logo preview</span>
               </div>

@@ -215,7 +215,7 @@ const RichTextEditor = forwardRef<HTMLDivElement, RichTextProps>(
             error
               ? "border-error focus-within:ring-2 focus-within:ring-error/20"
               : "border-base-300 focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20"
-          } ${disabled ? "opacity-60 pointer-events-none bg-base-200/50" : ""}`}
+          } ${disabled ? "opacity-60 pointer-events-none bg-base-200/80" : ""}`}
         >
           {/* WYSIWYG Toolbar */}
           {editor && !disabled && (
@@ -425,7 +425,7 @@ const RichTextEditor = forwardRef<HTMLDivElement, RichTextProps>(
           {/* Editable Content */}
           <EditorContent
             editor={editor}
-            className={`px-3 py-2.5 text-sm text-base-content outline-none ${heightClass} [&_.tiptap]:outline-none [&_.tiptap]:min-h-[inherit] [&_.tiptap_p]:my-1 [&_.tiptap_ul]:list-disc [&_.tiptap_ul]:pl-5 [&_.tiptap_ol]:list-decimal [&_.tiptap_ol]:pl-5 [&_.tiptap_blockquote]:border-l-2 [&_.tiptap_blockquote]:border-primary/50 [&_.tiptap_blockquote]:pl-3 [&_.tiptap_blockquote]:italic [&_.tiptap_blockquote]:text-base-content/70 [&_.tiptap_h2]:text-base [&_.tiptap_h2]:font-bold [&_.tiptap_h2]:my-2 [&_.tiptap_h3]:text-sm [&_.tiptap_h3]:font-semibold [&_.tiptap_h3]:my-1.5 [&_.tiptap_code]:rounded [&_.tiptap_code]:bg-base-200 [&_.tiptap_code]:px-1 [&_.tiptap_code]:py-0.5 [&_.tiptap_code]:font-mono [&_.tiptap_code]:text-xs [&_.tiptap.is-editor-empty:first-child::before]:text-base-content/40 [&_.tiptap.is-editor-empty:first-child::before]:content-[attr(data-placeholder)] [&_.tiptap.is-editor-empty:first-child::before]:float-left [&_.tiptap.is-editor-empty:first-child::before]:pointer-events-none [&_.tiptap.is-editor-empty:first-child::before]:h-0`}
+            className={`px-3 py-2.5 text-sm text-base-content outline-none ${heightClass} [&_.tiptap]:outline-none [&_.tiptap]:min-h-[inherit] [&_.tiptap_p]:my-1 [&_.tiptap_ul]:list-disc [&_.tiptap_ul]:pl-5 [&_.tiptap_ol]:list-decimal [&_.tiptap_ol]:pl-5 [&_.tiptap_blockquote]:border-l-2 [&_.tiptap_blockquote]:border-primary/80 [&_.tiptap_blockquote]:pl-3 [&_.tiptap_blockquote]:italic [&_.tiptap_blockquote]:text-base-content/70 [&_.tiptap_h2]:text-base [&_.tiptap_h2]:font-bold [&_.tiptap_h2]:my-2 [&_.tiptap_h3]:text-sm [&_.tiptap_h3]:font-semibold [&_.tiptap_h3]:my-1.5 [&_.tiptap_code]:rounded [&_.tiptap_code]:bg-base-200 [&_.tiptap_code]:px-1 [&_.tiptap_code]:py-0.5 [&_.tiptap_code]:font-mono [&_.tiptap_code]:text-xs [&_.tiptap.is-editor-empty:first-child::before]:text-base-content/40 [&_.tiptap.is-editor-empty:first-child::before]:content-[attr(data-placeholder)] [&_.tiptap.is-editor-empty:first-child::before]:float-left [&_.tiptap.is-editor-empty:first-child::before]:pointer-events-none [&_.tiptap.is-editor-empty:first-child::before]:h-0`}
           />
         </div>
 

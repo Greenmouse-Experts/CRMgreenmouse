@@ -239,7 +239,7 @@ function RouteComponent() {
               <div className="text-lg font-semibold text-base-content">
                 Kinovia CRM
               </div>
-              <div className="text-[10px] uppercase tracking-[0.2em] text-base-content/60">
+              <div className="text-[10px] uppercase tracking-[0.2em] text-base-content/80">
                 Human Resources
               </div>
             </div>

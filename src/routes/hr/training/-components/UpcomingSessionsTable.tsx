@@ -31,21 +31,21 @@ export default function UpcomingSessionsTable({
     switch (status) {
       case "Scheduled":
         return (
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-blue-50 px-2.5 py-0.5 text-xs font-semibold text-blue-700 border border-blue-200">
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-blue-50 px-2.5 py-0.5  font-semibold text-blue-700 border border-blue-200">
             <span className="size-1.5 rounded-full bg-blue-500 animate-pulse" />
             Scheduled
           </span>
         );
       case "In Progress":
         return (
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-50 px-2.5 py-0.5 text-xs font-semibold text-amber-700 border border-amber-200">
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-50 px-2.5 py-0.5  font-semibold text-amber-700 border border-amber-200">
             <span className="size-1.5 rounded-full bg-amber-500 animate-pulse" />
             In Progress
           </span>
         );
       case "Completed":
         return (
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-semibold text-emerald-700 border border-emerald-200">
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-0.5  font-semibold text-emerald-700 border border-emerald-200">
             <span className="size-1.5 rounded-full bg-emerald-500" />
             Completed
           </span>
@@ -53,7 +53,7 @@ export default function UpcomingSessionsTable({
       case "Cancelled":
       default:
         return (
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-semibold text-slate-600 border border-slate-200">
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-100 px-2.5 py-0.5  font-semibold text-slate-600 border border-slate-200">
             Cancelled
           </span>
         );
@@ -81,11 +81,11 @@ export default function UpcomingSessionsTable({
             <h2 className="text-lg font-bold text-base-content">
               Upcoming sessions
             </h2>
-            <span className="badge badge-sm badge-ghost text-xs font-semibold">
+            <span className="badge badge-sm badge-ghost  font-semibold">
               {filteredSessions.length}
             </span>
           </div>
-          <p className="text-xs text-base-content/60 mt-0.5">
+          <p className=" text-base-content/80 mt-0.5">
             Classroom, live virtual training, and cohort schedules.
           </p>
         </div>
@@ -98,7 +98,7 @@ export default function UpcomingSessionsTable({
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             placeholder="Search session, trainer..."
-            className="input input-sm input-bordered w-full pl-9 text-xs rounded-xl bg-base-200/50"
+            className="input input-sm input-bordered w-full pl-9  rounded-xl bg-base-200/80"
           />
         </div>
       </div>
@@ -110,10 +110,10 @@ export default function UpcomingSessionsTable({
             key={tab}
             type="button"
             onClick={() => setFilterStatus(tab)}
-            className={`px-3 py-1 text-xs font-semibold rounded-lg transition-all ${
+            className={`px-3 py-1  font-semibold rounded-lg transition-all ${
               filterStatus === tab
                 ? "bg-primary text-white shadow-2xs"
-                : "text-base-content/60 hover:bg-base-200"
+                : "text-base-content/80 hover:bg-base-200"
             }`}
           >
             {tab}
@@ -125,7 +125,7 @@ export default function UpcomingSessionsTable({
       <div className="overflow-x-auto">
         <table className="table table-sm w-full">
           <thead>
-            <tr className="border-b border-base-200 text-xs font-semibold text-base-content/60">
+            <tr className="border-b border-base-200  font-semibold text-base-content/80">
               <th>Course</th>
               <th>Date</th>
               <th>Delivery & Location</th>
@@ -133,10 +133,13 @@ export default function UpcomingSessionsTable({
               <th className="text-right">Status</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-base-200 text-xs">
+          <tbody className="divide-y divide-base-200 ">
             {filteredSessions.length === 0 ? (
               <tr>
-                <td colSpan={5} className="py-8 text-center text-base-content/40 italic">
+                <td
+                  colSpan={5}
+                  className="py-8 text-center text-base-content/40 italic"
+                >
                   No training sessions found.
                 </td>
               </tr>
@@ -171,7 +174,9 @@ export default function UpcomingSessionsTable({
                     {session.trainer}
                   </td>
 
-                  <td className="text-right">{getStatusBadge(session.status)}</td>
+                  <td className="text-right">
+                    {getStatusBadge(session.status)}
+                  </td>
                 </tr>
               ))
             )}

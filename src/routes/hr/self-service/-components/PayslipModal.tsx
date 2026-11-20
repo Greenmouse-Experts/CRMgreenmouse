@@ -62,17 +62,12 @@ export default function PayslipModal({
             </div>
             {getPayslipStatusBadge(payslip.status)}
           </div>
-          <div className="mt-1 text-xs text-base-content/60">
-            {payslip.bank}
-          </div>
+          <div className="mt-1  text-base-content/80">{payslip.bank}</div>
         </div>
 
         <div className="space-y-1.5">
           <PayslipRow label="Month" value={payslip.month} />
-          <PayslipRow
-            label="Gross"
-            value={formatCurrency(payslip.gross)}
-          />
+          <PayslipRow label="Gross" value={formatCurrency(payslip.gross)} />
           <PayslipRow
             label="Deductions"
             value={formatCurrency(payslip.deductions)}

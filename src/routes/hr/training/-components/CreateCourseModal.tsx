@@ -151,22 +151,23 @@ export default function CreateCourseModal({
       onClose={onClose}
     >
       <form onSubmit={handleSubmit} className="space-y-5">
-        <p className="text-xs text-base-content/60 -mt-1">
-          Add a new training course, specify delivery mode, trainer details, and scheduling.
+        <p className=" text-base-content/80 -mt-1">
+          Add a new training course, specify delivery mode, trainer details, and
+          scheduling.
         </p>
 
         {/* Section 1: Course Information */}
         <div className="space-y-3">
           <div className="flex items-center gap-1.5 pb-1 border-b border-base-200">
             <BookOpen className="size-3.5 text-primary" />
-            <h4 className="text-xs font-semibold uppercase tracking-wider text-base-content/70">
+            <h4 className=" font-semibold uppercase tracking-wider text-base-content/70">
               Course Details
             </h4>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
             <div className="sm:col-span-2">
-              <label className="text-xs font-semibold text-base-content/80 mb-1 block">
+              <label className=" font-semibold text-base-content/80 mb-1 block">
                 Course title <span className="text-error">*</span>
               </label>
               <SimpleInput
@@ -178,12 +179,14 @@ export default function CreateCourseModal({
             </div>
 
             <div>
-              <label className="text-xs font-semibold text-base-content/80 mb-1 block">
+              <label className=" font-semibold text-base-content/80 mb-1 block">
                 Category <span className="text-error">*</span>
               </label>
               <LocalSelect
                 value={form.category}
-                onChange={(e) => handleChange("category", e.target.value as CourseCategory)}
+                onChange={(e) =>
+                  handleChange("category", e.target.value as CourseCategory)
+                }
               >
                 {COURSE_CATEGORIES.map((cat) => (
                   <option key={cat} value={cat}>
@@ -194,12 +197,14 @@ export default function CreateCourseModal({
             </div>
 
             <div>
-              <label className="text-xs font-semibold text-base-content/80 mb-1 block">
+              <label className=" font-semibold text-base-content/80 mb-1 block">
                 Delivery mode <span className="text-error">*</span>
               </label>
               <LocalSelect
                 value={form.mode}
-                onChange={(e) => handleChange("mode", e.target.value as DeliveryMode)}
+                onChange={(e) =>
+                  handleChange("mode", e.target.value as DeliveryMode)
+                }
               >
                 {DELIVERY_MODES.map((mode) => (
                   <option key={mode} value={mode}>
@@ -210,7 +215,7 @@ export default function CreateCourseModal({
             </div>
 
             <div>
-              <label className="text-xs font-semibold text-base-content/80 mb-1 block">
+              <label className=" font-semibold text-base-content/80 mb-1 block">
                 Trainer / Provider <span className="text-error">*</span>
               </label>
               <SimpleInput
@@ -222,7 +227,7 @@ export default function CreateCourseModal({
             </div>
 
             <div>
-              <label className="text-xs font-semibold text-base-content/80 mb-1 block">
+              <label className=" font-semibold text-base-content/80 mb-1 block">
                 Duration (hours)
               </label>
               <input
@@ -231,13 +236,13 @@ export default function CreateCourseModal({
                 step="0.5"
                 value={form.duration}
                 onChange={(e) => handleChange("duration", e.target.value)}
-                className="input input-bordered w-full text-xs rounded-xl bg-base-200/50"
+                className="input input-bordered w-full  rounded-xl bg-base-200/80"
                 placeholder="e.g. 4"
               />
             </div>
 
             <div>
-              <label className="text-xs font-semibold text-base-content/80 mb-1 block">
+              <label className=" font-semibold text-base-content/80 mb-1 block">
                 Max Capacity
               </label>
               <input
@@ -245,13 +250,13 @@ export default function CreateCourseModal({
                 min="1"
                 value={form.capacity}
                 onChange={(e) => handleChange("capacity", e.target.value)}
-                className="input input-bordered w-full text-xs rounded-xl bg-base-200/50"
+                className="input input-bordered w-full  rounded-xl bg-base-200/80"
                 placeholder="e.g. 30"
               />
             </div>
 
             <div>
-              <label className="text-xs font-semibold text-base-content/80 mb-1 block">
+              <label className=" font-semibold text-base-content/80 mb-1 block">
                 Cost per participant (₦)
               </label>
               <SimpleInput
@@ -262,7 +267,7 @@ export default function CreateCourseModal({
             </div>
 
             <div className="sm:col-span-2">
-              <label className="text-xs font-semibold text-base-content/80 mb-1 block">
+              <label className=" font-semibold text-base-content/80 mb-1 block">
                 Learning objectives & description
               </label>
               <textarea
@@ -270,7 +275,7 @@ export default function CreateCourseModal({
                 onChange={(e) => handleChange("desc", e.target.value)}
                 rows={2}
                 placeholder="Key outcomes, syllabus outline, or prerequisites..."
-                className="textarea textarea-bordered w-full text-xs rounded-xl bg-base-200/50"
+                className="textarea textarea-bordered w-full  rounded-xl bg-base-200/80"
               />
             </div>
           </div>
@@ -280,39 +285,39 @@ export default function CreateCourseModal({
         <div className="space-y-3">
           <div className="flex items-center gap-1.5 pb-1 border-b border-base-200">
             <Calendar className="size-3.5 text-primary" />
-            <h4 className="text-xs font-semibold uppercase tracking-wider text-base-content/70">
+            <h4 className=" font-semibold uppercase tracking-wider text-base-content/70">
               Schedule & Enrollment
             </h4>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
             <div>
-              <label className="text-xs font-semibold text-base-content/80 mb-1 block">
+              <label className=" font-semibold text-base-content/80 mb-1 block">
                 Start date <span className="text-error">*</span>
               </label>
               <input
                 type="date"
                 value={form.start}
                 onChange={(e) => handleChange("start", e.target.value)}
-                className="input input-bordered w-full text-xs rounded-xl bg-base-200/50"
+                className="input input-bordered w-full  rounded-xl bg-base-200/80"
                 required
               />
             </div>
 
             <div>
-              <label className="text-xs font-semibold text-base-content/80 mb-1 block">
+              <label className=" font-semibold text-base-content/80 mb-1 block">
                 End date (optional)
               </label>
               <input
                 type="date"
                 value={form.end}
                 onChange={(e) => handleChange("end", e.target.value)}
-                className="input input-bordered w-full text-xs rounded-xl bg-base-200/50"
+                className="input input-bordered w-full  rounded-xl bg-base-200/80"
               />
             </div>
 
             <div>
-              <label className="text-xs font-semibold text-base-content/80 mb-1 block">
+              <label className=" font-semibold text-base-content/80 mb-1 block">
                 Target audience
               </label>
               <LocalSelect
@@ -335,7 +340,7 @@ export default function CreateCourseModal({
                   onChange={(e) => handleChange("mandatory", e.target.checked)}
                   className="checkbox checkbox-sm checkbox-primary rounded"
                 />
-                <span className="text-xs font-medium text-base-content">
+                <span className=" font-medium text-base-content">
                   Mandatory for staff
                 </span>
               </label>
@@ -347,7 +352,7 @@ export default function CreateCourseModal({
                   onChange={(e) => handleChange("cert", e.target.checked)}
                   className="checkbox checkbox-sm checkbox-primary rounded"
                 />
-                <span className="text-xs font-medium text-base-content">
+                <span className=" font-medium text-base-content">
                   Certificate issued
                 </span>
               </label>

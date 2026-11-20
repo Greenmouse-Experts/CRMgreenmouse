@@ -296,7 +296,7 @@ function RouteComponent() {
                                   message.senderType ||
                                   "Support"}
                               </span>
-                              <span className=" text-base-content/50">
+                              <span className=" text-base-content/80">
                                 {dateTime(message.createdAt)}
                               </span>
                             </div>

@@ -26,9 +26,8 @@ export default function LeaveRequestsTable({
   onCancelRequest,
 }: LeaveRequestsTableProps) {
   const [searchTerm, setSearchTerm] = useState("");
-  const [statusFilter, setStatusFilter] = useState<
-    (typeof TABS)[number]["key"]
-  >("All");
+  const [statusFilter, setStatusFilter] =
+    useState<(typeof TABS)[number]["key"]>("All");
 
   const filteredRequests = useMemo(() => {
     const term = searchTerm.trim().toLowerCase();
@@ -81,10 +80,10 @@ export default function LeaveRequestsTable({
             key={tab.key}
             type="button"
             onClick={() => setStatusFilter(tab.key)}
-            className={`px-3 py-1 text-xs font-semibold rounded-lg transition-all ${
+            className={`px-3 py-1  font-semibold rounded-lg transition-all ${
               statusFilter === tab.key
                 ? "bg-primary text-white shadow-2xs"
-                : "text-base-content/60 hover:bg-base-200"
+                : "text-base-content/80 hover:bg-base-200"
             }`}
           >
             {tab.label}
@@ -99,11 +98,15 @@ export default function LeaveRequestsTable({
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           placeholder="Search by ID, type, or reason..."
-          className="input input-sm input-bordered w-full pl-9 text-xs rounded-xl bg-base-200/50"
+          className="input input-sm input-bordered w-full pl-9  rounded-xl bg-base-200/80"
         />
       </div>
 
-      <CustomTable data={filteredRequests} columns={columns} actions={actions} />
+      <CustomTable
+        data={filteredRequests}
+        columns={columns}
+        actions={actions}
+      />
     </div>
   );
 }

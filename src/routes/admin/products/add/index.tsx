@@ -147,7 +147,7 @@ function RouteComponent() {
             </div>
 
             {calculatedMargin !== null && (
-              <div className="bg-base-200/50 p-4 rounded-lg flex items-center justify-between">
+              <div className="bg-base-200/80 p-4 rounded-lg flex items-center justify-between">
                 <div className="flex items-center gap-2 text-sm text-base-content/80">
                   <Percent size={16} className="text-primary" />
                   <span>Estimated Profit Margin:</span>

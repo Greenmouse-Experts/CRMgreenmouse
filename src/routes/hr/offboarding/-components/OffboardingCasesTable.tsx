@@ -57,14 +57,14 @@ export default function OffboardingCasesTable({
     switch (status) {
       case "Completed":
         return (
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-semibold text-emerald-700 border border-emerald-200">
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-0.5  font-semibold text-emerald-700 border border-emerald-200">
             <span className="size-1.5 rounded-full bg-emerald-500" />
             Completed
           </span>
         );
       case "Notice period":
         return (
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-50 px-2.5 py-0.5 text-xs font-semibold text-amber-700 border border-amber-200">
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-50 px-2.5 py-0.5  font-semibold text-amber-700 border border-amber-200">
             <span className="size-1.5 rounded-full bg-amber-500 animate-pulse" />
             Notice period
           </span>
@@ -72,7 +72,7 @@ export default function OffboardingCasesTable({
       case "Clearance in progress":
       default:
         return (
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-blue-50 px-2.5 py-0.5 text-xs font-semibold text-blue-700 border border-blue-200">
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-blue-50 px-2.5 py-0.5  font-semibold text-blue-700 border border-blue-200">
             <span className="size-1.5 rounded-full bg-blue-500" />
             Clearance in progress
           </span>
@@ -99,7 +99,7 @@ export default function OffboardingCasesTable({
             </div>
             <div>
               <div className="flex items-center gap-1.5">
-                <span className="font-semibold text-xs text-base-content">
+                <span className="font-semibold  text-base-content">
                   {row.employee}
                 </span>
                 {isActive && (
@@ -108,7 +108,7 @@ export default function OffboardingCasesTable({
                   </span>
                 )}
               </div>
-              <div className="text-[11px] text-base-content/50">
+              <div className="text-[11px] text-base-content/80">
                 {row.role} · {row.department}
               </div>
             </div>
@@ -120,16 +120,14 @@ export default function OffboardingCasesTable({
       key: "separationType",
       label: "Separation Type",
       render: (type: string) => (
-        <span className="badge badge-sm badge-ghost text-xs font-medium">
-          {type}
-        </span>
+        <span className="badge badge-sm badge-ghost  font-medium">{type}</span>
       ),
     },
     {
       key: "lastWorkingDay",
       label: "Last Working Day",
       render: (date: string) => (
-        <span className="text-xs font-medium text-base-content">
+        <span className=" font-medium text-base-content">
           {new Date(date).toLocaleDateString("en-US", {
             month: "short",
             day: "numeric",
@@ -142,7 +140,7 @@ export default function OffboardingCasesTable({
       key: "currentStep",
       label: "Current Milestone",
       render: (step: string) => (
-        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-base-200/60 text-base-content text-xs font-medium border border-base-300">
+        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-base-200/80 text-base-content  font-medium border border-base-300">
           {step}
         </span>
       ),
@@ -182,11 +180,11 @@ export default function OffboardingCasesTable({
             <h2 className="text-lg font-bold text-base-content">
               All Offboarding Records
             </h2>
-            <span className="badge badge-sm badge-ghost text-xs font-semibold">
+            <span className="badge badge-sm badge-ghost  font-semibold">
               {filteredCases.length}
             </span>
           </div>
-          <p className="text-xs text-base-content/60 mt-0.5">
+          <p className=" text-base-content/80 mt-0.5">
             Archival records and status tracking for all exiting and departed
             staff.
           </p>
@@ -199,7 +197,7 @@ export default function OffboardingCasesTable({
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             placeholder="Search employee, department..."
-            className="input input-sm input-bordered w-full pl-9 text-xs rounded-xl bg-base-200/50"
+            className="input input-sm input-bordered w-full pl-9  rounded-xl bg-base-200/80"
           />
         </div>
       </div>
@@ -211,10 +209,10 @@ export default function OffboardingCasesTable({
             key={tab}
             type="button"
             onClick={() => setSelectedTab(tab)}
-            className={`px-3 py-1 text-xs font-semibold rounded-lg transition-all ${
+            className={`px-3 py-1  font-semibold rounded-lg transition-all ${
               selectedTab === tab
                 ? "bg-primary text-white shadow-2xs"
-                : "text-base-content/60 hover:bg-base-200"
+                : "text-base-content/80 hover:bg-base-200"
             }`}
           >
             {tab}

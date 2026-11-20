@@ -99,13 +99,13 @@ export default function ClockInModal({
       onClose={onClose}
     >
       <form onSubmit={handleSubmit} className="space-y-4">
-        <p className="text-xs text-base-content/60 -mt-1 mb-3">
+        <p className=" text-base-content/80 -mt-1 mb-3">
           Record the official start of your work shift, schedule, and reporting
           location.
         </p>
 
         <div>
-          <label className="text-xs font-semibold text-base-content/80 mb-1 block">
+          <label className=" font-semibold text-base-content/80 mb-1 block">
             Employee name <span className="text-error">*</span>
           </label>
           <SimpleInput
@@ -118,7 +118,7 @@ export default function ClockInModal({
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label className="text-xs font-semibold text-base-content/80 mb-1 block">
+            <label className=" font-semibold text-base-content/80 mb-1 block">
               Shift
             </label>
             <LocalSelect
@@ -136,7 +136,7 @@ export default function ClockInModal({
           </div>
 
           <div>
-            <label className="text-xs font-semibold text-base-content/80 mb-1 block">
+            <label className=" font-semibold text-base-content/80 mb-1 block">
               Work mode
             </label>
             <LocalSelect
@@ -157,33 +157,33 @@ export default function ClockInModal({
           </div>
 
           <div>
-            <label className="text-xs font-semibold text-base-content/80 mb-1 block">
+            <label className=" font-semibold text-base-content/80 mb-1 block">
               Date <span className="text-error">*</span>
             </label>
             <input
               type="date"
               value={form.date}
               onChange={(e) => setForm((p) => ({ ...p, date: e.target.value }))}
-              className="input input-bordered w-full text-xs rounded-xl bg-base-200/50"
+              className="input input-bordered w-full  rounded-xl bg-base-200/80"
               required
             />
           </div>
 
           <div>
-            <label className="text-xs font-semibold text-base-content/80 mb-1 block">
+            <label className=" font-semibold text-base-content/80 mb-1 block">
               Clock-in time <span className="text-error">*</span>
             </label>
             <input
               type="time"
               value={form.time}
               onChange={(e) => setForm((p) => ({ ...p, time: e.target.value }))}
-              className="input input-bordered w-full text-xs rounded-xl bg-base-200/50"
+              className="input input-bordered w-full  rounded-xl bg-base-200/80"
               required
             />
           </div>
 
           <div className="sm:col-span-2">
-            <label className="text-xs font-semibold text-base-content/80 mb-1 block">
+            <label className=" font-semibold text-base-content/80 mb-1 block">
               Location
             </label>
             <LocalSelect
@@ -202,7 +202,7 @@ export default function ClockInModal({
         </div>
 
         <div>
-          <label className="text-xs font-semibold text-base-content/80 mb-1 block">
+          <label className=" font-semibold text-base-content/80 mb-1 block">
             Note (optional)
           </label>
           <textarea
@@ -210,7 +210,7 @@ export default function ClockInModal({
             onChange={(e) => setForm((p) => ({ ...p, note: e.target.value }))}
             placeholder="Reason if late or working remotely..."
             rows={2}
-            className="textarea textarea-bordered w-full text-xs rounded-xl bg-base-200/50"
+            className="textarea textarea-bordered w-full  rounded-xl bg-base-200/80"
           />
         </div>
 

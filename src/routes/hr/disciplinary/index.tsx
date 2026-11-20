@@ -87,10 +87,11 @@ function RouteComponent() {
       </PageHeader>
 
       {/* Mandatory Human Review Warning Banner */}
-      <div className="flex items-center gap-3 rounded-xl bg-amber-500/10 border border-amber-500/20 p-4 text-xs sm:text-sm font-medium text-amber-900 dark:text-amber-200 shadow-2xs">
+      <div className="flex items-center gap-3 rounded-xl bg-amber-500/10 border border-amber-500/20 p-4  sm:text-sm font-medium text-amber-900 dark:text-amber-200 shadow-2xs">
         <ShieldAlert className="size-5 shrink-0 text-amber-600 dark:text-amber-400" />
         <span>
-          Outcomes are never automated. Human review and due process are required.
+          Outcomes are never automated. Human review and due process are
+          required.
         </span>
       </div>
 
@@ -101,10 +102,7 @@ function RouteComponent() {
       <CaseWorkflowStepper currentStep="Employee response" />
 
       {/* Disciplinary Cases Table */}
-      <DisciplinaryCasesTable
-        cases={cases}
-        onSelectCase={handleSelectCase}
-      />
+      <DisciplinaryCasesTable cases={cases} onSelectCase={handleSelectCase} />
 
       {/* Open New Case Modal */}
       <OpenCaseModal

@@ -52,7 +52,7 @@ export default function StatCard({
             {value}
           </h3>
           {desc && (
-            <p className="text-sm text-base-content/50 mt-0.5 truncate">
+            <p className="text-sm text-base-content/80 mt-0.5 truncate">
               {desc}
             </p>
           )}

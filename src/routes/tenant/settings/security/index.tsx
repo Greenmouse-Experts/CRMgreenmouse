@@ -116,7 +116,7 @@ function RouteComponent() {
                   className="flex items-start gap-3 px-5 py-4 sm:px-6"
                 >
                   <MonitorSmartphone
-                    className="mt-0.5 size-5 shrink-0 text-base-content/50"
+                    className="mt-0.5 size-5 shrink-0 text-base-content/80"
                     aria-hidden="true"
                   />
                   <div className="min-w-0 flex-1">

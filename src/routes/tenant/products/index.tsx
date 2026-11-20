@@ -293,7 +293,7 @@ function RouteComponent() {
             {Number(val || 0).toLocaleString()}
           </span>
           {item.cost ? (
-            <div className=" text-base-content/50">
+            <div className=" text-base-content/80">
               Cost: {item.currency || "₦"}
               {Number(item.cost).toLocaleString()}
             </div>
@@ -687,7 +687,7 @@ function RouteComponent() {
             />
           </div>
 
-          <div className="p-3 bg-base-200/50 rounded-lg  text-base-content/70">
+          <div className="p-3 bg-base-200/80 rounded-lg  text-base-content/70">
             New calculated stock:{" "}
             <span className="font-semibold text-base-content">
               {Math.max(
@@ -721,7 +721,7 @@ function RouteComponent() {
       <Modal ref={detailsModalRef} title="Product Details">
         {selectedProduct && (
           <div className="space-y-4">
-            <div className="flex items-center gap-4 p-4 bg-base-200/50 rounded-xl">
+            <div className="flex items-center gap-4 p-4 bg-base-200/80 rounded-xl">
               <div className="size-16 rounded-xl bg-primary/10 flex items-center justify-center text-primary overflow-hidden shrink-0 border border-base-200">
                 {selectedProduct.images &&
                 selectedProduct.images.length > 0 &&

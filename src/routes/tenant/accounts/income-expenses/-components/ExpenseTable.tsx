@@ -131,7 +131,7 @@ export default function ExpenseTable() {
         else if (s === "rejected") badge = "badge-error";
         return (
           <span
-            className={`badge badge-soft ring ring-current/50  uppercase font-semibold badge-sm ${badge}`}
+            className={`badge badge-soft ring ring-current/80  uppercase font-semibold badge-sm ${badge}`}
           >
             {value || "Approved"}
           </span>

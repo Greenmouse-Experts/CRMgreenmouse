@@ -52,9 +52,9 @@ export default function CandidateDetailModal({
       maxWidth="max-w-xl"
       onClose={onClose}
     >
-      <div className="space-y-5 text-xs">
+      <div className="space-y-5 ">
         {/* Candidate Profile summary */}
-        <div className="flex items-center gap-4 p-4 rounded-xl bg-base-200/50 border border-base-200">
+        <div className="flex items-center gap-4 p-4 rounded-xl bg-base-200/80 border border-base-200">
           <div className="size-14 rounded-full bg-primary/20 text-primary font-bold text-lg flex items-center justify-center shrink-0">
             {candidate.name
               .split(" ")
@@ -66,9 +66,7 @@ export default function CandidateDetailModal({
             <h3 className="text-lg font-bold text-base-content truncate">
               {candidate.name}
             </h3>
-            <p className="text-xs text-base-content/70 mt-0.5">
-              {candidate.role}
-            </p>
+            <p className=" text-base-content/70 mt-0.5">{candidate.role}</p>
             <div className="flex items-center gap-2 mt-2">
               <span className="badge badge-sm badge-primary font-semibold">
                 {candidate.stage}
@@ -83,26 +81,26 @@ export default function CandidateDetailModal({
         {/* Contact & Meta */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 bg-base-200/30 p-3.5 rounded-xl border border-base-200">
           <div className="flex items-center gap-2 text-base-content/80">
-            <Mail className="size-4 text-base-content/50" />
+            <Mail className="size-4 text-base-content/80" />
             <span className="truncate">{candidate.email || "No email"}</span>
           </div>
           <div className="flex items-center gap-2 text-base-content/80">
-            <Phone className="size-4 text-base-content/50" />
+            <Phone className="size-4 text-base-content/80" />
             <span>{candidate.phone || "No phone"}</span>
           </div>
           <div className="flex items-center gap-2 text-base-content/80">
-            <Calendar className="size-4 text-base-content/50" />
+            <Calendar className="size-4 text-base-content/80" />
             <span>Applied: {candidate.appliedDate || "Recent"}</span>
           </div>
           <div className="flex items-center gap-2 text-base-content/80">
-            <Award className="size-4 text-base-content/50" />
+            <Award className="size-4 text-base-content/80" />
             <span>{candidate.experience || "Experience provided"}</span>
           </div>
         </div>
 
         {/* Pipeline Stage Movement */}
         <div>
-          <label className="text-xs font-bold text-base-content block mb-2">
+          <label className=" font-bold text-base-content block mb-2">
             Update Pipeline Stage
           </label>
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
@@ -111,7 +109,7 @@ export default function CandidateDetailModal({
                 key={st}
                 type="button"
                 onClick={() => handleStageChange(st)}
-                className={`px-3 py-2 rounded-xl text-xs font-semibold text-center transition-all ${
+                className={`px-3 py-2 rounded-xl  font-semibold text-center transition-all ${
                   selectedStage === st
                     ? "bg-primary text-white shadow-xs"
                     : "bg-base-200 text-base-content/70 hover:bg-base-300"

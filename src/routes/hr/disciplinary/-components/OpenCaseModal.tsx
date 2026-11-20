@@ -131,7 +131,7 @@ export default function OpenCaseModal({
       onClose={onClose}
     >
       <form onSubmit={handleSubmit} className="space-y-4">
-        <p className="text-xs text-base-content/60 -mt-1">
+        <p className=" text-base-content/80 -mt-1">
           Restricted to HR. All actions on this case are audited and logged for
           compliance.
         </p>
@@ -140,14 +140,14 @@ export default function OpenCaseModal({
         <div className="space-y-3">
           <div className="flex items-center gap-1.5 pb-1 border-b border-base-200">
             <ShieldAlert className="size-3.5 text-primary" />
-            <h4 className="text-xs font-semibold uppercase tracking-wider text-base-content/70">
+            <h4 className=" font-semibold uppercase tracking-wider text-base-content/70">
               Incident Details
             </h4>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
             <div>
-              <label className="text-xs font-semibold text-base-content/80 mb-1 block">
+              <label className=" font-semibold text-base-content/80 mb-1 block">
                 Employee concerned <span className="text-error">*</span>
               </label>
               <LocalSelect
@@ -163,7 +163,7 @@ export default function OpenCaseModal({
             </div>
 
             <div>
-              <label className="text-xs font-semibold text-base-content/80 mb-1 block">
+              <label className=" font-semibold text-base-content/80 mb-1 block">
                 Category <span className="text-error">*</span>
               </label>
               <LocalSelect
@@ -181,20 +181,20 @@ export default function OpenCaseModal({
             </div>
 
             <div>
-              <label className="text-xs font-semibold text-base-content/80 mb-1 block">
+              <label className=" font-semibold text-base-content/80 mb-1 block">
                 Incident date <span className="text-error">*</span>
               </label>
               <input
                 type="date"
                 value={form.date}
                 onChange={(e) => handleChange("date", e.target.value)}
-                className="input input-bordered w-full text-xs rounded-xl bg-base-200/50"
+                className="input input-bordered w-full  rounded-xl bg-base-200/80"
                 required
               />
             </div>
 
             <div>
-              <label className="text-xs font-semibold text-base-content/80 mb-1 block">
+              <label className=" font-semibold text-base-content/80 mb-1 block">
                 Severity <span className="text-error">*</span>
               </label>
               <LocalSelect
@@ -212,7 +212,7 @@ export default function OpenCaseModal({
             </div>
 
             <div>
-              <label className="text-xs font-semibold text-base-content/80 mb-1 block">
+              <label className=" font-semibold text-base-content/80 mb-1 block">
                 Reported by <span className="text-error">*</span>
               </label>
               <LocalSelect
@@ -228,7 +228,7 @@ export default function OpenCaseModal({
             </div>
 
             <div>
-              <label className="text-xs font-semibold text-base-content/80 mb-1 block">
+              <label className=" font-semibold text-base-content/80 mb-1 block">
                 Assigned investigator <span className="text-error">*</span>
               </label>
               <LocalSelect
@@ -244,7 +244,7 @@ export default function OpenCaseModal({
             </div>
 
             <div className="sm:col-span-2">
-              <label className="text-xs font-semibold text-base-content/80 mb-1 block">
+              <label className=" font-semibold text-base-content/80 mb-1 block">
                 Description of incident <span className="text-error">*</span>
               </label>
               <textarea
@@ -252,13 +252,13 @@ export default function OpenCaseModal({
                 onChange={(e) => handleChange("desc", e.target.value)}
                 rows={3}
                 placeholder="Specific facts, dates, impacted personnel, or policy sections breached..."
-                className="textarea textarea-bordered w-full text-xs rounded-xl bg-base-200/50"
+                className="textarea textarea-bordered w-full  rounded-xl bg-base-200/80"
                 required
               />
             </div>
 
             <div className="sm:col-span-2">
-              <label className="text-xs font-semibold text-base-content/80 mb-1 block">
+              <label className=" font-semibold text-base-content/80 mb-1 block">
                 Witnesses (optional)
               </label>
               <SimpleInput
@@ -274,14 +274,14 @@ export default function OpenCaseModal({
         <div className="space-y-3">
           <div className="flex items-center gap-1.5 pb-1 border-b border-base-200">
             <FileText className="size-3.5 text-primary" />
-            <h4 className="text-xs font-semibold uppercase tracking-wider text-base-content/70">
+            <h4 className=" font-semibold uppercase tracking-wider text-base-content/70">
               Evidence & Handling
             </h4>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
             <div className="sm:col-span-2">
-              <label className="text-xs font-semibold text-base-content/80 mb-1 block">
+              <label className=" font-semibold text-base-content/80 mb-1 block">
                 Interim action
               </label>
               <LocalSelect
@@ -297,7 +297,7 @@ export default function OpenCaseModal({
             </div>
 
             <div className="sm:col-span-2 pt-1">
-              <label className="label cursor-pointer justify-start gap-2.5 p-3 rounded-xl border border-base-200 bg-base-200/30 hover:bg-base-200/50 transition-colors">
+              <label className="label cursor-pointer justify-start gap-2.5 p-3 rounded-xl border border-base-200 bg-base-200/30 hover:bg-base-200/80 transition-colors">
                 <input
                   type="checkbox"
                   checked={form.conf}
@@ -305,7 +305,7 @@ export default function OpenCaseModal({
                   className="checkbox checkbox-sm checkbox-primary rounded"
                   required
                 />
-                <span className="text-xs text-base-content font-medium leading-tight">
+                <span className=" text-base-content font-medium leading-tight">
                   I confirm this case is confidential and the employee will be
                   given the right to respond in accordance with HR policy.
                 </span>

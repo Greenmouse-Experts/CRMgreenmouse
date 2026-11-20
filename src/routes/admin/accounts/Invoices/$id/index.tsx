@@ -88,7 +88,7 @@ function RouteComponent() {
                           ? new Date(invoice.dueDate).toLocaleDateString()
                           : "—"}
                       </p>
-                      <p className="text-xs font-mono text-base-content/50 mt-1">
+                      <p className="text-xs font-mono text-base-content/80 mt-1">
                         Tenant ID: {invoice.tenantId || "—"}
                       </p>
                     </div>
@@ -140,7 +140,7 @@ function RouteComponent() {
                           <tr>
                             <td
                               colSpan={4}
-                              className="text-center text-base-content/50 py-4"
+                              className="text-center text-base-content/80 py-4"
                             >
                               No line items specified.
                             </td>

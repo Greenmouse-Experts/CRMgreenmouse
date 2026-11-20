@@ -50,21 +50,21 @@ export default function DisciplinaryCasesTable({
       case "Under Review":
       case "Investigation":
         return (
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-50 px-2.5 py-0.5 text-xs font-semibold text-amber-700 border border-amber-200">
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-50 px-2.5 py-0.5  font-semibold text-amber-700 border border-amber-200">
             <span className="size-1.5 rounded-full bg-amber-500 animate-pulse" />
             Under Review
           </span>
         );
       case "Hearing Scheduled":
         return (
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-blue-50 px-2.5 py-0.5 text-xs font-semibold text-blue-700 border border-blue-200">
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-blue-50 px-2.5 py-0.5  font-semibold text-blue-700 border border-blue-200">
             <span className="size-1.5 rounded-full bg-blue-500" />
             Hearing scheduled
           </span>
         );
       case "Closed":
         return (
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-semibold text-emerald-700 border border-emerald-200">
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-0.5  font-semibold text-emerald-700 border border-emerald-200">
             <span className="size-1.5 rounded-full bg-emerald-500" />
             Closed
           </span>
@@ -73,7 +73,7 @@ export default function DisciplinaryCasesTable({
       case "Appealed":
       default:
         return (
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-purple-50 px-2.5 py-0.5 text-xs font-semibold text-purple-700 border border-purple-200">
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-purple-50 px-2.5 py-0.5  font-semibold text-purple-700 border border-purple-200">
             {status}
           </span>
         );
@@ -113,11 +113,11 @@ export default function DisciplinaryCasesTable({
             <h2 className="text-lg font-bold text-base-content">
               Disciplinary Records
             </h2>
-            <span className="badge badge-sm badge-ghost text-xs font-semibold">
+            <span className="badge badge-sm badge-ghost  font-semibold">
               {filteredCases.length}
             </span>
           </div>
-          <p className="text-xs text-base-content/60 mt-0.5">
+          <p className=" text-base-content/80 mt-0.5">
             Strict audit logging is enabled for all disciplinary queries and
             modifications.
           </p>
@@ -130,7 +130,7 @@ export default function DisciplinaryCasesTable({
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             placeholder="Search case, employee, category..."
-            className="input input-sm input-bordered w-full pl-9 text-xs rounded-xl bg-base-200/50"
+            className="input input-sm input-bordered w-full pl-9  rounded-xl bg-base-200/80"
           />
         </div>
       </div>
@@ -142,10 +142,10 @@ export default function DisciplinaryCasesTable({
             key={tab}
             type="button"
             onClick={() => setSelectedTab(tab)}
-            className={`px-3 py-1 text-xs font-semibold rounded-lg transition-all ${
+            className={`px-3 py-1  font-semibold rounded-lg transition-all ${
               selectedTab === tab
                 ? "bg-primary text-white shadow-2xs"
-                : "text-base-content/60 hover:bg-base-200"
+                : "text-base-content/80 hover:bg-base-200"
             }`}
           >
             {tab}
@@ -155,9 +155,9 @@ export default function DisciplinaryCasesTable({
 
       {/* Table Content */}
       <div className="overflow-x-auto">
-        <table className="table table-sm w-full text-xs">
+        <table className="table table-sm w-full ">
           <thead>
-            <tr className="border-b border-base-200 text-base-content/60 font-medium">
+            <tr className="border-b border-base-200 text-base-content/80 font-medium">
               <th className="py-3 font-semibold">Case</th>
               <th className="font-semibold">Employee</th>
               <th className="font-semibold">Category</th>
@@ -173,13 +173,13 @@ export default function DisciplinaryCasesTable({
               <tr>
                 <td
                   colSpan={8}
-                  className="text-center py-10 text-base-content/50"
+                  className="text-center py-10 text-base-content/80"
                 >
                   <ShieldAlert className="size-8 mx-auto mb-2 opacity-30" />
                   <p className="font-medium text-sm">
                     No disciplinary cases found
                   </p>
-                  <p className="text-xs text-base-content/40 mt-0.5">
+                  <p className=" text-base-content/40 mt-0.5">
                     Try adjusting your filters or search keywords
                   </p>
                 </td>
@@ -192,7 +192,7 @@ export default function DisciplinaryCasesTable({
                   className="hover:bg-base-200/40 cursor-pointer transition-colors"
                 >
                   <td className="py-3 font-bold text-base-content">
-                    <span className="font-mono bg-base-200/60 px-2 py-0.5 rounded-md border border-base-300">
+                    <span className="font-mono bg-base-200/80 px-2 py-0.5 rounded-md border border-base-300">
                       {c.id}
                     </span>
                   </td>
@@ -206,7 +206,7 @@ export default function DisciplinaryCasesTable({
                         <div className="font-semibold text-base-content">
                           {c.employee}
                         </div>
-                        <div className="text-[10px] text-base-content/50">
+                        <div className="text-[10px] text-base-content/80">
                           {c.department}
                         </div>
                       </div>

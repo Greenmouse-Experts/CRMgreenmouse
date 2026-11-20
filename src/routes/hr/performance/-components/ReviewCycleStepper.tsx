@@ -15,11 +15,11 @@ export default function ReviewCycleStepper({
           <h2 className="text-base sm:text-lg font-bold text-base-content">
             Review cycle
           </h2>
-          <p className="text-xs text-base-content/60 mt-0.5">
+          <p className=" text-base-content/80 mt-0.5">
             5-stage evaluation workflow from goal assignment through sign-off.
           </p>
         </div>
-        <div className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">
+        <div className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-3 py-1  font-semibold text-primary">
           <Clock className="size-3.5" />
           <span>
             Stage {currentStepIndex + 1} of {REVIEW_CYCLE_STEPS.length}:{" "}
@@ -42,16 +42,16 @@ export default function ReviewCycleStepper({
                   ? "bg-primary/5 border-primary/40 shadow-xs ring-1 ring-primary/20"
                   : isCompleted
                     ? "bg-emerald-500/5 border-emerald-500/30"
-                    : "bg-base-200/40 border-base-200 text-base-content/50"
+                    : "bg-base-200/40 border-base-200 text-base-content/80"
               }`}
             >
               <div
-                className={`size-8 rounded-full flex items-center justify-center text-xs font-bold shrink-0 transition-colors ${
+                className={`size-8 rounded-full flex items-center justify-center  font-bold shrink-0 transition-colors ${
                   isCurrent
                     ? "bg-primary text-white shadow-xs"
                     : isCompleted
                       ? "bg-emerald-600 text-white"
-                      : "bg-base-200 text-base-content/60"
+                      : "bg-base-200 text-base-content/80"
                 }`}
               >
                 {isCompleted ? (
@@ -68,12 +68,12 @@ export default function ReviewCycleStepper({
                   Step {idx + 1}
                 </span>
                 <span
-                  className={`text-xs font-bold leading-tight block ${
+                  className={` font-bold leading-tight block ${
                     isCurrent
                       ? "text-primary"
                       : isCompleted
                         ? "text-base-content"
-                        : "text-base-content/60"
+                        : "text-base-content/80"
                   }`}
                 >
                   {step}

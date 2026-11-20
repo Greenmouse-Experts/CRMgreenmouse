@@ -214,12 +214,12 @@ function RouteComponent() {
               {getClientLabel(quote)}
             </span>
             {quote.contactId && (
-              <span className=" text-base-content/50 uppercase font-medium">
+              <span className=" text-base-content/80 uppercase font-medium">
                 Contact
               </span>
             )}
             {isCompany && (
-              <span className=" text-base-content/50 uppercase font-medium">
+              <span className=" text-base-content/80 uppercase font-medium">
                 Company
               </span>
             )}

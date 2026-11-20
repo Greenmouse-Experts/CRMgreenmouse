@@ -16,8 +16,10 @@ function RouteComponent() {
     return (
       <div className="py-16 text-center space-y-4">
         <FileQuestion className="size-12 mx-auto text-base-content/30" />
-        <h2 className="text-lg font-bold text-base-content">Report Not Found</h2>
-        <p className="text-xs text-base-content/60">
+        <h2 className="text-lg font-bold text-base-content">
+          Report Not Found
+        </h2>
+        <p className=" text-base-content/80">
           The requested report "{slug}" does not exist in the analytics catalog.
         </p>
         <Link

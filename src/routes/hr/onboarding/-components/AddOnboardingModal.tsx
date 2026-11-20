@@ -55,17 +55,17 @@ export default function AddOnboardingModal({
       onClose={onClose}
     >
       <form onSubmit={handleSubmit} className="space-y-4">
-        <p className="text-xs text-base-content/60 -mt-1 mb-3">
+        <p className=" text-base-content/80 -mt-1 mb-3">
           Choose an existing employee to start their onboarding pipeline.
         </p>
 
         {employeeList.length === 0 ? (
-          <p className="text-sm text-base-content/60 py-4 text-center">
+          <p className="text-sm text-base-content/80 py-4 text-center">
             No employees available. Add employees first.
           </p>
         ) : (
           <div>
-            <label className="text-xs font-semibold text-base-content/80 mb-1 block">
+            <label className=" font-semibold text-base-content/80 mb-1 block">
               Employee <span className="text-error">*</span>
             </label>
             <LocalSelect

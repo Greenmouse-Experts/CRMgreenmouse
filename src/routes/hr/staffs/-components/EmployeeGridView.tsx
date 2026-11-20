@@ -26,10 +26,10 @@ export default function EmployeeGridView({
         >
           {/* Top corner ID badge */}
           <div className="flex items-center justify-between w-full mb-2">
-            <span className="font-mono text-[11px] text-base-content/50 bg-base-200/60 px-2 py-0.5 rounded-md">
+            <span className="font-mono text-[11px] text-base-content/80 bg-base-200/80 px-2 py-0.5 rounded-md">
               {emp.id}
             </span>
-            <span className="text-[11px] font-medium text-base-content/60">
+            <span className="text-[11px] font-medium text-base-content/80">
               {emp.dept}
             </span>
           </div>
@@ -46,9 +46,7 @@ export default function EmployeeGridView({
             <h3 className="font-semibold text-base text-base-content group-hover:text-primary transition-colors line-clamp-1">
               {emp.name}
             </h3>
-            <p className="text-xs text-base-content/60 line-clamp-1">
-              {emp.title}
-            </p>
+            <p className=" text-base-content/80 line-clamp-1">{emp.title}</p>
           </div>
 
           {/* Status & Availability Badges */}
@@ -57,7 +55,7 @@ export default function EmployeeGridView({
           </div>
 
           {/* Bottom metadata */}
-          <div className="pt-3 border-t border-base-200/70 flex items-center justify-between text-[11px] text-base-content/60">
+          <div className="pt-3 border-t border-base-200/70 flex items-center justify-between text-[11px] text-base-content/80">
             <span className="flex items-center gap-1 truncate">
               <MapPin className="size-3 shrink-0 text-base-content/40" />
               {emp.location}
@@ -69,7 +67,7 @@ export default function EmployeeGridView({
           </div>
 
           {/* Hover Action overlay hint */}
-          <div className="absolute inset-x-0 bottom-0 py-1.5 bg-primary/10 text-primary text-xs font-medium flex items-center justify-center gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity backdrop-blur-xs">
+          <div className="absolute inset-x-0 bottom-0 py-1.5 bg-primary/10 text-primary  font-medium flex items-center justify-center gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity backdrop-blur-xs">
             <Eye className="size-3.5" /> View Profile
           </div>
         </div>

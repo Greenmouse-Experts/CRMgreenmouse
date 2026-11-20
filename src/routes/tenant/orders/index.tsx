@@ -718,13 +718,13 @@ function RouteComponent() {
               {statusBadge(selectedOrder.status)}
             </div>
             <div className="grid gap-3 text-sm sm:grid-cols-2">
-              <div className="rounded-lg bg-base-200/50 p-3">
+              <div className="rounded-lg bg-base-200/80 p-3">
                 <p className=" text-base-content/70">Payment</p>
                 <p className="mt-1 font-medium capitalize">
                   {selectedOrder.paymentStatus || "Unpaid"}
                 </p>
               </div>
-              <div className="rounded-lg bg-base-200/50 p-3">
+              <div className="rounded-lg bg-base-200/80 p-3">
                 <p className=" text-base-content/70">Created</p>
                 <p className="mt-1 font-medium">
                   {selectedOrder.createdAt
@@ -775,7 +775,7 @@ function RouteComponent() {
               </div>
             </div>
             {selectedOrder.notes && (
-              <div className="rounded-lg bg-base-200/50 p-3">
+              <div className="rounded-lg bg-base-200/80 p-3">
                 <RichTextContent value={selectedOrder.notes} />
               </div>
             )}

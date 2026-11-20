@@ -75,7 +75,7 @@ function RouteComponent() {
             <span className="font-semibold text-base-content block">
               {val || `QUO-${item.id.slice(0, 8).toUpperCase()}`}
             </span>
-            <span className="text-sm text-base-content/50">
+            <span className="text-sm text-base-content/80">
               {item.createdAt
                 ? new Date(item.createdAt).toLocaleDateString()
                 : "—"}
@@ -95,7 +95,7 @@ function RouteComponent() {
               : "General Client"}
           </span>
           {item.contact?.email && (
-            <span className="text-sm text-base-content/50 block">
+            <span className="text-sm text-base-content/80 block">
               {item.contact.email}
             </span>
           )}
@@ -256,7 +256,7 @@ function RouteComponent() {
                   </div>
 
                   <div className="grid grid-cols-2 gap-4">
-                    <div className="bg-base-200/50 p-3 rounded-lg">
+                    <div className="bg-base-200/80 p-3 rounded-lg">
                       <span className="text-sm text-base-content/60 block">
                         Client
                       </span>
@@ -266,7 +266,7 @@ function RouteComponent() {
                           "Direct Client"}
                       </span>
                     </div>
-                    <div className="bg-base-200/50 p-3 rounded-lg">
+                    <div className="bg-base-200/80 p-3 rounded-lg">
                       <span className="text-sm text-base-content/60 block">
                         Quote Value
                       </span>
@@ -279,7 +279,7 @@ function RouteComponent() {
                         ).toLocaleString()}
                       </span>
                     </div>
-                    <div className="bg-base-200/50 p-3 rounded-lg">
+                    <div className="bg-base-200/80 p-3 rounded-lg">
                       <span className="text-sm text-base-content/60 block">
                         Tenant Scope
                       </span>
@@ -287,7 +287,7 @@ function RouteComponent() {
                         {(selectedQuote as any).tenantId || "Platform Tenant"}
                       </span>
                     </div>
-                    <div className="bg-base-200/50 p-3 rounded-lg">
+                    <div className="bg-base-200/80 p-3 rounded-lg">
                       <span className="text-sm text-base-content/60 block">
                         Valid Until
                       </span>

@@ -32,7 +32,7 @@ export default function LeaveStats({ requests }: LeaveStatsProps) {
         value={
           <div className="flex items-baseline gap-1">
             <span>{annualTotal}</span>
-            <span className="text-xs font-normal text-base-content/60">days</span>
+            <span className=" font-normal text-base-content/80">days</span>
           </div>
         }
         desc="Standard yearly paid leave allowance"
@@ -45,7 +45,7 @@ export default function LeaveStats({ requests }: LeaveStatsProps) {
         value={
           <div className="flex items-baseline gap-1">
             <span>{used}</span>
-            <span className="text-xs font-normal text-base-content/60">days</span>
+            <span className=" font-normal text-base-content/80">days</span>
           </div>
         }
         desc="Approved days taken year-to-date"
@@ -58,7 +58,7 @@ export default function LeaveStats({ requests }: LeaveStatsProps) {
         value={
           <div className="flex items-baseline gap-1">
             <span>{pending}</span>
-            <span className="text-xs font-normal text-base-content/60">days</span>
+            <span className=" font-normal text-base-content/80">days</span>
           </div>
         }
         desc="Awaiting manager or HR approval"
@@ -71,14 +71,16 @@ export default function LeaveStats({ requests }: LeaveStatsProps) {
         value={
           <div className="flex items-baseline gap-1">
             <span className="text-primary font-bold">{available}</span>
-            <span className="text-xs font-normal text-base-content/60">days</span>
+            <span className=" font-normal text-base-content/80">days</span>
           </div>
         }
         desc={
           <div className="space-y-1.5 mt-1">
-            <div className="flex items-center justify-between text-[11px] text-base-content/60">
+            <div className="flex items-center justify-between text-[11px] text-base-content/80">
               <span>Remaining balance</span>
-              <span className="font-semibold text-primary">{percentAvailable}%</span>
+              <span className="font-semibold text-primary">
+                {percentAvailable}%
+              </span>
             </div>
             <progress
               className="progress progress-primary w-full h-1.5"

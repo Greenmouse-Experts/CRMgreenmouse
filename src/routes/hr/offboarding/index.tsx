@@ -40,8 +40,7 @@ function RouteComponent() {
   const [isAddItemModalOpen, setIsAddItemModalOpen] = useState(false);
 
   // Active case for the stepper and clearance section
-  const activeCase =
-    cases.find((c) => c.id === selectedCaseId) || cases[0];
+  const activeCase = cases.find((c) => c.id === selectedCaseId) || cases[0];
 
   // Clearance items for currently active case
   const activeCaseClearanceItems = clearanceItems.filter(
@@ -66,15 +65,14 @@ function RouteComponent() {
           ? {
               ...c,
               currentStep: nextStep,
-              status:
-                nextStep === "Exit interview"
-                  ? "Completed"
-                  : c.status,
+              status: nextStep === "Exit interview" ? "Completed" : c.status,
             }
           : c,
       ),
     );
-    toast.success(`Offboarding milestone for ${activeCase.employee} advanced to "${nextStep}"`);
+    toast.success(
+      `Offboarding milestone for ${activeCase.employee} advanced to "${nextStep}"`,
+    );
   };
 
   const handleUpdateClearanceStatus = (
@@ -122,18 +120,16 @@ function RouteComponent() {
       </PageHeader>
 
       {/* Compliance Notice Banner */}
-      <div className="flex items-center gap-3 rounded-xl bg-blue-500/10 border border-blue-500/20 p-4 text-xs sm:text-sm font-medium text-blue-900 dark:text-blue-200 shadow-2xs">
+      <div className="flex items-center gap-3 rounded-xl bg-blue-500/10 border border-blue-500/20 p-4  sm:text-sm font-medium text-blue-900 dark:text-blue-200 shadow-2xs">
         <ShieldCheck className="size-5 shrink-0 text-blue-600 dark:text-blue-400" />
         <span>
-          Records are retained after exit; access to company services is scheduled for revocation at the authorized time.
+          Records are retained after exit; access to company services is
+          scheduled for revocation at the authorized time.
         </span>
       </div>
 
       {/* Top 4 KPI Metrics */}
-      <OffboardingStats
-        cases={cases}
-        clearanceItems={clearanceItems}
-      />
+      <OffboardingStats cases={cases} clearanceItems={clearanceItems} />
 
       {/* Active Case 8-Step Milestone Stepper Card */}
       {activeCase && (

@@ -438,7 +438,7 @@ export default function TransactionsLedger({
             </div>
 
             <dl className="grid gap-3 sm:grid-cols-2">
-              <div className="rounded-lg bg-base-200/50 p-3">
+              <div className="rounded-lg bg-base-200/80 p-3">
                 <dt className=" text-base-content/70">Amount</dt>
                 <dd
                   className={`mt-1 text-lg font-semibold tabular-nums ${signedAmount(selectedTx) >= 0 ? "text-success" : "text-error"}`}
@@ -447,7 +447,7 @@ export default function TransactionsLedger({
                   {formatAmount(signedAmount(selectedTx))}
                 </dd>
               </div>
-              <div className="rounded-lg bg-base-200/50 p-3">
+              <div className="rounded-lg bg-base-200/80 p-3">
                 <dt className=" text-base-content/70">Status</dt>
                 <dd className="mt-1">
                   <span
@@ -457,19 +457,19 @@ export default function TransactionsLedger({
                   </span>
                 </dd>
               </div>
-              <div className="rounded-lg bg-base-200/50 p-3">
+              <div className="rounded-lg bg-base-200/80 p-3">
                 <dt className=" text-base-content/70">Date and time</dt>
                 <dd className="mt-1 text-sm font-medium text-base-content">
                   {formatDate(selectedTx.date, true)}
                 </dd>
               </div>
-              <div className="rounded-lg bg-base-200/50 p-3">
+              <div className="rounded-lg bg-base-200/80 p-3">
                 <dt className=" text-base-content/70">Category</dt>
                 <dd className="mt-1 break-words text-sm font-medium text-base-content">
                   {selectedTx.category || "General"}
                 </dd>
               </div>
-              <div className="rounded-lg bg-base-200/50 p-3 sm:col-span-2">
+              <div className="rounded-lg bg-base-200/80 p-3 sm:col-span-2">
                 <dt className=" text-base-content/70">Reference</dt>
                 <dd className="mt-1 break-all font-mono  text-base-content">
                   {selectedTx.reference || selectedTx.id}

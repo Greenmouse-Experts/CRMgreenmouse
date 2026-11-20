@@ -411,7 +411,7 @@ function RouteComponent() {
                   </div>
 
                   <div className="p-6 grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm bg-base-100">
-                    <div className="flex items-center gap-3 p-3 rounded-xl bg-base-200/50">
+                    <div className="flex items-center gap-3 p-3 rounded-xl bg-base-200/80">
                       <div className="size-10 rounded-lg bg-primary/10 text-primary grid place-items-center">
                         <CreditCard className="size-5" />
                       </div>
@@ -427,7 +427,7 @@ function RouteComponent() {
                     </div>
 
                     {currentSub.currentPeriodStart && (
-                      <div className="flex items-center gap-3 p-3 rounded-xl bg-base-200/50">
+                      <div className="flex items-center gap-3 p-3 rounded-xl bg-base-200/80">
                         <div className="size-10 rounded-lg bg-info/10 text-info grid place-items-center">
                           <Calendar className="size-5" />
                         </div>
@@ -440,7 +440,7 @@ function RouteComponent() {
                       </div>
                     )}
 
-                    <div className="flex items-center gap-3 p-3 rounded-xl bg-base-200/50">
+                    <div className="flex items-center gap-3 p-3 rounded-xl bg-base-200/80">
                       <div className="size-10 rounded-lg bg-success/10 text-success grid place-items-center">
                         <Clock className="size-5" />
                       </div>
@@ -524,7 +524,7 @@ function RouteComponent() {
               <p className="text-base font-semibold text-base-content/70">
                 No active subscription plans available at the moment.
               </p>
-              <p className=" text-base-content/50">
+              <p className=" text-base-content/80">
                 Please check back later or contact system administration.
               </p>
             </div>

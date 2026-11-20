@@ -52,27 +52,27 @@ export default function LeaveRequestsTable({
     switch (status) {
       case "Approved":
         return (
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-semibold text-emerald-700 border border-emerald-200">
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-0.5  font-semibold text-emerald-700 border border-emerald-200">
             <span className="size-1.5 rounded-full bg-emerald-500" />
             Approved
           </span>
         );
       case "Rejected":
         return (
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-rose-50 px-2.5 py-0.5 text-xs font-semibold text-rose-700 border border-rose-200">
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-rose-50 px-2.5 py-0.5  font-semibold text-rose-700 border border-rose-200">
             <span className="size-1.5 rounded-full bg-rose-500" />
             Rejected
           </span>
         );
       case "Cancelled":
         return (
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-semibold text-slate-600 border border-slate-200">
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-100 px-2.5 py-0.5  font-semibold text-slate-600 border border-slate-200">
             Cancelled
           </span>
         );
       case "Submitted":
         return (
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-blue-50 px-2.5 py-0.5 text-xs font-semibold text-blue-700 border border-blue-200">
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-blue-50 px-2.5 py-0.5  font-semibold text-blue-700 border border-blue-200">
             <span className="size-1.5 rounded-full bg-blue-500 animate-pulse" />
             Submitted
           </span>
@@ -81,7 +81,7 @@ export default function LeaveRequestsTable({
       case "Pending HR Approval":
       default:
         return (
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-50 px-2.5 py-0.5 text-xs font-semibold text-amber-700 border border-amber-200">
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-50 px-2.5 py-0.5  font-semibold text-amber-700 border border-amber-200">
             <span className="size-1.5 rounded-full bg-amber-500 animate-pulse" />
             {status}
           </span>
@@ -96,11 +96,11 @@ export default function LeaveRequestsTable({
         <div>
           <div className="flex items-center gap-2">
             <h2 className="text-lg font-bold text-base-content">Requests</h2>
-            <span className="badge badge-sm badge-ghost text-xs font-semibold">
+            <span className="badge badge-sm badge-ghost  font-semibold">
               {filteredRequests.length}
             </span>
           </div>
-          <p className="text-xs text-base-content/60 mt-0.5">
+          <p className=" text-base-content/80 mt-0.5">
             Review time-off requests, supporting details, and manage approvals.
           </p>
         </div>
@@ -113,7 +113,7 @@ export default function LeaveRequestsTable({
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             placeholder="Search employee, ID, type..."
-            className="input input-sm input-bordered w-full pl-9 text-xs rounded-xl bg-base-200/50"
+            className="input input-sm input-bordered w-full pl-9  rounded-xl bg-base-200/80"
           />
         </div>
       </div>
@@ -125,10 +125,10 @@ export default function LeaveRequestsTable({
             key={tab}
             type="button"
             onClick={() => setStatusFilter(tab)}
-            className={`px-3 py-1 text-xs font-semibold rounded-lg transition-all ${
+            className={`px-3 py-1  font-semibold rounded-lg transition-all ${
               statusFilter === tab
                 ? "bg-primary text-white shadow-2xs"
-                : "text-base-content/60 hover:bg-base-200"
+                : "text-base-content/80 hover:bg-base-200"
             }`}
           >
             {tab}
@@ -140,7 +140,7 @@ export default function LeaveRequestsTable({
       <div className="overflow-x-auto">
         <table className="table table-sm w-full">
           <thead>
-            <tr className="border-b border-base-200 text-xs font-semibold text-base-content/60">
+            <tr className="border-b border-base-200  font-semibold text-base-content/80">
               <th>ID</th>
               <th>Employee</th>
               <th>Type</th>
@@ -150,17 +150,21 @@ export default function LeaveRequestsTable({
               <th className="text-right">Action</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-base-200 text-xs">
+          <tbody className="divide-y divide-base-200 ">
             {filteredRequests.length === 0 ? (
               <tr>
-                <td colSpan={7} className="py-8 text-center text-base-content/40 italic">
+                <td
+                  colSpan={7}
+                  className="py-8 text-center text-base-content/40 italic"
+                >
                   No leave requests found.
                 </td>
               </tr>
             ) : (
               filteredRequests.map((req) => {
                 const isPending =
-                  req.status.startsWith("Pending") || req.status === "Submitted";
+                  req.status.startsWith("Pending") ||
+                  req.status === "Submitted";
                 const isExpanded = expandedId === req.id;
 
                 return (
@@ -200,7 +204,10 @@ export default function LeaveRequestsTable({
 
                     <td>{getStatusBadge(req.status)}</td>
 
-                    <td className="text-right" onClick={(e) => e.stopPropagation()}>
+                    <td
+                      className="text-right"
+                      onClick={(e) => e.stopPropagation()}
+                    >
                       {isPending ? (
                         <div className="flex items-center justify-end gap-1.5">
                           <button
@@ -221,7 +228,7 @@ export default function LeaveRequestsTable({
                           </button>
                         </div>
                       ) : (
-                        <span className="text-xs text-base-content/40">—</span>
+                        <span className=" text-base-content/40">—</span>
                       )}
                     </td>
                   </tr>
@@ -234,26 +241,26 @@ export default function LeaveRequestsTable({
 
       {/* Expanded item details if selected */}
       {expandedId && (
-        <div className="p-4 rounded-xl bg-base-200/50 border border-base-200 space-y-2 animate-in fade-in duration-200">
+        <div className="p-4 rounded-xl bg-base-200/80 border border-base-200 space-y-2 animate-in fade-in duration-200">
           {(() => {
             const req = requests.find((r) => r.id === expandedId);
             if (!req) return null;
             return (
               <>
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold text-base-content">
+                  <span className=" font-bold text-base-content">
                     Request Details · {req.emp} ({req.id})
                   </span>
                   <button
                     type="button"
                     onClick={() => setExpandedId(null)}
-                    className="text-xs text-base-content/50 hover:text-base-content"
+                    className=" text-base-content/80 hover:text-base-content"
                   >
                     Dismiss
                   </button>
                 </div>
                 {req.reason && (
-                  <p className="text-xs text-base-content/80">
+                  <p className=" text-base-content/80">
                     <span className="font-semibold">Reason:</span> {req.reason}
                   </p>
                 )}
@@ -261,12 +268,17 @@ export default function LeaveRequestsTable({
                   {req.cover && (
                     <div className="flex items-center gap-1.5">
                       <User className="size-3.5 text-base-content/40" />
-                      <span>Handover covering colleague: <strong>{req.cover}</strong></span>
+                      <span>
+                        Handover covering colleague:{" "}
+                        <strong>{req.cover}</strong>
+                      </span>
                     </div>
                   )}
                   {req.phone && (
                     <div>
-                      <span>Contact while away: <strong>{req.phone}</strong></span>
+                      <span>
+                        Contact while away: <strong>{req.phone}</strong>
+                      </span>
                     </div>
                   )}
                 </div>

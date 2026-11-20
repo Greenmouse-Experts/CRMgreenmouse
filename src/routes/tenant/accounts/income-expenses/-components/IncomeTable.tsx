@@ -147,7 +147,7 @@ export default function IncomeTable() {
         }
         return (
           <span
-            className={`badge badge-soft ring ring-current/50  uppercase font-semibold badge-sm ${badge}`}
+            className={`badge badge-soft ring ring-current/80  uppercase font-semibold badge-sm ${badge}`}
           >
             {value || "Pending"}
           </span>

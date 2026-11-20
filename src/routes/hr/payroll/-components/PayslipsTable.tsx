@@ -23,14 +23,14 @@ function getStatusBadge(status: PayslipStatus) {
   switch (status) {
     case "Paid":
       return (
-        <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-semibold text-emerald-700 border border-emerald-200">
+        <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-0.5  font-semibold text-emerald-700 border border-emerald-200">
           <span className="size-1.5 rounded-full bg-emerald-500" />
           Paid
         </span>
       );
     case "On hold":
       return (
-        <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-50 px-2.5 py-0.5 text-xs font-semibold text-amber-700 border border-amber-200">
+        <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-50 px-2.5 py-0.5  font-semibold text-amber-700 border border-amber-200">
           <span className="size-1.5 rounded-full bg-amber-500" />
           On hold
         </span>
@@ -38,7 +38,7 @@ function getStatusBadge(status: PayslipStatus) {
     case "Ready":
     default:
       return (
-        <span className="inline-flex items-center gap-1.5 rounded-full bg-blue-50 px-2.5 py-0.5 text-xs font-semibold text-blue-700 border border-blue-200">
+        <span className="inline-flex items-center gap-1.5 rounded-full bg-blue-50 px-2.5 py-0.5  font-semibold text-blue-700 border border-blue-200">
           <span className="size-1.5 rounded-full bg-blue-500" />
           Ready
         </span>
@@ -82,11 +82,11 @@ export default function PayslipsTable({
             <h2 className="text-lg font-bold text-base-content">
               Payslips · Nov 2026
             </h2>
-            <span className="badge badge-sm badge-ghost text-xs font-semibold">
+            <span className="badge badge-sm badge-ghost  font-semibold">
               {filteredPayslips.length}
             </span>
           </div>
-          <p className="text-xs text-base-content/60 mt-0.5">
+          <p className=" text-base-content/80 mt-0.5">
             Review calculated pay before release. Held payslips are skipped at
             payout.
           </p>
@@ -99,7 +99,7 @@ export default function PayslipsTable({
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             placeholder="Search employee, department..."
-            className="input input-sm input-bordered w-full pl-9 text-xs rounded-xl bg-base-200/50"
+            className="input input-sm input-bordered w-full pl-9  rounded-xl bg-base-200/80"
           />
         </div>
       </div>
@@ -110,16 +110,16 @@ export default function PayslipsTable({
             key={tab}
             type="button"
             onClick={() => setStatusFilter(tab)}
-            className={`px-3 py-1 text-xs font-semibold rounded-lg transition-all ${
+            className={`px-3 py-1  font-semibold rounded-lg transition-all ${
               statusFilter === tab
                 ? "bg-primary text-white shadow-2xs"
-                : "text-base-content/60 hover:bg-base-200"
+                : "text-base-content/80 hover:bg-base-200"
             }`}
           >
             {tab}
           </button>
         ))}
-        <span className="ml-auto text-[11px] font-medium text-base-content/60">
+        <span className="ml-auto text-[11px] font-medium text-base-content/80">
           Releasable total:{" "}
           <strong className="text-primary">{formatCurrency(visibleNet)}</strong>
         </span>
@@ -128,7 +128,7 @@ export default function PayslipsTable({
       <div className="overflow-x-auto">
         <table className="table table-sm w-full">
           <thead>
-            <tr className="border-b border-base-200 text-xs font-semibold text-base-content/60">
+            <tr className="border-b border-base-200  font-semibold text-base-content/80">
               <th>Employee</th>
               <th>Gross</th>
               <th>Deductions</th>
@@ -137,7 +137,7 @@ export default function PayslipsTable({
               <th className="text-right">Action</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-base-200 text-xs">
+          <tbody className="divide-y divide-base-200 ">
             {filteredPayslips.length === 0 ? (
               <tr>
                 <td
@@ -167,7 +167,7 @@ export default function PayslipsTable({
                             <div className="font-semibold text-base-content">
                               {slip.employee}
                             </div>
-                            <div className="text-[11px] text-base-content/50">
+                            <div className="text-[11px] text-base-content/80">
                               {slip.role} · {slip.department}
                             </div>
                           </div>
@@ -222,7 +222,7 @@ export default function PayslipsTable({
                         <td colSpan={6} className="p-4">
                           <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
                             <div>
-                              <div className="text-[10px] uppercase tracking-wider text-base-content/50">
+                              <div className="text-[10px] uppercase tracking-wider text-base-content/80">
                                 Base salary
                               </div>
                               <div className="text-sm font-semibold text-base-content">
@@ -230,7 +230,7 @@ export default function PayslipsTable({
                               </div>
                             </div>
                             <div>
-                              <div className="text-[10px] uppercase tracking-wider text-base-content/50">
+                              <div className="text-[10px] uppercase tracking-wider text-base-content/80">
                                 Allowances
                               </div>
                               <div className="text-sm font-semibold text-base-content">
@@ -238,7 +238,7 @@ export default function PayslipsTable({
                               </div>
                             </div>
                             <div>
-                              <div className="text-[10px] uppercase tracking-wider text-base-content/50">
+                              <div className="text-[10px] uppercase tracking-wider text-base-content/80">
                                 Overtime
                               </div>
                               <div className="text-sm font-semibold text-base-content">
@@ -246,7 +246,7 @@ export default function PayslipsTable({
                               </div>
                             </div>
                             <div>
-                              <div className="text-[10px] uppercase tracking-wider text-base-content/50">
+                              <div className="text-[10px] uppercase tracking-wider text-base-content/80">
                                 Bonus
                               </div>
                               <div className="text-sm font-semibold text-base-content">
@@ -254,7 +254,7 @@ export default function PayslipsTable({
                               </div>
                             </div>
                             <div>
-                              <div className="text-[10px] uppercase tracking-wider text-base-content/50">
+                              <div className="text-[10px] uppercase tracking-wider text-base-content/80">
                                 PAYE tax
                               </div>
                               <div className="text-sm font-semibold text-rose-600">
@@ -262,7 +262,7 @@ export default function PayslipsTable({
                               </div>
                             </div>
                             <div>
-                              <div className="text-[10px] uppercase tracking-wider text-base-content/50">
+                              <div className="text-[10px] uppercase tracking-wider text-base-content/80">
                                 Pension
                               </div>
                               <div className="text-sm font-semibold text-rose-600">
@@ -270,7 +270,7 @@ export default function PayslipsTable({
                               </div>
                             </div>
                             <div>
-                              <div className="text-[10px] uppercase tracking-wider text-base-content/50">
+                              <div className="text-[10px] uppercase tracking-wider text-base-content/80">
                                 Loan recovery
                               </div>
                               <div className="text-sm font-semibold text-rose-600">
@@ -278,7 +278,7 @@ export default function PayslipsTable({
                               </div>
                             </div>
                             <div>
-                              <div className="text-[10px] uppercase tracking-wider text-base-content/50">
+                              <div className="text-[10px] uppercase tracking-wider text-base-content/80">
                                 Bank
                               </div>
                               <div className="text-sm font-semibold text-base-content">

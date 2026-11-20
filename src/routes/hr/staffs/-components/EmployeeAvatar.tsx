@@ -12,7 +12,7 @@ export default function EmployeeAvatar({
   className = "",
 }: EmployeeAvatarProps) {
   const sizeClasses = {
-    sm: "size-8 text-xs",
+    sm: "size-8 ",
     md: "size-10 text-sm",
     lg: "size-16 text-xl",
   }[size];

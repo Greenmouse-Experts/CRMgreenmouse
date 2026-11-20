@@ -109,7 +109,7 @@ export default function AdminUserList() {
                   <p className="text-sm font-semibold text-base-content/70">
                     No team members added yet
                   </p>
-                  <p className=" text-base-content/50">
+                  <p className=" text-base-content/80">
                     Invite colleagues and assign roles to collaborate across
                     your workspace.
                   </p>

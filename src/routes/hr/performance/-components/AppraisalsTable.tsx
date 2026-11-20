@@ -23,14 +23,14 @@ export default function AppraisalsTable({
     switch (status) {
       case "Completed":
         return (
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-semibold text-emerald-700 border border-emerald-200">
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-0.5  font-semibold text-emerald-700 border border-emerald-200">
             <span className="size-1.5 rounded-full bg-emerald-500" />
             Completed
           </span>
         );
       case "In Progress":
         return (
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-blue-50 px-2.5 py-0.5 text-xs font-semibold text-blue-700 border border-blue-200">
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-blue-50 px-2.5 py-0.5  font-semibold text-blue-700 border border-blue-200">
             <span className="size-1.5 rounded-full bg-blue-500 animate-pulse" />
             In Progress
           </span>
@@ -38,7 +38,7 @@ export default function AppraisalsTable({
       case "Pending":
       default:
         return (
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-50 px-2.5 py-0.5 text-xs font-semibold text-amber-700 border border-amber-200">
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-50 px-2.5 py-0.5  font-semibold text-amber-700 border border-amber-200">
             <span className="size-1.5 rounded-full bg-amber-500" />
             Pending
           </span>
@@ -57,13 +57,13 @@ export default function AppraisalsTable({
             <h2 className="text-base sm:text-lg font-bold text-base-content">
               Appraisals
             </h2>
-            <p className="text-xs text-base-content/60">
+            <p className=" text-base-content/80">
               Q4 employee reviews, reviewer assignments, and ratings.
             </p>
           </div>
         </div>
 
-        <span className="badge badge-sm badge-ghost text-xs font-semibold">
+        <span className="badge badge-sm badge-ghost  font-semibold">
           {appraisals.length} reviews
         </span>
       </div>
@@ -71,19 +71,19 @@ export default function AppraisalsTable({
       <div className="overflow-x-auto">
         <table className="table table-sm w-full">
           <thead>
-            <tr className="border-b border-base-200 text-xs font-semibold text-base-content/60">
+            <tr className="border-b border-base-200  font-semibold text-base-content/80">
               <th>Employee</th>
               <th>Reviewer</th>
               <th>Rating</th>
               <th className="text-right">Status</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-base-200 text-xs">
+          <tbody className="divide-y divide-base-200 ">
             {appraisals.map((item) => (
               <tr
                 key={item.id}
                 onClick={() => onSelectAppraisal?.(item)}
-                className="hover:bg-base-200/50 cursor-pointer transition-colors"
+                className="hover:bg-base-200/80 cursor-pointer transition-colors"
               >
                 <td>
                   <div className="flex items-center gap-2.5">
@@ -102,7 +102,7 @@ export default function AppraisalsTable({
 
                 <td>
                   {item.rating !== "—" ? (
-                    <span className="font-bold text-primary bg-primary/10 px-2 py-0.5 rounded-md text-xs">
+                    <span className="font-bold text-primary bg-primary/10 px-2 py-0.5 rounded-md ">
                       {item.rating} / 5.0
                     </span>
                   ) : (

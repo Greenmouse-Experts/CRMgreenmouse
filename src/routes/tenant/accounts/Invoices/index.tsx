@@ -171,7 +171,7 @@ function RouteComponent() {
             minimumFractionDigits: 2,
             maximumFractionDigits: 2,
           })}{" "}
-          <span className=" text-base-content/50 font-normal">
+          <span className=" text-base-content/80 font-normal">
             {item.currency || "USD"}
           </span>
         </span>

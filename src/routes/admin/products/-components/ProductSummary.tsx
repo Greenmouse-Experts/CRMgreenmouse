@@ -83,7 +83,7 @@ const ProductSummary: React.FC<ProductSummaryProps> = ({
             }}
             className={`card bg-base-100/70 backdrop-blur-md border shadow-sm p-4 transition-all duration-200 ${
               stat.clickable
-                ? "cursor-pointer hover:shadow-md hover:border-primary/50"
+                ? "cursor-pointer hover:shadow-md hover:border-primary/80"
                 : ""
             } ${
               isSelected
@@ -99,7 +99,7 @@ const ProductSummary: React.FC<ProductSummaryProps> = ({
                 <h3 className="text-2xl font-semibold text-base-content mt-1">
                   {stat.value}
                 </h3>
-                <p className="text-xs text-base-content/50 mt-0.5">
+                <p className="text-xs text-base-content/80 mt-0.5">
                   {stat.description}
                 </p>
               </div>

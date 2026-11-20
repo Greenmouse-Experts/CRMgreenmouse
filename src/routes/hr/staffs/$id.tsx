@@ -48,13 +48,15 @@ export interface StaffDetailSearchParams {
 }
 
 export const Route = createFileRoute("/hr/staffs/$id")({
-  validateSearch: (search: Record<string, unknown>): StaffDetailSearchParams => ({
+  validateSearch: (
+    search: Record<string, unknown>,
+  ): StaffDetailSearchParams => ({
     mode:
       search?.mode === "edit"
         ? "edit"
         : search?.mode === "view"
-        ? "view"
-        : undefined,
+          ? "view"
+          : undefined,
   }),
   component: StaffDetailPage,
 });
@@ -116,27 +118,32 @@ const DOCUMENT_ITEMS = [
   {
     key: "cv",
     title: "CV / Resume",
-    description: "PDF or Word document highlighting career history and education.",
+    description:
+      "PDF or Word document highlighting career history and education.",
   },
   {
     key: "contract",
     title: "Signed Employment Contract",
-    description: "Executed offer letter and signed terms of employment agreement.",
+    description:
+      "Executed offer letter and signed terms of employment agreement.",
   },
   {
     key: "id_document",
     title: "Identity Document (NIN / Passport)",
-    description: "Government-issued identity card, international passport or license.",
+    description:
+      "Government-issued identity card, international passport or license.",
   },
   {
     key: "certificates",
     title: "Academic & Professional Certificates",
-    description: "Degree certificate, diplomas, or professional accreditation credentials.",
+    description:
+      "Degree certificate, diplomas, or professional accreditation credentials.",
   },
   {
     key: "policies",
     title: "Signed Policies & NDA",
-    description: "Acknowledged employee handbook, IT policy, and non-disclosure agreement.",
+    description:
+      "Acknowledged employee handbook, IT policy, and non-disclosure agreement.",
   },
 ];
 
@@ -154,7 +161,13 @@ const DEFAULT_DEPARTMENTS = [
 ];
 
 const DEFAULT_GRADES = ["G1", "G2", "G3", "G4", "G5", "G6", "G7"];
-const EMPLOYMENT_TYPES = ["Full-time", "Part-time", "Contract", "Intern", "Casual"];
+const EMPLOYMENT_TYPES = [
+  "Full-time",
+  "Part-time",
+  "Contract",
+  "Intern",
+  "Casual",
+];
 const EMPLOYMENT_STATUSES = [
   { value: "active", label: "Active" },
   { value: "probation", label: "Probation" },
@@ -162,10 +175,29 @@ const EMPLOYMENT_STATUSES = [
   { value: "notice", label: "Notice Period" },
   { value: "inactive", label: "Inactive" },
 ];
-const WORK_LOCATIONS = ["Remote", "On-site (Lagos)", "On-site (Abuja)", "Hybrid"];
-const CONTRACT_TYPES = ["Permanent", "Fixed-term", "Probationary", "Contract", "Seasonal"];
+const WORK_LOCATIONS = [
+  "Remote",
+  "On-site (Lagos)",
+  "On-site (Abuja)",
+  "Hybrid",
+];
+const CONTRACT_TYPES = [
+  "Permanent",
+  "Fixed-term",
+  "Probationary",
+  "Contract",
+  "Seasonal",
+];
 const PAY_FREQUENCIES = ["Monthly", "Bi-weekly", "Weekly", "Annually"];
-const RELATIONSHIPS = ["Spouse", "Parent", "Sibling", "Child", "Relative", "Friend", "Other"];
+const RELATIONSHIPS = [
+  "Spouse",
+  "Parent",
+  "Sibling",
+  "Child",
+  "Relative",
+  "Friend",
+  "Other",
+];
 
 function StaffDetailPage() {
   const { id } = Route.useParams();
@@ -250,27 +282,27 @@ function StaffDetailPage() {
       const deptName =
         typeof emp.department === "object"
           ? emp.department?.name
-          : emp.departmentName ?? emp.department ?? "";
+          : (emp.departmentName ?? emp.department ?? "");
 
       const deptId =
         typeof emp.department === "object"
           ? emp.department?.id
-          : emp.departmentId ?? "";
+          : (emp.departmentId ?? "");
 
       const posTitle =
         typeof emp.position === "object"
           ? emp.position?.name
-          : emp.positionName ?? emp.jobTitle ?? emp.position ?? "";
+          : (emp.positionName ?? emp.jobTitle ?? emp.position ?? "");
 
       const posId =
         typeof emp.position === "object"
           ? emp.position?.id
-          : emp.positionId ?? "";
+          : (emp.positionId ?? "");
 
       const mgrId =
         typeof emp.manager === "object"
           ? emp.manager?.id
-          : emp.managerId ?? "";
+          : (emp.managerId ?? "");
 
       reset({
         firstName: emp.firstName ?? "",
@@ -287,10 +319,8 @@ function StaffDetailPage() {
         departmentId: deptId,
         jobTitle: posTitle,
         positionId: posId,
-        employeeType:
-          emp.employeeType ?? emp.employmentType ?? "Full-time",
-        employmentStatus:
-          emp.employmentStatus ?? emp.status ?? "active",
+        employeeType: emp.employeeType ?? emp.employmentType ?? "Full-time",
+        employmentStatus: emp.employmentStatus ?? emp.status ?? "active",
         workLocation: emp.workLocation ?? emp.location ?? "Remote",
         grade: emp.grade ?? "G2",
         managerId: mgrId,
@@ -338,7 +368,12 @@ function StaffDetailPage() {
   const handleStepClick = async (targetIndex: number) => {
     if (targetIndex > currentStep) {
       if (currentStep === 0) {
-        const valid = await trigger(["firstName", "lastName", "email", "phone"]);
+        const valid = await trigger([
+          "firstName",
+          "lastName",
+          "email",
+          "phone",
+        ]);
         if (!valid) {
           toast.error("Please fill in required personal fields first.");
           return;
@@ -362,7 +397,10 @@ function StaffDetailPage() {
     setCurrentStep((prev) => Math.min(FORM_STEPS.length - 1, prev + 1));
   };
 
-  const handleFileUpload = (key: string, e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileUpload = (
+    key: string,
+    e: React.ChangeEvent<HTMLInputElement>,
+  ) => {
     const file = e.target.files?.[0];
     if (file) {
       const sizeMb = (file.size / (1024 * 1024)).toFixed(2);
@@ -401,10 +439,7 @@ function StaffDetailPage() {
         undefined;
 
       const jobTitle =
-        selectedPos?.name ||
-        values.jobTitle ||
-        values.positionId ||
-        undefined;
+        selectedPos?.name || values.jobTitle || values.positionId || undefined;
 
       const payload: CreateEmployeeInput = {
         firstName: values.firstName.trim(),
@@ -478,18 +513,20 @@ function StaffDetailPage() {
     const current =
       onLeaveLocal !== null
         ? onLeaveLocal
-        : Boolean(
-            employeeQuery.data?.onLeave || employeeQuery.data?.isOnLeave,
-          );
+        : Boolean(employeeQuery.data?.onLeave || employeeQuery.data?.isOnLeave);
     setOnLeaveLocal(!current);
-    toast.success(!current ? "Marked employee as on leave" : "Marked employee as active");
+    toast.success(
+      !current ? "Marked employee as on leave" : "Marked employee as active",
+    );
   };
 
   if (!isNew && employeeQuery.isLoading) {
     return (
       <div className="min-h-[50vh] flex flex-col items-center justify-center gap-3">
         <Loader2 className="size-8 animate-spin text-primary" />
-        <p className="text-xs text-base-content/60 font-medium">Loading employee details...</p>
+        <p className=" text-base-content/80 font-medium">
+          Loading employee details...
+        </p>
       </div>
     );
   }
@@ -500,13 +537,20 @@ function StaffDetailPage() {
         <div className="size-12 rounded-full bg-error/10 text-error flex items-center justify-center mx-auto">
           <AlertCircle className="size-6" />
         </div>
-        <h3 className="font-semibold text-lg text-base-content">Unable to load employee</h3>
-        <p className="text-xs text-base-content/60">{extract_message(employeeQuery.error as any)}</p>
+        <h3 className="font-semibold text-lg text-base-content">
+          Unable to load employee
+        </h3>
+        <p className=" text-base-content/80">
+          {extract_message(employeeQuery.error as any)}
+        </p>
         <div className="flex justify-center gap-2 pt-2">
-          <button onClick={() => employeeQuery.refetch()} className="btn btn-sm btn-primary text-xs">
+          <button
+            onClick={() => employeeQuery.refetch()}
+            className="btn btn-sm btn-primary "
+          >
             Try Again
           </button>
-          <Link to="/hr/staffs" className="btn btn-sm btn-ghost text-xs">
+          <Link to="/hr/staffs" className="btn btn-sm btn-ghost ">
             Back to Directory
           </Link>
         </div>
@@ -535,13 +579,18 @@ function StaffDetailPage() {
 
   const currentDept =
     departmentsList.find(
-      (d) => d.id === formValues.departmentId || d.name === formValues.department,
-    )?.name || formValues.department || "—";
+      (d) =>
+        d.id === formValues.departmentId || d.name === formValues.department,
+    )?.name ||
+    formValues.department ||
+    "—";
 
   const currentJob =
     positionsList.find(
       (p) => p.id === formValues.positionId || p.name === formValues.jobTitle,
-    )?.name || formValues.jobTitle || "—";
+    )?.name ||
+    formValues.jobTitle ||
+    "—";
 
   const currentManager =
     potentialManagers.find((m) => m.id === formValues.managerId)?.name ||
@@ -554,7 +603,7 @@ function StaffDetailPage() {
       <div className="flex items-center justify-between">
         <Link
           to="/hr/staffs"
-          className="inline-flex items-center gap-2 text-xs font-medium text-base-content/60 hover:text-primary transition-colors"
+          className="inline-flex items-center gap-2  font-medium text-base-content/80 hover:text-primary transition-colors"
         >
           <ArrowLeft className="size-4" />
           <span>Back to Employees</span>
@@ -597,10 +646,7 @@ function StaffDetailPage() {
           <div className="card bg-base-100 border border-base-200/80 shadow-xs rounded-2xl p-6 sm:p-8">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
               <div className="flex items-center gap-5">
-                <EmployeeAvatar
-                  name={fullName}
-                  size="lg"
-                />
+                <EmployeeAvatar name={fullName} size="lg" />
                 <div className="space-y-1.5">
                   <div className="flex flex-wrap items-center gap-2.5">
                     <h1 className="text-xl sm:text-2xl font-bold text-base-content tracking-tight">
@@ -613,18 +659,21 @@ function StaffDetailPage() {
                       </span>
                     )}
                   </div>
-                  <div className="flex flex-wrap items-center gap-y-1 gap-x-4 text-xs text-base-content/70">
+                  <div className="flex flex-wrap items-center gap-y-1 gap-x-4  text-base-content/70">
                     <span className="flex items-center gap-1.5 font-medium">
                       <Briefcase className="size-3.5 text-primary" />
                       {typeof emp.position === "object"
                         ? emp.position?.name
-                        : emp.positionName ?? emp.jobTitle ?? emp.position ?? "Staff"}
+                        : (emp.positionName ??
+                          emp.jobTitle ??
+                          emp.position ??
+                          "Staff")}
                     </span>
                     <span className="flex items-center gap-1.5 font-medium">
                       <Building2 className="size-3.5 text-info" />
                       {typeof emp.department === "object"
                         ? emp.department?.name
-                        : emp.departmentName ?? emp.department ?? "General"}
+                        : (emp.departmentName ?? emp.department ?? "General")}
                     </span>
                     <span className="flex items-center gap-1.5 font-medium">
                       <MapPin className="size-3.5 text-warning" />
@@ -639,14 +688,14 @@ function StaffDetailPage() {
                 <button
                   type="button"
                   onClick={() => setActiveTab("edit")}
-                  className="btn btn-sm btn-primary text-xs gap-1.5 rounded-xl shadow-xs"
+                  className="btn btn-sm btn-primary  gap-1.5 rounded-xl shadow-xs"
                 >
                   <Pencil className="size-3.5" /> Edit Profile
                 </button>
                 <button
                   type="button"
                   onClick={handleToggleLeave}
-                  className="btn btn-sm btn-outline border-base-300 text-xs rounded-xl"
+                  className="btn btn-sm btn-outline border-base-300  rounded-xl"
                 >
                   <Clock className="size-3.5" />
                   {effectiveOnLeave ? "Mark Returned" : "Mark On Leave"}
@@ -654,7 +703,7 @@ function StaffDetailPage() {
                 <button
                   type="button"
                   onClick={handleDeactivate}
-                  className="btn btn-sm btn-ghost text-error hover:bg-error/10 text-xs rounded-xl"
+                  className="btn btn-sm btn-ghost text-error hover:bg-error/10  rounded-xl"
                 >
                   <UserX className="size-3.5" /> Deactivate
                 </button>
@@ -665,27 +714,39 @@ function StaffDetailPage() {
           {/* Quick Metrics Grid */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
             <div className="card bg-base-100 border border-base-200/80 p-4 rounded-2xl shadow-xs">
-              <span className="text-xs font-medium text-base-content/60">Employment Type</span>
+              <span className=" font-medium text-base-content/80">
+                Employment Type
+              </span>
               <p className="text-sm font-bold text-base-content mt-1">
                 {emp.employeeType || emp.employmentType || "Full-time"}
               </p>
             </div>
             <div className="card bg-base-100 border border-base-200/80 p-4 rounded-2xl shadow-xs">
-              <span className="text-xs font-medium text-base-content/60">Grade Level</span>
+              <span className=" font-medium text-base-content/80">
+                Grade Level
+              </span>
               <p className="text-sm font-bold text-base-content mt-1">
                 {emp.grade || "G2"}
               </p>
             </div>
             <div className="card bg-base-100 border border-base-200/80 p-4 rounded-2xl shadow-xs">
-              <span className="text-xs font-medium text-base-content/60">Monthly Base Salary</span>
+              <span className=" font-medium text-base-content/80">
+                Monthly Base Salary
+              </span>
               <p className="text-sm font-bold text-base-content mt-1">
-                {formatSalary(emp.basicSalary ? Number(emp.basicSalary) : undefined)}
+                {formatSalary(
+                  emp.basicSalary ? Number(emp.basicSalary) : undefined,
+                )}
               </p>
             </div>
             <div className="card bg-base-100 border border-base-200/80 p-4 rounded-2xl shadow-xs">
-              <span className="text-xs font-medium text-base-content/60">Date of Joining</span>
+              <span className=" font-medium text-base-content/80">
+                Date of Joining
+              </span>
               <p className="text-sm font-bold text-base-content mt-1 font-mono">
-                {emp.startDate ? emp.startDate.slice(0, 10) : emp.createdAt?.slice(0, 10) || "—"}
+                {emp.startDate
+                  ? emp.startDate.slice(0, 10)
+                  : emp.createdAt?.slice(0, 10) || "—"}
               </p>
             </div>
           </div>
@@ -698,38 +759,54 @@ function StaffDetailPage() {
                 <div className="size-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center">
                   <User className="size-4" />
                 </div>
-                <h3 className="font-semibold text-sm text-base-content">Personal & Contact Info</h3>
+                <h3 className="font-semibold text-sm text-base-content">
+                  Personal & Contact Info
+                </h3>
               </div>
-              <div className="grid grid-cols-2 gap-3 text-xs">
+              <div className="grid grid-cols-2 gap-3 ">
                 <div>
-                  <span className="text-base-content/50">Full Legal Name</span>
-                  <p className="font-semibold text-base-content mt-0.5">{fullName}</p>
+                  <span className="text-base-content/80">Full Legal Name</span>
+                  <p className="font-semibold text-base-content mt-0.5">
+                    {fullName}
+                  </p>
                 </div>
                 <div>
-                  <span className="text-base-content/50">Work Email</span>
-                  <p className="font-semibold text-base-content mt-0.5 truncate">{emp.email || "—"}</p>
+                  <span className="text-base-content/80">Work Email</span>
+                  <p className="font-semibold text-base-content mt-0.5 truncate">
+                    {emp.email || "—"}
+                  </p>
                 </div>
                 <div>
-                  <span className="text-base-content/50">Phone Number</span>
-                  <p className="font-semibold text-base-content mt-0.5">{emp.phone || emp.phoneNumber || "—"}</p>
+                  <span className="text-base-content/80">Phone Number</span>
+                  <p className="font-semibold text-base-content mt-0.5">
+                    {emp.phone || emp.phoneNumber || "—"}
+                  </p>
                 </div>
                 <div>
-                  <span className="text-base-content/50">Date of Birth</span>
+                  <span className="text-base-content/80">Date of Birth</span>
                   <p className="font-semibold text-base-content mt-0.5 font-mono">
                     {emp.dateOfBirth ? emp.dateOfBirth.slice(0, 10) : "—"}
                   </p>
                 </div>
                 <div>
-                  <span className="text-base-content/50">Gender</span>
-                  <p className="font-semibold text-base-content mt-0.5 capitalize">{emp.gender || "—"}</p>
+                  <span className="text-base-content/80">Gender</span>
+                  <p className="font-semibold text-base-content mt-0.5 capitalize">
+                    {emp.gender || "—"}
+                  </p>
                 </div>
                 <div>
-                  <span className="text-base-content/50">Nationality</span>
-                  <p className="font-semibold text-base-content mt-0.5">{emp.nationality || "—"}</p>
+                  <span className="text-base-content/80">Nationality</span>
+                  <p className="font-semibold text-base-content mt-0.5">
+                    {emp.nationality || "—"}
+                  </p>
                 </div>
                 <div className="col-span-2">
-                  <span className="text-base-content/50">Residential Address</span>
-                  <p className="font-semibold text-base-content mt-0.5">{emp.residentialAddress || "—"}</p>
+                  <span className="text-base-content/80">
+                    Residential Address
+                  </span>
+                  <p className="font-semibold text-base-content mt-0.5">
+                    {emp.residentialAddress || "—"}
+                  </p>
                 </div>
               </div>
             </div>
@@ -740,27 +817,32 @@ function StaffDetailPage() {
                 <div className="size-8 rounded-lg bg-info/10 text-info flex items-center justify-center">
                   <Building2 className="size-4" />
                 </div>
-                <h3 className="font-semibold text-sm text-base-content">Role & Organization</h3>
+                <h3 className="font-semibold text-sm text-base-content">
+                  Role & Organization
+                </h3>
               </div>
-              <div className="grid grid-cols-2 gap-3 text-xs">
+              <div className="grid grid-cols-2 gap-3 ">
                 <div>
-                  <span className="text-base-content/50">Department</span>
+                  <span className="text-base-content/80">Department</span>
                   <p className="font-semibold text-base-content mt-0.5">
                     {typeof emp.department === "object"
                       ? emp.department?.name
-                      : emp.departmentName ?? emp.department ?? "—"}
+                      : (emp.departmentName ?? emp.department ?? "—")}
                   </p>
                 </div>
                 <div>
-                  <span className="text-base-content/50">Job Title / Role</span>
+                  <span className="text-base-content/80">Job Title / Role</span>
                   <p className="font-semibold text-base-content mt-0.5">
                     {typeof emp.position === "object"
                       ? emp.position?.name
-                      : emp.positionName ?? emp.jobTitle ?? emp.position ?? "—"}
+                      : (emp.positionName ??
+                        emp.jobTitle ??
+                        emp.position ??
+                        "—")}
                   </p>
                 </div>
                 <div>
-                  <span className="text-base-content/50">Reporting Line</span>
+                  <span className="text-base-content/80">Reporting Line</span>
                   <p className="font-semibold text-base-content mt-0.5">
                     {typeof emp.manager === "object"
                       ? emp.manager?.name
@@ -768,18 +850,22 @@ function StaffDetailPage() {
                   </p>
                 </div>
                 <div>
-                  <span className="text-base-content/50">Work Schedule</span>
-                  <p className="font-semibold text-base-content mt-0.5">{emp.workSchedule || "Standard"}</p>
+                  <span className="text-base-content/80">Work Schedule</span>
+                  <p className="font-semibold text-base-content mt-0.5">
+                    {emp.workSchedule || "Standard"}
+                  </p>
                 </div>
                 <div>
-                  <span className="text-base-content/50">Start Date</span>
+                  <span className="text-base-content/80">Start Date</span>
                   <p className="font-semibold text-base-content mt-0.5 font-mono">
                     {emp.startDate ? emp.startDate.slice(0, 10) : "—"}
                   </p>
                 </div>
                 <div>
-                  <span className="text-base-content/50">Work Location</span>
-                  <p className="font-semibold text-base-content mt-0.5">{emp.workLocation || emp.location || "Remote"}</p>
+                  <span className="text-base-content/80">Work Location</span>
+                  <p className="font-semibold text-base-content mt-0.5">
+                    {emp.workLocation || emp.location || "Remote"}
+                  </p>
                 </div>
               </div>
             </div>
@@ -790,33 +876,47 @@ function StaffDetailPage() {
                 <div className="size-8 rounded-lg bg-warning/10 text-warning flex items-center justify-center">
                   <ShieldCheck className="size-4" />
                 </div>
-                <h3 className="font-semibold text-sm text-base-content">Contract & Probation</h3>
+                <h3 className="font-semibold text-sm text-base-content">
+                  Contract & Probation
+                </h3>
               </div>
-              <div className="grid grid-cols-2 gap-3 text-xs">
+              <div className="grid grid-cols-2 gap-3 ">
                 <div>
-                  <span className="text-base-content/50">Contract Type</span>
-                  <p className="font-semibold text-base-content mt-0.5">{emp.contractType || "Permanent"}</p>
-                </div>
-                <div>
-                  <span className="text-base-content/50">Contract Expiry</span>
-                  <p className="font-semibold text-base-content mt-0.5 font-mono">
-                    {emp.contractEndDate ? emp.contractEndDate.slice(0, 10) : "Indefinite"}
+                  <span className="text-base-content/80">Contract Type</span>
+                  <p className="font-semibold text-base-content mt-0.5">
+                    {emp.contractType || "Permanent"}
                   </p>
                 </div>
                 <div>
-                  <span className="text-base-content/50">Probation Status</span>
+                  <span className="text-base-content/80">Contract Expiry</span>
+                  <p className="font-semibold text-base-content mt-0.5 font-mono">
+                    {emp.contractEndDate
+                      ? emp.contractEndDate.slice(0, 10)
+                      : "Indefinite"}
+                  </p>
+                </div>
+                <div>
+                  <span className="text-base-content/80">Probation Status</span>
                   <p className="font-semibold text-base-content mt-0.5">
                     {emp.isOnProbation ? (
-                      <span className="text-warning font-bold">On Probation</span>
+                      <span className="text-warning font-bold">
+                        On Probation
+                      </span>
                     ) : (
-                      <span className="text-success font-medium">Confirmed</span>
+                      <span className="text-success font-medium">
+                        Confirmed
+                      </span>
                     )}
                   </p>
                 </div>
                 <div>
-                  <span className="text-base-content/50">Probation End Date</span>
+                  <span className="text-base-content/80">
+                    Probation End Date
+                  </span>
                   <p className="font-semibold text-base-content mt-0.5 font-mono">
-                    {emp.probationEndDate ? emp.probationEndDate.slice(0, 10) : "—"}
+                    {emp.probationEndDate
+                      ? emp.probationEndDate.slice(0, 10)
+                      : "—"}
                   </p>
                 </div>
               </div>
@@ -828,20 +928,30 @@ function StaffDetailPage() {
                 <div className="size-8 rounded-lg bg-error/10 text-error flex items-center justify-center">
                   <Phone className="size-4" />
                 </div>
-                <h3 className="font-semibold text-sm text-base-content">Emergency Contact</h3>
+                <h3 className="font-semibold text-sm text-base-content">
+                  Emergency Contact
+                </h3>
               </div>
-              <div className="grid grid-cols-2 gap-3 text-xs">
+              <div className="grid grid-cols-2 gap-3 ">
                 <div>
-                  <span className="text-base-content/50">Contact Person</span>
-                  <p className="font-semibold text-base-content mt-0.5">{emp.emergencyContactName || "—"}</p>
+                  <span className="text-base-content/80">Contact Person</span>
+                  <p className="font-semibold text-base-content mt-0.5">
+                    {emp.emergencyContactName || "—"}
+                  </p>
                 </div>
                 <div>
-                  <span className="text-base-content/50">Relationship</span>
-                  <p className="font-semibold text-base-content mt-0.5">{emp.emergencyContactRelationship || "—"}</p>
+                  <span className="text-base-content/80">Relationship</span>
+                  <p className="font-semibold text-base-content mt-0.5">
+                    {emp.emergencyContactRelationship || "—"}
+                  </p>
                 </div>
                 <div className="col-span-2">
-                  <span className="text-base-content/50">Emergency Contact Number</span>
-                  <p className="font-semibold text-base-content mt-0.5">{emp.emergencyContactPhone || "—"}</p>
+                  <span className="text-base-content/80">
+                    Emergency Contact Number
+                  </span>
+                  <p className="font-semibold text-base-content mt-0.5">
+                    {emp.emergencyContactPhone || "—"}
+                  </p>
                 </div>
               </div>
             </div>
@@ -856,24 +966,36 @@ function StaffDetailPage() {
                   Compensation & Banking Details
                 </h3>
               </div>
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 ">
                 <div>
-                  <span className="text-base-content/50">Basic Salary</span>
+                  <span className="text-base-content/80">Basic Salary</span>
                   <p className="font-bold text-sm text-base-content mt-0.5">
-                    {formatSalary(emp.basicSalary ? Number(emp.basicSalary) : undefined)}
+                    {formatSalary(
+                      emp.basicSalary ? Number(emp.basicSalary) : undefined,
+                    )}
                   </p>
                 </div>
                 <div>
-                  <span className="text-base-content/50">Payment Frequency</span>
-                  <p className="font-semibold text-base-content mt-0.5 capitalize">{emp.payFrequency || "Monthly"}</p>
+                  <span className="text-base-content/80">
+                    Payment Frequency
+                  </span>
+                  <p className="font-semibold text-base-content mt-0.5 capitalize">
+                    {emp.payFrequency || "Monthly"}
+                  </p>
                 </div>
                 <div>
-                  <span className="text-base-content/50">Bank Institution</span>
-                  <p className="font-semibold text-base-content mt-0.5">{emp.bankName || "—"}</p>
+                  <span className="text-base-content/80">Bank Institution</span>
+                  <p className="font-semibold text-base-content mt-0.5">
+                    {emp.bankName || "—"}
+                  </p>
                 </div>
                 <div>
-                  <span className="text-base-content/50">Bank Account (NUBAN)</span>
-                  <p className="font-mono font-semibold text-base-content mt-0.5">{emp.bankAccountNumber || "—"}</p>
+                  <span className="text-base-content/80">
+                    Bank Account (NUBAN)
+                  </span>
+                  <p className="font-mono font-semibold text-base-content mt-0.5">
+                    {emp.bankAccountNumber || "—"}
+                  </p>
                 </div>
               </div>
             </div>
@@ -893,14 +1015,15 @@ function StaffDetailPage() {
           >
             {/* Header: Kinova HR Eyebrow & Title */}
             <div className="space-y-1">
-              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-primary">
+              <p className=" font-semibold uppercase tracking-[0.18em] text-primary">
                 Employees › {isNew ? "Add Employee" : "Edit Employee"}
               </p>
               <h1 className="text-2xl font-bold tracking-tight text-base-content sm:text-3xl">
                 {isNew ? "Create employee record" : `Edit profile: ${fullName}`}
               </h1>
-              <p className="text-xs sm:text-sm text-base-content/60">
-                Mandatory fields, duplicate IDs and required documents are validated before saving.
+              <p className=" sm:text-sm text-base-content/80">
+                Mandatory fields, duplicate IDs and required documents are
+                validated before saving.
               </p>
             </div>
 
@@ -914,12 +1037,12 @@ function StaffDetailPage() {
                     <li
                       key={step}
                       onClick={() => handleStepClick(idx)}
-                      className={`flex items-center gap-2 rounded-full border px-3.5 py-1.5 text-xs cursor-pointer select-none transition-all ${
+                      className={`flex items-center gap-2 rounded-full border px-3.5 py-1.5  cursor-pointer select-none transition-all ${
                         isCurrent
                           ? "border-primary bg-primary text-primary-content font-semibold shadow-xs"
                           : isCompleted
-                          ? "border-emerald-500/40 bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 font-medium hover:border-emerald-500/60"
-                          : "border-base-300 bg-base-100 text-base-content/60 hover:border-base-content/30 hover:text-base-content"
+                            ? "border-emerald-500/40 bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 font-medium hover:border-emerald-500/80"
+                            : "border-base-300 bg-base-100 text-base-content/80 hover:border-base-content/30 hover:text-base-content"
                       }`}
                     >
                       <span
@@ -927,8 +1050,8 @@ function StaffDetailPage() {
                           isCurrent
                             ? "bg-primary-content text-primary"
                             : isCompleted
-                            ? "bg-emerald-500 text-white"
-                            : "bg-base-200 text-base-content/70"
+                              ? "bg-emerald-500 text-white"
+                              : "bg-base-200 text-base-content/70"
                         }`}
                       >
                         {isCompleted ? "✓" : idx + 1}
@@ -947,8 +1070,9 @@ function StaffDetailPage() {
                   <h3 className="font-semibold text-base text-base-content">
                     Personal Details
                   </h3>
-                  <p className="text-xs text-base-content/60">
-                    Primary identity, contact details, and demographic background
+                  <p className=" text-base-content/80">
+                    Primary identity, contact details, and demographic
+                    background
                   </p>
                 </div>
 
@@ -1019,7 +1143,9 @@ function StaffDetailPage() {
                       <option value="male">Male</option>
                       <option value="female">Female</option>
                       <option value="other">Other</option>
-                      <option value="prefer_not_to_say">Prefer not to say</option>
+                      <option value="prefer_not_to_say">
+                        Prefer not to say
+                      </option>
                     </LocalSelect>
 
                     <SimpleInput
@@ -1046,8 +1172,9 @@ function StaffDetailPage() {
                   <h3 className="font-semibold text-base text-base-content">
                     Emergency Contact
                   </h3>
-                  <p className="text-xs text-base-content/60">
-                    Designated emergency point of contact for safety & compliance
+                  <p className=" text-base-content/80">
+                    Designated emergency point of contact for safety &
+                    compliance
                   </p>
                 </div>
 
@@ -1084,8 +1211,9 @@ function StaffDetailPage() {
                   <h3 className="font-semibold text-base text-base-content">
                     Employment & Organizational Details
                   </h3>
-                  <p className="text-xs text-base-content/60">
-                    Role assignment, department affiliation, reporting line, and status
+                  <p className=" text-base-content/80">
+                    Role assignment, department affiliation, reporting line, and
+                    status
                   </p>
                 </div>
 
@@ -1110,7 +1238,10 @@ function StaffDetailPage() {
                     >
                       <option value="">Select Department</option>
                       {departmentsList.map((dept) => (
-                        <option key={dept.id || dept.name} value={dept.id || dept.name}>
+                        <option
+                          key={dept.id || dept.name}
+                          value={dept.id || dept.name}
+                        >
                           {dept.name}
                         </option>
                       ))}
@@ -1248,7 +1379,7 @@ function StaffDetailPage() {
                         className="checkbox checkbox-primary checkbox-sm"
                         {...register("isOnProbation")}
                       />
-                      <span className="text-xs font-medium text-base-content">
+                      <span className=" font-medium text-base-content">
                         Staff member is on probation
                       </span>
                     </label>
@@ -1269,7 +1400,7 @@ function StaffDetailPage() {
                         className="checkbox checkbox-primary checkbox-sm"
                         {...register("needsSystemAccount")}
                       />
-                      <span className="text-xs font-medium text-base-content">
+                      <span className=" font-medium text-base-content">
                         Create CRM login account with this email address
                       </span>
                     </label>
@@ -1282,10 +1413,11 @@ function StaffDetailPage() {
             {currentStep === 3 && (
               <div className="card bg-base-100 border border-base-200/80 shadow-xs rounded-2xl p-6 sm:p-7 space-y-5 animate-in fade-in duration-300">
                 {/* Kinova HR Lock Banner */}
-                <div className="flex items-center gap-2.5 rounded-xl bg-warning/15 border border-warning/20 p-3.5 text-xs text-warning-content font-medium">
+                <div className="flex items-center gap-2.5 rounded-xl bg-warning/15 border border-warning/20 p-3.5  text-warning-content font-medium">
                   <Lock className="size-4 shrink-0 text-warning" />
                   <span>
-                    Restricted: visible only to users with compensation permission. Changes are audited.
+                    Restricted: visible only to users with compensation
+                    permission. Changes are audited.
                   </span>
                 </div>
 
@@ -1293,8 +1425,9 @@ function StaffDetailPage() {
                   <h3 className="font-semibold text-base text-base-content">
                     Compensation & Banking Details
                   </h3>
-                  <p className="text-xs text-base-content/60">
-                    Payroll salary configuration and disbursement banking credentials
+                  <p className=" text-base-content/80">
+                    Payroll salary configuration and disbursement banking
+                    credentials
                   </p>
                 </div>
 
@@ -1345,8 +1478,9 @@ function StaffDetailPage() {
                   <h3 className="font-semibold text-base text-base-content">
                     Documents & Credentials
                   </h3>
-                  <p className="text-xs text-base-content/60">
-                    Upload employee verification documents, contracts, and certifications
+                  <p className=" text-base-content/80">
+                    Upload employee verification documents, contracts, and
+                    certifications
                   </p>
                 </div>
 
@@ -1358,8 +1492,8 @@ function StaffDetailPage() {
                         key={doc.key}
                         className={`relative rounded-2xl border-2 border-dashed p-5 transition-all flex flex-col justify-between ${
                           uploaded
-                            ? "border-emerald-500/50 bg-emerald-500/5 shadow-xs"
-                            : "border-base-300 bg-base-100 hover:border-primary/50 hover:bg-base-200/30"
+                            ? "border-emerald-500/80 bg-emerald-500/5 shadow-xs"
+                            : "border-base-300 bg-base-100 hover:border-primary/80 hover:bg-base-200/30"
                         }`}
                       >
                         <div className="space-y-2">
@@ -1391,19 +1525,22 @@ function StaffDetailPage() {
                           </div>
 
                           <div>
-                            <h4 className="text-xs font-semibold text-base-content">
+                            <h4 className=" font-semibold text-base-content">
                               {doc.title}
                             </h4>
-                            <p className="text-[11px] text-base-content/60 mt-0.5 line-clamp-2">
+                            <p className="text-[11px] text-base-content/80 mt-0.5 line-clamp-2">
                               {doc.description}
                             </p>
                           </div>
                         </div>
 
-                        <div className="pt-4 mt-2 border-t border-base-200/60">
+                        <div className="pt-4 mt-2 border-t border-base-200/80">
                           {uploaded ? (
                             <div className="flex items-center justify-between text-[11px]">
-                              <span className="font-medium text-emerald-600 truncate max-w-[140px]" title={uploaded.name}>
+                              <span
+                                className="font-medium text-emerald-600 truncate max-w-[140px]"
+                                title={uploaded.name}
+                              >
                                 {uploaded.name}
                               </span>
                               <span className="text-base-content/40 font-mono">
@@ -1434,10 +1571,10 @@ function StaffDetailPage() {
               <div className="space-y-6 animate-in fade-in duration-300">
                 {/* Kinova HR Checklist */}
                 <div className="card bg-base-100 border border-base-200/80 p-5 rounded-2xl shadow-xs">
-                  <h4 className="text-xs font-bold uppercase tracking-wider text-base-content/70 mb-3">
+                  <h4 className=" font-bold uppercase tracking-wider text-base-content/70 mb-3">
                     Pre-Submission Readiness Checklist
                   </h4>
-                  <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs">
+                  <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 ">
                     <li className="flex items-center gap-2 text-base-content/80">
                       <span className="size-2 rounded-full bg-emerald-500" />
                       <span>Mandatory fields complete</span>
@@ -1462,7 +1599,7 @@ function StaffDetailPage() {
                 </div>
 
                 {/* Review Cards Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 ">
                   {/* Personal Summary */}
                   <div className="card bg-base-100 border border-base-200/80 p-5 rounded-2xl shadow-xs space-y-3">
                     <div className="flex items-center justify-between pb-2 border-b border-base-200">
@@ -1478,12 +1615,47 @@ function StaffDetailPage() {
                       </button>
                     </div>
                     <div className="space-y-1.5">
-                      <p><span className="text-base-content/50">Full Name:</span> <span className="font-semibold">{formValues.firstName} {formValues.middleName || ""} {formValues.lastName}</span></p>
-                      <p><span className="text-base-content/50">Email:</span> <span className="font-semibold">{formValues.email || "—"}</span></p>
-                      <p><span className="text-base-content/50">Phone:</span> <span className="font-semibold">{formValues.phone || "—"}</span></p>
-                      <p><span className="text-base-content/50">Date of Birth:</span> <span className="font-semibold font-mono">{formValues.dateOfBirth || "—"}</span></p>
-                      <p><span className="text-base-content/50">Nationality:</span> <span className="font-semibold">{formValues.nationality || "—"}</span></p>
-                      <p><span className="text-base-content/50">Address:</span> <span className="font-semibold">{formValues.residentialAddress || "—"}</span></p>
+                      <p>
+                        <span className="text-base-content/80">Full Name:</span>{" "}
+                        <span className="font-semibold">
+                          {formValues.firstName} {formValues.middleName || ""}{" "}
+                          {formValues.lastName}
+                        </span>
+                      </p>
+                      <p>
+                        <span className="text-base-content/80">Email:</span>{" "}
+                        <span className="font-semibold">
+                          {formValues.email || "—"}
+                        </span>
+                      </p>
+                      <p>
+                        <span className="text-base-content/80">Phone:</span>{" "}
+                        <span className="font-semibold">
+                          {formValues.phone || "—"}
+                        </span>
+                      </p>
+                      <p>
+                        <span className="text-base-content/80">
+                          Date of Birth:
+                        </span>{" "}
+                        <span className="font-semibold font-mono">
+                          {formValues.dateOfBirth || "—"}
+                        </span>
+                      </p>
+                      <p>
+                        <span className="text-base-content/80">
+                          Nationality:
+                        </span>{" "}
+                        <span className="font-semibold">
+                          {formValues.nationality || "—"}
+                        </span>
+                      </p>
+                      <p>
+                        <span className="text-base-content/80">Address:</span>{" "}
+                        <span className="font-semibold">
+                          {formValues.residentialAddress || "—"}
+                        </span>
+                      </p>
                     </div>
                   </div>
 
@@ -1502,9 +1674,30 @@ function StaffDetailPage() {
                       </button>
                     </div>
                     <div className="space-y-1.5">
-                      <p><span className="text-base-content/50">Contact Person:</span> <span className="font-semibold">{formValues.emergencyContactName || "—"}</span></p>
-                      <p><span className="text-base-content/50">Relationship:</span> <span className="font-semibold">{formValues.emergencyContactRelationship || "—"}</span></p>
-                      <p><span className="text-base-content/50">Emergency Phone:</span> <span className="font-semibold">{formValues.emergencyContactPhone || "—"}</span></p>
+                      <p>
+                        <span className="text-base-content/80">
+                          Contact Person:
+                        </span>{" "}
+                        <span className="font-semibold">
+                          {formValues.emergencyContactName || "—"}
+                        </span>
+                      </p>
+                      <p>
+                        <span className="text-base-content/80">
+                          Relationship:
+                        </span>{" "}
+                        <span className="font-semibold">
+                          {formValues.emergencyContactRelationship || "—"}
+                        </span>
+                      </p>
+                      <p>
+                        <span className="text-base-content/80">
+                          Emergency Phone:
+                        </span>{" "}
+                        <span className="font-semibold">
+                          {formValues.emergencyContactPhone || "—"}
+                        </span>
+                      </p>
                     </div>
                   </div>
 
@@ -1523,13 +1716,53 @@ function StaffDetailPage() {
                       </button>
                     </div>
                     <div className="space-y-1.5">
-                      <p><span className="text-base-content/50">Employee ID:</span> <span className="font-semibold font-mono">{formValues.employeeNumber || "Auto-assigned"}</span></p>
-                      <p><span className="text-base-content/50">Department:</span> <span className="font-semibold">{currentDept}</span></p>
-                      <p><span className="text-base-content/50">Job Title:</span> <span className="font-semibold">{currentJob}</span></p>
-                      <p><span className="text-base-content/50">Type / Status:</span> <span className="font-semibold">{formValues.employeeType} · {formValues.employmentStatus}</span></p>
-                      <p><span className="text-base-content/50">Location / Grade:</span> <span className="font-semibold">{formValues.workLocation} · {formValues.grade}</span></p>
-                      <p><span className="text-base-content/50">Manager:</span> <span className="font-semibold">{currentManager}</span></p>
-                      <p><span className="text-base-content/50">Start Date:</span> <span className="font-semibold font-mono">{formValues.startDate || "—"}</span></p>
+                      <p>
+                        <span className="text-base-content/80">
+                          Employee ID:
+                        </span>{" "}
+                        <span className="font-semibold font-mono">
+                          {formValues.employeeNumber || "Auto-assigned"}
+                        </span>
+                      </p>
+                      <p>
+                        <span className="text-base-content/80">
+                          Department:
+                        </span>{" "}
+                        <span className="font-semibold">{currentDept}</span>
+                      </p>
+                      <p>
+                        <span className="text-base-content/80">Job Title:</span>{" "}
+                        <span className="font-semibold">{currentJob}</span>
+                      </p>
+                      <p>
+                        <span className="text-base-content/80">
+                          Type / Status:
+                        </span>{" "}
+                        <span className="font-semibold">
+                          {formValues.employeeType} ·{" "}
+                          {formValues.employmentStatus}
+                        </span>
+                      </p>
+                      <p>
+                        <span className="text-base-content/80">
+                          Location / Grade:
+                        </span>{" "}
+                        <span className="font-semibold">
+                          {formValues.workLocation} · {formValues.grade}
+                        </span>
+                      </p>
+                      <p>
+                        <span className="text-base-content/80">Manager:</span>{" "}
+                        <span className="font-semibold">{currentManager}</span>
+                      </p>
+                      <p>
+                        <span className="text-base-content/80">
+                          Start Date:
+                        </span>{" "}
+                        <span className="font-semibold font-mono">
+                          {formValues.startDate || "—"}
+                        </span>
+                      </p>
                     </div>
                   </div>
 
@@ -1548,11 +1781,49 @@ function StaffDetailPage() {
                       </button>
                     </div>
                     <div className="space-y-1.5">
-                      <p><span className="text-base-content/50">Basic Salary:</span> <span className="font-bold text-sm text-base-content">{formatSalary(formValues.basicSalary ? Number(formValues.basicSalary) : undefined)}</span></p>
-                      <p><span className="text-base-content/50">Pay Frequency:</span> <span className="font-semibold capitalize">{formValues.payFrequency}</span></p>
-                      <p><span className="text-base-content/50">Bank:</span> <span className="font-semibold">{formValues.bankName || "—"}</span></p>
-                      <p><span className="text-base-content/50">NUBAN Account:</span> <span className="font-mono font-semibold">{formValues.bankAccountNumber || "—"}</span></p>
-                      <p className="pt-1"><span className="text-base-content/50">Attached Files:</span> <span className="font-semibold text-emerald-600">{Object.keys(uploadedDocs).length} document(s) uploaded</span></p>
+                      <p>
+                        <span className="text-base-content/80">
+                          Basic Salary:
+                        </span>{" "}
+                        <span className="font-bold text-sm text-base-content">
+                          {formatSalary(
+                            formValues.basicSalary
+                              ? Number(formValues.basicSalary)
+                              : undefined,
+                          )}
+                        </span>
+                      </p>
+                      <p>
+                        <span className="text-base-content/80">
+                          Pay Frequency:
+                        </span>{" "}
+                        <span className="font-semibold capitalize">
+                          {formValues.payFrequency}
+                        </span>
+                      </p>
+                      <p>
+                        <span className="text-base-content/80">Bank:</span>{" "}
+                        <span className="font-semibold">
+                          {formValues.bankName || "—"}
+                        </span>
+                      </p>
+                      <p>
+                        <span className="text-base-content/80">
+                          NUBAN Account:
+                        </span>{" "}
+                        <span className="font-mono font-semibold">
+                          {formValues.bankAccountNumber || "—"}
+                        </span>
+                      </p>
+                      <p className="pt-1">
+                        <span className="text-base-content/80">
+                          Attached Files:
+                        </span>{" "}
+                        <span className="font-semibold text-emerald-600">
+                          {Object.keys(uploadedDocs).length} document(s)
+                          uploaded
+                        </span>
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -1564,16 +1835,22 @@ function StaffDetailPage() {
               {currentStep === 0 ? (
                 <button
                   type="button"
-                  onClick={() => (!isNew ? setActiveTab("view") : navigate({ to: "/hr/staffs" }))}
-                  className="btn btn-ghost border border-base-300 rounded-xl px-5 text-xs font-medium"
+                  onClick={() =>
+                    !isNew
+                      ? setActiveTab("view")
+                      : navigate({ to: "/hr/staffs" })
+                  }
+                  className="btn btn-ghost border border-base-300 rounded-xl px-5  font-medium"
                 >
                   Cancel
                 </button>
               ) : (
                 <button
                   type="button"
-                  onClick={() => setCurrentStep((prev) => Math.max(0, prev - 1))}
-                  className="btn btn-outline border-base-300 rounded-xl px-5 text-xs font-medium gap-1.5"
+                  onClick={() =>
+                    setCurrentStep((prev) => Math.max(0, prev - 1))
+                  }
+                  className="btn btn-outline border-base-300 rounded-xl px-5  font-medium gap-1.5"
                 >
                   <ArrowLeft className="size-3.5" /> Back
                 </button>
@@ -1583,7 +1860,7 @@ function StaffDetailPage() {
                 <button
                   type="button"
                   onClick={handleContinue}
-                  className="btn btn-primary rounded-xl px-6 text-xs font-semibold gap-1.5 shadow-sm"
+                  className="btn btn-primary rounded-xl px-6  font-semibold gap-1.5 shadow-sm"
                 >
                   <span>Continue</span>
                   <ArrowRight className="size-3.5" />
@@ -1592,7 +1869,7 @@ function StaffDetailPage() {
                 <button
                   type="submit"
                   disabled={isPending}
-                  className="btn btn-primary rounded-xl px-7 text-xs font-semibold gap-2 shadow-sm"
+                  className="btn btn-primary rounded-xl px-7  font-semibold gap-2 shadow-sm"
                 >
                   {isPending ? (
                     <Loader2 className="size-4 animate-spin" />

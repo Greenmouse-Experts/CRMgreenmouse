@@ -287,7 +287,7 @@ function DashboardPanel({
         <div>
           <h2 className="font-semibold text-base-content">{title}</h2>
           {description && (
-            <p className="mt-1  text-base-content/60">{description}</p>
+            <p className="mt-1  text-base-content/80">{description}</p>
           )}
         </div>
         {action}
@@ -490,18 +490,18 @@ export default function HrDashboard() {
                 </span>
                 <span className="min-w-0 flex-1">
                   <span className="flex flex-wrap items-center gap-x-2 gap-y-0.5">
-                    <span className=" font-medium text-base-content/60">
+                    <span className=" font-medium text-base-content/80">
                       {item.type}:
                     </span>
                     <span className=" font-semibold text-base-content">
                       {item.person}
                     </span>
                   </span>
-                  <span className="block truncate text-sm  text-base-content/60">
+                  <span className="block truncate text-sm  text-base-content/80">
                     {item.detail}
                   </span>
                 </span>
-                <span className="shrink-0  text-base-content/50">
+                <span className="shrink-0  text-base-content/80">
                   {item.age}
                 </span>
               </Link>
@@ -628,14 +628,14 @@ export default function HrDashboard() {
                   <span className="block truncate text-sm font-medium">
                     {milestone.name}
                   </span>
-                  <span className="block  text-base-content/60">
+                  <span className="block  text-base-content/80">
                     {milestone.detail}
                   </span>
                 </span>
                 {milestone.icon === "cake" ? (
                   <Cake className="size-4 text-secondary" />
                 ) : (
-                  <FileText className="size-4 text-base-content/50" />
+                  <FileText className="size-4 text-base-content/80" />
                 )}
               </div>
             ))}
@@ -645,7 +645,7 @@ export default function HrDashboard() {
         <DashboardPanel
           title="Recent HR activity"
           description="Latest updates from your team"
-          action={<Activity className="size-4 text-base-content/50" />}
+          action={<Activity className="size-4 text-base-content/80" />}
         >
           <ol className="mt-3 divide-y divide-base-200">
             {recentActivity.map((item, index) => (
@@ -654,7 +654,7 @@ export default function HrDashboard() {
                   className={`mt-1 flex size-6 shrink-0 items-center justify-center rounded-full ${
                     index === 0
                       ? "bg-success/10 text-success"
-                      : "bg-base-200 text-base-content/50"
+                      : "bg-base-200 text-base-content/80"
                   }`}
                 >
                   {index === 0 ? (
@@ -668,7 +668,7 @@ export default function HrDashboard() {
                 <span className="min-w-0 flex-1 text-sm leading-5 text-base-content/80">
                   {item.text}
                 </span>
-                <span className="shrink-0 pt-0.5  text-base-content/50">
+                <span className="shrink-0 pt-0.5  text-base-content/80">
                   {item.time}
                 </span>
               </li>

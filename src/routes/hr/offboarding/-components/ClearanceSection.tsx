@@ -46,21 +46,21 @@ export default function ClearanceSection({
     switch (status) {
       case "Completed":
         return (
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-semibold text-emerald-700 border border-emerald-200">
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-0.5  font-semibold text-emerald-700 border border-emerald-200">
             <span className="size-1.5 rounded-full bg-emerald-500" />
             Completed
           </span>
         );
       case "In Progress":
         return (
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-blue-50 px-2.5 py-0.5 text-xs font-semibold text-blue-700 border border-blue-200">
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-blue-50 px-2.5 py-0.5  font-semibold text-blue-700 border border-blue-200">
             <span className="size-1.5 rounded-full bg-blue-500 animate-pulse" />
             In Progress
           </span>
         );
       case "Scheduled":
         return (
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-purple-50 px-2.5 py-0.5 text-xs font-semibold text-purple-700 border border-purple-200">
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-purple-50 px-2.5 py-0.5  font-semibold text-purple-700 border border-purple-200">
             <Clock className="size-3" />
             Scheduled
           </span>
@@ -68,7 +68,7 @@ export default function ClearanceSection({
       case "Pending":
       default:
         return (
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-50 px-2.5 py-0.5 text-xs font-semibold text-amber-700 border border-amber-200">
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-50 px-2.5 py-0.5  font-semibold text-amber-700 border border-amber-200">
             <span className="size-1.5 rounded-full bg-amber-500" />
             Pending
           </span>
@@ -110,11 +110,9 @@ export default function ClearanceSection({
       label: "Item / Task",
       render: (itemText: string, row: ClearanceItem) => (
         <div className="space-y-0.5">
-          <div className="font-semibold text-xs text-base-content">
-            {itemText}
-          </div>
+          <div className="font-semibold  text-base-content">{itemText}</div>
           {row.notes && (
-            <div className="text-[11px] text-base-content/50 max-w-sm line-clamp-1">
+            <div className="text-[11px] text-base-content/80 max-w-sm line-clamp-1">
               {row.notes}
             </div>
           )}
@@ -125,9 +123,7 @@ export default function ClearanceSection({
       key: "owner",
       label: "Owner / Assignee",
       render: (owner: string) => (
-        <span className="text-xs font-medium text-base-content/80">
-          {owner}
-        </span>
+        <span className=" font-medium text-base-content/80">{owner}</span>
       ),
     },
     {
@@ -139,7 +135,7 @@ export default function ClearanceSection({
       key: "dueDate",
       label: "Due Date",
       render: (date?: string) => (
-        <span className="text-xs text-base-content/60">
+        <span className=" text-base-content/80">
           {date
             ? new Date(date).toLocaleDateString("en-US", {
                 month: "short",
@@ -187,11 +183,11 @@ export default function ClearanceSection({
             <h2 className="text-lg font-bold text-base-content">
               Clearance Checklist
             </h2>
-            <span className="badge badge-sm badge-ghost text-xs font-semibold">
+            <span className="badge badge-sm badge-ghost  font-semibold">
               {completedCount} of {items.length} cleared
             </span>
           </div>
-          <p className="text-xs text-base-content/60 mt-0.5">
+          <p className=" text-base-content/80 mt-0.5">
             Inter-departmental sign-offs required for {employeeName} before
             final settlement.
           </p>
@@ -216,10 +212,10 @@ export default function ClearanceSection({
               key={dept}
               type="button"
               onClick={() => setSelectedDept(dept)}
-              className={`px-3 py-1 text-xs font-semibold rounded-lg transition-all ${
+              className={`px-3 py-1  font-semibold rounded-lg transition-all ${
                 selectedDept === dept
                   ? "bg-primary text-white shadow-2xs"
-                  : "text-base-content/60 hover:bg-base-200"
+                  : "text-base-content/80 hover:bg-base-200"
               }`}
             >
               {dept}
@@ -235,7 +231,7 @@ export default function ClearanceSection({
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             placeholder="Search task or owner..."
-            className="input input-sm input-bordered w-full pl-9 text-xs rounded-xl bg-base-200/50"
+            className="input input-sm input-bordered w-full pl-9  rounded-xl bg-base-200/80"
           />
         </div>
       </div>
