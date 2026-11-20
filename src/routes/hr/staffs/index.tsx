@@ -27,7 +27,11 @@ const UNKNOWN = "—";
 
 const titleCase = (value?: string) =>
   value
-    ? value.charAt(0).toUpperCase() + value.slice(1).toLowerCase()
+    ? value
+        .trim()
+        .split(/\s+/)
+        .map((w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+        .join(" ")
     : UNKNOWN;
 
 const relationName = (
@@ -41,7 +45,12 @@ const relationName = (
 };
 
 const toUiEmployee = (employee: EmployeeRecord): Employee => {
-  const statusKey = employee.status?.toLowerCase();
+  const rawStatus =
+    employee.employmentStatus ||
+    employee.status ||
+    (employee.isDraft ? "Draft" : "Active");
+
+  const statusKey = rawStatus?.toLowerCase();
   const status =
     statusKey === "inactive" || statusKey === "suspended"
       ? "Suspended"
@@ -51,34 +60,84 @@ const toUiEmployee = (employee: EmployeeRecord): Employee => {
           ? "Notice Period"
           : statusKey === "active"
             ? "Active"
-            : titleCase(employee.status);
+            : statusKey === "draft"
+              ? "Draft"
+              : titleCase(rawStatus);
 
   const firstName = employee.firstName ?? employee.first_name ?? "";
+  const middleName = employee.middleName ?? employee.middle_name ?? "";
   const lastName = employee.lastName ?? employee.last_name ?? "";
+
+  const constructedName = [firstName, middleName, lastName]
+    .filter(Boolean)
+    .join(" ")
+    .trim();
+
   const name =
-    (employee.name ?? employee.fullName ?? `${firstName} ${lastName}`.trim()) ||
+    employee.name ??
+    employee.fullName ??
+    (constructedName ? titleCase(constructedName) : employee.email || UNKNOWN);
+
+  const empNumber =
+    employee.employeeNumber ||
+    employee.employee_number ||
+    (employee.id && employee.id.length > 8 ? employee.id.slice(0, 8) : employee.id) ||
     UNKNOWN;
+
+  const rawTitle = relationName(
+    employee.position ?? employee.role,
+    employee.positionName ?? employee.position_name ?? employee.jobTitle,
+  );
+  const title = rawTitle !== UNKNOWN ? titleCase(rawTitle) : UNKNOWN;
+
+  const rawDept = relationName(
+    employee.department,
+    employee.departmentName ?? employee.department_name,
+  );
+  const dept =
+    rawDept.toLowerCase() === "qa"
+      ? "QA"
+      : rawDept.toLowerCase() === "hr"
+        ? "HR"
+        : rawDept.toLowerCase() === "it"
+          ? "IT"
+          : rawDept !== UNKNOWN
+            ? titleCase(rawDept)
+            : UNKNOWN;
+
+  const rawType =
+    employee.employeeType ??
+    employee.employmentType ??
+    employee.employment_type ??
+    UNKNOWN;
+  const type = rawType !== UNKNOWN ? titleCase(rawType) : UNKNOWN;
+
+  const rawLocation =
+    employee.workLocation ??
+    employee.location ??
+    employee.work_location ??
+    UNKNOWN;
+  const location = rawLocation !== UNKNOWN ? titleCase(rawLocation) : UNKNOWN;
 
   return {
     id: employee.id || employee._id || UNKNOWN,
+    employeeNumber: empNumber,
     name,
+    firstName,
+    middleName,
+    lastName,
     email: employee.email ?? UNKNOWN,
     phone:
-      employee.phoneNumber ||
       employee.phone ||
+      employee.phoneNumber ||
       employee.phone_number ||
       UNKNOWN,
-    title: relationName(
-      employee.position ?? employee.role,
-      employee.positionName ?? employee.position_name ?? employee.jobTitle,
-    ),
-    dept: relationName(
-      employee.department,
-      employee.departmentName ?? employee.department_name,
-    ),
-    location: employee.location || UNKNOWN,
-    type: titleCase(employee.employmentType ?? employee.employment_type),
+    title,
+    dept,
+    location,
+    type,
     status,
+    isDraft: Boolean(employee.isDraft),
     onLeave: Boolean(employee.onLeave || employee.isOnLeave),
     manager:
       relationName(employee.manager) === UNKNOWN
@@ -89,6 +148,12 @@ const toUiEmployee = (employee: EmployeeRecord): Employee => {
       employee.start_date?.slice(0, 10) ||
       employee.createdAt?.slice(0, 10),
     grade: employee.grade,
+    salary:
+      employee.basicSalary !== undefined
+        ? Number(employee.basicSalary)
+        : employee.salary !== undefined
+          ? Number(employee.salary)
+          : undefined,
   };
 };
 

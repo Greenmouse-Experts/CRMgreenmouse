@@ -27,30 +27,75 @@ export default function EmployeeTableView({
       render: (_value: string, emp: Employee) => (
         <div className="flex items-center gap-3">
           <EmployeeAvatar name={emp.name} size="sm" />
-          <div>
-            <p className="font-semibold text-base-content">{emp.name}</p>
-            <p className="text-xs text-base-content/60">{emp.title}</p>
+          <div className="min-w-0">
+            <div className="flex items-center gap-1.5">
+              <p className="font-semibold text-base-content truncate">
+                {emp.name}
+              </p>
+              {emp.isDraft && (
+                <span className="badge badge-xs badge-warning font-semibold text-[10px]">
+                  Draft
+                </span>
+              )}
+            </div>
+            <div className="flex items-center gap-1.5 text-xs text-base-content/60 truncate">
+              {emp.title !== "—" && <span>{emp.title}</span>}
+              {emp.title !== "—" && emp.email !== "—" && <span>·</span>}
+              {emp.email !== "—" && (
+                <span className="truncate">{emp.email}</span>
+              )}
+            </div>
           </div>
         </div>
       ),
     },
     {
-      key: "id",
-      label: "ID",
+      key: "employeeNumber",
+      label: "Employee ID",
+      render: (_value: string, emp: Employee) => (
+        <span className="bg-base-200/80 px-2 py-0.5 rounded-md font-mono text-xs text-base-content/80 font-medium">
+          {emp.employeeNumber ||
+            (emp.id && emp.id.length > 8 ? emp.id.slice(0, 8) : emp.id)}
+        </span>
+      ),
+    },
+    {
+      key: "dept",
+      label: "Department",
       render: (value: string) => (
-        <span className="bg-base-200/60 px-2 py-0.5 rounded-md font-mono text-xs text-base-content/70">
+        <span className="font-medium text-xs text-base-content/80">
           {value}
         </span>
       ),
     },
-    { key: "dept", label: "Department" },
-    { key: "type", label: "Type" },
-    { key: "location", label: "Location" },
+    {
+      key: "type",
+      label: "Type",
+      render: (value: string) => (
+        <span className="text-xs text-base-content/70">{value}</span>
+      ),
+    },
+    {
+      key: "location",
+      label: "Location",
+      render: (value: string) => (
+        <span className="text-xs text-base-content/70">{value}</span>
+      ),
+    },
     {
       key: "status",
       label: "Status",
       render: (_value: string, emp: Employee) => (
         <EmployeeStatusBadge status={emp.status} onLeave={emp.onLeave} />
+      ),
+    },
+    {
+      key: "start",
+      label: "Start Date",
+      render: (value: string) => (
+        <span className="font-mono text-xs text-base-content/60">
+          {value || "—"}
+        </span>
       ),
     },
     {

@@ -3,6 +3,7 @@ export type EmploymentStatus =
   | "Probation"
   | "Notice Period"
   | "Suspended"
+  | "Draft"
   | string;
 
 export type EmploymentType =
@@ -14,19 +15,24 @@ export type EmploymentType =
 
 export interface Employee {
   id: string;
+  employeeNumber?: string;
   name: string;
+  firstName?: string;
+  middleName?: string;
+  lastName?: string;
   email: string;
+  phone?: string;
   title: string;
   dept: string;
   location: string;
   type: EmploymentType;
   status: EmploymentStatus;
+  isDraft?: boolean;
   onLeave: boolean;
   manager?: string;
   start?: string;
   salary?: number;
   grade?: string;
-  phone?: string;
   birthday?: string;
 }
 
