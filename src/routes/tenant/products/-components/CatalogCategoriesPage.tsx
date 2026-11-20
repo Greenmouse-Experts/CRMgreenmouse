@@ -127,7 +127,7 @@ export default function CatalogCategoriesPage({
           </div>
           <div>
             <div className="font-semibold text-base-content">{item.name}</div>
-            <div className=" text-base-content/60">
+            <div className=" text-base-content/80">
               {item.description || "No description"}
             </div>
           </div>

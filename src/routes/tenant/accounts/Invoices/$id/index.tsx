@@ -206,7 +206,7 @@ function RouteComponent() {
                         <tr>
                           <td
                             colSpan={4}
-                            className="text-center py-4 text-base-content/60"
+                            className="text-center py-4 text-base-content/80"
                           >
                             No items recorded.
                           </td>

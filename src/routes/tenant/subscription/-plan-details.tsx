@@ -56,7 +56,7 @@ export default function PlanDetails({
             ))}
           </dl>
         ) : (
-          <p className="text-base-content/60">No limits listed.</p>
+          <p className="text-base-content/80">No limits listed.</p>
         )}
         {typeof plan.trialDays === "number" && (
           <p className=" text-base-content/70">

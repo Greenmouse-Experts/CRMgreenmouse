@@ -147,7 +147,7 @@ export default function IncomeTable() {
         }
         return (
           <span
-            className={`badge badge-soft ring ring-current/50 text-[10px] uppercase font-semibold badge-sm ${badge}`}
+            className={`badge badge-soft ring ring-current/50  uppercase font-semibold badge-sm ${badge}`}
           >
             {value || "Pending"}
           </span>
@@ -158,7 +158,7 @@ export default function IncomeTable() {
       key: "description",
       label: "Description",
       render: (value: string) => (
-        <span className=" text-base-content/60 max-w-xs truncate block">
+        <span className=" text-base-content/80 max-w-xs truncate block">
           {value || "—"}
         </span>
       ),

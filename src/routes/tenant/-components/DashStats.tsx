@@ -54,7 +54,7 @@ export default function DashStats() {
               <div className="p-2.5 bg-base-200 rounded-full w-fit mx-auto text-base-content/40">
                 <DollarSign className="size-5" />
               </div>
-              <p className=" font-medium text-base-content/60">
+              <p className=" font-medium text-base-content/80">
                 No income records yet
               </p>
               <Link
@@ -76,7 +76,7 @@ export default function DashStats() {
                 return (
                   <li
                     key={item.id}
-                    className="flex items-center justify-between p-2.5 rounded-xl hover:bg-base-200/60 transition-colors"
+                    className="flex items-center justify-between p-2.5 rounded-xl hover:bg-base-200/80 transition-colors"
                   >
                     <div className="flex items-center gap-3 min-w-0">
                       <div className="size-9 rounded-full bg-success/10 text-success flex items-center justify-center shrink-0">
@@ -86,7 +86,7 @@ export default function DashStats() {
                         <p className="text-sm font-semibold truncate text-base-content">
                           {item.source || item.category?.name || "Income"}
                         </p>
-                        <p className=" text-base-content/60">{dateStr}</p>
+                        <p className=" text-base-content/80">{dateStr}</p>
                       </div>
                     </div>
                     <div className="text-right shrink-0 ml-3">
@@ -98,7 +98,7 @@ export default function DashStats() {
                         })}
                       </span>
                       {item.status && (
-                        <p className="text-[10px] text-base-content/50 uppercase font-medium">
+                        <p className=" text-base-content/50 uppercase font-medium">
                           {item.status}
                         </p>
                       )}
@@ -152,7 +152,7 @@ export default function DashStats() {
               <div className="p-2.5 bg-base-200 rounded-full w-fit mx-auto text-base-content/40">
                 <DollarSign className="size-5" />
               </div>
-              <p className=" font-medium text-base-content/60">
+              <p className=" font-medium text-base-content/80">
                 No expense records yet
               </p>
               <Link
@@ -174,7 +174,7 @@ export default function DashStats() {
                 return (
                   <li
                     key={item.id}
-                    className="flex items-center justify-between p-2.5 rounded-xl hover:bg-base-200/60 transition-colors"
+                    className="flex items-center justify-between p-2.5 rounded-xl hover:bg-base-200/80 transition-colors"
                   >
                     <div className="flex items-center gap-3 min-w-0">
                       <div className="size-9 rounded-full bg-error/10 text-error flex items-center justify-center shrink-0">
@@ -184,7 +184,7 @@ export default function DashStats() {
                         <p className="text-sm font-semibold truncate text-base-content">
                           {item.paidTo || item.category?.name || "Expense"}
                         </p>
-                        <p className=" text-base-content/60">{dateStr}</p>
+                        <p className=" text-base-content/80">{dateStr}</p>
                       </div>
                     </div>
                     <div className="text-right shrink-0 ml-3">
@@ -196,7 +196,7 @@ export default function DashStats() {
                         })}
                       </span>
                       {item.status && (
-                        <p className="text-[10px] text-base-content/50 uppercase font-medium">
+                        <p className=" text-base-content/50 uppercase font-medium">
                           {item.status}
                         </p>
                       )}

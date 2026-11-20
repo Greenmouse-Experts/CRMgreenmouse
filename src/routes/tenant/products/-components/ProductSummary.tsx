@@ -60,7 +60,7 @@ const ProductSummary: React.FC<ProductSummaryProps> = ({ products }) => {
         >
           <div className="flex items-center justify-between">
             <div>
-              <p className=" font-medium text-base-content/60 uppercase tracking-wider">
+              <p className=" font-medium text-base-content/80 uppercase tracking-wider">
                 {stat.title}
               </p>
               <h3 className="text-2xl font-semibold text-base-content mt-1">

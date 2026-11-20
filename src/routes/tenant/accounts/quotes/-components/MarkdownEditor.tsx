@@ -178,7 +178,7 @@ export default function MarkdownEditor() {
                 {field.value}
               </ReactMarkdown>
             ) : (
-              <p className="text-base-content/60">
+              <p className="text-base-content/80">
                 Your formatted description will appear here.
               </p>
             )}

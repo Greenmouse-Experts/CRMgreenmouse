@@ -18,10 +18,13 @@ interface QuoteFormValues {
 }
 
 function errorMessage(error: unknown) {
-  const message = (error as { response?: { data?: { message?: string | string[] } } })
-    ?.response?.data?.message;
-  return (Array.isArray(message) ? message.join(". ") : message) ||
-    "Failed to save quote. Please try again.";
+  const message = (
+    error as { response?: { data?: { message?: string | string[] } } }
+  )?.response?.data?.message;
+  return (
+    (Array.isArray(message) ? message.join(". ") : message) ||
+    "Failed to save quote. Please try again."
+  );
 }
 
 export default function QuoteForm({ quote }: { quote?: Quote }) {
@@ -79,14 +82,18 @@ export default function QuoteForm({ quote }: { quote?: Quote }) {
         <section className="space-y-4">
           <div>
             <h2 className="text-base font-semibold">Quote details</h2>
-            <p className="text-sm text-base-content/60">Set the quote dates, amount, and current status.</p>
+            <p className="text-sm text-base-content/80">
+              Set the quote dates, amount, and current status.
+            </p>
           </div>
           <div className="grid gap-4 sm:grid-cols-2">
             <SimpleInput
               label="Quote date"
               type="date"
               required
-              {...methods.register("date", { required: "Quote date is required" })}
+              {...methods.register("date", {
+                required: "Quote date is required",
+              })}
             />
             <SimpleInput
               label="Expiry date"
@@ -94,7 +101,8 @@ export default function QuoteForm({ quote }: { quote?: Quote }) {
               min={methods.watch("date")}
               {...methods.register("expiresAt", {
                 validate: (value) =>
-                  !value || value >= methods.getValues("date") ||
+                  !value ||
+                  value >= methods.getValues("date") ||
                   "Expiry date must be on or after the quote date",
               })}
             />
@@ -120,9 +128,12 @@ export default function QuoteForm({ quote }: { quote?: Quote }) {
               <option value="accepted">Accepted</option>
               <option value="rejected">Rejected</option>
               <option value="expired">Expired</option>
-              {status && !["draft", "sent", "accepted", "rejected", "expired"].includes(status) && (
-                <option value={status}>{status.replaceAll("_", " ")}</option>
-              )}
+              {status &&
+                !["draft", "sent", "accepted", "rejected", "expired"].includes(
+                  status,
+                ) && (
+                  <option value={status}>{status.replaceAll("_", " ")}</option>
+                )}
             </LocalSelect>
           </div>
         </section>
@@ -130,7 +141,9 @@ export default function QuoteForm({ quote }: { quote?: Quote }) {
         <section className="space-y-4 border-t border-base-200 pt-5">
           <div>
             <h2 className="text-base font-semibold">Client and scope</h2>
-            <p className="text-sm text-base-content/60">Describe the work and any terms the client should see.</p>
+            <p className="text-sm text-base-content/80">
+              Describe the work and any terms the client should see.
+            </p>
           </div>
           <SimpleInput
             label="Client name"
@@ -149,11 +162,14 @@ export default function QuoteForm({ quote }: { quote?: Quote }) {
               required
               {...methods.register("description", {
                 required: "Description is required",
-                validate: (value) => !!value.trim() || "Description is required",
+                validate: (value) =>
+                  !!value.trim() || "Description is required",
               })}
             />
             {methods.formState.errors.description && (
-              <p className="mt-1 text-sm text-error">{methods.formState.errors.description.message}</p>
+              <p className="mt-1 text-sm text-error">
+                {methods.formState.errors.description.message}
+              </p>
             )}
           </div>
           <SimpleTextArea

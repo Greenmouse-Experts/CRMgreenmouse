@@ -117,7 +117,7 @@ function RouteComponent() {
         else if (s === "overdue") badgeClass = "badge-error badge-soft";
         return (
           <span
-            className={`badge badge-sm font-semibold uppercase text-[10px] ${badgeClass}`}
+            className={`badge badge-sm font-semibold uppercase  ${badgeClass}`}
           >
             {status || "Draft"}
           </span>
@@ -137,7 +137,7 @@ function RouteComponent() {
               {name}
             </div>
             {item.contact?.email && (
-              <div className=" text-base-content/60">{item.contact.email}</div>
+              <div className=" text-base-content/80">{item.contact.email}</div>
             )}
           </div>
         );

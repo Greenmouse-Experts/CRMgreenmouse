@@ -265,7 +265,7 @@ function RouteComponent() {
         <div className="flex items-center gap-3">
           <div>
             <div className="font-semibold text-base-content">{item.name}</div>
-            <div className=" text-base-content/60 line-clamp-1 max-w-[200px]">
+            <div className=" text-base-content/80 line-clamp-1 max-w-[200px]">
               {item.description || "No description"}
             </div>
           </div>
@@ -764,7 +764,7 @@ function RouteComponent() {
 
             <div className="grid grid-cols-2 gap-4 text-sm">
               <div className="p-3 bg-base-200/30 rounded-lg">
-                <span className=" text-base-content/60 block">
+                <span className=" text-base-content/80 block">
                   Selling Price
                 </span>
                 <span className="font-semibold text-base-content text-base">
@@ -772,13 +772,13 @@ function RouteComponent() {
                 </span>
               </div>
               <div className="p-3 bg-base-200/30 rounded-lg">
-                <span className=" text-base-content/60 block">Cost Price</span>
+                <span className=" text-base-content/80 block">Cost Price</span>
                 <span className="font-semibold text-base-content text-base">
                   ₦{Number(selectedProduct.cost || 0).toLocaleString()}
                 </span>
               </div>
               <div className="p-3 bg-base-200/30 rounded-lg">
-                <span className=" text-base-content/60 block">
+                <span className=" text-base-content/80 block">
                   Current Stock
                 </span>
                 <span className="font-semibold text-base-content text-base">
@@ -786,7 +786,7 @@ function RouteComponent() {
                 </span>
               </div>
               <div className="p-3 bg-base-200/30 rounded-lg">
-                <span className=" text-base-content/60 block">Product ID</span>
+                <span className=" text-base-content/80 block">Product ID</span>
                 <span className="font-mono  text-base-content/70">
                   {selectedProduct.id}
                 </span>

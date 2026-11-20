@@ -127,7 +127,7 @@ export function SubscriptionCallback() {
           </div>
 
           {reference && (
-            <p className="max-w-full break-all rounded-lg bg-base-200/60 px-3 py-2 font-mono  text-base-content/60">
+            <p className="max-w-full break-all rounded-lg bg-base-200/80 px-3 py-2 font-mono  text-base-content/80">
               Reference: {reference}
             </p>
           )}

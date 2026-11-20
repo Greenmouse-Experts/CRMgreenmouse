@@ -131,7 +131,7 @@ export default function ExpenseTable() {
         else if (s === "rejected") badge = "badge-error";
         return (
           <span
-            className={`badge badge-soft ring ring-current/50 text-[10px] uppercase font-semibold badge-sm ${badge}`}
+            className={`badge badge-soft ring ring-current/50  uppercase font-semibold badge-sm ${badge}`}
           >
             {value || "Approved"}
           </span>
@@ -142,7 +142,7 @@ export default function ExpenseTable() {
       key: "description",
       label: "Description",
       render: (value: string) => (
-        <span className=" text-base-content/60 max-w-xs truncate block">
+        <span className=" text-base-content/80 max-w-xs truncate block">
           {value || "—"}
         </span>
       ),

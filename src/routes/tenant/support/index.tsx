@@ -100,7 +100,7 @@ function RouteComponent() {
         <div className="flex flex-col gap-3 border-b border-base-200 p-4 sm:flex-row sm:items-center">
           <label className="input input-bordered flex items-center gap-2 w-full sm:max-w-sm">
             <Search
-              className="size-4 text-base-content/60"
+              className="size-4 text-base-content/80"
               aria-hidden="true"
             />
             <input
@@ -170,7 +170,7 @@ function RouteComponent() {
                   ? "No tickets match these filters"
                   : "No support tickets yet"}
               </h2>
-              <p className="text-sm text-base-content/60">
+              <p className="text-sm text-base-content/80">
                 {ticketsQuery.data?.length
                   ? "Try another search, module, status, or priority."
                   : "Create a ticket to start a customer support thread."}
@@ -206,7 +206,7 @@ function RouteComponent() {
                         {ticket.ticketNumber || `#${ticket.id.slice(0, 8)}`}
                       </span>
                     </div>
-                    <p className="mt-1 truncate text-sm text-base-content/60">
+                    <p className="mt-1 truncate text-sm text-base-content/80">
                       {contactName(ticket.contact)} ·{" "}
                       {ticket.assignedStaff
                         ? `Assigned to ${ticket.assignedStaff.firstName} ${ticket.assignedStaff.lastName}`

@@ -220,7 +220,7 @@ export default function InvoiceBrandingSettings() {
                 }
               }}
             />
-            <span className="mt-1  text-base-content/60">
+            <span className="mt-1  text-base-content/80">
               {logoFile
                 ? `${logoFile.name} will be uploaded when you save.`
                 : "Upload an image or enter a logo URL."}

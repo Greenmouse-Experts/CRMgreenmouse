@@ -71,12 +71,12 @@ export default function IncomeExpense() {
                 <XAxis
                   dataKey="name"
                   stroke="currentColor"
-                  className=" text-base-content/60"
+                  className=" text-base-content/80"
                 />
                 <YAxis
                   width={60}
                   stroke="currentColor"
-                  className=" text-base-content/60"
+                  className=" text-base-content/80"
                 />
                 <Tooltip
                   contentStyle={{

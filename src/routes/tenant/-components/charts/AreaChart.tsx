@@ -59,13 +59,13 @@ export default function AreaChartExample({
             dataKey="name"
             tick={{ fontSize: 12 }}
             stroke="currentColor"
-            className="text-base-content/60"
+            className="text-base-content/80"
           />
           <YAxis
             width={60}
             tick={{ fontSize: 12 }}
             stroke="currentColor"
-            className="text-base-content/60"
+            className="text-base-content/80"
           />
           <Tooltip
             formatter={(val: any) => [

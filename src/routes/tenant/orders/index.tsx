@@ -641,7 +641,7 @@ function RouteComponent() {
                 />
               )}
             />
-            <div className="rounded-lg bg-base-200/60 p-3 text-sm tabular-nums">
+            <div className="rounded-lg bg-base-200/80 p-3 text-sm tabular-nums">
               <div className="flex justify-between text-base-content/70">
                 <span>Subtotal</span>
                 <span>{formatMoney(subtotal, currency)}</span>

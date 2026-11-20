@@ -86,7 +86,7 @@ function RouteComponent() {
           </Link>
         </div>
       </form>
-      <p className=" text-base-content/60">
+      <p className=" text-base-content/80">
         These settings are stored on this browser. They do not change which
         notifications your workspace receives.
       </p>

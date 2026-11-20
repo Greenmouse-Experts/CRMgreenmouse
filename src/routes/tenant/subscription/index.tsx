@@ -262,7 +262,7 @@ function RouteComponent() {
 
         return (
           <span
-            className={`badge badge-sm font-semibold uppercase text-[10px] ${badgeClass}`}
+            className={`badge badge-sm font-semibold uppercase  ${badgeClass}`}
           >
             {status || "Completed"}
           </span>
@@ -347,14 +347,14 @@ function RouteComponent() {
                     <div className="space-y-1">
                       <div className="flex items-center gap-2">
                         <span
-                          className={`badge uppercase text-[10px] font-semibold tracking-wider ${statusBadgeClass}`}
+                          className={`badge uppercase  font-semibold tracking-wider ${statusBadgeClass}`}
                         >
                           {subscriptionStatus === "trial"
                             ? "Trial plan"
                             : "Current plan"}
                         </span>
                         {currentSub.cancelAtPeriodEnd && (
-                          <span className="badge badge-warning text-[10px] font-semibold gap-1">
+                          <span className="badge badge-warning  font-semibold gap-1">
                             <AlertCircle className="size-3" /> Cancels at period
                             end
                           </span>
@@ -416,10 +416,10 @@ function RouteComponent() {
                         <CreditCard className="size-5" />
                       </div>
                       <div>
-                        <p className=" text-base-content/60">Plan Price</p>
+                        <p className=" text-base-content/80">Plan Price</p>
                         <p className="font-semibold text-base text-base-content">
                           {formatCurrency(currentPlanPrice)}
-                          <span className=" font-normal text-base-content/60">
+                          <span className=" font-normal text-base-content/80">
                             /{currentBillingCycle === "yearly" ? "yr" : "mo"}
                           </span>
                         </p>
@@ -432,7 +432,7 @@ function RouteComponent() {
                           <Calendar className="size-5" />
                         </div>
                         <div>
-                          <p className=" text-base-content/60">Period Start</p>
+                          <p className=" text-base-content/80">Period Start</p>
                           <p className="font-semibold text-base-content">
                             {formatDate(currentSub.currentPeriodStart)}
                           </p>
@@ -445,7 +445,7 @@ function RouteComponent() {
                         <Clock className="size-5" />
                       </div>
                       <div>
-                        <p className=" text-base-content/60">
+                        <p className=" text-base-content/80">
                           {subscriptionStatus === "trial"
                             ? "Trial Ends"
                             : "Renews / Expiration"}
@@ -488,7 +488,7 @@ function RouteComponent() {
           </div>
 
           {/* Billing Cycle Switcher */}
-          <div className="flex items-center gap-3 bg-base-200/60 p-1.5 rounded-xl border border-base-200 self-start sm:self-auto">
+          <div className="flex items-center gap-3 bg-base-200/80 p-1.5 rounded-xl border border-base-200 self-start sm:self-auto">
             <button
               type="button"
               onClick={() => setBillingCycleSelection("monthly")}
@@ -510,7 +510,7 @@ function RouteComponent() {
               }`}
             >
               Yearly Billing
-              <span className="badge badge-accent badge-xs text-[9px] uppercase font-semibold">
+              <span className="badge badge-accent badge-xs  uppercase font-semibold">
                 Save
               </span>
             </button>
@@ -553,7 +553,7 @@ function RouteComponent() {
                   >
                     <div className="card-body p-6 space-y-4">
                       {isCurrent && (
-                        <div className="badge badge-primary font-semibold text-[10px] uppercase tracking-wider self-start">
+                        <div className="badge badge-primary font-semibold  uppercase tracking-wider self-start">
                           {subscriptionStatus === "trial"
                             ? "Your Trial Plan"
                             : "Your Current Plan"}
@@ -565,7 +565,7 @@ function RouteComponent() {
                           {plan.name}
                         </h4>
                         {plan.description && (
-                          <p className=" text-base-content/60 min-h-[32px] leading-relaxed">
+                          <p className=" text-base-content/80 min-h-[32px] leading-relaxed">
                             {plan.description}
                           </p>
                         )}
@@ -578,7 +578,7 @@ function RouteComponent() {
                           ) : (
                             <>
                               {formatCurrency(price)}
-                              <span className=" font-normal text-base-content/60 ml-1">
+                              <span className=" font-normal text-base-content/80 ml-1">
                                 /{billingCycle === "yearly" ? "year" : "month"}
                               </span>
                             </>

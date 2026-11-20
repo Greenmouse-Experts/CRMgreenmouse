@@ -117,7 +117,7 @@ function RouteComponent() {
                     <h2 className="text-lg font-semibold capitalize">
                       {categoryKind} categories
                     </h2>
-                    <p className="text-sm text-base-content/60">
+                    <p className="text-sm text-base-content/80">
                       {categories.length} total
                     </p>
                   </div>
@@ -130,7 +130,7 @@ function RouteComponent() {
                   </button>
                 </div>
                 {categories.length === 0 ? (
-                  <p className="rounded-lg border border-dashed border-base-300 p-6 text-sm text-base-content/60">
+                  <p className="rounded-lg border border-dashed border-base-300 p-6 text-sm text-base-content/80">
                     No {categoryKind} categories yet.
                   </p>
                 ) : (

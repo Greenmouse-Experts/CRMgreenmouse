@@ -179,7 +179,7 @@ function RouteComponent() {
             <div className="font-semibold text-base-content leading-tight">
               {item.name}
             </div>
-            <div className=" text-base-content/60 max-w-sm truncate">
+            <div className=" text-base-content/80 max-w-sm truncate">
               {item.description || "No description provided"}
             </div>
           </div>
@@ -212,7 +212,7 @@ function RouteComponent() {
       key: "createdAt",
       label: "Created",
       render: (value: string) => (
-        <span className=" text-base-content/60">
+        <span className=" text-base-content/80">
           {value ? new Date(value).toLocaleDateString() : "—"}
         </span>
       ),
@@ -367,7 +367,7 @@ function RouteComponent() {
                 <div className="relative min-w-0 flex-1">
                   <Search
                     aria-hidden="true"
-                    className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-base-content/60"
+                    className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-base-content/80"
                   />
                   <input
                     type="text"
@@ -472,7 +472,7 @@ function RouteComponent() {
                               return (
                                 <label
                                   key={perm.key}
-                                  className={`flex cursor-pointer items-start gap-3 px-4 py-3 transition-colors hover:bg-base-200/60 focus-within:bg-base-200/60 ${
+                                  className={`flex cursor-pointer items-start gap-3 px-4 py-3 transition-colors hover:bg-base-200/80 focus-within:bg-base-200/80 ${
                                     isChecked ? "bg-primary/5" : "bg-base-100"
                                   }`}
                                 >

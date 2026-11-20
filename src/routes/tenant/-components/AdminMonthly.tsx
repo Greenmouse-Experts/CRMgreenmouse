@@ -55,7 +55,7 @@ function ChartCard({
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
           <h2 className="text-base font-semibold text-base-content">{title}</h2>
-          <p className="mt-0.5  text-base-content/60">{description}</p>
+          <p className="mt-0.5  text-base-content/80">{description}</p>
         </div>
         {controls}
       </div>
@@ -85,7 +85,7 @@ function MonthlyTrend({
 
   if (!hasActivity) {
     return (
-      <div className="flex h-64 items-center justify-center text-center text-sm text-base-content/60">
+      <div className="flex h-64 items-center justify-center text-center text-sm text-base-content/80">
         No income or expenses recorded for {year}.
       </div>
     );
@@ -167,7 +167,7 @@ function CategoryPerformance({
 
   if (data.length === 0) {
     return (
-      <div className="flex h-64 items-center justify-center text-center text-sm text-base-content/60">
+      <div className="flex h-64 items-center justify-center text-center text-sm text-base-content/80">
         No {kind} categories recorded for this month.
       </div>
     );

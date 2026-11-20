@@ -83,7 +83,7 @@ export default function AdminWallet() {
         </div>
       </section>
       <div className="space-y-2">
-        <p className="text-sm text-current/60 font-semibold">Recents</p>
+        <p className="text-sm text-current/80 font-semibold">Recents</p>
         <div className="space-y-2">
           {recentTransactions
             .sort(

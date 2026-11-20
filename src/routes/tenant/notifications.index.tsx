@@ -160,7 +160,7 @@ function RouteComponent() {
                       {notification.title || "Notification"}
                     </h2>
                     <time
-                      className=" text-base-content/60"
+                      className=" text-base-content/80"
                       dateTime={notification.createdAt}
                     >
                       {notification.createdAt &&

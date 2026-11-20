@@ -90,7 +90,7 @@ function MetricCard({
           <p className="mt-2 break-words text-xl font-semibold tabular-nums text-base-content">
             {value}
           </p>
-          {detail && <p className="mt-1  text-base-content/60">{detail}</p>}
+          {detail && <p className="mt-1  text-base-content/80">{detail}</p>}
         </div>
         <div
           className={`flex size-9 shrink-0 items-center justify-center rounded-lg ${tone}`}
@@ -214,7 +214,7 @@ export default function TransactionsLedger({
             {value || "Transaction"}
           </p>
           {tx.category && (
-            <p className="truncate  text-base-content/60">{tx.category}</p>
+            <p className="truncate  text-base-content/80">{tx.category}</p>
           )}
         </div>
       ),
@@ -417,7 +417,7 @@ export default function TransactionsLedger({
       <Modal ref={detailsModalRef} title="Transaction Details">
         {selectedTx && (
           <div className="space-y-5">
-            <div className="flex items-start gap-3 rounded-xl bg-base-200/60 p-4">
+            <div className="flex items-start gap-3 rounded-xl bg-base-200/80 p-4">
               <span
                 className={`flex size-11 shrink-0 items-center justify-center rounded-lg ${signedAmount(selectedTx) >= 0 ? "bg-success/10 text-success" : "bg-error/10 text-error"}`}
               >

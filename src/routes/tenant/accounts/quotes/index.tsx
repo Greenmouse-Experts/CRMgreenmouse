@@ -142,7 +142,8 @@ function RouteComponent() {
     const clientLabel = getClientLabel(quote);
     methods.reset({
       date: quote.date?.slice(0, 10) || "",
-      clientName: quote.clientName?.trim() || (clientLabel === "—" ? "" : clientLabel),
+      clientName:
+        quote.clientName?.trim() || (clientLabel === "—" ? "" : clientLabel),
       amount: quote.amount,
       description: quote.description || "",
       status,
@@ -213,12 +214,12 @@ function RouteComponent() {
               {getClientLabel(quote)}
             </span>
             {quote.contactId && (
-              <span className="text-[10px] text-base-content/50 uppercase font-medium">
+              <span className=" text-base-content/50 uppercase font-medium">
                 Contact
               </span>
             )}
             {isCompany && (
-              <span className="text-[10px] text-base-content/50 uppercase font-medium">
+              <span className=" text-base-content/50 uppercase font-medium">
                 Company
               </span>
             )}

@@ -36,7 +36,7 @@ export default function AdminUserList() {
               <div className="font-semibold text-sm text-base-content leading-tight">
                 {fullName}
               </div>
-              <div className=" text-base-content/60">{item.email}</div>
+              <div className=" text-base-content/80">{item.email}</div>
             </div>
           </div>
         );
@@ -68,7 +68,7 @@ export default function AdminUserList() {
             className={`badge badge-sm ${
               isActive
                 ? "badge-success text-success-content"
-                : "badge-ghost text-base-content/60"
+                : "badge-ghost text-base-content/80"
             }`}
           >
             {isActive ? "Active" : "Inactive"}
@@ -80,7 +80,7 @@ export default function AdminUserList() {
       key: "createdAt",
       label: "Joined",
       render: (value: string) => (
-        <span className=" text-base-content/60">
+        <span className=" text-base-content/80">
           {value ? new Date(value).toLocaleDateString() : "—"}
         </span>
       ),

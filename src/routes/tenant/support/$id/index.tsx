@@ -278,7 +278,7 @@ function RouteComponent() {
                     </span>
                   </div>
                   {!visibleMessages.length ? (
-                    <p className="px-5 py-10 text-center text-sm text-base-content/60">
+                    <p className="px-5 py-10 text-center text-sm text-base-content/80">
                       No replies yet. Send the first update below.
                     </p>
                   ) : (
@@ -355,7 +355,7 @@ function RouteComponent() {
               >
                 <h2 className="font-semibold">Ticket details</h2>
                 <div>
-                  <p className="mb-1  font-medium text-base-content/60">
+                  <p className="mb-1  font-medium text-base-content/80">
                     Status
                   </p>
                   <select
@@ -375,7 +375,7 @@ function RouteComponent() {
                   </select>
                 </div>
                 <div>
-                  <p className="mb-1  font-medium text-base-content/60">
+                  <p className="mb-1  font-medium text-base-content/80">
                     Priority
                   </p>
                   <span
@@ -385,7 +385,7 @@ function RouteComponent() {
                   </span>
                 </div>
                 <div>
-                  <p className="mb-1  font-medium text-base-content/60">
+                  <p className="mb-1  font-medium text-base-content/80">
                     Module
                   </p>
                   <p className="text-sm">
@@ -395,7 +395,7 @@ function RouteComponent() {
                   </p>
                 </div>
                 <div>
-                  <p className="mb-1  font-medium text-base-content/60">
+                  <p className="mb-1  font-medium text-base-content/80">
                     Assigned to
                   </p>
                   <select
@@ -423,20 +423,20 @@ function RouteComponent() {
                   )}
                 </div>
                 <div>
-                  <p className="mb-1  font-medium text-base-content/60">
+                  <p className="mb-1  font-medium text-base-content/80">
                     Contact
                   </p>
                   <p className="text-sm font-medium">
                     {nameOf(ticket.contact)}
                   </p>
                   {ticket.contact?.email && (
-                    <p className="break-all  text-base-content/60">
+                    <p className="break-all  text-base-content/80">
                       {ticket.contact.email}
                     </p>
                   )}
                 </div>
                 <div>
-                  <p className="mb-1  font-medium text-base-content/60">
+                  <p className="mb-1  font-medium text-base-content/80">
                     Last updated
                   </p>
                   <p className="text-sm">{dateTime(ticket.updatedAt)}</p>
@@ -451,7 +451,7 @@ function RouteComponent() {
                     </p>
                   ) : (
                     <form onSubmit={escalate} className="space-y-2">
-                      <p className=" text-base-content/60">
+                      <p className=" text-base-content/80">
                         Share this ticket and its thread with platform support
                         when your team needs help.
                       </p>

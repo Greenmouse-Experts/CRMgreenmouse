@@ -26,7 +26,7 @@ export default function AdminRecents() {
             {value || "Transaction"}
           </div>
           {item.category && (
-            <div className=" text-base-content/60">{item.category}</div>
+            <div className=" text-base-content/80">{item.category}</div>
           )}
         </div>
       ),
@@ -82,9 +82,7 @@ export default function AdminRecents() {
           badge = "badge-error badge-soft";
         }
         return (
-          <span
-            className={`badge badge-xs uppercase font-semibold text-[10px] ${badge}`}
-          >
+          <span className={`badge badge-xs uppercase font-semibold  ${badge}`}>
             {status || "Completed"}
           </span>
         );

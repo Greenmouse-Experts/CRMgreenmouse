@@ -121,14 +121,14 @@ function RouteComponent() {
                   />
                   <div className="min-w-0 flex-1">
                     <p className="font-medium">{device}</p>
-                    <p className="mt-0.5 break-words  text-base-content/60">
+                    <p className="mt-0.5 break-words  text-base-content/80">
                       {[entry.location, entry.ipAddress]
                         .filter(Boolean)
                         .join(" · ") || "Location unavailable"}
                     </p>
                   </div>
                   <time
-                    className="shrink-0  text-base-content/60"
+                    className="shrink-0  text-base-content/80"
                     dateTime={timestamp}
                   >
                     {timestamp && !Number.isNaN(Date.parse(timestamp))
