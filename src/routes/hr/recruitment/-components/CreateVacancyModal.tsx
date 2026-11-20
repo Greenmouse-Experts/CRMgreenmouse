@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import Modal, { type ModalHandle } from "@/components/DialogModal";
 import SimpleInput from "@/components/inputs/SimpleInput";
 import LocalSelect from "@/components/inputs/LocalSelect";
+import RichTextEditor from "@/components/inputs/RichTextEditor";
 import {
   HR_DEPARTMENTS,
   HR_GRADES,
@@ -178,8 +179,8 @@ export default function CreateVacancyModal({
     >
       <div className="space-y-4">
         {/* Stepper Tabs & description */}
-        <div className="flex flex-col    gap-3 -mt-1 pb-3 border-b border-base-200">
-          <p className=" text-base-content/60">
+        <div className="flex flex-col gap-3 -mt-1 pb-3 border-b border-base-200">
+          <p className="text-base-content/60">
             Raise a requisition. It goes to the approver before it can be
             published.
           </p>
@@ -188,7 +189,7 @@ export default function CreateVacancyModal({
             <button
               type="button"
               onClick={() => setActiveTab("requisition")}
-              className={`px-3 py-1.5 rounded-lg  font-semibold transition-all ${
+              className={`px-3 py-1.5 rounded-lg font-semibold transition-all ${
                 activeTab === "requisition"
                   ? "bg-primary text-white shadow-xs"
                   : "bg-base-200 text-base-content/70 hover:bg-base-300"
@@ -199,7 +200,7 @@ export default function CreateVacancyModal({
             <button
               type="button"
               onClick={() => setActiveTab("advert")}
-              className={`px-3 py-1.5 rounded-lg  font-semibold transition-all ${
+              className={`px-3 py-1.5 rounded-lg font-semibold transition-all ${
                 activeTab === "advert"
                   ? "bg-primary text-white shadow-xs"
                   : "bg-base-200 text-base-content/70 hover:bg-base-300"
@@ -216,7 +217,7 @@ export default function CreateVacancyModal({
             <div className="space-y-4 animate-in fade-in duration-200">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="sm:col-span-2">
-                  <label className=" font-semibold text-base-content/80 mb-1 block">
+                  <label className="font-semibold text-base-content/80 mb-1 block">
                     Job title <span className="text-error">*</span>
                   </label>
                   <SimpleInput
@@ -228,7 +229,7 @@ export default function CreateVacancyModal({
                 </div>
 
                 <div>
-                  <label className=" font-semibold text-base-content/80 mb-1 block">
+                  <label className="font-semibold text-base-content/80 mb-1 block">
                     Department <span className="text-error">*</span>
                   </label>
                   <LocalSelect
@@ -244,7 +245,7 @@ export default function CreateVacancyModal({
                 </div>
 
                 <div>
-                  <label className=" font-semibold text-base-content/80 mb-1 block">
+                  <label className="font-semibold text-base-content/80 mb-1 block">
                     Job grade / level
                   </label>
                   <LocalSelect
@@ -260,7 +261,7 @@ export default function CreateVacancyModal({
                 </div>
 
                 <div>
-                  <label className=" font-semibold text-base-content/80 mb-1 block">
+                  <label className="font-semibold text-base-content/80 mb-1 block">
                     Number of openings
                   </label>
                   <input
@@ -269,12 +270,12 @@ export default function CreateVacancyModal({
                     max="50"
                     value={form.openings}
                     onChange={(e) => handleChange("openings", e.target.value)}
-                    className="input input-bordered w-full  rounded-xl bg-base-200/50"
+                    className="input input-bordered w-full rounded-xl bg-base-200/50"
                   />
                 </div>
 
                 <div>
-                  <label className=" font-semibold text-base-content/80 mb-1 block">
+                  <label className="font-semibold text-base-content/80 mb-1 block">
                     Employment type
                   </label>
                   <LocalSelect
@@ -290,7 +291,7 @@ export default function CreateVacancyModal({
                 </div>
 
                 <div>
-                  <label className=" font-semibold text-base-content/80 mb-1 block">
+                  <label className="font-semibold text-base-content/80 mb-1 block">
                     Location
                   </label>
                   <LocalSelect
@@ -306,7 +307,7 @@ export default function CreateVacancyModal({
                 </div>
 
                 <div>
-                  <label className=" font-semibold text-base-content/80 mb-1 block">
+                  <label className="font-semibold text-base-content/80 mb-1 block">
                     Reason for hiring
                   </label>
                   <LocalSelect
@@ -322,7 +323,7 @@ export default function CreateVacancyModal({
                 </div>
 
                 <div className="sm:col-span-2">
-                  <label className=" font-semibold text-base-content/80 mb-1 block">
+                  <label className="font-semibold text-base-content/80 mb-1 block">
                     Budget / Salary range
                   </label>
                   <SimpleInput
@@ -354,34 +355,29 @@ export default function CreateVacancyModal({
 
           {activeTab === "advert" && (
             <div className="space-y-4 animate-in fade-in duration-200">
-              <div>
-                <label className=" font-semibold text-base-content/80 mb-1 block">
-                  Job description & key requirements
-                </label>
-                <textarea
-                  value={form.desc}
-                  onChange={(e) => handleChange("desc", e.target.value)}
-                  placeholder="Outline responsibilities, must-have skills, qualifications, and team fit..."
-                  rows={4}
-                  className="textarea textarea-bordered w-full  rounded-xl bg-base-200/50"
-                />
-              </div>
+              <RichTextEditor
+                label="Job description & key requirements"
+                value={form.desc}
+                onChange={(html) => handleChange("desc", html)}
+                placeholder="Outline responsibilities, must-have skills, qualifications, and team fit..."
+                minHeight="min-h-[140px]"
+              />
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className=" font-semibold text-base-content/80 mb-1 block">
+                  <label className="font-semibold text-base-content/80 mb-1 block">
                     Application deadline
                   </label>
                   <input
                     type="date"
                     value={form.closes}
                     onChange={(e) => handleChange("closes", e.target.value)}
-                    className="input input-bordered w-full  rounded-xl bg-base-200/50"
+                    className="input input-bordered w-full rounded-xl bg-base-200/50"
                   />
                 </div>
 
                 <div>
-                  <label className=" font-semibold text-base-content/80 mb-1 block">
+                  <label className="font-semibold text-base-content/80 mb-1 block">
                     Approver (HR Lead / VP)
                   </label>
                   <LocalSelect
@@ -397,7 +393,7 @@ export default function CreateVacancyModal({
                 </div>
 
                 <div className="sm:col-span-2">
-                  <label className=" font-semibold text-base-content/80 mb-1 block">
+                  <label className="font-semibold text-base-content/80 mb-1 block">
                     Publication Channels
                   </label>
                   <LocalSelect
