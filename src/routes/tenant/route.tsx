@@ -270,10 +270,10 @@ function RouteComponent() {
           <ul className="menu  w-full space-y-2 ">
             {nav_links.map((link) => {
               if (link.type === "submenu" && link.children) {
-                // Submenus should be open by default
+                // Submenus closed by default
                 return (
                   <li key={link.path} className="mb-2">
-                    <details open>
+                    <details>
                       <summary className="text-md  ">
                         {link.icon}
                         {link.label}
