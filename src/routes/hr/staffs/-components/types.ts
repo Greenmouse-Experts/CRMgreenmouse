@@ -39,7 +39,7 @@ export type StatusFilterOption =
 
 export type ViewMode = "list" | "grid";
 
-/** Fields accepted by POST /v1/staffs. */
+/** Fields accepted for employee creation. */
 export interface CreateStaffInput {
   email: string;
   firstName: string;

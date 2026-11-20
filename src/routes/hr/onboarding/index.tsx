@@ -23,7 +23,7 @@ import {
   useStartOnboarding,
   type OnboardingTask,
 } from "@/api/onboardingApi";
-import { useStaffs, type StaffMember } from "@/api/tenantApi";
+import { useEmployees, type EmployeeRecord } from "@/api/employeesApi";
 import { extract_message } from "@/helpers/auth";
 import { UserPlus } from "lucide-react";
 import { toast } from "sonner";
@@ -42,19 +42,51 @@ const DEPARTMENT_MAP: Record<string, DepartmentTag> = {
   payroll: "Payroll",
 };
 
-function toUiHire(staff: StaffMember): OnboardingHire {
-  return {
-    id: staff.id,
-    name: `${staff.firstName ?? ""} ${staff.lastName ?? ""}`.trim() || UNKNOWN,
-    role: staff.role?.name ?? UNKNOWN,
-    dept: staff.role?.name ?? UNKNOWN,
-    email: staff.email ?? UNKNOWN,
-    start: staff.createdAt
-      ? new Date(staff.createdAt).toLocaleDateString("en-US", {
+function toUiHire(employee: EmployeeRecord): OnboardingHire {
+  const firstName = employee.firstName ?? employee.first_name ?? "";
+  const lastName = employee.lastName ?? employee.last_name ?? "";
+  const name =
+    (employee.name ?? employee.fullName ?? `${firstName} ${lastName}`.trim()) ||
+    UNKNOWN;
+
+  const roleName =
+    typeof employee.position === "object"
+      ? employee.position?.name
+      : typeof employee.role === "object"
+        ? employee.role?.name
+        : (employee.positionName ??
+          employee.position_name ??
+          employee.jobTitle ??
+          employee.position ??
+          UNKNOWN);
+
+  const deptName =
+    typeof employee.department === "object"
+      ? employee.department?.name
+      : (employee.departmentName ??
+        employee.department_name ??
+        employee.department ??
+        UNKNOWN);
+
+  const startFormatted = employee.startDate
+    ? new Date(employee.startDate).toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+      })
+    : employee.createdAt
+      ? new Date(employee.createdAt).toLocaleDateString("en-US", {
           month: "short",
           day: "numeric",
         })
-      : UNKNOWN,
+      : UNKNOWN;
+
+  return {
+    id: employee.id,
+    name,
+    role: roleName,
+    dept: deptName,
+    email: employee.email ?? UNKNOWN,
+    start: startFormatted,
     progress: 0,
     probationStep: 0,
   };
@@ -68,40 +100,36 @@ function toChecklistItem(raw: OnboardingTask): ChecklistItem {
     id: raw.id,
     dept: DEPARTMENT_MAP[deptKey] ?? "HR",
     text:
-      raw.title ??
-      raw.name ??
-      raw.text ??
-      raw.description ??
-      "Untitled task",
+      raw.title ?? raw.name ?? raw.text ?? raw.description ?? "Untitled task",
     completed: Boolean(
       raw.completed ??
-        raw.isCompleted ??
-        (status === "completed" || status === "done"),
+      raw.isCompleted ??
+      (status === "completed" || status === "done"),
     ),
   };
 }
 
 function RouteComponent() {
-  const staffQuery = useStaffs();
+  const employeesQuery = useEmployees();
 
   const startOnboardingMutation = useStartOnboarding();
   const completeTaskMutation = useCompleteOnboardingTask();
   const completeReviewMutation = useCompleteProbationReview();
   const decideProbationMutation = useDecideProbation();
 
-  const [selectedStaffId, setSelectedStaffId] = useState("");
+  const [selectedEmployeeId, setSelectedEmployeeId] = useState("");
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [probationOverrides, setProbationOverrides] = useState<
     Record<string, number>
   >({});
 
   const hires = useMemo<OnboardingHire[]>(
-    () => (staffQuery.data ?? []).map(toUiHire),
-    [staffQuery.data],
+    () => (employeesQuery.data ?? []).map(toUiHire),
+    [employeesQuery.data],
   );
 
   const selectedBaseHire =
-    hires.find((h) => h.id === selectedStaffId) ?? hires[0] ?? null;
+    hires.find((h) => h.id === selectedEmployeeId) ?? hires[0] ?? null;
   const selectedHireId = selectedBaseHire?.id;
 
   const tasksQuery = useOnboardingTasks(selectedHireId);
@@ -177,11 +205,11 @@ function RouteComponent() {
     );
   };
 
-  const handleStartOnboarding = async (staffId: string) => {
+  const handleStartOnboarding = async (employeeId: string) => {
     try {
-      await startOnboardingMutation.mutateAsync(staffId);
+      await startOnboardingMutation.mutateAsync(employeeId);
       toast.success("Onboarding started");
-      setSelectedStaffId(staffId);
+      setSelectedEmployeeId(employeeId);
       setIsAddModalOpen(false);
     } catch (error) {
       toast.error(extract_message(error as never));
@@ -205,12 +233,12 @@ function RouteComponent() {
       </PageHeader>
 
       <PageLoader
-        query={staffQuery}
+        query={employeesQuery}
         emptyState={{
-          title: "No staff members yet",
-          description: "Add staff before starting an onboarding pipeline.",
+          title: "No employees yet",
+          description: "Add employees before starting an onboarding pipeline.",
           actionText: "Refresh",
-          onAction: () => staffQuery.refetch(),
+          onAction: () => employeesQuery.refetch(),
         }}
       >
         <div className="space-y-6">
@@ -219,7 +247,7 @@ function RouteComponent() {
           <NewHireCards
             hires={hires}
             selectedHireId={selectedHireId ?? ""}
-            onSelectHire={setSelectedStaffId}
+            onSelectHire={setSelectedEmployeeId}
           />
 
           {selectedHire && (
@@ -248,7 +276,7 @@ function RouteComponent() {
       <AddOnboardingModal
         isOpen={isAddModalOpen}
         onClose={() => setIsAddModalOpen(false)}
-        staff={staffQuery.data ?? []}
+        employees={employeesQuery.data ?? []}
         onStartOnboarding={handleStartOnboarding}
       />
     </div>

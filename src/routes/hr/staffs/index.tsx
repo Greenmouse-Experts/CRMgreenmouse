@@ -54,27 +54,41 @@ const toUiEmployee = (employee: EmployeeRecord): Employee => {
             ? "Active"
             : titleCase(employee.status);
 
+  const firstName = employee.firstName ?? employee.first_name ?? "";
+  const lastName = employee.lastName ?? employee.last_name ?? "";
+  const name =
+    (employee.name ?? employee.fullName ?? `${firstName} ${lastName}`.trim()) ||
+    UNKNOWN;
+
   return {
-    id: employee.id,
-    name:
-      `${employee.firstName ?? ""} ${employee.lastName ?? ""}`.trim() ||
-      UNKNOWN,
+    id: employee.id || employee._id || UNKNOWN,
+    name,
     email: employee.email ?? UNKNOWN,
-    phone: employee.phoneNumber || UNKNOWN,
+    phone:
+      employee.phoneNumber ||
+      employee.phone ||
+      employee.phone_number ||
+      UNKNOWN,
     title: relationName(
       employee.position ?? employee.role,
-      employee.positionName,
+      employee.positionName ?? employee.position_name ?? employee.jobTitle,
     ),
-    dept: relationName(employee.department, employee.departmentName),
+    dept: relationName(
+      employee.department,
+      employee.departmentName ?? employee.department_name,
+    ),
     location: employee.location || UNKNOWN,
-    type: titleCase(employee.employmentType),
+    type: titleCase(employee.employmentType ?? employee.employment_type),
     status,
-    onLeave: false,
+    onLeave: Boolean(employee.onLeave || employee.isOnLeave),
     manager:
       relationName(employee.manager) === UNKNOWN
         ? undefined
         : relationName(employee.manager),
-    start: employee.startDate?.slice(0, 10) || employee.createdAt?.slice(0, 10),
+    start:
+      employee.startDate?.slice(0, 10) ||
+      employee.start_date?.slice(0, 10) ||
+      employee.createdAt?.slice(0, 10),
     grade: employee.grade,
   };
 };

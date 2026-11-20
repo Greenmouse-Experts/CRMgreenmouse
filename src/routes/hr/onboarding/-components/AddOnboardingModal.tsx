@@ -1,26 +1,30 @@
 import { useState, useEffect } from "react";
 import Modal, { type ModalHandle } from "@/components/DialogModal";
 import LocalSelect from "@/components/inputs/LocalSelect";
-import type { StaffMember } from "@/api/tenantApi";
+import type { EmployeeRecord } from "@/api/employeesApi";
 import { useRef } from "react";
 import { Send } from "lucide-react";
 
 interface AddOnboardingModalProps {
   isOpen: boolean;
   onClose: () => void;
-  staff: StaffMember[];
-  onStartOnboarding: (staffId: string) => Promise<void>;
+  employees?: EmployeeRecord[];
+  staff?: EmployeeRecord[];
+  onStartOnboarding: (employeeId: string) => Promise<void>;
 }
 
 export default function AddOnboardingModal({
   isOpen,
   onClose,
+  employees,
   staff,
   onStartOnboarding,
 }: AddOnboardingModalProps) {
   const modalRef = useRef<ModalHandle>(null);
-  const [selectedStaffId, setSelectedStaffId] = useState("");
+  const [selectedEmployeeId, setSelectedEmployeeId] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const employeeList = employees ?? staff ?? [];
 
   useEffect(() => {
     if (isOpen) {
@@ -32,12 +36,12 @@ export default function AddOnboardingModal({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!selectedStaffId) return;
+    if (!selectedEmployeeId) return;
 
     setIsSubmitting(true);
     try {
-      await onStartOnboarding(selectedStaffId);
-      setSelectedStaffId("");
+      await onStartOnboarding(selectedEmployeeId);
+      setSelectedEmployeeId("");
     } finally {
       setIsSubmitting(false);
     }
@@ -52,31 +56,41 @@ export default function AddOnboardingModal({
     >
       <form onSubmit={handleSubmit} className="space-y-4">
         <p className="text-xs text-base-content/60 -mt-1 mb-3">
-          Choose an existing staff member to start their onboarding pipeline.
+          Choose an existing employee to start their onboarding pipeline.
         </p>
 
-        {staff.length === 0 ? (
+        {employeeList.length === 0 ? (
           <p className="text-sm text-base-content/60 py-4 text-center">
-            No staff members available. Add staff first.
+            No employees available. Add employees first.
           </p>
         ) : (
           <div>
             <label className="text-xs font-semibold text-base-content/80 mb-1 block">
-              Staff member <span className="text-error">*</span>
+              Employee <span className="text-error">*</span>
             </label>
             <LocalSelect
-              value={selectedStaffId}
-              onChange={(e) => setSelectedStaffId(e.target.value)}
+              value={selectedEmployeeId}
+              onChange={(e) => setSelectedEmployeeId(e.target.value)}
               required
             >
-              <option value="">Select a staff member</option>
-              {staff.map((member) => (
-                <option key={member.id} value={member.id}>
-                  {`${member.firstName ?? ""} ${member.lastName ?? ""}`.trim() ||
-                    member.email}{" "}
-                  — {member.email}
-                </option>
-              ))}
+              <option value="">Select an employee</option>
+              {employeeList.map((member) => {
+                const firstName = member.firstName ?? member.first_name ?? "";
+                const lastName = member.lastName ?? member.last_name ?? "";
+                const fullName =
+                  (member.name ??
+                    member.fullName ??
+                    `${firstName} ${lastName}`.trim()) ||
+                  member.email ||
+                  member.id;
+
+                return (
+                  <option key={member.id} value={member.id}>
+                    {fullName}
+                    {member.email ? ` — ${member.email}` : ""}
+                  </option>
+                );
+              })}
             </LocalSelect>
           </div>
         )}
@@ -92,7 +106,7 @@ export default function AddOnboardingModal({
           </button>
           <button
             type="submit"
-            disabled={isSubmitting || !selectedStaffId}
+            disabled={isSubmitting || !selectedEmployeeId}
             className="btn btn-sm bg-primary text-white hover:bg-primary/90 rounded-xl px-5 gap-1.5 shadow-sm shadow-primary/20"
           >
             <Send className="size-3.5" />

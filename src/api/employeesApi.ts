@@ -101,9 +101,8 @@ export const useEmployees = () =>
   useQuery<EmployeeRecord[]>({
     queryKey: [...queryRoot, "list"],
     queryFn: async () => {
-      // The people directory uses /staffs — GET /v1/employees returns 500.
-      const { data } = await apiClient.get<any>("/staffs", authConfig());
-      return unwrapList<EmployeeRecord>(data, ["staffs"]);
+      const { data } = await apiClient.get<any>("/employees", authConfig());
+      return unwrapList<EmployeeRecord>(data, ["employees"]);
     },
   });
 
@@ -209,7 +208,7 @@ export const useCreateEmployee = () => {
   return useMutation({
     mutationFn: async (payload: CreateEmployeeInput) => {
       const { data } = await apiClient.post<any>(
-        "/staffs",
+        "/employees",
         payload,
         authConfig(),
       );
