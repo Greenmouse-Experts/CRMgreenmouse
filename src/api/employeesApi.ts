@@ -1,7 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import apiClient from "./simpleApi";
 import { get_user_value } from "@/store/authStore";
-import AUTH_CRED from "../../auth_cred";
 
 /* -------------------------------------------------------------------------- */
 /* Types                                                                       */
@@ -189,7 +188,7 @@ export const sanitizeEmployeePayload = (
  * test credentials when no user is stored so it can be exercised locally.
  */
 const authConfig = () => {
-  const token = get_user_value()?.accessToken ?? AUTH_CRED.accessToken;
+  const token = get_user_value()?.accessToken;
   return { headers: { Authorization: `Bearer ${token}` } };
 };
 
