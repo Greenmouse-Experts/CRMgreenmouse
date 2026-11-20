@@ -1,5 +1,4 @@
 import type { Employee, StatusFilterOption } from "./types";
-import { Search, X } from "lucide-react";
 
 interface EmployeeFiltersProps {
   searchTerm: string;

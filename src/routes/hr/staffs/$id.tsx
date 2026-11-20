@@ -4,23 +4,26 @@ import { useForm, Controller, FormProvider } from "react-hook-form";
 import { toast } from "sonner";
 import {
   ArrowLeft,
+  ArrowRight,
   Save,
   User,
   Phone,
   CreditCard,
   Building2,
-  Calendar,
   AlertCircle,
   Loader2,
   Pencil,
-  Mail,
   MapPin,
   Briefcase,
   ShieldCheck,
   Clock,
-  CheckCircle2,
   Eye,
   UserX,
+  Lock,
+  UploadCloud,
+  Trash2,
+  Paperclip,
+  Check,
 } from "lucide-react";
 import SimpleInput from "@/components/inputs/SimpleInput";
 import SimplePhoneInput from "@/components/inputs/SimplePhoneInput";
@@ -67,6 +70,7 @@ export interface EmployeeFormData {
   nationality?: string;
   residentialAddress?: string;
 
+  // Employment
   employeeNumber?: string;
   department?: string;
   departmentId?: string;
@@ -80,31 +84,72 @@ export interface EmployeeFormData {
   startDate?: string;
   workSchedule?: string;
 
+  // Contract & Probation
   isOnProbation?: boolean;
   probationEndDate?: string;
   contractType?: string;
   contractEndDate?: string;
   needsSystemAccount?: boolean;
 
+  // Emergency contact
   emergencyContactName?: string;
   emergencyContactRelationship?: string;
   emergencyContactPhone?: string;
 
-  basicSalary?: number | string;
+  // Compensation
+  basicSalary?: string | number;
   payFrequency?: string;
   bankName?: string;
   bankAccountNumber?: string;
 }
 
+const FORM_STEPS = [
+  "Personal",
+  "Emergency contact",
+  "Employment",
+  "Compensation",
+  "Documents",
+  "Review",
+];
+
+const DOCUMENT_ITEMS = [
+  {
+    key: "cv",
+    title: "CV / Resume",
+    description: "PDF or Word document highlighting career history and education.",
+  },
+  {
+    key: "contract",
+    title: "Signed Employment Contract",
+    description: "Executed offer letter and signed terms of employment agreement.",
+  },
+  {
+    key: "id_document",
+    title: "Identity Document (NIN / Passport)",
+    description: "Government-issued identity card, international passport or license.",
+  },
+  {
+    key: "certificates",
+    title: "Academic & Professional Certificates",
+    description: "Degree certificate, diplomas, or professional accreditation credentials.",
+  },
+  {
+    key: "policies",
+    title: "Signed Policies & NDA",
+    description: "Acknowledged employee handbook, IT policy, and non-disclosure agreement.",
+  },
+];
+
 const DEFAULT_DEPARTMENTS = [
-  "Sales",
   "Engineering",
-  "Finance",
-  "Operations",
+  "Product",
+  "Design",
   "Marketing",
+  "Sales",
+  "Finance",
   "Customer Success",
-  "HR",
-  "Executive",
+  "Human Resources",
+  "Operations",
   "Legal",
 ];
 
@@ -120,6 +165,7 @@ const EMPLOYMENT_STATUSES = [
 const WORK_LOCATIONS = ["Remote", "On-site (Lagos)", "On-site (Abuja)", "Hybrid"];
 const CONTRACT_TYPES = ["Permanent", "Fixed-term", "Probationary", "Contract", "Seasonal"];
 const PAY_FREQUENCIES = ["Monthly", "Bi-weekly", "Weekly", "Annually"];
+const RELATIONSHIPS = ["Spouse", "Parent", "Sibling", "Child", "Relative", "Friend", "Other"];
 
 function StaffDetailPage() {
   const { id } = Route.useParams();
@@ -130,6 +176,10 @@ function StaffDetailPage() {
   const [activeTab, setActiveTab] = useState<"view" | "edit">(
     isNew || search.mode === "edit" ? "edit" : "view",
   );
+  const [currentStep, setCurrentStep] = useState(0);
+  const [uploadedDocs, setUploadedDocs] = useState<
+    Record<string, { name: string; size: string }>
+  >({});
   const [onLeaveLocal, setOnLeaveLocal] = useState<boolean | null>(null);
 
   const employeeQuery = useEmployee(isNew ? undefined : id);
@@ -185,10 +235,12 @@ function StaffDetailPage() {
     control,
     reset,
     watch,
+    trigger,
     formState: { isSubmitting },
   } = methods;
 
   const isOnProbation = watch("isOnProbation");
+  const formValues = watch();
 
   // Populate data when editing or viewing
   useEffect(() => {
@@ -252,10 +304,7 @@ function StaffDetailPage() {
         contractEndDate: emp.contractEndDate
           ? emp.contractEndDate.slice(0, 10)
           : "",
-        needsSystemAccount:
-          emp.needsSystemAccount !== undefined
-            ? Boolean(emp.needsSystemAccount)
-            : true,
+        needsSystemAccount: emp.needsSystemAccount !== false,
         emergencyContactName: emp.emergencyContactName ?? "",
         emergencyContactRelationship: emp.emergencyContactRelationship ?? "",
         emergencyContactPhone: emp.emergencyContactPhone ?? "",
@@ -285,6 +334,56 @@ function StaffDetailPage() {
   const potentialManagers = (allEmployeesQuery.data ?? []).filter(
     (e) => isNew || e.id !== id,
   );
+
+  const handleStepClick = async (targetIndex: number) => {
+    if (targetIndex > currentStep) {
+      if (currentStep === 0) {
+        const valid = await trigger(["firstName", "lastName", "email", "phone"]);
+        if (!valid) {
+          toast.error("Please fill in required personal fields first.");
+          return;
+        }
+      }
+    }
+    setCurrentStep(targetIndex);
+  };
+
+  const handleContinue = async () => {
+    if (currentStep === 0) {
+      const valid = await trigger(["firstName", "lastName", "email", "phone"]);
+      if (!valid) {
+        toast.error("Please fill in all required personal fields.");
+        return;
+      }
+    } else if (currentStep === 2) {
+      const valid = await trigger(["startDate"]);
+      if (!valid) return;
+    }
+    setCurrentStep((prev) => Math.min(FORM_STEPS.length - 1, prev + 1));
+  };
+
+  const handleFileUpload = (key: string, e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const sizeMb = (file.size / (1024 * 1024)).toFixed(2);
+      setUploadedDocs((prev) => ({
+        ...prev,
+        [key]: {
+          name: file.name,
+          size: `${sizeMb} MB`,
+        },
+      }));
+      toast.success(`Attached: ${file.name}`);
+    }
+  };
+
+  const handleRemoveDoc = (key: string) => {
+    setUploadedDocs((prev) => {
+      const copy = { ...prev };
+      delete copy[key];
+      return copy;
+    });
+  };
 
   const onSubmit = async (values: EmployeeFormData) => {
     try {
@@ -383,443 +482,315 @@ function StaffDetailPage() {
             employeeQuery.data?.onLeave || employeeQuery.data?.isOnLeave,
           );
     setOnLeaveLocal(!current);
-    toast.info(!current ? "Marked as on leave" : "Marked as active & present");
+    toast.success(!current ? "Marked employee as on leave" : "Marked employee as active");
   };
-
-  const isPending =
-    isSubmitting || createEmployee.isPending || updateEmployee.isPending;
 
   if (!isNew && employeeQuery.isLoading) {
     return (
-      <div className="py-24 text-center space-y-3">
-        <Loader2 className="size-8 animate-spin mx-auto text-primary" />
-        <p className="text-sm text-base-content/60">
-          Loading employee details...
-        </p>
+      <div className="min-h-[50vh] flex flex-col items-center justify-center gap-3">
+        <Loader2 className="size-8 animate-spin text-primary" />
+        <p className="text-xs text-base-content/60 font-medium">Loading employee details...</p>
       </div>
     );
   }
 
   if (!isNew && employeeQuery.isError) {
     return (
-      <div className="card bg-base-100 border border-error/30 p-12 text-center space-y-4 max-w-lg mx-auto mt-12 rounded-2xl">
-        <AlertCircle className="size-12 mx-auto text-error" />
-        <h3 className="font-bold text-lg text-base-content">
-          Employee Not Found
-        </h3>
-        <p className="text-sm text-base-content/60">
-          {extract_message(employeeQuery.error as never) ||
-            "Unable to retrieve the requested employee record."}
-        </p>
-        <Link
-          to="/hr/staffs"
-          className="btn btn-sm btn-primary rounded-xl px-4 inline-flex items-center gap-1.5 mx-auto"
-        >
-          <ArrowLeft className="size-4" />
-          <span>Back to Staff Directory</span>
-        </Link>
+      <div className="card bg-base-100 border border-error/20 p-8 text-center max-w-lg mx-auto my-12 space-y-4">
+        <div className="size-12 rounded-full bg-error/10 text-error flex items-center justify-center mx-auto">
+          <AlertCircle className="size-6" />
+        </div>
+        <h3 className="font-semibold text-lg text-base-content">Unable to load employee</h3>
+        <p className="text-xs text-base-content/60">{extract_message(employeeQuery.error as any)}</p>
+        <div className="flex justify-center gap-2 pt-2">
+          <button onClick={() => employeeQuery.refetch()} className="btn btn-sm btn-primary text-xs">
+            Try Again
+          </button>
+          <Link to="/hr/staffs" className="btn btn-sm btn-ghost text-xs">
+            Back to Directory
+          </Link>
+        </div>
       </div>
     );
   }
 
-  const emp = employeeQuery.data;
-  const fullName = emp
-    ? `${emp.firstName ?? ""} ${emp.lastName ?? ""}`.trim() || emp.name || "Employee"
-    : `${watch("firstName")} ${watch("lastName")}`.trim() || "New Employee";
+  const emp = (employeeQuery.data || {}) as Record<string, any>;
+  const fullName =
+    emp.name ||
+    emp.fullName ||
+    `${emp.firstName || ""} ${emp.lastName || ""}`.trim() ||
+    (isNew ? "New Employee" : "Employee Details");
 
-  const currentStatus =
-    (emp?.employmentStatus ?? emp?.status ?? "active") as any;
-
-  const isOnLeaveDisplay =
+  const effectiveOnLeave =
     onLeaveLocal !== null
       ? onLeaveLocal
-      : Boolean(emp?.onLeave || emp?.isOnLeave);
+      : Boolean(emp.onLeave || emp.isOnLeave);
 
-  const managerObj =
-    typeof emp?.manager === "object"
-      ? emp.manager?.name
-      : emp?.manager ??
-        potentialManagers.find((m) => m.id === emp?.managerId)?.name ??
-        "—";
+  const effectiveStatus = effectiveOnLeave
+    ? "On Leave"
+    : emp.employmentStatus || emp.status || "Active";
 
-  const departmentDisplay =
-    (typeof emp?.department === "object"
-      ? emp.department?.name
-      : emp?.departmentName ?? emp?.department) || "—";
+  const isPending =
+    isSubmitting || createEmployee.isPending || updateEmployee.isPending;
 
-  const titleDisplay =
-    (typeof emp?.position === "object"
-      ? emp.position?.name
-      : emp?.positionName ?? emp?.jobTitle ?? emp?.position) || "—";
+  const currentDept =
+    departmentsList.find(
+      (d) => d.id === formValues.departmentId || d.name === formValues.department,
+    )?.name || formValues.department || "—";
+
+  const currentJob =
+    positionsList.find(
+      (p) => p.id === formValues.positionId || p.name === formValues.jobTitle,
+    )?.name || formValues.jobTitle || "—";
+
+  const currentManager =
+    potentialManagers.find((m) => m.id === formValues.managerId)?.name ||
+    formValues.managerId ||
+    "—";
 
   return (
-    <div className="space-y-6 pb-20 max-w-5xl mx-auto">
-      {/* Top Navigation & Action Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-base-200 pb-5">
-        <div className="space-y-1">
-          <Link
-            to="/hr/staffs"
-            className="inline-flex items-center gap-1.5 text-xs font-semibold text-base-content/60 hover:text-primary transition-colors mb-1"
-          >
-            <ArrowLeft className="size-3.5" />
-            <span>Back to Staff Directory</span>
-          </Link>
-          <div className="flex items-center gap-3">
-            <h1 className="text-2xl font-bold tracking-tight text-base-content">
-              {isNew ? "Add New Employee" : fullName}
-            </h1>
-            {!isNew && (
-              <EmployeeStatusBadge
-                status={currentStatus}
-                onLeave={isOnLeaveDisplay}
-              />
-            )}
+    <div className="space-y-6 pb-20 max-w-6xl mx-auto">
+      {/* Top Breadcrumb & Return Link */}
+      <div className="flex items-center justify-between">
+        <Link
+          to="/hr/staffs"
+          className="inline-flex items-center gap-2 text-xs font-medium text-base-content/60 hover:text-primary transition-colors"
+        >
+          <ArrowLeft className="size-4" />
+          <span>Back to Employees</span>
+        </Link>
+
+        {!isNew && (
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => setActiveTab("view")}
+              className={`btn btn-xs rounded-lg font-medium px-3 ${
+                activeTab === "view"
+                  ? "btn-primary shadow-xs"
+                  : "btn-ghost text-base-content/70"
+              }`}
+            >
+              <Eye className="size-3.5 mr-1" /> Profile View
+            </button>
+            <button
+              type="button"
+              onClick={() => setActiveTab("edit")}
+              className={`btn btn-xs rounded-lg font-medium px-3 ${
+                activeTab === "edit"
+                  ? "btn-primary shadow-xs"
+                  : "btn-ghost text-base-content/70"
+              }`}
+            >
+              <Pencil className="size-3.5 mr-1" /> Edit Profile
+            </button>
           </div>
-          <p className="text-xs text-base-content/60">
-            {isNew
-              ? "Register a new employee profile, department allocation, and contract terms."
-              : `Employee ID: ${emp?.employeeNumber || emp?.id || id} · ${departmentDisplay} · ${titleDisplay}`}
-          </p>
-        </div>
-
-        {/* Action Controls */}
-        <div className="flex flex-wrap items-center gap-2">
-          {!isNew && (
-            <>
-              {activeTab === "view" ? (
-                <>
-                  <button
-                    type="button"
-                    onClick={handleToggleLeave}
-                    className="btn btn-sm btn-ghost border border-base-300 rounded-xl text-xs font-medium"
-                  >
-                    {isOnLeaveDisplay
-                      ? "Mark Active & Present"
-                      : "Mark On Leave"}
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => setActiveTab("edit")}
-                    className="btn btn-sm btn-primary rounded-xl text-xs font-semibold gap-1.5 shadow-sm"
-                  >
-                    <Pencil className="size-3.5" />
-                    <span>Edit Profile</span>
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={handleDeactivate}
-                    className="btn btn-sm btn-ghost border border-error/30 text-error hover:bg-error/10 rounded-xl text-xs font-medium gap-1.5"
-                    title="Deactivate employee"
-                  >
-                    <UserX className="size-3.5" />
-                    <span>Deactivate</span>
-                  </button>
-                </>
-              ) : (
-                <>
-                  <button
-                    type="button"
-                    onClick={() => setActiveTab("view")}
-                    className="btn btn-sm btn-ghost border border-base-300 rounded-xl text-xs font-medium"
-                  >
-                    Cancel Edit
-                  </button>
-                  <button
-                    type="submit"
-                    form="employee-form"
-                    disabled={isPending}
-                    className="btn btn-sm btn-primary rounded-xl text-xs font-semibold gap-1.5 shadow-sm"
-                  >
-                    {isPending ? (
-                      <Loader2 className="size-3.5 animate-spin" />
-                    ) : (
-                      <Save className="size-3.5" />
-                    )}
-                    <span>Save Changes</span>
-                  </button>
-                </>
-              )}
-            </>
-          )}
-
-          {isNew && (
-            <>
-              <Link
-                to="/hr/staffs"
-                className="btn btn-sm btn-ghost border border-base-300 rounded-xl text-xs font-medium"
-              >
-                Cancel
-              </Link>
-              <button
-                type="submit"
-                form="employee-form"
-                disabled={isPending}
-                className="btn btn-sm btn-primary rounded-xl text-xs font-semibold gap-1.5 shadow-sm"
-              >
-                {isPending ? (
-                  <Loader2 className="size-3.5 animate-spin" />
-                ) : (
-                  <Save className="size-3.5" />
-                )}
-                <span>Create Employee</span>
-              </button>
-            </>
-          )}
-        </div>
+        )}
       </div>
 
-      {/* Tabs navigation for existing employees */}
-      {!isNew && (
-        <div className="flex border-b border-base-200 gap-6 text-sm font-medium">
-          <button
-            type="button"
-            onClick={() => setActiveTab("view")}
-            className={`pb-3 px-1 border-b-2 inline-flex items-center gap-2 transition-colors ${
-              activeTab === "view"
-                ? "border-primary text-primary font-bold"
-                : "border-transparent text-base-content/60 hover:text-base-content"
-            }`}
-          >
-            <Eye className="size-4" />
-            <span>Profile Overview</span>
-          </button>
-          <button
-            type="button"
-            onClick={() => setActiveTab("edit")}
-            className={`pb-3 px-1 border-b-2 inline-flex items-center gap-2 transition-colors ${
-              activeTab === "edit"
-                ? "border-primary text-primary font-bold"
-                : "border-transparent text-base-content/60 hover:text-base-content"
-            }`}
-          >
-            <Pencil className="size-4" />
-            <span>Edit Profile Details</span>
-          </button>
-        </div>
-      )}
-
-      {/* ------------------------------------------------------------------ */}
-      {/* VIEW MODE: Comprehensive Employee Profile Details Page             */}
-      {/* ------------------------------------------------------------------ */}
-      {!isNew && activeTab === "view" && emp && (
+      {/* ================================================================== */}
+      {/* VIEW MODE: Dedicated Full Page Profile View                         */}
+      {/* ================================================================== */}
+      {!isNew && activeTab === "view" && (
         <div className="space-y-6">
-          {/* Hero Profile Card */}
-          <div className="card bg-base-100 border border-base-200/80 shadow-xs p-5 sm:p-6 rounded-2xl flex flex-col sm:flex-row items-center sm:items-start gap-5">
-            <EmployeeAvatar name={fullName} size="lg" className="size-20 text-2xl shadow-sm" />
-            <div className="min-w-0 flex-1 text-center sm:text-left space-y-2">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                <div>
-                  <h2 className="text-xl font-bold text-base-content">{fullName}</h2>
-                  <p className="text-sm font-medium text-base-content/70">
-                    {titleDisplay} · <span className="text-primary font-semibold">{departmentDisplay}</span>
-                  </p>
-                </div>
-                <div className="flex items-center justify-center sm:justify-end gap-2">
-                  <EmployeeStatusBadge status={currentStatus} onLeave={isOnLeaveDisplay} />
+          {/* Hero Profile Banner */}
+          <div className="card bg-base-100 border border-base-200/80 shadow-xs rounded-2xl p-6 sm:p-8">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
+              <div className="flex items-center gap-5">
+                <EmployeeAvatar
+                  name={fullName}
+                  size="lg"
+                />
+                <div className="space-y-1.5">
+                  <div className="flex flex-wrap items-center gap-2.5">
+                    <h1 className="text-xl sm:text-2xl font-bold text-base-content tracking-tight">
+                      {fullName}
+                    </h1>
+                    <EmployeeStatusBadge status={effectiveStatus} />
+                    {emp.employeeNumber && (
+                      <span className="badge badge-sm badge-ghost font-mono text-[11px]">
+                        ID: {emp.employeeNumber}
+                      </span>
+                    )}
+                  </div>
+                  <div className="flex flex-wrap items-center gap-y-1 gap-x-4 text-xs text-base-content/70">
+                    <span className="flex items-center gap-1.5 font-medium">
+                      <Briefcase className="size-3.5 text-primary" />
+                      {typeof emp.position === "object"
+                        ? emp.position?.name
+                        : emp.positionName ?? emp.jobTitle ?? emp.position ?? "Staff"}
+                    </span>
+                    <span className="flex items-center gap-1.5 font-medium">
+                      <Building2 className="size-3.5 text-info" />
+                      {typeof emp.department === "object"
+                        ? emp.department?.name
+                        : emp.departmentName ?? emp.department ?? "General"}
+                    </span>
+                    <span className="flex items-center gap-1.5 font-medium">
+                      <MapPin className="size-3.5 text-warning" />
+                      {emp.workLocation || emp.location || "Remote"}
+                    </span>
+                  </div>
                 </div>
               </div>
 
-              <div className="flex flex-wrap items-center justify-center sm:justify-start gap-3 text-xs text-base-content/70 pt-1">
-                <span className="flex items-center gap-1.5">
-                  <MapPin className="size-3.5 text-primary" />
-                  {emp.workLocation || emp.location || "Remote"}
-                </span>
-                <span>•</span>
-                <span className="flex items-center gap-1.5">
-                  <Briefcase className="size-3.5 text-info" />
-                  {emp.employeeType || emp.employmentType || "Full-time"}
-                </span>
-                <span>•</span>
-                <span className="flex items-center gap-1.5">
-                  <ShieldCheck className="size-3.5 text-success" />
-                  Grade {emp.grade || "G2"}
-                </span>
-                <span>•</span>
-                <span className="flex items-center gap-1.5">
-                  <Clock className="size-3.5 text-warning" />
-                  {emp.workSchedule || "Standard Schedule"}
-                </span>
-              </div>
-
-              <div className="flex flex-wrap items-center justify-center sm:justify-start gap-4 text-xs text-base-content/80 pt-2 border-t border-base-200">
-                <a
-                  href={`mailto:${emp.email}`}
-                  className="flex items-center gap-1.5 hover:text-primary transition-colors"
+              {/* Action Buttons */}
+              <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
+                <button
+                  type="button"
+                  onClick={() => setActiveTab("edit")}
+                  className="btn btn-sm btn-primary text-xs gap-1.5 rounded-xl shadow-xs"
                 >
-                  <Mail className="size-3.5 text-primary" />
-                  <span>{emp.email}</span>
-                </a>
-                {(emp.phone || emp.phoneNumber) && (
-                  <a
-                    href={`tel:${emp.phone || emp.phoneNumber}`}
-                    className="flex items-center gap-1.5 hover:text-primary transition-colors"
-                  >
-                    <Phone className="size-3.5 text-success" />
-                    <span>{emp.phone || emp.phoneNumber}</span>
-                  </a>
-                )}
+                  <Pencil className="size-3.5" /> Edit Profile
+                </button>
+                <button
+                  type="button"
+                  onClick={handleToggleLeave}
+                  className="btn btn-sm btn-outline border-base-300 text-xs rounded-xl"
+                >
+                  <Clock className="size-3.5" />
+                  {effectiveOnLeave ? "Mark Returned" : "Mark On Leave"}
+                </button>
+                <button
+                  type="button"
+                  onClick={handleDeactivate}
+                  className="btn btn-sm btn-ghost text-error hover:bg-error/10 text-xs rounded-xl"
+                >
+                  <UserX className="size-3.5" /> Deactivate
+                </button>
               </div>
             </div>
           </div>
 
-          {/* KPI Stats Strip */}
+          {/* Quick Metrics Grid */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-            <div className="p-4 bg-base-100 border border-base-200/80 rounded-2xl shadow-xs space-y-1">
-              <span className="text-xs text-base-content/60 flex items-center gap-1.5">
-                <CreditCard className="size-3.5 text-success" /> Monthly Salary
-              </span>
-              <p className="text-base font-bold text-base-content">
+            <div className="card bg-base-100 border border-base-200/80 p-4 rounded-2xl shadow-xs">
+              <span className="text-xs font-medium text-base-content/60">Employment Type</span>
+              <p className="text-sm font-bold text-base-content mt-1">
+                {emp.employeeType || emp.employmentType || "Full-time"}
+              </p>
+            </div>
+            <div className="card bg-base-100 border border-base-200/80 p-4 rounded-2xl shadow-xs">
+              <span className="text-xs font-medium text-base-content/60">Grade Level</span>
+              <p className="text-sm font-bold text-base-content mt-1">
+                {emp.grade || "G2"}
+              </p>
+            </div>
+            <div className="card bg-base-100 border border-base-200/80 p-4 rounded-2xl shadow-xs">
+              <span className="text-xs font-medium text-base-content/60">Monthly Base Salary</span>
+              <p className="text-sm font-bold text-base-content mt-1">
                 {formatSalary(emp.basicSalary ? Number(emp.basicSalary) : undefined)}
               </p>
-              <span className="text-[11px] text-base-content/50 capitalize">
-                {emp.payFrequency || "Monthly"} frequency
-              </span>
             </div>
-
-            <div className="p-4 bg-base-100 border border-base-200/80 rounded-2xl shadow-xs space-y-1">
-              <span className="text-xs text-base-content/60 flex items-center gap-1.5">
-                <Calendar className="size-3.5 text-primary" /> Joining Date
-              </span>
-              <p className="text-base font-bold text-base-content">
-                {emp.startDate ? emp.startDate.slice(0, 10) : "—"}
+            <div className="card bg-base-100 border border-base-200/80 p-4 rounded-2xl shadow-xs">
+              <span className="text-xs font-medium text-base-content/60">Date of Joining</span>
+              <p className="text-sm font-bold text-base-content mt-1 font-mono">
+                {emp.startDate ? emp.startDate.slice(0, 10) : emp.createdAt?.slice(0, 10) || "—"}
               </p>
-              <span className="text-[11px] text-base-content/50">
-                {emp.contractType || "Permanent contract"}
-              </span>
-            </div>
-
-            <div className="p-4 bg-base-100 border border-base-200/80 rounded-2xl shadow-xs space-y-1">
-              <span className="text-xs text-base-content/60 flex items-center gap-1.5">
-                <User className="size-3.5 text-info" /> Reports To
-              </span>
-              <p className="text-base font-bold text-base-content truncate">
-                {managerObj}
-              </p>
-              <span className="text-[11px] text-base-content/50">
-                Direct Supervisor
-              </span>
-            </div>
-
-            <div className="p-4 bg-base-100 border border-base-200/80 rounded-2xl shadow-xs space-y-1">
-              <span className="text-xs text-base-content/60 flex items-center gap-1.5">
-                <CheckCircle2 className="size-3.5 text-warning" /> Probation
-              </span>
-              <p className="text-base font-bold text-base-content">
-                {emp.isOnProbation ? "Under Review" : "Confirmed Staff"}
-              </p>
-              <span className="text-[11px] text-base-content/50">
-                {emp.isOnProbation && emp.probationEndDate
-                  ? `Ends ${emp.probationEndDate.slice(0, 10)}`
-                  : "Completed"}
-              </span>
             </div>
           </div>
 
-          {/* Profile Breakdown Cards */}
+          {/* Detailed Cards Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Card 1: Personal Details */}
-            <div className="card bg-base-100 border border-base-200/80 shadow-xs rounded-2xl p-5 space-y-4">
-              <div className="flex items-center gap-2.5 pb-3 border-b border-base-200">
-                <div className="size-8 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
+            {/* 1. Personal & Contact */}
+            <div className="card bg-base-100 border border-base-200/80 shadow-xs rounded-2xl p-6 space-y-4">
+              <div className="flex items-center gap-2.5 pb-2 border-b border-base-200">
+                <div className="size-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center">
                   <User className="size-4" />
                 </div>
-                <h3 className="font-semibold text-sm text-base-content">
-                  Personal Information
-                </h3>
+                <h3 className="font-semibold text-sm text-base-content">Personal & Contact Info</h3>
               </div>
               <div className="grid grid-cols-2 gap-3 text-xs">
                 <div>
-                  <span className="text-base-content/50">First Name</span>
-                  <p className="font-semibold text-base-content mt-0.5">{emp.firstName || "—"}</p>
+                  <span className="text-base-content/50">Full Legal Name</span>
+                  <p className="font-semibold text-base-content mt-0.5">{fullName}</p>
                 </div>
                 <div>
-                  <span className="text-base-content/50">Middle Name</span>
-                  <p className="font-semibold text-base-content mt-0.5">{emp.middleName || "—"}</p>
+                  <span className="text-base-content/50">Work Email</span>
+                  <p className="font-semibold text-base-content mt-0.5 truncate">{emp.email || "—"}</p>
                 </div>
                 <div>
-                  <span className="text-base-content/50">Last Name</span>
-                  <p className="font-semibold text-base-content mt-0.5">{emp.lastName || "—"}</p>
+                  <span className="text-base-content/50">Phone Number</span>
+                  <p className="font-semibold text-base-content mt-0.5">{emp.phone || emp.phoneNumber || "—"}</p>
+                </div>
+                <div>
+                  <span className="text-base-content/50">Date of Birth</span>
+                  <p className="font-semibold text-base-content mt-0.5 font-mono">
+                    {emp.dateOfBirth ? emp.dateOfBirth.slice(0, 10) : "—"}
+                  </p>
                 </div>
                 <div>
                   <span className="text-base-content/50">Gender</span>
                   <p className="font-semibold text-base-content mt-0.5 capitalize">{emp.gender || "—"}</p>
                 </div>
                 <div>
-                  <span className="text-base-content/50">Date of Birth</span>
-                  <p className="font-semibold text-base-content mt-0.5">
-                    {emp.dateOfBirth ? emp.dateOfBirth.slice(0, 10) : "—"}
-                  </p>
-                </div>
-                <div>
                   <span className="text-base-content/50">Nationality</span>
                   <p className="font-semibold text-base-content mt-0.5">{emp.nationality || "—"}</p>
                 </div>
-                <div className="col-span-2 pt-1 border-t border-base-200/50">
+                <div className="col-span-2">
                   <span className="text-base-content/50">Residential Address</span>
                   <p className="font-semibold text-base-content mt-0.5">{emp.residentialAddress || "—"}</p>
                 </div>
               </div>
             </div>
 
-            {/* Card 2: Job & Organization */}
-            <div className="card bg-base-100 border border-base-200/80 shadow-xs rounded-2xl p-5 space-y-4">
-              <div className="flex items-center gap-2.5 pb-3 border-b border-base-200">
-                <div className="size-8 rounded-xl bg-info/10 text-info flex items-center justify-center">
+            {/* 2. Employment & Role */}
+            <div className="card bg-base-100 border border-base-200/80 shadow-xs rounded-2xl p-6 space-y-4">
+              <div className="flex items-center gap-2.5 pb-2 border-b border-base-200">
+                <div className="size-8 rounded-lg bg-info/10 text-info flex items-center justify-center">
                   <Building2 className="size-4" />
                 </div>
-                <h3 className="font-semibold text-sm text-base-content">
-                  Job & Organizational Assignment
-                </h3>
+                <h3 className="font-semibold text-sm text-base-content">Role & Organization</h3>
               </div>
               <div className="grid grid-cols-2 gap-3 text-xs">
                 <div>
-                  <span className="text-base-content/50">Employee Number / ID</span>
-                  <p className="font-mono font-bold text-base-content mt-0.5">{emp.employeeNumber || emp.id}</p>
-                </div>
-                <div>
                   <span className="text-base-content/50">Department</span>
-                  <p className="font-semibold text-base-content mt-0.5">{departmentDisplay}</p>
+                  <p className="font-semibold text-base-content mt-0.5">
+                    {typeof emp.department === "object"
+                      ? emp.department?.name
+                      : emp.departmentName ?? emp.department ?? "—"}
+                  </p>
                 </div>
                 <div>
                   <span className="text-base-content/50">Job Title / Role</span>
-                  <p className="font-semibold text-base-content mt-0.5">{titleDisplay}</p>
+                  <p className="font-semibold text-base-content mt-0.5">
+                    {typeof emp.position === "object"
+                      ? emp.position?.name
+                      : emp.positionName ?? emp.jobTitle ?? emp.position ?? "—"}
+                  </p>
                 </div>
                 <div>
-                  <span className="text-base-content/50">Employment Type</span>
-                  <p className="font-semibold text-base-content mt-0.5">{emp.employeeType || emp.employmentType || "Full-time"}</p>
+                  <span className="text-base-content/50">Reporting Line</span>
+                  <p className="font-semibold text-base-content mt-0.5">
+                    {typeof emp.manager === "object"
+                      ? emp.manager?.name
+                      : emp.manager || "—"}
+                  </p>
+                </div>
+                <div>
+                  <span className="text-base-content/50">Work Schedule</span>
+                  <p className="font-semibold text-base-content mt-0.5">{emp.workSchedule || "Standard"}</p>
+                </div>
+                <div>
+                  <span className="text-base-content/50">Start Date</span>
+                  <p className="font-semibold text-base-content mt-0.5 font-mono">
+                    {emp.startDate ? emp.startDate.slice(0, 10) : "—"}
+                  </p>
                 </div>
                 <div>
                   <span className="text-base-content/50">Work Location</span>
                   <p className="font-semibold text-base-content mt-0.5">{emp.workLocation || emp.location || "Remote"}</p>
                 </div>
-                <div>
-                  <span className="text-base-content/50">Grade Level</span>
-                  <p className="font-semibold text-base-content mt-0.5">{emp.grade || "G2"}</p>
-                </div>
-                <div>
-                  <span className="text-base-content/50">Supervisor</span>
-                  <p className="font-semibold text-base-content mt-0.5">{managerObj}</p>
-                </div>
-                <div>
-                  <span className="text-base-content/50">System Login Account</span>
-                  <p className="font-semibold text-base-content mt-0.5 flex items-center gap-1 text-emerald-600">
-                    <CheckCircle2 className="size-3" /> Enabled
-                  </p>
-                </div>
               </div>
             </div>
 
-            {/* Card 3: Contract & Probation */}
-            <div className="card bg-base-100 border border-base-200/80 shadow-xs rounded-2xl p-5 space-y-4">
-              <div className="flex items-center gap-2.5 pb-3 border-b border-base-200">
-                <div className="size-8 rounded-xl bg-warning/10 text-warning flex items-center justify-center">
-                  <Calendar className="size-4" />
+            {/* 3. Contract & Probation */}
+            <div className="card bg-base-100 border border-base-200/80 shadow-xs rounded-2xl p-6 space-y-4">
+              <div className="flex items-center gap-2.5 pb-2 border-b border-base-200">
+                <div className="size-8 rounded-lg bg-warning/10 text-warning flex items-center justify-center">
+                  <ShieldCheck className="size-4" />
                 </div>
-                <h3 className="font-semibold text-sm text-base-content">
-                  Contract & Probation Terms
-                </h3>
+                <h3 className="font-semibold text-sm text-base-content">Contract & Probation</h3>
               </div>
               <div className="grid grid-cols-2 gap-3 text-xs">
                 <div>
@@ -827,56 +798,58 @@ function StaffDetailPage() {
                   <p className="font-semibold text-base-content mt-0.5">{emp.contractType || "Permanent"}</p>
                 </div>
                 <div>
-                  <span className="text-base-content/50">Contract End Date</span>
-                  <p className="font-semibold text-base-content mt-0.5">
-                    {emp.contractEndDate ? emp.contractEndDate.slice(0, 10) : "Open-ended / Permanent"}
+                  <span className="text-base-content/50">Contract Expiry</span>
+                  <p className="font-semibold text-base-content mt-0.5 font-mono">
+                    {emp.contractEndDate ? emp.contractEndDate.slice(0, 10) : "Indefinite"}
                   </p>
                 </div>
                 <div>
                   <span className="text-base-content/50">Probation Status</span>
                   <p className="font-semibold text-base-content mt-0.5">
-                    {emp.isOnProbation ? "Under Probationary Review" : "Completed / Confirmed"}
+                    {emp.isOnProbation ? (
+                      <span className="text-warning font-bold">On Probation</span>
+                    ) : (
+                      <span className="text-success font-medium">Confirmed</span>
+                    )}
                   </p>
                 </div>
                 <div>
                   <span className="text-base-content/50">Probation End Date</span>
-                  <p className="font-semibold text-base-content mt-0.5">
+                  <p className="font-semibold text-base-content mt-0.5 font-mono">
                     {emp.probationEndDate ? emp.probationEndDate.slice(0, 10) : "—"}
                   </p>
                 </div>
               </div>
             </div>
 
-            {/* Card 4: Emergency Contact */}
-            <div className="card bg-base-100 border border-base-200/80 shadow-xs rounded-2xl p-5 space-y-4">
-              <div className="flex items-center gap-2.5 pb-3 border-b border-base-200">
-                <div className="size-8 rounded-xl bg-error/10 text-error flex items-center justify-center">
+            {/* 4. Emergency Contact */}
+            <div className="card bg-base-100 border border-base-200/80 shadow-xs rounded-2xl p-6 space-y-4">
+              <div className="flex items-center gap-2.5 pb-2 border-b border-base-200">
+                <div className="size-8 rounded-lg bg-error/10 text-error flex items-center justify-center">
                   <Phone className="size-4" />
                 </div>
-                <h3 className="font-semibold text-sm text-base-content">
-                  Emergency Contact
-                </h3>
+                <h3 className="font-semibold text-sm text-base-content">Emergency Contact</h3>
               </div>
               <div className="grid grid-cols-2 gap-3 text-xs">
                 <div>
-                  <span className="text-base-content/50">Contact Full Name</span>
+                  <span className="text-base-content/50">Contact Person</span>
                   <p className="font-semibold text-base-content mt-0.5">{emp.emergencyContactName || "—"}</p>
                 </div>
                 <div>
                   <span className="text-base-content/50">Relationship</span>
                   <p className="font-semibold text-base-content mt-0.5">{emp.emergencyContactRelationship || "—"}</p>
                 </div>
-                <div className="col-span-2 pt-1 border-t border-base-200/50">
-                  <span className="text-base-content/50">Emergency Phone Number</span>
+                <div className="col-span-2">
+                  <span className="text-base-content/50">Emergency Contact Number</span>
                   <p className="font-semibold text-base-content mt-0.5">{emp.emergencyContactPhone || "—"}</p>
                 </div>
               </div>
             </div>
 
-            {/* Card 5: Compensation & Banking (Full Width) */}
-            <div className="card bg-base-100 border border-base-200/80 shadow-xs rounded-2xl p-5 space-y-4 md:col-span-2">
-              <div className="flex items-center gap-2.5 pb-3 border-b border-base-200">
-                <div className="size-8 rounded-xl bg-success/10 text-success flex items-center justify-center">
+            {/* 5. Compensation & Banking */}
+            <div className="card bg-base-100 border border-base-200/80 shadow-xs rounded-2xl p-6 space-y-4 md:col-span-2">
+              <div className="flex items-center gap-2.5 pb-2 border-b border-base-200">
+                <div className="size-8 rounded-lg bg-success/10 text-success flex items-center justify-center">
                   <CreditCard className="size-4" />
                 </div>
                 <h3 className="font-semibold text-sm text-base-content">
@@ -908,462 +881,727 @@ function StaffDetailPage() {
         </div>
       )}
 
-      {/* ------------------------------------------------------------------ */}
-      {/* EDIT / CREATE MODE: Full Interactive Form                          */}
-      {/* ------------------------------------------------------------------ */}
+      {/* ================================================================== */}
+      {/* EDIT / CREATE MODE: 6-Step Multi-Section Form (Kinova HR Layout)   */}
+      {/* ================================================================== */}
       {(isNew || activeTab === "edit") && (
         <FormProvider {...methods}>
           <form
             id="employee-form"
             onSubmit={handleSubmit(onSubmit)}
-            className="space-y-8"
+            className="space-y-6"
           >
-            {/* Section 1: Personal Details */}
-            <div className="card bg-base-100 border border-base-200/80 shadow-xs rounded-2xl overflow-hidden">
-              <div className="p-4 sm:p-5 border-b border-base-200 bg-base-200/30 flex items-center gap-3">
-                <div className="size-9 rounded-xl bg-primary/10 text-primary flex items-center justify-center font-semibold">
-                  <User className="size-4" />
-                </div>
-                <div>
-                  <h3 className="font-semibold text-sm text-base-content">
-                    Personal Information
+            {/* Header: Kinova HR Eyebrow & Title */}
+            <div className="space-y-1">
+              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-primary">
+                Employees › {isNew ? "Add Employee" : "Edit Employee"}
+              </p>
+              <h1 className="text-2xl font-bold tracking-tight text-base-content sm:text-3xl">
+                {isNew ? "Create employee record" : `Edit profile: ${fullName}`}
+              </h1>
+              <p className="text-xs sm:text-sm text-base-content/60">
+                Mandatory fields, duplicate IDs and required documents are validated before saving.
+              </p>
+            </div>
+
+            {/* Stepper Pills Navigation */}
+            <div className="pt-2">
+              <ol className="flex flex-wrap items-center gap-2">
+                {FORM_STEPS.map((step, idx) => {
+                  const isCompleted = idx < currentStep;
+                  const isCurrent = idx === currentStep;
+                  return (
+                    <li
+                      key={step}
+                      onClick={() => handleStepClick(idx)}
+                      className={`flex items-center gap-2 rounded-full border px-3.5 py-1.5 text-xs cursor-pointer select-none transition-all ${
+                        isCurrent
+                          ? "border-primary bg-primary text-primary-content font-semibold shadow-xs"
+                          : isCompleted
+                          ? "border-emerald-500/40 bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 font-medium hover:border-emerald-500/60"
+                          : "border-base-300 bg-base-100 text-base-content/60 hover:border-base-content/30 hover:text-base-content"
+                      }`}
+                    >
+                      <span
+                        className={`size-4 rounded-full flex items-center justify-center text-[10px] font-bold ${
+                          isCurrent
+                            ? "bg-primary-content text-primary"
+                            : isCompleted
+                            ? "bg-emerald-500 text-white"
+                            : "bg-base-200 text-base-content/70"
+                        }`}
+                      >
+                        {isCompleted ? "✓" : idx + 1}
+                      </span>
+                      <span>{step}</span>
+                    </li>
+                  );
+                })}
+              </ol>
+            </div>
+
+            {/* STEP 0: Personal */}
+            {currentStep === 0 && (
+              <div className="card bg-base-100 border border-base-200/80 shadow-xs rounded-2xl p-6 sm:p-7 space-y-5 animate-in fade-in duration-300">
+                <div className="border-b border-base-200 pb-3">
+                  <h3 className="font-semibold text-base text-base-content">
+                    Personal Details
                   </h3>
                   <p className="text-xs text-base-content/60">
                     Primary identity, contact details, and demographic background
                   </p>
                 </div>
-              </div>
 
-              <div className="p-5 sm:p-6 space-y-4">
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                  <SimpleInput
-                    label="First Name *"
-                    placeholder="e.g. Adebayo"
-                    {...register("firstName", {
-                      required: "First name is required",
-                    })}
-                  />
-                  <SimpleInput
-                    label="Middle Name"
-                    placeholder="e.g. Chukwu"
-                    {...register("middleName")}
-                  />
-                  <SimpleInput
-                    label="Last Name *"
-                    placeholder="e.g. Adeleke"
-                    {...register("lastName", {
-                      required: "Last name is required",
-                    })}
-                  />
-                </div>
+                <div className="space-y-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <SimpleInput
+                      label="First Name *"
+                      placeholder="e.g. Adebayo"
+                      {...register("firstName", {
+                        required: "First name is required",
+                      })}
+                    />
+                    <SimpleInput
+                      label="Middle Name"
+                      placeholder="e.g. Chukwu"
+                      {...register("middleName")}
+                    />
+                    <SimpleInput
+                      label="Last Name *"
+                      placeholder="e.g. Adeleke"
+                      {...register("lastName", {
+                        required: "Last name is required",
+                      })}
+                    />
+                  </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <SimpleInput
-                    label="Work Email Address *"
-                    type="email"
-                    placeholder="adebayo.adeleke@company.com"
-                    {...register("email", {
-                      required: "Work email is required",
-                      pattern: {
-                        value: /^\S+@\S+\.\S+$/,
-                        message: "Please enter a valid email address",
-                      },
-                    })}
-                  />
-
-                  <Controller
-                    name="phone"
-                    control={control}
-                    rules={{ required: "Phone number is required" }}
-                    render={({ field, fieldState }) => (
-                      <SimplePhoneInput
-                        label="Phone Number *"
-                        value={field.value ?? ""}
-                        onChange={(_val, rawValue) =>
-                          field.onChange(rawValue ?? "")
-                        }
-                        placeholder="+234 800 000 0000"
-                        error={fieldState.error?.message}
-                      />
-                    )}
-                  />
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                  <SimpleInput
-                    label="Date of Birth"
-                    type="date"
-                    {...register("dateOfBirth")}
-                  />
-
-                  <LocalSelect label="Gender" {...register("gender")}>
-                    <option value="">Select Gender</option>
-                    <option value="male">Male</option>
-                    <option value="female">Female</option>
-                    <option value="other">Other</option>
-                    <option value="prefer_not_to_say">Prefer not to say</option>
-                  </LocalSelect>
-
-                  <SimpleInput
-                    label="Nationality"
-                    placeholder="e.g. Nigerian"
-                    {...register("nationality")}
-                  />
-                </div>
-
-                <SimpleTextArea
-                  label="Residential Address"
-                  placeholder="Residential street address, city, state..."
-                  rows={2}
-                  {...register("residentialAddress")}
-                />
-              </div>
-            </div>
-
-            {/* Section 2: Employment & Organizational Details */}
-            <div className="card bg-base-100 border border-base-200/80 shadow-xs rounded-2xl overflow-hidden">
-              <div className="p-4 sm:p-5 border-b border-base-200 bg-base-200/30 flex items-center gap-3">
-                <div className="size-9 rounded-xl bg-info/10 text-info flex items-center justify-center font-semibold">
-                  <Building2 className="size-4" />
-                </div>
-                <div>
-                  <h3 className="font-semibold text-sm text-base-content">
-                    Employment & Organizational Details
-                  </h3>
-                  <p className="text-xs text-base-content/60">
-                    Role assignment, department affiliation, reporting line, and status
-                  </p>
-                </div>
-              </div>
-
-              <div className="p-5 sm:p-6 space-y-4">
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                  <SimpleInput
-                    label="Employee Number / ID"
-                    placeholder="e.g. EMP-0012"
-                    {...register("employeeNumber")}
-                  />
-
-                  <LocalSelect
-                    label="Department"
-                    {...register("departmentId", {
-                      onChange: (e) => {
-                        const sel = departmentsList.find(
-                          (d) => d.id === e.target.value,
-                        );
-                        if (sel) methods.setValue("department", sel.name);
-                      },
-                    })}
-                  >
-                    <option value="">Select Department</option>
-                    {departmentsList.map((dept) => (
-                      <option key={dept.id || dept.name} value={dept.id || dept.name}>
-                        {dept.name}
-                      </option>
-                    ))}
-                  </LocalSelect>
-
-                  {positionsList.length > 0 ? (
-                    <LocalSelect
-                      label="Position / Role"
-                      {...register("positionId", {
-                        onChange: (e) => {
-                          const sel = positionsList.find(
-                            (p) => p.id === e.target.value,
-                          );
-                          if (sel) methods.setValue("jobTitle", sel.name);
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <SimpleInput
+                      label="Work Email Address *"
+                      type="email"
+                      placeholder="adebayo.adeleke@company.com"
+                      {...register("email", {
+                        required: "Work email is required",
+                        pattern: {
+                          value: /^\S+@\S+\.\S+$/,
+                          message: "Please enter a valid email address",
                         },
                       })}
-                    >
-                      <option value="">Select Position</option>
-                      {positionsList.map((pos) => (
-                        <option key={pos.id} value={pos.id}>
-                          {pos.name}
-                        </option>
-                      ))}
-                    </LocalSelect>
-                  ) : (
+                    />
+
+                    <Controller
+                      name="phone"
+                      control={control}
+                      rules={{ required: "Phone number is required" }}
+                      render={({ field, fieldState }) => (
+                        <SimplePhoneInput
+                          label="Phone Number *"
+                          value={field.value ?? ""}
+                          onChange={(_val, rawValue) =>
+                            field.onChange(rawValue ?? "")
+                          }
+                          placeholder="+234 800 000 0000"
+                          error={fieldState.error?.message}
+                        />
+                      )}
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <SimpleInput
-                      label="Job Title"
-                      placeholder="e.g. Senior Frontend Engineer"
-                      {...register("jobTitle")}
+                      label="Date of Birth"
+                      type="date"
+                      {...register("dateOfBirth")}
                     />
-                  )}
-                </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                  <LocalSelect
-                    label="Employment Type"
-                    {...register("employeeType")}
-                  >
-                    {EMPLOYMENT_TYPES.map((type) => (
-                      <option key={type} value={type}>
-                        {type}
-                      </option>
-                    ))}
-                  </LocalSelect>
+                    <LocalSelect label="Gender" {...register("gender")}>
+                      <option value="">Select Gender</option>
+                      <option value="male">Male</option>
+                      <option value="female">Female</option>
+                      <option value="other">Other</option>
+                      <option value="prefer_not_to_say">Prefer not to say</option>
+                    </LocalSelect>
 
-                  <LocalSelect
-                    label="Employment Status"
-                    {...register("employmentStatus")}
-                  >
-                    {EMPLOYMENT_STATUSES.map((status) => (
-                      <option key={status.value} value={status.value}>
-                        {status.label}
-                      </option>
-                    ))}
-                  </LocalSelect>
-
-                  <LocalSelect
-                    label="Work Location"
-                    {...register("workLocation")}
-                  >
-                    {WORK_LOCATIONS.map((loc) => (
-                      <option key={loc} value={loc}>
-                        {loc}
-                      </option>
-                    ))}
-                  </LocalSelect>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                  <LocalSelect label="Grade / Level" {...register("grade")}>
-                    {DEFAULT_GRADES.map((grade) => (
-                      <option key={grade} value={grade}>
-                        {grade}
-                      </option>
-                    ))}
-                  </LocalSelect>
-
-                  <LocalSelect
-                    label="Reporting Manager / Supervisor"
-                    {...register("managerId")}
-                  >
-                    <option value="">None / Self</option>
-                    {potentialManagers.map((mgr) => {
-                      const name =
-                        mgr.name ??
-                        `${mgr.firstName ?? ""} ${mgr.lastName ?? ""}`.trim() ??
-                        mgr.email;
-                      return (
-                        <option key={mgr.id} value={mgr.id}>
-                          {name} ({mgr.departmentName ?? "Staff"})
-                        </option>
-                      );
-                    })}
-                  </LocalSelect>
-
-                  <SimpleInput
-                    label="Start / Joining Date"
-                    type="date"
-                    {...register("startDate")}
-                  />
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <SimpleInput
-                    label="Work Schedule"
-                    placeholder="e.g. Standard (9am - 5pm)"
-                    {...register("workSchedule")}
-                  />
-
-                  <div className="flex items-center gap-3 pt-6">
-                    <input
-                      type="checkbox"
-                      id="needsSystemAccount"
-                      className="checkbox checkbox-primary"
-                      {...register("needsSystemAccount")}
-                    />
-                    <label
-                      htmlFor="needsSystemAccount"
-                      className="text-xs font-medium text-base-content cursor-pointer"
-                    >
-                      Provision ERP & CRM system login account for this employee
-                    </label>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Section 3: Contract & Probation Terms */}
-            <div className="card bg-base-100 border border-base-200/80 shadow-xs rounded-2xl overflow-hidden">
-              <div className="p-4 sm:p-5 border-b border-base-200 bg-base-200/30 flex items-center gap-3">
-                <div className="size-9 rounded-xl bg-warning/10 text-warning flex items-center justify-center font-semibold">
-                  <Calendar className="size-4" />
-                </div>
-                <div>
-                  <h3 className="font-semibold text-sm text-base-content">
-                    Contract & Probation Terms
-                  </h3>
-                  <p className="text-xs text-base-content/60">
-                    Contract timelines, probation monitoring, and renewal details
-                  </p>
-                </div>
-              </div>
-
-              <div className="p-5 sm:p-6 space-y-4">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <LocalSelect
-                    label="Contract Type"
-                    {...register("contractType")}
-                  >
-                    {CONTRACT_TYPES.map((type) => (
-                      <option key={type} value={type}>
-                        {type}
-                      </option>
-                    ))}
-                  </LocalSelect>
-
-                  <SimpleInput
-                    label="Contract End Date (If applicable)"
-                    type="date"
-                    {...register("contractEndDate")}
-                  />
-                </div>
-
-                <div className="border border-base-200 rounded-xl p-4 bg-base-200/20 space-y-3">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm font-semibold text-base-content">
-                        Probation Period
-                      </p>
-                      <p className="text-xs text-base-content/60">
-                        Enable if this hire is currently undergoing probationary review.
-                      </p>
-                    </div>
-                    <input
-                      type="checkbox"
-                      className="toggle toggle-warning"
-                      {...register("isOnProbation")}
+                    <SimpleInput
+                      label="Nationality"
+                      placeholder="e.g. Nigerian"
+                      {...register("nationality")}
                     />
                   </div>
 
-                  {isOnProbation && (
-                    <div className="pt-2 max-w-sm">
-                      <SimpleInput
-                        label="Probation End Date"
-                        type="date"
-                        {...register("probationEndDate")}
-                      />
-                    </div>
-                  )}
+                  <SimpleTextArea
+                    label="Residential Address"
+                    placeholder="Residential street address, city, state..."
+                    rows={2}
+                    {...register("residentialAddress")}
+                  />
                 </div>
               </div>
-            </div>
+            )}
 
-            {/* Section 4: Emergency Contact */}
-            <div className="card bg-base-100 border border-base-200/80 shadow-xs rounded-2xl overflow-hidden">
-              <div className="p-4 sm:p-5 border-b border-base-200 bg-base-200/30 flex items-center gap-3">
-                <div className="size-9 rounded-xl bg-error/10 text-error flex items-center justify-center font-semibold">
-                  <Phone className="size-4" />
-                </div>
-                <div>
-                  <h3 className="font-semibold text-sm text-base-content">
+            {/* STEP 1: Emergency contact */}
+            {currentStep === 1 && (
+              <div className="card bg-base-100 border border-base-200/80 shadow-xs rounded-2xl p-6 sm:p-7 space-y-5 animate-in fade-in duration-300">
+                <div className="border-b border-base-200 pb-3">
+                  <h3 className="font-semibold text-base text-base-content">
                     Emergency Contact
                   </h3>
                   <p className="text-xs text-base-content/60">
                     Designated emergency point of contact for safety & compliance
                   </p>
                 </div>
-              </div>
 
-              <div className="p-5 sm:p-6">
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                   <SimpleInput
                     label="Contact Full Name"
                     placeholder="e.g. Mary Adeleke"
                     {...register("emergencyContactName")}
                   />
-                  <SimpleInput
+                  <LocalSelect
                     label="Relationship"
-                    placeholder="e.g. Spouse / Sister"
                     {...register("emergencyContactRelationship")}
-                  />
+                  >
+                    <option value="">Select Relationship</option>
+                    {RELATIONSHIPS.map((rel) => (
+                      <option key={rel} value={rel}>
+                        {rel}
+                      </option>
+                    ))}
+                  </LocalSelect>
                   <SimpleInput
-                    label="Emergency Phone"
+                    label="Emergency Phone Number"
                     placeholder="+234 800 000 0000"
                     {...register("emergencyContactPhone")}
                   />
                 </div>
               </div>
-            </div>
+            )}
 
-            {/* Section 5: Compensation & Bank Details */}
-            <div className="card bg-base-100 border border-base-200/80 shadow-xs rounded-2xl overflow-hidden">
-              <div className="p-4 sm:p-5 border-b border-base-200 bg-base-200/30 flex items-center gap-3">
-                <div className="size-9 rounded-xl bg-success/10 text-success flex items-center justify-center font-semibold">
-                  <CreditCard className="size-4" />
+            {/* STEP 2: Employment */}
+            {currentStep === 2 && (
+              <div className="card bg-base-100 border border-base-200/80 shadow-xs rounded-2xl p-6 sm:p-7 space-y-5 animate-in fade-in duration-300">
+                <div className="border-b border-base-200 pb-3">
+                  <h3 className="font-semibold text-base text-base-content">
+                    Employment & Organizational Details
+                  </h3>
+                  <p className="text-xs text-base-content/60">
+                    Role assignment, department affiliation, reporting line, and status
+                  </p>
                 </div>
-                <div>
-                  <h3 className="font-semibold text-sm text-base-content">
+
+                <div className="space-y-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <SimpleInput
+                      label="Employee Number / ID"
+                      placeholder="e.g. EMP-0012"
+                      {...register("employeeNumber")}
+                    />
+
+                    <LocalSelect
+                      label="Department"
+                      {...register("departmentId", {
+                        onChange: (e) => {
+                          const sel = departmentsList.find(
+                            (d) => d.id === e.target.value,
+                          );
+                          if (sel) methods.setValue("department", sel.name);
+                        },
+                      })}
+                    >
+                      <option value="">Select Department</option>
+                      {departmentsList.map((dept) => (
+                        <option key={dept.id || dept.name} value={dept.id || dept.name}>
+                          {dept.name}
+                        </option>
+                      ))}
+                    </LocalSelect>
+
+                    {positionsList.length > 0 ? (
+                      <LocalSelect
+                        label="Position / Role"
+                        {...register("positionId", {
+                          onChange: (e) => {
+                            const sel = positionsList.find(
+                              (p) => p.id === e.target.value,
+                            );
+                            if (sel) methods.setValue("jobTitle", sel.name);
+                          },
+                        })}
+                      >
+                        <option value="">Select Position</option>
+                        {positionsList.map((pos) => (
+                          <option key={pos.id} value={pos.id}>
+                            {pos.name}
+                          </option>
+                        ))}
+                      </LocalSelect>
+                    ) : (
+                      <SimpleInput
+                        label="Job Title"
+                        placeholder="e.g. Senior Frontend Engineer"
+                        {...register("jobTitle")}
+                      />
+                    )}
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <LocalSelect
+                      label="Employment Type"
+                      {...register("employeeType")}
+                    >
+                      {EMPLOYMENT_TYPES.map((type) => (
+                        <option key={type} value={type}>
+                          {type}
+                        </option>
+                      ))}
+                    </LocalSelect>
+
+                    <LocalSelect
+                      label="Employment Status"
+                      {...register("employmentStatus")}
+                    >
+                      {EMPLOYMENT_STATUSES.map((status) => (
+                        <option key={status.value} value={status.value}>
+                          {status.label}
+                        </option>
+                      ))}
+                    </LocalSelect>
+
+                    <LocalSelect
+                      label="Work Location"
+                      {...register("workLocation")}
+                    >
+                      {WORK_LOCATIONS.map((loc) => (
+                        <option key={loc} value={loc}>
+                          {loc}
+                        </option>
+                      ))}
+                    </LocalSelect>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <LocalSelect label="Grade / Level" {...register("grade")}>
+                      {DEFAULT_GRADES.map((grade) => (
+                        <option key={grade} value={grade}>
+                          {grade}
+                        </option>
+                      ))}
+                    </LocalSelect>
+
+                    <LocalSelect
+                      label="Reporting Manager / Supervisor"
+                      {...register("managerId")}
+                    >
+                      <option value="">None / Self</option>
+                      {potentialManagers.map((mgr) => {
+                        const name =
+                          mgr.name ??
+                          `${mgr.firstName ?? ""} ${mgr.lastName ?? ""}`.trim() ??
+                          mgr.email;
+                        return (
+                          <option key={mgr.id} value={mgr.id}>
+                            {name} ({mgr.departmentName ?? "Staff"})
+                          </option>
+                        );
+                      })}
+                    </LocalSelect>
+
+                    <SimpleInput
+                      label="Start Date *"
+                      type="date"
+                      {...register("startDate", {
+                        required: "Start date is required",
+                      })}
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <SimpleInput
+                      label="Work Schedule"
+                      placeholder="e.g. Standard (9am - 5pm)"
+                      {...register("workSchedule")}
+                    />
+
+                    <LocalSelect
+                      label="Contract Type"
+                      {...register("contractType")}
+                    >
+                      {CONTRACT_TYPES.map((c) => (
+                        <option key={c} value={c}>
+                          {c}
+                        </option>
+                      ))}
+                    </LocalSelect>
+
+                    <SimpleInput
+                      label="Contract End Date"
+                      type="date"
+                      {...register("contractEndDate")}
+                    />
+                  </div>
+
+                  {/* Toggles */}
+                  <div className="pt-2 border-t border-base-200/80 space-y-3">
+                    <label className="flex items-center gap-3 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        className="checkbox checkbox-primary checkbox-sm"
+                        {...register("isOnProbation")}
+                      />
+                      <span className="text-xs font-medium text-base-content">
+                        Staff member is on probation
+                      </span>
+                    </label>
+
+                    {isOnProbation && (
+                      <div className="max-w-xs pl-7">
+                        <SimpleInput
+                          label="Probation End Date"
+                          type="date"
+                          {...register("probationEndDate")}
+                        />
+                      </div>
+                    )}
+
+                    <label className="flex items-center gap-3 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        className="checkbox checkbox-primary checkbox-sm"
+                        {...register("needsSystemAccount")}
+                      />
+                      <span className="text-xs font-medium text-base-content">
+                        Create CRM login account with this email address
+                      </span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* STEP 3: Compensation */}
+            {currentStep === 3 && (
+              <div className="card bg-base-100 border border-base-200/80 shadow-xs rounded-2xl p-6 sm:p-7 space-y-5 animate-in fade-in duration-300">
+                {/* Kinova HR Lock Banner */}
+                <div className="flex items-center gap-2.5 rounded-xl bg-warning/15 border border-warning/20 p-3.5 text-xs text-warning-content font-medium">
+                  <Lock className="size-4 shrink-0 text-warning" />
+                  <span>
+                    Restricted: visible only to users with compensation permission. Changes are audited.
+                  </span>
+                </div>
+
+                <div className="border-b border-base-200 pb-3">
+                  <h3 className="font-semibold text-base text-base-content">
                     Compensation & Banking Details
                   </h3>
                   <p className="text-xs text-base-content/60">
                     Payroll salary configuration and disbursement banking credentials
                   </p>
                 </div>
+
+                <div className="space-y-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <SimpleInput
+                      label="Basic Salary (₦)"
+                      type="number"
+                      step="any"
+                      placeholder="e.g. 500000"
+                      {...register("basicSalary")}
+                    />
+
+                    <LocalSelect
+                      label="Pay Frequency"
+                      {...register("payFrequency")}
+                    >
+                      {PAY_FREQUENCIES.map((freq) => (
+                        <option key={freq} value={freq}>
+                          {freq}
+                        </option>
+                      ))}
+                    </LocalSelect>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <SimpleInput
+                      label="Bank Name"
+                      placeholder="e.g. Access Bank / Zenith Bank"
+                      {...register("bankName")}
+                    />
+
+                    <SimpleInput
+                      label="Bank Account Number"
+                      placeholder="10-digit NUBAN account number"
+                      maxLength={10}
+                      {...register("bankAccountNumber")}
+                    />
+                  </div>
+                </div>
               </div>
+            )}
 
-              <div className="p-5 sm:p-6 space-y-4">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <SimpleInput
-                    label="Basic Salary (₦)"
-                    type="number"
-                    step="any"
-                    placeholder="e.g. 500000"
-                    {...register("basicSalary")}
-                  />
-
-                  <LocalSelect
-                    label="Pay Frequency"
-                    {...register("payFrequency")}
-                  >
-                    {PAY_FREQUENCIES.map((freq) => (
-                      <option key={freq} value={freq}>
-                        {freq}
-                      </option>
-                    ))}
-                  </LocalSelect>
+            {/* STEP 4: Documents */}
+            {currentStep === 4 && (
+              <div className="card bg-base-100 border border-base-200/80 shadow-xs rounded-2xl p-6 sm:p-7 space-y-5 animate-in fade-in duration-300">
+                <div className="border-b border-base-200 pb-3">
+                  <h3 className="font-semibold text-base text-base-content">
+                    Documents & Credentials
+                  </h3>
+                  <p className="text-xs text-base-content/60">
+                    Upload employee verification documents, contracts, and certifications
+                  </p>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <SimpleInput
-                    label="Bank Name"
-                    placeholder="e.g. Access Bank / Zenith Bank"
-                    {...register("bankName")}
-                  />
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {DOCUMENT_ITEMS.map((doc) => {
+                    const uploaded = uploadedDocs[doc.key];
+                    return (
+                      <div
+                        key={doc.key}
+                        className={`relative rounded-2xl border-2 border-dashed p-5 transition-all flex flex-col justify-between ${
+                          uploaded
+                            ? "border-emerald-500/50 bg-emerald-500/5 shadow-xs"
+                            : "border-base-300 bg-base-100 hover:border-primary/50 hover:bg-base-200/30"
+                        }`}
+                      >
+                        <div className="space-y-2">
+                          <div className="flex items-center justify-between">
+                            <div
+                              className={`size-9 rounded-xl flex items-center justify-center ${
+                                uploaded
+                                  ? "bg-emerald-500/15 text-emerald-600"
+                                  : "bg-primary/10 text-primary"
+                              }`}
+                            >
+                              {uploaded ? (
+                                <Check className="size-4 stroke-[2.5]" />
+                              ) : (
+                                <UploadCloud className="size-4" />
+                              )}
+                            </div>
 
-                  <SimpleInput
-                    label="Bank Account Number"
-                    placeholder="10-digit NUBAN account number"
-                    maxLength={10}
-                    {...register("bankAccountNumber")}
-                  />
+                            {uploaded && (
+                              <button
+                                type="button"
+                                onClick={() => handleRemoveDoc(doc.key)}
+                                className="btn btn-ghost btn-xs text-error hover:bg-error/10 rounded-lg p-1 size-7 flex items-center justify-center"
+                                title="Remove file"
+                              >
+                                <Trash2 className="size-3.5" />
+                              </button>
+                            )}
+                          </div>
+
+                          <div>
+                            <h4 className="text-xs font-semibold text-base-content">
+                              {doc.title}
+                            </h4>
+                            <p className="text-[11px] text-base-content/60 mt-0.5 line-clamp-2">
+                              {doc.description}
+                            </p>
+                          </div>
+                        </div>
+
+                        <div className="pt-4 mt-2 border-t border-base-200/60">
+                          {uploaded ? (
+                            <div className="flex items-center justify-between text-[11px]">
+                              <span className="font-medium text-emerald-600 truncate max-w-[140px]" title={uploaded.name}>
+                                {uploaded.name}
+                              </span>
+                              <span className="text-base-content/40 font-mono">
+                                {uploaded.size}
+                              </span>
+                            </div>
+                          ) : (
+                            <label className="btn btn-xs btn-outline border-base-300 w-full rounded-lg cursor-pointer text-[11px]">
+                              <Paperclip className="size-3 mr-1" />
+                              Browse File
+                              <input
+                                type="file"
+                                className="hidden"
+                                onChange={(e) => handleFileUpload(doc.key, e)}
+                              />
+                            </label>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
-            </div>
+            )}
 
-            {/* Bottom Submit Button */}
-            <div className="flex items-center justify-end gap-3 pt-4">
-              <button
-                type="button"
-                onClick={() => (!isNew ? setActiveTab("view") : navigate({ to: "/hr/staffs" }))}
-                className="btn btn-ghost border border-base-300 rounded-xl px-5 text-xs font-medium"
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                disabled={isPending}
-                className="btn btn-primary rounded-xl px-6 text-xs font-semibold gap-1.5 shadow-sm"
-              >
-                {isPending ? (
-                  <Loader2 className="size-4 animate-spin" />
-                ) : (
-                  <Save className="size-4" />
-                )}
-                <span>{isNew ? "Create Employee" : "Save Changes"}</span>
-              </button>
+            {/* STEP 5: Review */}
+            {currentStep === 5 && (
+              <div className="space-y-6 animate-in fade-in duration-300">
+                {/* Kinova HR Checklist */}
+                <div className="card bg-base-100 border border-base-200/80 p-5 rounded-2xl shadow-xs">
+                  <h4 className="text-xs font-bold uppercase tracking-wider text-base-content/70 mb-3">
+                    Pre-Submission Readiness Checklist
+                  </h4>
+                  <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs">
+                    <li className="flex items-center gap-2 text-base-content/80">
+                      <span className="size-2 rounded-full bg-emerald-500" />
+                      <span>Mandatory fields complete</span>
+                    </li>
+                    <li className="flex items-center gap-2 text-base-content/80">
+                      <span className="size-2 rounded-full bg-emerald-500" />
+                      <span>No duplicate employee ID</span>
+                    </li>
+                    <li className="flex items-center gap-2 text-base-content/80">
+                      <span className="size-2 rounded-full bg-emerald-500" />
+                      <span>Department & position assigned</span>
+                    </li>
+                    <li className="flex items-center gap-2 text-base-content/80">
+                      <span className="size-2 rounded-full bg-emerald-500" />
+                      <span>Audit event will be created</span>
+                    </li>
+                    <li className="flex items-center gap-2 text-base-content/80 sm:col-span-2">
+                      <span className="size-2 rounded-full bg-emerald-500" />
+                      <span>Notifications: HR, Manager, IT</span>
+                    </li>
+                  </ul>
+                </div>
+
+                {/* Review Cards Grid */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                  {/* Personal Summary */}
+                  <div className="card bg-base-100 border border-base-200/80 p-5 rounded-2xl shadow-xs space-y-3">
+                    <div className="flex items-center justify-between pb-2 border-b border-base-200">
+                      <span className="font-semibold text-sm text-base-content">
+                        Personal Information
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => setCurrentStep(0)}
+                        className="btn btn-ghost btn-xs text-primary font-medium"
+                      >
+                        Edit
+                      </button>
+                    </div>
+                    <div className="space-y-1.5">
+                      <p><span className="text-base-content/50">Full Name:</span> <span className="font-semibold">{formValues.firstName} {formValues.middleName || ""} {formValues.lastName}</span></p>
+                      <p><span className="text-base-content/50">Email:</span> <span className="font-semibold">{formValues.email || "—"}</span></p>
+                      <p><span className="text-base-content/50">Phone:</span> <span className="font-semibold">{formValues.phone || "—"}</span></p>
+                      <p><span className="text-base-content/50">Date of Birth:</span> <span className="font-semibold font-mono">{formValues.dateOfBirth || "—"}</span></p>
+                      <p><span className="text-base-content/50">Nationality:</span> <span className="font-semibold">{formValues.nationality || "—"}</span></p>
+                      <p><span className="text-base-content/50">Address:</span> <span className="font-semibold">{formValues.residentialAddress || "—"}</span></p>
+                    </div>
+                  </div>
+
+                  {/* Emergency Contact Summary */}
+                  <div className="card bg-base-100 border border-base-200/80 p-5 rounded-2xl shadow-xs space-y-3">
+                    <div className="flex items-center justify-between pb-2 border-b border-base-200">
+                      <span className="font-semibold text-sm text-base-content">
+                        Emergency Contact
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => setCurrentStep(1)}
+                        className="btn btn-ghost btn-xs text-primary font-medium"
+                      >
+                        Edit
+                      </button>
+                    </div>
+                    <div className="space-y-1.5">
+                      <p><span className="text-base-content/50">Contact Person:</span> <span className="font-semibold">{formValues.emergencyContactName || "—"}</span></p>
+                      <p><span className="text-base-content/50">Relationship:</span> <span className="font-semibold">{formValues.emergencyContactRelationship || "—"}</span></p>
+                      <p><span className="text-base-content/50">Emergency Phone:</span> <span className="font-semibold">{formValues.emergencyContactPhone || "—"}</span></p>
+                    </div>
+                  </div>
+
+                  {/* Employment Summary */}
+                  <div className="card bg-base-100 border border-base-200/80 p-5 rounded-2xl shadow-xs space-y-3">
+                    <div className="flex items-center justify-between pb-2 border-b border-base-200">
+                      <span className="font-semibold text-sm text-base-content">
+                        Employment & Role
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => setCurrentStep(2)}
+                        className="btn btn-ghost btn-xs text-primary font-medium"
+                      >
+                        Edit
+                      </button>
+                    </div>
+                    <div className="space-y-1.5">
+                      <p><span className="text-base-content/50">Employee ID:</span> <span className="font-semibold font-mono">{formValues.employeeNumber || "Auto-assigned"}</span></p>
+                      <p><span className="text-base-content/50">Department:</span> <span className="font-semibold">{currentDept}</span></p>
+                      <p><span className="text-base-content/50">Job Title:</span> <span className="font-semibold">{currentJob}</span></p>
+                      <p><span className="text-base-content/50">Type / Status:</span> <span className="font-semibold">{formValues.employeeType} · {formValues.employmentStatus}</span></p>
+                      <p><span className="text-base-content/50">Location / Grade:</span> <span className="font-semibold">{formValues.workLocation} · {formValues.grade}</span></p>
+                      <p><span className="text-base-content/50">Manager:</span> <span className="font-semibold">{currentManager}</span></p>
+                      <p><span className="text-base-content/50">Start Date:</span> <span className="font-semibold font-mono">{formValues.startDate || "—"}</span></p>
+                    </div>
+                  </div>
+
+                  {/* Compensation & Documents Summary */}
+                  <div className="card bg-base-100 border border-base-200/80 p-5 rounded-2xl shadow-xs space-y-3">
+                    <div className="flex items-center justify-between pb-2 border-b border-base-200">
+                      <span className="font-semibold text-sm text-base-content">
+                        Compensation & Documents
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => setCurrentStep(3)}
+                        className="btn btn-ghost btn-xs text-primary font-medium"
+                      >
+                        Edit
+                      </button>
+                    </div>
+                    <div className="space-y-1.5">
+                      <p><span className="text-base-content/50">Basic Salary:</span> <span className="font-bold text-sm text-base-content">{formatSalary(formValues.basicSalary ? Number(formValues.basicSalary) : undefined)}</span></p>
+                      <p><span className="text-base-content/50">Pay Frequency:</span> <span className="font-semibold capitalize">{formValues.payFrequency}</span></p>
+                      <p><span className="text-base-content/50">Bank:</span> <span className="font-semibold">{formValues.bankName || "—"}</span></p>
+                      <p><span className="text-base-content/50">NUBAN Account:</span> <span className="font-mono font-semibold">{formValues.bankAccountNumber || "—"}</span></p>
+                      <p className="pt-1"><span className="text-base-content/50">Attached Files:</span> <span className="font-semibold text-emerald-600">{Object.keys(uploadedDocs).length} document(s) uploaded</span></p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Bottom Stepper Navigation Controls */}
+            <div className="mt-8 flex items-center justify-between pt-5 border-t border-base-200">
+              {currentStep === 0 ? (
+                <button
+                  type="button"
+                  onClick={() => (!isNew ? setActiveTab("view") : navigate({ to: "/hr/staffs" }))}
+                  className="btn btn-ghost border border-base-300 rounded-xl px-5 text-xs font-medium"
+                >
+                  Cancel
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => setCurrentStep((prev) => Math.max(0, prev - 1))}
+                  className="btn btn-outline border-base-300 rounded-xl px-5 text-xs font-medium gap-1.5"
+                >
+                  <ArrowLeft className="size-3.5" /> Back
+                </button>
+              )}
+
+              {currentStep < FORM_STEPS.length - 1 ? (
+                <button
+                  type="button"
+                  onClick={handleContinue}
+                  className="btn btn-primary rounded-xl px-6 text-xs font-semibold gap-1.5 shadow-sm"
+                >
+                  <span>Continue</span>
+                  <ArrowRight className="size-3.5" />
+                </button>
+              ) : (
+                <button
+                  type="submit"
+                  disabled={isPending}
+                  className="btn btn-primary rounded-xl px-7 text-xs font-semibold gap-2 shadow-sm"
+                >
+                  {isPending ? (
+                    <Loader2 className="size-4 animate-spin" />
+                  ) : (
+                    <Save className="size-4" />
+                  )}
+                  <span>{isNew ? "Create Employee" : "Save Changes"}</span>
+                </button>
+              )}
             </div>
           </form>
         </FormProvider>
