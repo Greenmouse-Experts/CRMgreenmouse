@@ -5,7 +5,6 @@ import PageLoader from "@/components/layout/PageLoader";
 import EmployeeStats from "./-components/EmployeeStats";
 import EmployeeFilters from "./-components/EmployeeFilters";
 import EmployeeTableView from "./-components/EmployeeTableView";
-import EmployeeDetailModal from "./-components/EmployeeDetailModal";
 import AddEmployeeModal from "./-components/AddEmployeeModal";
 import { exportEmployeesToCSV } from "./-components/employeeData";
 import type { Employee, StatusFilterOption } from "./-components/types";
@@ -117,9 +116,6 @@ function RouteComponent() {
   const [statusFilter, setStatusFilter] = useState<StatusFilterOption>("All");
   const [departmentFilter, setDepartmentFilter] = useState("All");
 
-  const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(
-    null,
-  );
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
   const filteredEmployees = useMemo(() => {
@@ -182,16 +178,6 @@ function RouteComponent() {
       success: "Employee deactivated",
       error: (error) => extract_message(error as never),
     });
-    setSelectedEmployee(null);
-  };
-
-  const handleToggleLeave = (employeeId: string) => {
-    setSelectedEmployee((prev) =>
-      prev && prev.id === employeeId
-        ? { ...prev, onLeave: !prev.onLeave }
-        : prev,
-    );
-    toast.info("Availability updated locally");
   };
 
   return (
@@ -274,18 +260,13 @@ function RouteComponent() {
         ) : (
           <EmployeeTableView
             employees={filteredEmployees}
-            onSelectEmployee={setSelectedEmployee}
+            onSelectEmployee={(emp) =>
+              navigate({ to: "/hr/staffs/$id", params: { id: emp.id } })
+            }
             onDeleteEmployee={handleRemoveEmployee}
           />
         )}
       </PageLoader>
-
-      <EmployeeDetailModal
-        employee={selectedEmployee}
-        isOpen={Boolean(selectedEmployee)}
-        onClose={() => setSelectedEmployee(null)}
-        onToggleLeave={handleToggleLeave}
-      />
 
       <AddEmployeeModal
         isOpen={isAddModalOpen}

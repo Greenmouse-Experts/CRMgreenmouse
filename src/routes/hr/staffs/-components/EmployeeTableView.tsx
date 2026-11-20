@@ -61,6 +61,7 @@ export default function EmployeeTableView({
           <Link
             to="/hr/staffs/$id"
             params={{ id: emp.id }}
+            search={{ mode: "edit" }}
             onClick={(e) => e.stopPropagation()}
             className="btn btn-xs btn-ghost text-base-content/70 hover:text-primary font-medium"
           >
