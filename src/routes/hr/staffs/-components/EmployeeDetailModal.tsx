@@ -1,4 +1,5 @@
 import { useRef, useEffect } from "react";
+import { Link } from "@tanstack/react-router";
 import Modal, { type ModalHandle } from "@/components/DialogModal";
 import type { Employee } from "./types";
 import EmployeeAvatar from "./EmployeeAvatar";
@@ -15,6 +16,7 @@ import {
   ShieldCheck,
   Banknote,
   CalendarCheck2,
+  Pencil,
 } from "lucide-react";
 
 interface EmployeeDetailModalProps {
@@ -105,7 +107,7 @@ export default function EmployeeDetailModal({
 
           <div className="p-3 bg-base-100 border border-base-200 rounded-xl col-span-2 sm:col-span-1">
             <span className="text-xs text-base-content/50 block flex items-center gap-1">
-              <User className="size-3 text-success" /> Reporting Manager
+              <CalendarCheck2 className="size-3 text-warning" /> Reports To
             </span>
             <span className="text-sm font-semibold text-base-content block mt-1 truncate">
               {employee.manager || "Executive Leadership"}
@@ -113,77 +115,78 @@ export default function EmployeeDetailModal({
           </div>
         </div>
 
-        {/* Contact & Organization Details */}
+        {/* Contact & Professional Info Grid */}
         <div className="space-y-3">
           <h4 className="text-xs font-semibold uppercase tracking-wider text-base-content/50">
-            Contact & Employment Details
+            Contact & Office Details
           </h4>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
-            <div className="p-3 rounded-xl border border-base-200 flex items-center gap-3">
-              <div className="size-8 rounded-lg bg-base-200 flex items-center justify-center shrink-0 text-base-content/70">
-                <Mail className="size-4" />
-              </div>
-              <div className="min-w-0 flex-1">
-                <span className="text-xs text-base-content/50 block">
-                  Work Email
-                </span>
-                <a
-                  href={`mailto:${employee.email}`}
-                  className="font-medium text-primary hover:underline truncate block"
-                >
-                  {employee.email}
-                </a>
-              </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+            <div className="p-3 rounded-xl bg-base-200/40 border border-base-200 space-y-1">
+              <span className="text-base-content/50 flex items-center gap-1.5">
+                <Mail className="size-3.5 text-primary" /> Email Address
+              </span>
+              <p className="font-semibold text-base-content select-all">
+                {employee.email}
+              </p>
             </div>
 
-            <div className="p-3 rounded-xl border border-base-200 flex items-center gap-3">
-              <div className="size-8 rounded-lg bg-base-200 flex items-center justify-center shrink-0 text-base-content/70">
-                <Phone className="size-4" />
-              </div>
-              <div className="min-w-0 flex-1">
-                <span className="text-xs text-base-content/50 block">
-                  Direct Phone
-                </span>
-                <a
-                  href={`tel:${employee.phone}`}
-                  className="font-medium text-base-content hover:underline truncate block"
-                >
-                  {employee.phone || "Not recorded"}
-                </a>
-              </div>
+            <div className="p-3 rounded-xl bg-base-200/40 border border-base-200 space-y-1">
+              <span className="text-base-content/50 flex items-center gap-1.5">
+                <Phone className="size-3.5 text-success" /> Phone Number
+              </span>
+              <p className="font-semibold text-base-content">
+                {employee.phone}
+              </p>
             </div>
 
-            <div className="p-3 rounded-xl border border-base-200 flex items-center gap-3">
-              <div className="size-8 rounded-lg bg-base-200 flex items-center justify-center shrink-0 text-base-content/70">
-                <Building2 className="size-4" />
-              </div>
-              <div className="min-w-0 flex-1">
-                <span className="text-xs text-base-content/50 block">
-                  Department
-                </span>
-                <span className="font-medium text-base-content block">
-                  {employee.dept}
-                </span>
-              </div>
+            <div className="p-3 rounded-xl bg-base-200/40 border border-base-200 space-y-1">
+              <span className="text-base-content/50 flex items-center gap-1.5">
+                <Building2 className="size-3.5 text-info" /> Department
+              </span>
+              <p className="font-semibold text-base-content">{employee.dept}</p>
             </div>
 
-            <div className="p-3 rounded-xl border border-base-200 flex items-center gap-3">
-              <div className="size-8 rounded-lg bg-base-200 flex items-center justify-center shrink-0 text-base-content/70">
-                <CalendarCheck2 className="size-4" />
-              </div>
-              <div className="min-w-0 flex-1">
-                <span className="text-xs text-base-content/50 block">
-                  Availability
-                </span>
-                <span
-                  className={`font-semibold text-xs ${
-                    employee.onLeave ? "text-amber-600" : "text-emerald-600"
-                  }`}
-                >
-                  {employee.onLeave ? "Currently On Leave" : "Active & Present"}
-                </span>
-              </div>
+            <div className="p-3 rounded-xl bg-base-200/40 border border-base-200 space-y-1">
+              <span className="text-base-content/50 flex items-center gap-1.5">
+                <User className="size-3.5 text-warning" /> Direct Supervisor
+              </span>
+              <p className="font-semibold text-base-content">
+                {employee.manager || "Executive Leadership"}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Status / Compliance notes */}
+        <div className="space-y-3">
+          <h4 className="text-xs font-semibold uppercase tracking-wider text-base-content/50">
+            Employment Availability
+          </h4>
+          <div className="p-4 rounded-xl border border-base-200 bg-base-200/20 flex items-center justify-between">
+            <div className="space-y-0.5">
+              <p className="text-xs font-semibold text-base-content">
+                Current Availability
+              </p>
+              <p className="text-[11px] text-base-content/60">
+                Determines whether this employee is active on shifts or on
+                scheduled leave.
+              </p>
+            </div>
+            <div className="flex items-center gap-2">
+              <span
+                className={`size-2 rounded-full ${
+                  employee.onLeave
+                    ? "bg-amber-500"
+                    : "bg-emerald-500 animate-pulse"
+                }`}
+              />
+              <span
+                className={`font-semibold text-xs ${
+                  employee.onLeave ? "text-amber-600" : "text-emerald-600"
+                }`}
+              >
+                {employee.onLeave ? "Currently On Leave" : "Active & Present"}
+              </span>
             </div>
           </div>
         </div>
@@ -203,6 +206,13 @@ export default function EmployeeDetailModal({
           )}
 
           <div className="flex items-center gap-2 ml-auto">
+            <Link
+              to="/hr/staffs/$id"
+              params={{ id: employee.id }}
+              className="btn btn-sm btn-primary text-xs gap-1.5"
+            >
+              <Pencil className="size-3.5" /> Edit Profile
+            </Link>
             <button
               type="button"
               onClick={onClose}

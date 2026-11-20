@@ -10,13 +10,28 @@ import AUTH_CRED from "../../auth_cred";
 export interface EmployeeRecord {
   id: string;
   firstName?: string;
+  middleName?: string;
   lastName?: string;
   email?: string;
   phoneNumber?: string;
+  phone?: string;
   employeeNumber?: string;
   status?: string;
+  employmentStatus?: string;
   employmentType?: string;
+  employeeType?: string;
   startDate?: string;
+  probationEndDate?: string;
+  contractType?: string;
+  contractEndDate?: string;
+  workSchedule?: string;
+  dateOfBirth?: string;
+  gender?: string;
+  nationality?: string;
+  residentialAddress?: string;
+  emergencyContactName?: string;
+  emergencyContactRelationship?: string;
+  emergencyContactPhone?: string;
   createdAt?: string;
   departmentId?: string;
   positionId?: string;
@@ -24,10 +39,29 @@ export interface EmployeeRecord {
   positionName?: string;
   department?: { id?: string; name?: string } | string;
   position?: { id?: string; name?: string } | string;
+  jobTitle?: string;
   role?: { id?: string; name?: string };
   manager?: { id?: string; name?: string } | string;
+  managerId?: string;
   location?: string;
+  workLocation?: string;
   grade?: string;
+  isOnProbation?: boolean;
+  needsSystemAccount?: boolean;
+  isDraft?: boolean;
+  basicSalary?: number;
+  payFrequency?: string;
+  bankName?: string;
+  bankAccountNumber?: string;
+  allowances?: Array<{ name: string; amount: number }>;
+  bonuses?: Array<{ name: string; amount: number }>;
+  deductions?: Array<{ name: string; amount: number }>;
+  documents?: Array<{
+    kind?: string;
+    url: string;
+    publicId?: string;
+    fileName?: string;
+  }>;
   [key: string]: any;
 }
 
@@ -47,11 +81,50 @@ export interface CreateEmployeeInput {
   firstName: string;
   lastName: string;
   email: string;
-  phoneNumber: string;
-  departmentId?: string;
-  positionId?: string;
+  phoneNumber?: string;
+  phone?: string;
+  employeeNumber?: string;
+  middleName?: string;
+  dateOfBirth?: string;
+  gender?: string;
+  nationality?: string;
+  residentialAddress?: string;
+  emergencyContactName?: string;
+  emergencyContactRelationship?: string;
+  emergencyContactPhone?: string;
+  employeeType?: string;
   employmentType?: string;
+  department?: string;
+  departmentId?: string;
+  jobTitle?: string;
+  positionId?: string;
+  grade?: string;
+  managerId?: string;
+  workLocation?: string;
+  location?: string;
   startDate?: string;
+  probationEndDate?: string;
+  contractType?: string;
+  contractEndDate?: string;
+  workSchedule?: string;
+  isDraft?: boolean;
+  employmentStatus?: string;
+  status?: string;
+  isOnProbation?: boolean;
+  needsSystemAccount?: boolean;
+  basicSalary?: number;
+  payFrequency?: string;
+  bankName?: string;
+  bankAccountNumber?: string;
+  allowances?: Array<{ name: string; amount: number }>;
+  bonuses?: Array<{ name: string; amount: number }>;
+  deductions?: Array<{ name: string; amount: number }>;
+  documents?: Array<{
+    kind?: string;
+    url: string;
+    publicId?: string;
+    fileName?: string;
+  }>;
   [key: string]: any;
 }
 
@@ -116,7 +189,7 @@ export const useEmployee = (id?: string) =>
       );
       return unwrapOne<EmployeeRecord>(data);
     },
-    enabled: Boolean(id),
+    enabled: Boolean(id) && id !== "new",
   });
 
 export const useEmployeeOrganization = () =>
@@ -170,7 +243,7 @@ export const useEmployeeCompensation = (id?: string) =>
       );
       return unwrapOne<any>(data);
     },
-    enabled: Boolean(id),
+    enabled: Boolean(id) && id !== "new",
   });
 
 export const useEmployeeOnboardingTasks = (id?: string) =>
@@ -183,7 +256,7 @@ export const useEmployeeOnboardingTasks = (id?: string) =>
       );
       return unwrapList<any>(data, ["tasks"]);
     },
-    enabled: Boolean(id),
+    enabled: Boolean(id) && id !== "new",
   });
 
 export const useEmployeeProbationReviews = (id?: string) =>
@@ -196,7 +269,7 @@ export const useEmployeeProbationReviews = (id?: string) =>
       );
       return unwrapList<any>(data, ["reviews"]);
     },
-    enabled: Boolean(id),
+    enabled: Boolean(id) && id !== "new",
   });
 
 /* -------------------------------------------------------------------------- */
@@ -306,29 +379,7 @@ export const useDecideProbation = () => {
   });
 };
 
-export const useCompleteProbationReview = () => {
-  const invalidate = useInvalidateEmployees();
-  return useMutation({
-    mutationFn: async ({
-      reviewId,
-      ...payload
-    }: { reviewId: string } & Record<string, any>) => {
-      const { data } = await apiClient.patch<any>(
-        `/employees/probation/reviews/${reviewId}/complete`,
-        payload,
-        authConfig(),
-      );
-      return unwrapOne<any>(data);
-    },
-    onSuccess: invalidate,
-  });
-};
-
-/* -------------------------------------------------------------------------- */
-/* Onboarding mutations                                                        */
-/* -------------------------------------------------------------------------- */
-
-export const useStartOnboarding = () => {
+export const useStartEmployeeOnboarding = () => {
   const invalidate = useInvalidateEmployees();
   return useMutation({
     mutationFn: async (id: string) => {
@@ -343,7 +394,7 @@ export const useStartOnboarding = () => {
   });
 };
 
-export const useCompleteOnboardingTask = () => {
+export const useCompleteEmployeeOnboardingTask = () => {
   const invalidate = useInvalidateEmployees();
   return useMutation({
     mutationFn: async (taskId: string) => {
@@ -358,15 +409,30 @@ export const useCompleteOnboardingTask = () => {
   });
 };
 
-export const useReassignOnboardingTask = () => {
+export const useStartEmployeeProbationReview = () => {
+  const invalidate = useInvalidateEmployees();
+  return useMutation({
+    mutationFn: async (id: string) => {
+      const { data } = await apiClient.post<any>(
+        `/employees/${id}/probation/start-review`,
+        {},
+        authConfig(),
+      );
+      return unwrapOne<any>(data);
+    },
+    onSuccess: invalidate,
+  });
+};
+
+export const useSubmitEmployeeProbationReview = () => {
   const invalidate = useInvalidateEmployees();
   return useMutation({
     mutationFn: async ({
-      taskId,
+      reviewId,
       ...payload
-    }: { taskId: string } & Record<string, any>) => {
-      const { data } = await apiClient.patch<any>(
-        `/employees/onboarding/tasks/${taskId}/assignment`,
+    }: { reviewId: string } & Record<string, any>) => {
+      const { data } = await apiClient.post<any>(
+        `/employees/probation/reviews/${reviewId}/submit`,
         payload,
         authConfig(),
       );
@@ -377,13 +443,23 @@ export const useReassignOnboardingTask = () => {
 };
 
 /* -------------------------------------------------------------------------- */
-/* Organization mutations                                                      */
+/* Department & Position mutations                                            */
 /* -------------------------------------------------------------------------- */
 
 export const useCreateDepartment = () => {
   const invalidate = useInvalidateEmployees();
   return useMutation({
-    mutationFn: async (payload: Record<string, any>) => {
+    mutationFn: async (payload: {
+      name: string;
+      code?: string;
+      headEmployeeId?: string;
+      parentDepartmentId?: string;
+      costCentre?: string;
+      primaryLocation?: string;
+      approvedHeadcount?: number;
+      description?: string;
+      status?: "active" | "inactive";
+    }) => {
       const { data } = await apiClient.post<any>(
         "/employees/organization/departments",
         payload,
@@ -401,7 +477,18 @@ export const useUpdateDepartment = () => {
     mutationFn: async ({
       id,
       ...payload
-    }: { id: string } & Record<string, any>) => {
+    }: {
+      id: string;
+      name?: string;
+      code?: string;
+      headEmployeeId?: string;
+      parentDepartmentId?: string;
+      costCentre?: string;
+      primaryLocation?: string;
+      approvedHeadcount?: number;
+      description?: string;
+      status?: "active" | "inactive";
+    }) => {
       const { data } = await apiClient.patch<any>(
         `/employees/organization/departments/${id}`,
         payload,
@@ -416,7 +503,13 @@ export const useUpdateDepartment = () => {
 export const useCreatePosition = () => {
   const invalidate = useInvalidateEmployees();
   return useMutation({
-    mutationFn: async (payload: Record<string, any>) => {
+    mutationFn: async (payload: {
+      title: string;
+      departmentId?: string;
+      gradeId?: string;
+      approvedHeadcount?: number;
+      status?: "active" | "inactive";
+    }) => {
       const { data } = await apiClient.post<any>(
         "/employees/organization/positions",
         payload,
@@ -434,7 +527,14 @@ export const useUpdatePosition = () => {
     mutationFn: async ({
       id,
       ...payload
-    }: { id: string } & Record<string, any>) => {
+    }: {
+      id: string;
+      title?: string;
+      departmentId?: string;
+      gradeId?: string;
+      approvedHeadcount?: number;
+      status?: "active" | "inactive";
+    }) => {
       const { data } = await apiClient.patch<any>(
         `/employees/organization/positions/${id}`,
         payload,

@@ -64,6 +64,7 @@ import { Route as AdminSubscriptionIndexRouteImport } from './routes/admin/subsc
 import { Route as AdminSettingsIndexRouteImport } from './routes/admin/settings/index'
 import { Route as AdminProductsIndexRouteImport } from './routes/admin/products/index'
 import { Route as AdminOrdersIndexRouteImport } from './routes/admin/orders/index'
+import { Route as HrStaffsIdRouteImport } from './routes/hr/staffs/$id'
 import { Route as HrReportsSlugRouteImport } from './routes/hr/reports/$slug'
 import { Route as AuthForgotPasswordNewPasswordRouteImport } from './routes/auth/forgot-password/new-password'
 import { Route as TenantUsersRolesIndexRouteImport } from './routes/tenant/users/roles/index'
@@ -405,6 +406,11 @@ const AdminOrdersIndexRoute = AdminOrdersIndexRouteImport.update({
   id: '/orders/',
   path: '/orders/',
   getParentRoute: () => AdminRouteRoute,
+} as any)
+const HrStaffsIdRoute = HrStaffsIdRouteImport.update({
+  id: '/staffs/$id',
+  path: '/staffs/$id',
+  getParentRoute: () => HrRouteRoute,
 } as any)
 const HrReportsSlugRoute = HrReportsSlugRouteImport.update({
   id: '/reports/$slug',
@@ -801,6 +807,7 @@ export interface FileRoutesByFullPath {
   '/test/': typeof TestIndexRoute
   '/auth/forgot-password/new-password': typeof AuthForgotPasswordNewPasswordRoute
   '/hr/reports/$slug': typeof HrReportsSlugRoute
+  '/hr/staffs/$id': typeof HrStaffsIdRoute
   '/admin/orders': typeof AdminOrdersIndexRoute
   '/admin/products': typeof AdminProductsIndexRoute
   '/admin/settings/': typeof AdminSettingsIndexRoute
@@ -914,6 +921,7 @@ export interface FileRoutesByTo {
   '/test': typeof TestIndexRoute
   '/auth/forgot-password/new-password': typeof AuthForgotPasswordNewPasswordRoute
   '/hr/reports/$slug': typeof HrReportsSlugRoute
+  '/hr/staffs/$id': typeof HrStaffsIdRoute
   '/admin/orders': typeof AdminOrdersIndexRoute
   '/admin/products': typeof AdminProductsIndexRoute
   '/admin/settings': typeof AdminSettingsIndexRoute
@@ -1037,6 +1045,7 @@ export interface FileRoutesById {
   '/test/': typeof TestIndexRoute
   '/auth/forgot-password/new-password': typeof AuthForgotPasswordNewPasswordRoute
   '/hr/reports/$slug': typeof HrReportsSlugRoute
+  '/hr/staffs/$id': typeof HrStaffsIdRoute
   '/admin/orders/': typeof AdminOrdersIndexRoute
   '/admin/products/': typeof AdminProductsIndexRoute
   '/admin/settings/': typeof AdminSettingsIndexRoute
@@ -1161,6 +1170,7 @@ export interface FileRouteTypes {
     | '/test/'
     | '/auth/forgot-password/new-password'
     | '/hr/reports/$slug'
+    | '/hr/staffs/$id'
     | '/admin/orders'
     | '/admin/products'
     | '/admin/settings/'
@@ -1274,6 +1284,7 @@ export interface FileRouteTypes {
     | '/test'
     | '/auth/forgot-password/new-password'
     | '/hr/reports/$slug'
+    | '/hr/staffs/$id'
     | '/admin/orders'
     | '/admin/products'
     | '/admin/settings'
@@ -1396,6 +1407,7 @@ export interface FileRouteTypes {
     | '/test/'
     | '/auth/forgot-password/new-password'
     | '/hr/reports/$slug'
+    | '/hr/staffs/$id'
     | '/admin/orders/'
     | '/admin/products/'
     | '/admin/settings/'
@@ -1905,6 +1917,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin/orders'
       preLoaderRoute: typeof AdminOrdersIndexRouteImport
       parentRoute: typeof AdminRouteRoute
+    }
+    '/hr/staffs/$id': {
+      id: '/hr/staffs/$id'
+      path: '/staffs/$id'
+      fullPath: '/hr/staffs/$id'
+      preLoaderRoute: typeof HrStaffsIdRouteImport
+      parentRoute: typeof HrRouteRoute
     }
     '/hr/reports/$slug': {
       id: '/hr/reports/$slug'
@@ -2482,6 +2501,7 @@ interface HrRouteRouteChildren {
   HrSettingsRouteRoute: typeof HrSettingsRouteRouteWithChildren
   HrIndexRoute: typeof HrIndexRoute
   HrReportsSlugRoute: typeof HrReportsSlugRoute
+  HrStaffsIdRoute: typeof HrStaffsIdRoute
   HrAttendanceIndexRoute: typeof HrAttendanceIndexRoute
   HrDisciplinaryIndexRoute: typeof HrDisciplinaryIndexRoute
   HrLeaveIndexRoute: typeof HrLeaveIndexRoute
@@ -2501,6 +2521,7 @@ const HrRouteRouteChildren: HrRouteRouteChildren = {
   HrSettingsRouteRoute: HrSettingsRouteRouteWithChildren,
   HrIndexRoute: HrIndexRoute,
   HrReportsSlugRoute: HrReportsSlugRoute,
+  HrStaffsIdRoute: HrStaffsIdRoute,
   HrAttendanceIndexRoute: HrAttendanceIndexRoute,
   HrDisciplinaryIndexRoute: HrDisciplinaryIndexRoute,
   HrLeaveIndexRoute: HrLeaveIndexRoute,

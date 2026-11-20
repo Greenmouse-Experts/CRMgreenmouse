@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import PageHeader from "@/components/Headers/PageHeader";
 import PageLoader from "@/components/layout/PageLoader";
 import EmployeeStats from "./-components/EmployeeStats";
@@ -94,6 +94,7 @@ const toUiEmployee = (employee: EmployeeRecord): Employee => {
 };
 
 function RouteComponent() {
+  const navigate = useNavigate();
   const employeesQuery = useEmployees();
   const createEmployee = useCreateEmployee();
   const removeEmployee = useRemoveEmployee();
@@ -211,13 +212,13 @@ function RouteComponent() {
             >
               <Download className="size-4" /> Export
             </button>
-            <button
-              type="button"
-              onClick={() => setIsAddModalOpen(true)}
+            <Link
+              to="/hr/staffs/$id"
+              params={{ id: "new" }}
               className="btn btn-sm btn-primary gap-1.5 rounded-lg text-xs font-medium shadow-xs"
             >
               <Plus className="size-4" /> Add employee
-            </button>
+            </Link>
           </div>
         </PageHeader>
       </div>
@@ -229,7 +230,8 @@ function RouteComponent() {
           description:
             "Add your first staff member to start building the directory.",
           actionText: "Add employee",
-          onAction: () => setIsAddModalOpen(true),
+          onAction: () =>
+            navigate({ to: "/hr/staffs/$id", params: { id: "new" } }),
         }}
       >
         <EmployeeStats employees={employeeList} />

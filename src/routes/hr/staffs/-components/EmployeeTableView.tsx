@@ -1,3 +1,4 @@
+import { Link } from "@tanstack/react-router";
 import type { Employee } from "./types";
 import EmployeeAvatar from "./EmployeeAvatar";
 import EmployeeStatusBadge from "./EmployeeStatusBadge";
@@ -57,6 +58,14 @@ export default function EmployeeTableView({
       label: "Action",
       render: (_value: unknown, emp: Employee) => (
         <div className="flex items-center justify-end gap-1">
+          <Link
+            to="/hr/staffs/$id"
+            params={{ id: emp.id }}
+            onClick={(e) => e.stopPropagation()}
+            className="btn btn-xs btn-ghost text-base-content/70 hover:text-primary font-medium"
+          >
+            Edit
+          </Link>
           <button
             type="button"
             onClick={() => onSelectEmployee(emp)}
