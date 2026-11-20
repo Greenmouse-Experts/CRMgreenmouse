@@ -36,11 +36,57 @@ export interface OrganizationData {
   positions: Position[];
 }
 
-const unwrapArray = <T,>(data: any): T[] => {
+const unwrapArray = <T>(data: any): T[] => {
   if (Array.isArray(data)) return data as T[];
   if (Array.isArray(data?.data)) return data.data as T[];
   return [];
 };
+
+export function toUiDepartment(raw: any): Department {
+  const statusStr = String(
+    raw?.status || (raw?.isActive ? "active" : "inactive"),
+  ).toLowerCase();
+
+  const headName =
+    raw?.head ||
+    raw?.headName ||
+    [raw?.headFirstName, raw?.headLastName].filter(Boolean).join(" ") ||
+    "Unassigned";
+
+  return {
+    id: raw?.id ?? "",
+    code:
+      raw?.code ||
+      (raw?.name ? String(raw.name).slice(0, 3).toUpperCase() : "DEP"),
+    name: raw?.name || "Untitled Department",
+    head: headName,
+    count: Number(
+      raw?.staffCount ??
+        raw?.count ??
+        raw?.staff_count ??
+        raw?.approvedHeadcount ??
+        0,
+    ),
+    status: statusStr === "active" ? "Active" : "Inactive",
+    parent: raw?.parentDepartmentName ?? raw?.parent ?? undefined,
+    costCentre: raw?.costCentre ?? undefined,
+    location: raw?.primaryLocation ?? raw?.location ?? undefined,
+    description: raw?.description ?? undefined,
+  };
+}
+
+export function toUiPosition(raw: any): Position {
+  return {
+    id: raw?.id ?? "",
+    title: raw?.title ?? raw?.jobTitle ?? raw?.name ?? "Untitled Position",
+    dept: raw?.dept ?? raw?.department ?? raw?.departmentName ?? "General",
+    grade: raw?.grade ?? raw?.jobGrade ?? "—",
+    approved: Number(
+      raw?.approved ?? raw?.approvedHeadcount ?? raw?.openings ?? 1,
+    ),
+    filled: Number(raw?.filled ?? raw?.filledCount ?? raw?.staffCount ?? 0),
+  };
+}
 
 /* -------------------------------------------------------------------------- */
 /* Queries                                                                    */
@@ -51,9 +97,11 @@ export const useOrganization = () =>
     queryKey: ["organization"],
     queryFn: async () => {
       const { data } = await apiClient.get<any>("/employees/organization");
+      const rawDepartments = unwrapArray<any>(data?.departments);
+      const rawPositions = unwrapArray<any>(data?.positions);
       return {
-        departments: unwrapArray<Department>(data?.departments),
-        positions: unwrapArray<Position>(data?.positions),
+        departments: rawDepartments.map(toUiDepartment),
+        positions: rawPositions.map(toUiPosition),
       };
     },
   });
@@ -87,7 +135,7 @@ export const useUpdateDepartment = () => {
     mutationFn: async ({
       id,
       ...payload
-    }: { id: string } & Partial<UpdateDepartmentPayload>) => {
+    }: { id: string } & UpdateDepartmentPayload) => {
       const { data } = await apiClient.patch<any>(
         `/employees/organization/departments/${id}`,
         payload,

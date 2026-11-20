@@ -55,10 +55,7 @@ function RouteComponent() {
     );
   };
 
-  const handleUpdateDeptStatus = (
-    deptId: string,
-    status: DepartmentStatus,
-  ) => {
+  const handleUpdateDeptStatus = (deptId: string, status: DepartmentStatus) => {
     updateDepartment.mutate(
       { id: deptId, status: status.toLowerCase() as "active" | "inactive" },
       { onError: () => toast.error("Failed to update department status") },
@@ -115,7 +112,7 @@ function RouteComponent() {
           const dept = departments.find((d) => d.id === deptId);
           if (dept) {
             toast.info(
-              `${dept.name} department · Head: ${dept.head} (${dept.count} staff)`,
+              `${dept.name} department · Head: ${dept.head || "Unassigned"} (${dept.count ?? 0} staff)`,
             );
           }
         }}

@@ -11,21 +11,22 @@ interface DepartmentsTableProps {
   onDeleteDepartment?: (deptId: string) => void;
 }
 
-function getStatusBadge(status: DepartmentStatus) {
+function getStatusBadge(status?: DepartmentStatus | string) {
+  const isActive = status?.toLowerCase() === "active";
   return (
     <span
       className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[11px] font-semibold border ${
-        status === "Active"
+        isActive
           ? "bg-emerald-50 text-emerald-700 border-emerald-200"
           : "bg-slate-100 text-slate-700 border-slate-200"
       }`}
     >
       <span
         className={`size-1.5 rounded-full ${
-          status === "Active" ? "bg-emerald-500 animate-pulse" : "bg-slate-400"
+          isActive ? "bg-emerald-500 animate-pulse" : "bg-slate-400"
         }`}
       />
-      {status}
+      {isActive ? "Active" : "Inactive"}
     </span>
   );
 }
@@ -42,16 +43,19 @@ export default function DepartmentsTable({
   const filteredDepartments = useMemo(
     () =>
       departments.filter((dept) => {
-        if (statusFilter !== "All" && dept.status !== statusFilter) {
+        if (
+          statusFilter !== "All" &&
+          dept.status?.toLowerCase() !== statusFilter.toLowerCase()
+        ) {
           return false;
         }
         if (searchTerm.trim()) {
           const q = searchTerm.toLowerCase();
           return (
-            dept.name.toLowerCase().includes(q) ||
-            dept.code.toLowerCase().includes(q) ||
-            dept.head.toLowerCase().includes(q) ||
-            (dept.location && dept.location.toLowerCase().includes(q))
+            Boolean(dept.name && dept.name.toLowerCase().includes(q)) ||
+            Boolean(dept.code && dept.code.toLowerCase().includes(q)) ||
+            Boolean(dept.head && dept.head.toLowerCase().includes(q)) ||
+            Boolean(dept.location && dept.location.toLowerCase().includes(q))
           );
         }
         return true;
@@ -65,7 +69,7 @@ export default function DepartmentsTable({
       label: "Code",
       render: (value) => (
         <span className="font-mono text-xs font-bold text-primary">
-          {value}
+          {value || "—"}
         </span>
       ),
     },
@@ -74,7 +78,9 @@ export default function DepartmentsTable({
       label: "Name",
       render: (_value, dept) => (
         <div className="flex flex-col">
-          <span className="font-semibold text-base-content">{dept.name}</span>
+          <span className="font-semibold text-base-content">
+            {dept.name || "Untitled"}
+          </span>
           {dept.location && (
             <span className="flex items-center gap-1 text-[11px] text-base-content/50 font-normal">
               <MapPin className="size-2.5" />
@@ -88,7 +94,9 @@ export default function DepartmentsTable({
       key: "head",
       label: "Head",
       render: (value) => (
-        <span className="text-base-content/80 font-medium">{value}</span>
+        <span className="text-base-content/80 font-medium">
+          {value || "Unassigned"}
+        </span>
       ),
     },
     {
@@ -96,7 +104,7 @@ export default function DepartmentsTable({
       label: "Staff",
       render: (value) => (
         <span className="rounded-md bg-base-200/80 px-2 py-0.5 text-xs font-bold text-base-content">
-          {value}
+          {Number(value) || 0}
         </span>
       ),
     },
@@ -116,18 +124,15 @@ export default function DepartmentsTable({
     {
       key: "toggle",
       label: "Deactivate / Activate",
-      render: (dept) =>
-        dept.status === "Active" ? "Deactivate" : "Activate",
-      action: (dept) =>
-        onUpdateStatus?.(
-          dept.id,
-          dept.status === "Active" ? "Inactive" : "Active",
-        ),
+      render: (dept) => (dept.status === "Active" ? "Deactivate" : "Activate"),
+      action: (dept) => {
+        const nextStatus = dept.status === "Active" ? "Inactive" : "Active";
+        onUpdateStatus?.(dept.id, nextStatus);
+      },
     },
     {
       key: "delete",
-      label: "Delete",
-      render: () => <span className="text-error">Delete</span>,
+      label: "Mark Inactive",
       action: (dept) => onDeleteDepartment?.(dept.id),
     },
   ];
@@ -137,42 +142,45 @@ export default function DepartmentsTable({
       {/* Header & Controls */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h2 className="text-lg font-bold text-base-content">Departments</h2>
+          <h3 className="text-base font-bold text-base-content">Departments</h3>
           <p className="text-xs text-base-content/60">
-            Registered business divisions and their leadership
+            {filteredDepartments.length} functional business unit
+            {filteredDepartments.length === 1 ? "" : "s"}
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
-          <div className="relative w-full sm:w-44">
-            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 size-3.5 text-base-content/40" />
+        <div className="flex flex-wrap items-center gap-2">
+          {/* Search Input */}
+          <div className="relative">
+            <Search className="size-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-base-content/40" />
             <input
               type="text"
-              placeholder="Search depts..."
+              placeholder="Search departments..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="input input-xs w-full pl-8 bg-base-200/60 border-base-300 rounded-lg text-xs"
+              className="input input-sm input-bordered pl-8 text-xs rounded-xl w-44 sm:w-52"
             />
           </div>
 
+          {/* Status Filter */}
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="select select-xs bg-base-200/60 border-base-300 rounded-lg text-xs"
+            className="select select-sm select-bordered text-xs rounded-xl"
           >
-            <option value="All">All Statuses</option>
+            <option value="All">All statuses</option>
             <option value="Active">Active</option>
             <option value="Inactive">Inactive</option>
           </select>
         </div>
       </div>
 
-      {/* Table */}
+      {/* CustomTable */}
       <CustomTable
-        ring={false}
-        data={filteredDepartments}
         columns={columns}
+        data={filteredDepartments}
         actions={actions}
+        onRowClick={(dept) => onSelectDepartment?.(dept)}
       />
     </div>
   );

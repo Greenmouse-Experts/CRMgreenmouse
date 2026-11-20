@@ -14,13 +14,11 @@ export default function OrgHierarchy({
   selectedDeptId,
   onSelectDept,
 }: OrgHierarchyProps) {
-  const getInitials = (name: string) => {
-    return name
-      .split(" ")
-      .map((part) => part[0])
-      .join("")
-      .slice(0, 2)
-      .toUpperCase();
+  const getInitials = (name?: string | null) => {
+    if (!name || !name.trim()) return "—";
+    const parts = name.trim().split(/\s+/);
+    if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+    return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
   };
 
   const avatarColors = [
@@ -33,18 +31,29 @@ export default function OrgHierarchy({
     "bg-teal-100 text-teal-700 border-teal-200",
   ];
 
+  const safeLeader = leader || {
+    name: "Ifeoma Chukwu",
+    title: "Chief Executive Officer",
+  };
+
+  const totalHeadcount = departments.reduce(
+    (acc, d) => acc + (Number(d.count) || 0),
+    0,
+  );
+
   return (
     <div className="card bg-base-100 border border-base-200 shadow-sm p-4 sm:p-6 space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2 border-b border-base-200">
         <div>
           <h2 className="text-lg font-bold text-base-content">Hierarchy</h2>
           <p className="text-xs text-base-content/60">
-            Executive leadership structure, functional department heads, and reporting channels
+            Executive leadership structure, functional department heads, and
+            reporting channels
           </p>
         </div>
         <div className="flex items-center gap-1.5 text-xs text-base-content/60">
           <Users className="size-3.5" />
-          <span>{departments.reduce((acc, d) => acc + d.count, 0)} Total Reporting Headcount</span>
+          <span>{totalHeadcount} Total Reporting Headcount</span>
         </div>
       </div>
 
@@ -55,7 +64,7 @@ export default function OrgHierarchy({
           <div className="flex justify-center mb-2">
             <div className="relative">
               <div className="size-12 rounded-full bg-primary text-white font-bold text-sm flex items-center justify-center shadow-sm">
-                {getInitials(leader.name)}
+                {getInitials(safeLeader.name)}
               </div>
               <span className="absolute -bottom-1 -right-1 size-5 rounded-full bg-emerald-500 text-white flex items-center justify-center border-2 border-base-100 shadow-xs">
                 <ShieldCheck className="size-3" />
@@ -63,66 +72,78 @@ export default function OrgHierarchy({
             </div>
           </div>
           <p className="font-bold text-sm sm:text-base text-base-content">
-            {leader.name}
+            {safeLeader.name}
           </p>
           <p className="text-xs text-primary font-semibold tracking-wide">
-            {leader.title}
+            {safeLeader.title}
           </p>
         </div>
 
-        {/* Vertical Trunk Line */}
-        <div className="h-7 w-0.5 bg-primary/40" />
+        {departments.length === 0 ? (
+          <div className="pt-6 text-center text-xs text-base-content/50">
+            No departments configured yet. Click "Add department" above to start
+            building your organizational structure.
+          </div>
+        ) : (
+          <>
+            {/* Vertical Trunk Line */}
+            <div className="h-7 w-0.5 bg-primary/40" />
 
-        {/* Horizontal Cross Branch Line */}
-        <div className="hidden xl:block w-[88%] h-0.5 bg-primary/20 mb-3 relative">
-          <div className="absolute left-0 top-0 size-2 rounded-full bg-primary/40 -translate-y-1/2" />
-          <div className="absolute right-0 top-0 size-2 rounded-full bg-primary/40 -translate-y-1/2" />
-          <div className="absolute left-1/2 top-0 size-2.5 rounded-full bg-primary -translate-x-1/2 -translate-y-1/2" />
-        </div>
+            {/* Horizontal Cross Branch Line */}
+            <div className="hidden xl:block w-[88%] h-0.5 bg-primary/20 mb-3 relative">
+              <div className="absolute left-0 top-0 size-2 rounded-full bg-primary/40 -translate-y-1/2" />
+              <div className="absolute right-0 top-0 size-2 rounded-full bg-primary/40 -translate-y-1/2" />
+              <div className="absolute left-1/2 top-0 size-2.5 rounded-full bg-primary -translate-x-1/2 -translate-y-1/2" />
+            </div>
 
-        {/* Department Heads Level */}
-        <div className="grid w-full grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-7 pt-1">
-          {departments.map((dept, idx) => {
-            const isSelected = selectedDeptId === dept.id;
-            const colorClass = avatarColors[idx % avatarColors.length];
+            {/* Department Heads Level */}
+            <div className="grid w-full grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-7 pt-1">
+              {departments.map((dept, idx) => {
+                const isSelected = selectedDeptId === dept.id;
+                const colorClass = avatarColors[idx % avatarColors.length];
+                const headText = dept.head || "Unassigned";
 
-            return (
-              <div
-                key={dept.id}
-                onClick={() => onSelectDept?.(dept.id)}
-                className={`group relative rounded-xl border p-3.5 text-center transition-all duration-200 cursor-pointer ${
-                  isSelected
-                    ? "border-primary bg-primary/5 ring-2 ring-primary/20 shadow-sm scale-[1.02]"
-                    : "border-base-200 bg-base-100 hover:border-primary/40 hover:shadow-md"
-                }`}
-              >
-                {/* Department Head Initials Avatar */}
-                <div className="flex justify-center mb-2">
+                return (
                   <div
-                    className={`size-9 rounded-full flex items-center justify-center font-bold text-xs border ${colorClass}`}
+                    key={dept.id || idx}
+                    onClick={() => dept.id && onSelectDept?.(dept.id)}
+                    className={`group relative rounded-xl border p-3.5 text-center transition-all duration-200 cursor-pointer ${
+                      isSelected
+                        ? "border-primary bg-primary/5 ring-2 ring-primary/20 shadow-sm scale-[1.02]"
+                        : "border-base-200 bg-base-100 hover:border-primary/40 hover:shadow-md"
+                    }`}
                   >
-                    {getInitials(dept.head)}
+                    {/* Department Head Initials Avatar */}
+                    <div className="flex justify-center mb-2">
+                      <div
+                        className={`size-9 rounded-full flex items-center justify-center font-bold text-xs border ${colorClass}`}
+                      >
+                        {getInitials(
+                          headText !== "Unassigned" ? headText : dept.name,
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Department Info */}
+                    <p className="text-sm font-bold text-base-content group-hover:text-primary transition-colors truncate">
+                      {dept.name || "Department"}
+                    </p>
+                    <p className="text-xs text-base-content/60 truncate mt-0.5">
+                      {headText}
+                    </p>
+
+                    {/* Staff Count Pill */}
+                    <div className="mt-2.5">
+                      <span className="inline-block rounded-full bg-primary/10 border border-primary/15 px-2.5 py-0.5 text-[11px] font-bold text-primary">
+                        {dept.count ?? 0} staff
+                      </span>
+                    </div>
                   </div>
-                </div>
-
-                {/* Department Info */}
-                <p className="text-sm font-bold text-base-content group-hover:text-primary transition-colors truncate">
-                  {dept.name}
-                </p>
-                <p className="text-xs text-base-content/60 truncate mt-0.5">
-                  {dept.head}
-                </p>
-
-                {/* Staff Count Pill */}
-                <div className="mt-2.5">
-                  <span className="inline-block rounded-full bg-primary/10 border border-primary/15 px-2.5 py-0.5 text-[11px] font-bold text-primary">
-                    {dept.count} staff
-                  </span>
-                </div>
-              </div>
-            );
-          })}
-        </div>
+                );
+              })}
+            </div>
+          </>
+        )}
       </div>
     </div>
   );

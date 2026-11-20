@@ -20,15 +20,17 @@ export default function PositionsTable({
     const q = searchTerm.toLowerCase();
     return positions.filter(
       (pos) =>
-        pos.title.toLowerCase().includes(q) ||
-        pos.dept.toLowerCase().includes(q) ||
-        pos.grade.toLowerCase().includes(q),
+        Boolean(pos.title && pos.title.toLowerCase().includes(q)) ||
+        Boolean(pos.dept && pos.dept.toLowerCase().includes(q)) ||
+        Boolean(pos.grade && pos.grade.toLowerCase().includes(q)),
     );
   }, [positions, searchTerm]);
 
-  const isFullyFilled = (pos: Position) => pos.filled >= pos.approved;
+  const isFullyFilled = (pos: Position) =>
+    (Number(pos.filled) || 0) >= (Number(pos.approved) || 1);
+
   const percentage = (pos: Position) =>
-    Math.round((pos.filled / (pos.approved || 1)) * 100);
+    Math.round(((Number(pos.filled) || 0) / (Number(pos.approved) || 1)) * 100);
 
   const columns: columnType[] = [
     {
@@ -36,9 +38,11 @@ export default function PositionsTable({
       label: "Title",
       render: (_value, pos) => (
         <div className="flex flex-col">
-          <span className="font-semibold text-base-content">{pos.title}</span>
+          <span className="font-semibold text-base-content">
+            {pos.title || "Untitled Position"}
+          </span>
           <span className="text-[11px] text-base-content/50 font-normal">
-            {pos.dept}
+            {pos.dept || "General"}
           </span>
         </div>
       ),
@@ -48,7 +52,7 @@ export default function PositionsTable({
       label: "Grade",
       render: (value) => (
         <span className="rounded-md bg-base-200 px-2 py-0.5 text-xs font-mono font-semibold text-base-content/80">
-          {value}
+          {value || "—"}
         </span>
       ),
     },
@@ -57,7 +61,7 @@ export default function PositionsTable({
       label: "Approved",
       render: (value) => (
         <span className="text-center font-bold text-base-content">
-          {value}
+          {Number(value) || 0}
         </span>
       ),
     },
@@ -66,11 +70,9 @@ export default function PositionsTable({
       label: "Filled",
       render: (value, pos) => (
         <span
-          className={
-            isFullyFilled(pos) ? "text-emerald-600" : "text-amber-600"
-          }
+          className={isFullyFilled(pos) ? "text-emerald-600" : "text-amber-600"}
         >
-          {value}
+          {Number(value) || 0}
         </span>
       ),
     },
@@ -122,39 +124,39 @@ export default function PositionsTable({
       {/* Header & Controls */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h2 className="text-lg font-bold text-base-content">Positions</h2>
+          <h3 className="text-base font-bold text-base-content">Positions</h3>
           <p className="text-xs text-base-content/60">
-            Standard job roles, pay grades, and approved headcounts
+            {filteredPositions.length} defined job role
+            {filteredPositions.length === 1 ? "" : "s"}
           </p>
         </div>
 
         <div className="flex items-center gap-2">
-          <div className="relative w-full sm:w-44">
-            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 size-3.5 text-base-content/40" />
+          {/* Search Input */}
+          <div className="relative">
+            <Search className="size-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-base-content/40" />
             <input
               type="text"
               placeholder="Search positions..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="input input-xs w-full pl-8 bg-base-200/60 border-base-300 rounded-lg text-xs"
+              className="input input-sm input-bordered pl-8 text-xs rounded-xl w-44 sm:w-52"
             />
           </div>
 
-          {onAddPositionClick && (
-            <button
-              type="button"
-              onClick={onAddPositionClick}
-              className="btn btn-xs bg-primary text-white hover:bg-primary/90 border-0 rounded-lg px-2.5 font-medium gap-1"
-            >
-              <UserPlus className="size-3" />
-              <span>Add</span>
-            </button>
-          )}
+          <button
+            type="button"
+            onClick={onAddPositionClick}
+            className="btn btn-sm btn-primary rounded-xl px-3 gap-1 shadow-xs"
+          >
+            <UserPlus className="size-3.5" />
+            <span>Add</span>
+          </button>
         </div>
       </div>
 
-      {/* Table */}
-      <CustomTable ring={false} data={filteredPositions} columns={columns} />
+      {/* CustomTable */}
+      <CustomTable columns={columns} data={filteredPositions} />
     </div>
   );
 }

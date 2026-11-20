@@ -11,11 +11,20 @@ export default function OrganizationStats({
   departments,
   positions,
 }: OrganizationStatsProps) {
-  const totalHeadcount = departments.reduce((acc, d) => acc + d.count, 0);
+  const totalHeadcount = departments.reduce(
+    (acc, d) => acc + (Number(d.count) || 0),
+    0,
+  );
   const totalDepartments = departments.length;
 
-  const totalApproved = positions.reduce((acc, p) => acc + p.approved, 0);
-  const totalFilled = positions.reduce((acc, p) => acc + p.filled, 0);
+  const totalApproved = positions.reduce(
+    (acc, p) => acc + (Number(p.approved) || 0),
+    0,
+  );
+  const totalFilled = positions.reduce(
+    (acc, p) => acc + (Number(p.filled) || 0),
+    0,
+  );
   const openPositions = Math.max(0, totalApproved - totalFilled);
 
   return (
