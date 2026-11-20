@@ -16,6 +16,8 @@ import {
   type RecruitmentApplication,
   type RecruitmentVacancy,
 } from "@/api/recruitmentApi";
+import { useOrganization } from "@/api/organizationApi";
+import { useEmployees } from "@/api/employeesApi";
 import { extract_message } from "@/helpers/auth";
 import RecruitmentStats from "./-components/RecruitmentStats";
 import CandidatePipeline from "./-components/CandidatePipeline";
@@ -64,6 +66,7 @@ function toUiVacancy(raw: RecruitmentVacancy): Vacancy {
     id: raw.id,
     title: raw.jobTitle ?? raw.title ?? "Untitled vacancy",
     dept: raw.department ?? raw.departmentName ?? "—",
+    departmentId: raw.departmentId,
     openings: raw.openings ?? 1,
     applicants: raw.applicants ?? raw.applicationCount ?? 0,
     closes: raw.closingDate
@@ -72,6 +75,7 @@ function toUiVacancy(raw: RecruitmentVacancy): Vacancy {
           day: "numeric",
         })
       : "—",
+    closingDate: raw.closingDate,
     status: (status && STATUS_MAP[status]) || "Draft",
     grade: raw.grade,
     type: raw.employmentType,
@@ -111,6 +115,8 @@ function RouteComponent() {
   const departmentsQuery = useRecruitmentOptions("department");
   const approversQuery = useRecruitmentApprovers();
   const offersQuery = useRecruitmentOffers();
+  const orgQuery = useOrganization();
+  const employeesQuery = useEmployees();
 
   const createVacancyMutation = useCreateVacancy();
   const updateStageMutation = useUpdateApplicationStage();
@@ -137,6 +143,31 @@ function RouteComponent() {
   const [selectedCandidate, setSelectedCandidate] = useState<Candidate | null>(
     null,
   );
+
+  const departmentOptions =
+    departmentsQuery.data && departmentsQuery.data.length > 0
+      ? departmentsQuery.data.map((d) => ({
+          id: d.id,
+          name: d.name || "Department",
+        }))
+      : (orgQuery.data?.departments ?? []).map((d) => ({
+          id: d.id,
+          name: d.name || "Department",
+        }));
+
+  const approverOptions =
+    approversQuery.data && approversQuery.data.length > 0
+      ? approversQuery.data.map((a) => ({
+          id: a.id,
+          name: a.name || "Approver",
+        }))
+      : (employeesQuery.data ?? []).map((e) => ({
+          id: e.id,
+          name:
+            `${e.firstName ?? ""} ${e.lastName ?? ""}`.trim() ||
+            e.email ||
+            "Approver",
+        }));
 
   const handleAdvanceStage = (
     candidateId: string,
@@ -166,29 +197,40 @@ function RouteComponent() {
     handleAdvanceStage(candidateId, newStage);
   };
 
-  const handleCreateVacancy = (newVacancy: Vacancy) => {
-    const departments = departmentsQuery.data ?? [];
-    const approvers = approversQuery.data ?? [];
+  const handleCreateVacancy = async (newVacancy: Vacancy) => {
+    const department =
+      departmentOptions.find(
+        (d) =>
+          d.id === newVacancy.departmentId ||
+          d.name.toLowerCase() === newVacancy.dept.toLowerCase(),
+      ) ?? departmentOptions[0];
 
-    const department = departments.find(
-      (d) => d.name.toLowerCase() === newVacancy.dept.toLowerCase(),
-    );
     const approver =
-      approvers.find(
+      approverOptions.find(
         (a) =>
+          a.id === newVacancy.approverId ||
           a.name.toLowerCase() === (newVacancy.approver ?? "").toLowerCase(),
-      ) ?? approvers[0];
-    const hiringManager = approvers[0];
+      ) ?? approverOptions[0];
 
-    if (!department || !approver || !hiringManager) {
+    const hiringManager =
+      approversQuery.data?.[0] ?? approver ?? approverOptions[0];
+
+    if (!department || !department.id) {
       toast.error("Recruitment setup incomplete", {
-        description:
-          "Configure departments and approvers before creating a vacancy.",
+        description: "Configure departments before creating a vacancy.",
       });
-      return;
+      throw new Error("Recruitment setup incomplete: missing department");
     }
 
-    toast.promise(
+    if (!approver || !approver.id) {
+      toast.error("Recruitment setup incomplete", {
+        description:
+          "Configure approvers or staff members before creating a vacancy.",
+      });
+      throw new Error("Recruitment setup incomplete: missing approver");
+    }
+
+    return await toast.promise(
       createVacancyMutation.mutateAsync({
         jobTitle: newVacancy.title,
         departmentId: department.id,
@@ -196,7 +238,9 @@ function RouteComponent() {
         employmentType: newVacancy.type ?? "Full-time",
         reasonForHire: newVacancy.reason ?? "New position",
         jobDescription: newVacancy.desc ?? "",
-        closingDate: new Date(newVacancy.closes).toISOString(),
+        closingDate: newVacancy.closingDate
+          ? new Date(newVacancy.closingDate).toISOString()
+          : new Date(newVacancy.closes).toISOString(),
         hiringManagerId: hiringManager.id,
         approverId: approver.id,
       }),
@@ -314,6 +358,8 @@ function RouteComponent() {
         isOpen={isCreateVacancyOpen}
         onClose={() => setIsCreateVacancyOpen(false)}
         onCreateVacancy={handleCreateVacancy}
+        departments={departmentOptions}
+        approvers={approverOptions}
       />
 
       <CandidateDetailModal

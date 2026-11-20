@@ -18,13 +18,17 @@ import { Send } from "lucide-react";
 interface CreateVacancyModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onCreateVacancy: (vacancy: Vacancy) => void;
+  onCreateVacancy: (vacancy: Vacancy) => Promise<any> | void;
+  departments?: Array<{ id: string; name: string }>;
+  approvers?: Array<{ id: string; name: string }>;
 }
 
 export default function CreateVacancyModal({
   isOpen,
   onClose,
   onCreateVacancy,
+  departments,
+  approvers,
 }: CreateVacancyModalProps) {
   const modalRef = useRef<ModalHandle>(null);
 
@@ -32,9 +36,19 @@ export default function CreateVacancyModal({
     "requisition",
   );
 
+  const departmentChoices =
+    departments && departments.length > 0
+      ? departments
+      : HR_DEPARTMENTS.map((name) => ({ id: "", name }));
+
+  const approverChoices =
+    approvers && approvers.length > 0
+      ? approvers
+      : APPROVER_OPTIONS.map((name) => ({ id: "", name }));
+
   const [form, setForm] = useState({
     title: "",
-    dept: "Engineering",
+    dept: departmentChoices[0]?.name || "Engineering",
     grade: "G3",
     openings: 1,
     type: "Full-time",
@@ -45,7 +59,7 @@ export default function CreateVacancyModal({
     closes: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
       .toISOString()
       .slice(0, 10),
-    approver: APPROVER_OPTIONS[0] || "Head of HR",
+    approver: approverChoices[0]?.name || "Head of HR",
     channels: CHANNEL_OPTIONS[0] || "Careers page",
   });
 
@@ -59,11 +73,29 @@ export default function CreateVacancyModal({
     }
   }, [isOpen]);
 
+  useEffect(() => {
+    if (
+      departmentChoices.length > 0 &&
+      !departmentChoices.some((d) => d.name === form.dept)
+    ) {
+      setForm((prev) => ({ ...prev, dept: departmentChoices[0].name }));
+    }
+  }, [departmentChoices, form.dept]);
+
+  useEffect(() => {
+    if (
+      approverChoices.length > 0 &&
+      !approverChoices.some((a) => a.name === form.approver)
+    ) {
+      setForm((prev) => ({ ...prev, approver: approverChoices[0].name }));
+    }
+  }, [approverChoices, form.approver]);
+
   const handleChange = (field: string, value: any) => {
     setForm((prev) => ({ ...prev, [field]: value }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!form.title.trim()) {
@@ -74,10 +106,22 @@ export default function CreateVacancyModal({
     setIsSubmitting(true);
 
     try {
+      const selectedDept = departmentChoices.find(
+        (d) =>
+          d.name.toLowerCase() === form.dept.toLowerCase() ||
+          (d.id && d.id === form.dept),
+      );
+      const selectedApprover = approverChoices.find(
+        (a) =>
+          a.name.toLowerCase() === form.approver.toLowerCase() ||
+          (a.id && a.id === form.approver),
+      );
+
       const newVacancy: Vacancy = {
         id: `VAC-${Math.floor(26 + Math.random() * 50)}`,
         title: form.title.trim(),
-        dept: form.dept,
+        dept: selectedDept?.name || form.dept,
+        departmentId: selectedDept?.id || undefined,
         grade: form.grade,
         openings: Number(form.openings) || 1,
         applicants: 0,
@@ -90,20 +134,19 @@ export default function CreateVacancyModal({
           month: "short",
           day: "numeric",
         }),
-        approver: form.approver,
+        closingDate: form.closes,
+        approver: selectedApprover?.name || form.approver,
+        approverId: selectedApprover?.id || undefined,
         channels: form.channels,
         status: "Pending Approval",
       };
 
-      onCreateVacancy(newVacancy);
-      toast.success("Vacancy submitted for approval", {
-        description: `${newVacancy.title} requisition has been routed to ${form.approver}.`,
-      });
+      await onCreateVacancy(newVacancy);
 
-      // Reset form
+      // Reset form on success
       setForm({
         title: "",
-        dept: "Engineering",
+        dept: departmentChoices[0]?.name || "Engineering",
         grade: "G3",
         openings: 1,
         type: "Full-time",
@@ -114,13 +157,13 @@ export default function CreateVacancyModal({
         closes: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
           .toISOString()
           .slice(0, 10),
-        approver: APPROVER_OPTIONS[0] || "Head of HR",
+        approver: approverChoices[0]?.name || "Head of HR",
         channels: CHANNEL_OPTIONS[0] || "Careers page",
       });
       setActiveTab("requisition");
       onClose();
     } catch {
-      toast.error("Failed to submit vacancy requisition");
+      // Kept open on failure so inputs are preserved
     } finally {
       setIsSubmitting(false);
     }
@@ -192,9 +235,9 @@ export default function CreateVacancyModal({
                     value={form.dept}
                     onChange={(e) => handleChange("dept", e.target.value)}
                   >
-                    {HR_DEPARTMENTS.map((dept) => (
-                      <option key={dept} value={dept}>
-                        {dept}
+                    {departmentChoices.map((dept) => (
+                      <option key={dept.id || dept.name} value={dept.name}>
+                        {dept.name}
                       </option>
                     ))}
                   </LocalSelect>
@@ -345,9 +388,9 @@ export default function CreateVacancyModal({
                     value={form.approver}
                     onChange={(e) => handleChange("approver", e.target.value)}
                   >
-                    {APPROVER_OPTIONS.map((app) => (
-                      <option key={app} value={app}>
-                        {app}
+                    {approverChoices.map((app) => (
+                      <option key={app.id || app.name} value={app.name}>
+                        {app.name}
                       </option>
                     ))}
                   </LocalSelect>
@@ -393,8 +436,14 @@ export default function CreateVacancyModal({
                     disabled={isSubmitting}
                     className="btn btn-sm bg-primary text-white hover:bg-primary/90 rounded-xl px-5 gap-1.5 shadow-sm shadow-primary/20"
                   >
-                    <Send className="size-3.5" />
-                    <span>Submit requisition</span>
+                    {isSubmitting ? (
+                      <span className="loading loading-spinner loading-xs" />
+                    ) : (
+                      <Send className="size-3.5" />
+                    )}
+                    <span>
+                      {isSubmitting ? "Submitting..." : "Submit requisition"}
+                    </span>
                   </button>
                 </div>
               </div>

@@ -7,7 +7,11 @@ export type PipelineStage =
   | "Offer"
   | "Hired";
 
-export type VacancyStatus = "Published" | "Pending Approval" | "Draft" | "Closed";
+export type VacancyStatus =
+  | "Published"
+  | "Pending Approval"
+  | "Draft"
+  | "Closed";
 
 export interface Candidate {
   id: string;
@@ -26,9 +30,11 @@ export interface Vacancy {
   id: string;
   title: string;
   dept: string;
+  departmentId?: string;
   openings: number;
   applicants: number;
   closes: string;
+  closingDate?: string;
   status: VacancyStatus;
   grade?: string;
   type?: string;
@@ -38,5 +44,6 @@ export interface Vacancy {
   desc?: string;
   manager?: string;
   approver?: string;
+  approverId?: string;
   channels?: string;
 }
