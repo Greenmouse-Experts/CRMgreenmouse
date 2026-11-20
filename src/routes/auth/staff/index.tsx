@@ -73,7 +73,7 @@ function RouteComponent() {
             label="Email Address"
             type="email"
             required
-            placeholder="destiny@greenmouse.com"
+            placeholder="johndoe@greenmouse.com"
             {...form.register("email", { required: true })}
           />
 
