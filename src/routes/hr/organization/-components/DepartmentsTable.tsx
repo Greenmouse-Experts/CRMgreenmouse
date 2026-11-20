@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import CustomTable, { type columnType } from "@/components/tables/CustomTable";
 import type { Actions } from "@/components/tables/pop-up";
-import { MapPin, Search } from "lucide-react";
+import { Search } from "lucide-react";
 import type { Department, DepartmentStatus } from "./types";
 
 interface DepartmentsTableProps {
@@ -54,8 +54,7 @@ export default function DepartmentsTable({
           return (
             Boolean(dept.name && dept.name.toLowerCase().includes(q)) ||
             Boolean(dept.code && dept.code.toLowerCase().includes(q)) ||
-            Boolean(dept.head && dept.head.toLowerCase().includes(q)) ||
-            Boolean(dept.location && dept.location.toLowerCase().includes(q))
+            Boolean(dept.status && dept.status.toLowerCase().includes(q))
           );
         }
         return true;
@@ -63,55 +62,38 @@ export default function DepartmentsTable({
     [departments, searchTerm, statusFilter],
   );
 
-  const columns: columnType[] = [
+  const columns: columnType<Department>[] = [
     {
       key: "code",
       label: "Code",
-      render: (value) => (
+      render: (value, dept) => (
         <span className="font-mono text-xs font-bold text-primary">
-          {value || "—"}
+          {value || dept.code || "—"}
         </span>
       ),
     },
     {
       key: "name",
       label: "Name",
-      render: (_value, dept) => (
-        <div className="flex flex-col">
-          <span className="font-semibold text-base-content">
-            {dept.name || "Untitled"}
-          </span>
-          {dept.location && (
-            <span className="flex items-center gap-1 text-[11px] text-base-content/50 font-normal">
-              <MapPin className="size-2.5" />
-              {dept.location}
-            </span>
-          )}
-        </div>
-      ),
-    },
-    {
-      key: "head",
-      label: "Head",
-      render: (value) => (
-        <span className="text-base-content/80 font-medium">
-          {value || "Unassigned"}
+      render: (value, dept) => (
+        <span className="font-semibold text-base-content">
+          {value || dept.name || "Untitled"}
         </span>
       ),
     },
     {
-      key: "count",
-      label: "Staff",
-      render: (value) => (
+      key: "staffCount",
+      label: "Staff Count",
+      render: (value, dept) => (
         <span className="rounded-md bg-base-200/80 px-2 py-0.5 text-xs font-bold text-base-content">
-          {Number(value) || 0}
+          {Number(value ?? dept.staffCount ?? dept.count ?? 0)}
         </span>
       ),
     },
     {
       key: "status",
       label: "Status",
-      render: (_value, dept) => getStatusBadge(dept.status),
+      render: (value, dept) => getStatusBadge(value || dept.status),
     },
   ];
 
@@ -124,10 +106,14 @@ export default function DepartmentsTable({
     {
       key: "toggle",
       label: "Deactivate / Activate",
-      render: (dept) => (dept.status === "Active" ? "Deactivate" : "Activate"),
+      render: (dept) => {
+        const isActive = dept.status?.toLowerCase() === "active";
+        return isActive ? "Deactivate" : "Activate";
+      },
       action: (dept) => {
-        const nextStatus = dept.status === "Active" ? "Inactive" : "Active";
-        onUpdateStatus?.(dept.id, nextStatus);
+        const isActive = dept.status?.toLowerCase() === "active";
+        const nextStatus = isActive ? "Inactive" : "Active";
+        onUpdateStatus?.(dept.id, nextStatus as DepartmentStatus);
       },
     },
     {
@@ -149,7 +135,7 @@ export default function DepartmentsTable({
           </p>
         </div>
 
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="flex items-center gap-2">
           {/* Search Input */}
           <div className="relative">
             <Search className="size-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-base-content/40" />

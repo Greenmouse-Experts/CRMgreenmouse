@@ -51,32 +51,40 @@ export function toUiDepartment(raw: any): Department {
     raw?.head ||
     raw?.headName ||
     [raw?.headFirstName, raw?.headLastName].filter(Boolean).join(" ") ||
-    "Unassigned";
+    undefined;
+
+  const staffCountNum = Number(
+    raw?.staffCount ??
+      raw?.count ??
+      raw?.staff_count ??
+      raw?.approvedHeadcount ??
+      0,
+  );
 
   return {
+    ...raw,
     id: raw?.id ?? "",
     code:
       raw?.code ||
       (raw?.name ? String(raw.name).slice(0, 3).toUpperCase() : "DEP"),
     name: raw?.name || "Untitled Department",
-    head: headName,
-    count: Number(
-      raw?.staffCount ??
-        raw?.count ??
-        raw?.staff_count ??
-        raw?.approvedHeadcount ??
-        0,
-    ),
+    staffCount: staffCountNum,
+    count: staffCountNum,
     status: statusStr === "active" ? "Active" : "Inactive",
+    head: headName || "Unassigned",
+    headName: headName ?? null,
     parent: raw?.parentDepartmentName ?? raw?.parent ?? undefined,
-    costCentre: raw?.costCentre ?? undefined,
+    parentDepartmentName: raw?.parentDepartmentName ?? null,
+    costCentre: raw?.costCentre ?? null,
     location: raw?.primaryLocation ?? raw?.location ?? undefined,
-    description: raw?.description ?? undefined,
+    primaryLocation: raw?.primaryLocation ?? null,
+    description: raw?.description ?? null,
   };
 }
 
 export function toUiPosition(raw: any): Position {
   return {
+    ...raw,
     id: raw?.id ?? "",
     title: raw?.title ?? raw?.jobTitle ?? raw?.name ?? "Untitled Position",
     dept: raw?.dept ?? raw?.department ?? raw?.departmentName ?? "General",

@@ -4,13 +4,18 @@ export interface Department {
   id: string;
   code: string;
   name: string;
-  head: string;
-  count: number;
-  status: DepartmentStatus;
+  status: DepartmentStatus | string;
+  staffCount?: number;
+  count?: number;
+  head?: string;
+  headName?: string | null;
+  parentDepartmentName?: string | null;
   parent?: string;
-  costCentre?: string;
+  costCentre?: string | null;
+  primaryLocation?: string | null;
   location?: string;
-  description?: string;
+  description?: string | null;
+  [key: string]: any;
 }
 
 export interface Position {
