@@ -7,7 +7,9 @@ import {
 } from "react-hook-form";
 import Modal, { type ModalHandle } from "@/components/DialogModal";
 import SimpleInput from "@/components/inputs/SimpleInput";
+import SimpleSelect from "@/components/inputs/SimpleSelect";
 import LocalSelect from "@/components/inputs/LocalSelect";
+import type { EmployeeRecord } from "@/api/employeesApi";
 import RichTextEditor from "@/components/inputs/RichTextEditor";
 import {
   HR_EMPLOYMENT_TYPES,
@@ -452,18 +454,37 @@ export default function CreateVacancyModal({
                     <label className="font-semibold text-base-content/80 mb-1 block">
                       Hiring manager <span className="text-error">*</span>
                     </label>
-                    <LocalSelect
-                      {...register("hiringManagerId", {
-                        required: "Please select a hiring manager",
-                      })}
-                    >
-                      <option value="">Select hiring manager</option>
-                      {managerChoices.map((m) => (
-                        <option key={m.id} value={m.id}>
-                          {m.name}
-                        </option>
-                      ))}
-                    </LocalSelect>
+                    <Controller
+                      control={methods.control}
+                      name="hiringManagerId"
+                      rules={{ required: "Please select a hiring manager" }}
+                      render={({ field }) => (
+                        <SimpleSelect<EmployeeRecord>
+                          route="/employees"
+                          value={field.value}
+                          onChange={field.onChange}
+                          label="Hiring manager *"
+                          render={(employee, index) => {
+                            const name =
+                              [employee.firstName, employee.lastName]
+                                .filter(Boolean)
+                                .join(" ") || employee.email || "Unnamed";
+                            return (
+                              <>
+                                {index === 0 && (
+                                  <option value="">
+                                    Select hiring manager
+                                  </option>
+                                )}
+                                <option key={employee.id} value={employee.id}>
+                                  {name}
+                                </option>
+                              </>
+                            );
+                          }}
+                        />
+                      )}
+                    />
                   </div>
 
                   <div>
