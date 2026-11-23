@@ -1,92 +1,61 @@
 # Pending / Problematic APIs
 
 Verified against the current `Greenmouse CRM API.postman_collection.json`
-(479 requests) and live probes run **2026-11-19** with the token in
-`auth_cred.ts`. That token is now **expired** (later probes returned `401`), so
-anything marked "probe" below should be re-checked with a fresh token before
-the backend team acts on it.
+(479 requests). Originally probed **2026-11-19**; **re-probed 2026-11-23** with
+an access token renewed via `tenant/auth/refresh` (the `auth_cred.ts` refresh
+token is valid until **2026-11-26**).
 
-## 1. Confirmed broken (HTTP 500 on live probe)
+The `/v1/employees` module 500s recorded on 2026-11-19 are **fixed** — list,
+detail, milestones, onboarding tasks, probation reviews and creation all
+respond correctly now. The people directory and onboarding pages read
+`/v1/employees` again (commit `a190a07`); `/v1/staffs` remains a separate,
+currently empty resource.
 
-| Method | Endpoint | Observed | Expected | Impact |
-| --- | --- | --- | --- | --- |
-| `GET` | `/v1/employees` | `500` | `200` + employee list | Main employee list unusable |
-| `GET` | `/v1/employees/upcoming-milestones` | `500` | `200` + milestones | Dashboard milestones unusable |
-| `GET` | `/v1/employees/:id/onboarding/tasks` | `500` | `200` + tasks | Also 500 with a real staff ID |
-| `GET` | `/v1/employees/:id/probation/reviews` | `500` | `200` + reviews | Also 500 with a real staff ID |
-| `POST` | `/v1/employees/:id/onboarding/start` | `500` | `201` | Cannot start onboarding |
-| `POST` | `/v1/employees` | `500` (probe with `{}` got validation, no success path verified) | `201` | Employee creation unverified |
-| `PATCH` | `/v1/staffs/:id` | `500` for a missing UUID | `404` | Missing record should not be a 500 |
+## 1. Verified response shapes (formerly undocumented)
 
-The `/v1/employees` module appears broken as a whole. Until it is fixed, the
-working alternative is `/v1/staffs` (see below).
+Live probes on 2026-11-23 returned:
 
-## 2. Working alternatives verified in the same session
+| Endpoint | Shape |
+| --- | --- |
+| `GET /v1/employees` | array of employee objects (`id`, `tenantId`, `staffId`, `employeeNumber`, `firstName`, …) |
+| `GET /v1/employees/upcoming-milestones` | `{ items: [], window: { from, to, days: 30 } }` |
+| `GET /v1/employees/:id/onboarding/tasks` | `{ employeeId, tasks: [], progress: { completed, total, percent } }` |
+| `GET /v1/employees/:id/probation/reviews` | `{ employeeId, reviews: [], completed, total }` |
+| `POST /v1/employees` | `201` + created record — even `{}` succeeds (creates a draft with null names) |
+| `POST /v1/employees/:id/onboarding/start` | `400` "Complete the employee record before starting onboarding" until the record is filled in |
+| `PATCH /v1/staffs/:id` (missing UUID) | `404` "Staff not found" |
 
-| Method | Endpoint | Result |
-| --- | --- | --- |
-| `GET` | `/v1/staffs` | `200`, array (empty for the test tenant) |
-| `POST` | `/v1/staffs` | `201`; accepts only `email`, `firstName`, `lastName`, `phoneNumber`, optional `roleId`/`profilePic` |
-| `DELETE` | `/v1/staffs/:id` | `200` — `"Staff deleted successfully"` |
-| `GET` | `/v1/employees/organization` | `200` — `{ departments: [], positions: [] }` |
-| `GET` | `/v1/employees/recent-activity` | `200` — `{ items, total, page, limit, totalPages }` |
-| `GET` | `/v1/recruitment/dashboard` | `200` — `{ openVacancies, applicants, interviewsThisWeek, offersOut, pipeline, vacancies }` |
-| `GET` | `/v1/recruitment/vacancies`, `/applications`, `/offers`, `/interviews` | `200`, arrays |
-| `GET` | `/v1/recruitment/approvers` | `200`, array containing the tenant owner |
+The frontend's defensive unwrapping (`tasks` / `reviews` / `items` keys) matches
+these shapes. The Postman collection still has no examples for them.
 
-**Code impact (resolved):** `src/routes/hr/staffs` now uses the working staffs
-endpoints — `useEmployees` → `GET /v1/staffs` and `useCreateEmployee` →
-`POST /v1/staffs` — instead of the broken `/v1/employees` module. The people
-directory now reads from `/v1/staffs`.
+## 2. Collection documentation gaps
 
-## 3. Collection documentation gaps (corrected counts)
-
-Earlier notes said "every body is `{}`" and "every response body is `null`" —
-those were overstatements. Current collection:
-
-- **413 of 479** requests have no response example (`"body": null`), not all.
+- **413 of 479** requests have no response example (`"body": null`).
 - **376 of 479** request bodies are empty or literally `{}`.
-- For the **`/v1/employees`** family specifically, the "empty `{}`" statement
-  **is** accurate — every write endpoint has a `{}` body and every response has
-  no example.
-- `POST` / `PATCH` on **`/v1/staffs` now do have documented bodies** with
-  `<string>` placeholders, so `/staffs` is also the better-documented API.
+- For the **`/v1/employees`** family every write endpoint has a `{}` body and
+  no response example. `/v1/staffs` POST/PATCH are the better-documented
+  exception (`<string>` placeholders).
 
-| Endpoint | Method | Undocumented body |
-| --- | --- | --- |
-| `/v1/employees` | POST | creation fields |
-| `/v1/employees/:id` | PATCH | updatable fields |
-| `/v1/employees/:id/compensation` | PATCH | compensation fields |
-| `/v1/employees/:id/contract-renewal` | PATCH | renewal fields |
-| `/v1/employees/:id/probation/decision` | POST | decision payload + allowed values |
-| `/v1/employees/probation/reviews/:reviewId/complete` | PATCH | completion payload |
-| `/v1/employees/onboarding/tasks/:taskId/assignment` | PATCH | assignee id |
-| `/v1/employees/organization/departments` | POST | create-contract discovered via live 400: accepts `code`, `name`, `status` (lowercase `active`/`inactive`); rejects `id`, `head`, `count`, `parent`, `location` |
-| `/v1/employees/organization/departments/:id` | PATCH | department fields — status updates use lowercase `active`/`inactive` |
-| `/v1/employees/organization/positions` | POST | position fields — `{ title, dept, grade, approved, filled }` (unverified) |
-| `/v1/employees/organization/positions/:id` | PATCH | position fields (unverified) |
+Empty `{}` examples hide requirements the live API enforces (verified via
+400s):
 
-Needed: real example bodies, required markers, and enum values.
+| Endpoint | Required / validated fields |
+| --- | --- |
+| `PATCH /v1/employees/onboarding/tasks/:taskId/complete` | `notes` must be a string |
+| `PATCH /v1/employees/probation/reviews/:reviewId/complete` | `notes` must be a string |
+| `PATCH /v1/employees/onboarding/tasks/:taskId/assignment` | `assignedTo` must be a UUID |
+| `POST /v1/employees/:id/probation/decision` | `decision` must be `confirm` or `extend` (Postman sample also shows `newEndDate`, `reason`) |
+| `POST /v1/employees/organization/departments` | `name` (string ≤ 120), `code` (string ≤ 30); lowercase `active`/`inactive` status |
+| `POST /v1/employees/organization/positions` | `title` (string ≤ 160), `departmentId` (UUID) |
+| `PATCH /v1/employees/:id` | `employmentStatus` enum — see section 5 |
+| `POST /v1/recruitment/vacancies` (reference) | `jobTitle`, `departmentId`, `openings`, `employmentType`, `reasonForHire`, `jobDescription`, `closingDate`, `hiringManagerId`, `approverId` |
 
-## 4. Documented contract vs. validation contradictions
+Needed: real example bodies, required markers, and enum values in the
+collection.
 
-Empty `{}` examples hide requirements that the live API actually enforces:
+## 3. Missing endpoints (verified absent from the collection)
 
-| Endpoint | Collection body | Validation error revealed |
-| --- | --- | --- |
-| `PATCH /v1/employees/onboarding/tasks/:taskId/complete` | empty | `notes` must be a string |
-| `PATCH /v1/employees/probation/reviews/:reviewId/complete` | `{}` | `notes` must be a string |
-| `PATCH /v1/employees/onboarding/tasks/:taskId/assignment` | `{}` | `assignedTo` must be a UUID |
-| `POST /v1/employees/:id/probation/decision` | `{}` | `decision` must be `confirm` or `extend` |
-| `POST /v1/employees/organization/departments` | `{}` | `name` must be a string |
-| `POST /v1/recruitment/vacancies` (reference) | `{}` | `jobTitle`, `departmentId`, `openings`, `employmentType`, `reasonForHire`, `jobDescription`, `closingDate`, `hiringManagerId`, `approverId` |
-
-The collection should be updated to include these fields.
-
-## 5. Missing endpoints (verified absent from the collection)
-
-1. `DELETE /v1/employees/:id` — no delete or archive/terminate endpoint. The
-   client currently fakes removal with `PATCH { status: "inactive" }`.
+1. `DELETE /v1/employees/:id` — no delete or archive/terminate endpoint.
 2. Manager lookup — no endpoint to list candidate managers, and no `managerId`
    write path.
 3. Locations / grades — no list endpoints to populate those fields.
@@ -100,107 +69,110 @@ The collection should be updated to include these fields.
 9. Dedicated status-change action for employees — status is only a generic
    PATCH field.
 
-## 6. Query / pagination gaps (corrected)
+## 4. Query / pagination gaps
 
-Earlier note: "`GET /v1/employees` accepts no query parameters." That is now
-outdated — the collection documents
-`GET /v1/employees?sort=lastName&order=desc`. Still missing:
+`GET /v1/employees` documents `sort` / `order` only. Verified 2026-11-23:
 
-- `search` / `q`, `status`, `departmentId`, `positionId`
-- `page` / `limit` / `cursor`
-- Explicit sortable-field enumeration
+- `limit` / `page` → `400` "property should not exist" (explicitly rejected).
+- `search` → `200` (accepted; filtering could not be confirmed because the
+  test tenant has no named employee records).
+- `status`, `departmentId`, `positionId` filters — still absent.
+- `GET /v1/employees/upcoming-milestones` — fixed 30-day window; a `days`
+  parameter is rejected (`400`). No limit/window control.
 
-`GET /v1/employees/recent-activity` and `/upcoming-milestones` still have no
-limit/window parameter.
+## 5. Contract and status ambiguities
 
-## 7. Contract and status ambiguities
-
-- Status values are not enumerated. The client guesses `active`, `probation`,
-  `notice`, `notice_period`, `suspended`, `inactive`; a rename breaks the UI
-  silently.
-- `inactive` vs `suspended` both map to "Suspended" in the UI but mean
-  different things.
+- **Employment status enum (verified):** `active`, `notice_period`,
+  `suspended`, `exited`. The client is out of sync:
+  - `useRemoveEmployee` sends `employmentStatus: "inactive"` → **400**.
+    `exited` is the closest valid terminal status.
+  - The staff form (`/hr/staffs/$id`) offers `probation`, `notice`,
+    `inactive` — none are valid enum values.
+- `inactive` vs `suspended` mapping in the UI needs revisiting against the
+  verified enum.
 - Contract renewal has no documented fields and no contract read endpoint.
 - Compensation PATCH cannot express an effective date or revision history.
+- Relationship between `/v1/employees` and `/v1/staffs` is undocumented
+  (employee records carry `staffId: null`; the staffs list is empty).
 
-## 8. Auth and error handling
+## 6. Auth and error handling
 
-- The token in `auth_cred.ts` is expired; the refresh token expires too, so a
-  stale session silently logs out. Do not commit real tokens.
-- `src/api/employeesApi.ts` currently imports `auth_cred` directly — remove
-  that dependency; all auth must go through the Axios interceptor.
+- Access tokens expire; the `auth_cred.ts` refresh token works until
+  **2026-11-26**, after which a fresh login is needed for probing. Do not
+  commit real tokens.
 - Permission model for staff vs tenant users is undocumented.
-- Duplicate-email behavior on create is undocumented (409? 422? reuse?).
+- Duplicate-email behavior on create is undocumented (409? 422? reuse?) —
+  note `POST /v1/employees {}` currently succeeds and creates a draft.
 
-## 9. Endpoints currently wired in the app
+## 7. Endpoints currently wired in the app
 
 | Method | Path | Client hook |
 | --- | --- | --- |
 | GET | `/v1/employees` | `useEmployees` |
+| GET | `/v1/staffs` | `useStaffs` (leave request modal) |
 | GET | `/v1/employees/:id` | `useEmployee` |
 | GET | `/v1/employees/organization` | `useEmployeeOrganization` |
 | GET | `/v1/employees/recent-activity` | `useEmployeeRecentActivity` |
 | GET | `/v1/employees/upcoming-milestones` | `useUpcomingMilestones` |
 | GET | `/v1/employees/:id/compensation` | `useEmployeeCompensation` |
-| GET | `/v1/employees/:id/onboarding/tasks` | `useEmployeeOnboardingTasks` |
-| GET | `/v1/employees/:id/probation/reviews` | `useEmployeeProbationReviews` |
 | POST | `/v1/employees` | `useCreateEmployee` |
-| PATCH | `/v1/employees/:id` | `useUpdateEmployee` |
-| PATCH | `/v1/employees/:id` (`status: inactive`) | `useRemoveEmployee` |
+| PATCH | `/v1/employees/:id` | `useUpdateEmployee` / `useRemoveEmployee` (sends invalid `inactive` — see section 5) |
 | PATCH | `/v1/employees/:id/compensation` | `useUpdateCompensation` |
 | PATCH | `/v1/employees/:id/contract-renewal` | `useRenewContract` |
-| POST | `/v1/employees/:id/probation/decision` | `useDecideProbation` |
-| PATCH | `/v1/employees/probation/reviews/:reviewId/complete` | `useCompleteProbationReview` |
-| POST | `/v1/employees/:id/onboarding/start` | `useStartOnboarding` |
-| PATCH | `/v1/employees/onboarding/tasks/:taskId/complete` | `useCompleteOnboardingTask` |
-| PATCH | `/v1/employees/onboarding/tasks/:taskId/assignment` | `useReassignOnboardingTask` |
 | POST | `/v1/employees/organization/departments` | `useCreateDepartment` |
 | PATCH | `/v1/employees/organization/departments/:id` | `useUpdateDepartment` |
 | POST | `/v1/employees/organization/positions` | `useCreatePosition` |
 | PATCH | `/v1/employees/organization/positions/:id` | `useUpdatePosition` |
 
+Onboarding/probation (canonical module: `src/api/onboardingApi.ts`, used by
+`/hr/onboarding` and `/hr/onboarding/$employeeId`):
+
+| Method | Path | Client hook |
+| --- | --- | --- |
+| GET | `/v1/employees/:id/onboarding/tasks` | `useOnboardingTasks` |
+| GET | `/v1/employees/:id/probation/reviews` | `useProbationReviews` |
+| POST | `/v1/employees/:id/onboarding/start` | `useStartOnboarding` |
+| PATCH | `/v1/employees/onboarding/tasks/:taskId/complete` | `useCompleteOnboardingTask` |
+| PATCH | `/v1/employees/onboarding/tasks/:taskId/assignment` | `useReassignOnboardingTask` |
+| PATCH | `/v1/employees/probation/reviews/:reviewId/complete` | `useCompleteProbationReview` |
+| POST | `/v1/employees/:id/probation/decision` | `useDecideProbation` (`confirm` / `extend` + `newEndDate` / `reason`) |
+
+`employeesApi.ts` still contains older duplicate onboarding hooks plus
+`useStartEmployeeProbationReview` (`probation/start-review`) and
+`useSubmitEmployeeProbationReview` (`probation/reviews/:reviewId/submit`)
+whose routes do **not** exist in the collection — candidates for removal.
+
 Also wired elsewhere:
 
 - Recruitment: `src/api/recruitmentApi.ts` (`/v1/recruitment/*`)
-- HR onboarding: `src/api/onboardingApi.ts` (`/v1/employees/:id/onboarding/*`,
-  `/probation/*`) — affected by the section 1 failures
-- Staff directory fallback: `src/api/tenantApi.ts` (`/v1/staffs`)
-- Leave management: `src/api/leaveApi.ts` (`/v1/leave/types`,
-  `/v1/leave/requests`, `/v1/leave/requests/mine`, `/v1/leave/balances/mine`,
+- Attendance: `src/api/attendanceApi.ts` (`/v1/attendance/*`)
+- Leave: `src/api/leaveApi.ts` (`/v1/leave/types`, `/v1/leave/requests`,
+  `/v1/leave/requests/mine`, `/v1/leave/balances/mine`,
   `POST /v1/leave/requests`, `PATCH /v1/leave/requests/:id/decision`,
   `PATCH /v1/leave/requests/:id/cancel`, `PUT /v1/leave/types`) — wired in
   `src/routes/hr/leave` and `src/routes/hr/self-service`. No response bodies
-  are documented for the leave GETs in the collection; the frontend reads
-  them defensively (see `integration.md`).
+  are documented for the leave GETs; the frontend reads them defensively.
+- Staff directory (tenant side): `src/api/tenantApi.ts` (`/v1/staffs`)
 
-## 10. Organization module — partial implementation
-
-The organization endpoints are live but incompletely implemented on the
-backend. Verified via unauthenticated probes (401 = route exists, 404 =
-missing); the create-department contract was discovered via the live 400 the
-user reported:
+## 8. Organization module — partial implementation
 
 | Method | Endpoint | Status | Contract |
 | --- | --- | --- | --- |
 | `GET` | `/v1/employees/organization` | **Working** — `200` `{ departments: [], positions: [] }` | — |
-| `POST` | `/v1/employees/organization/departments` | Route exists; `400` unless the payload matches | Create contract: `{ code, name, status }` with lowercase `active`/`inactive`; rejects `id`, `head`, `count`, `parent`, `location` |
-| `PATCH` | `/v1/employees/organization/departments/:id` | Route exists (401) | Status updates — lowercase `active`/`inactive` |
-| `POST` / `PATCH` | `/v1/employees/organization/positions` / `/positions/:id` | Route exists (401) | Position fields — `{ title, dept, grade, approved, filled }` (unverified) |
+| `POST` | `/v1/employees/organization/departments` | Working route; `400` unless payload matches | `name` (≤ 120), `code` (≤ 30), lowercase `active`/`inactive` status; rejects `id`, `head`, `count`, `parent`, `location` |
+| `PATCH` | `/v1/employees/organization/departments/:id` | Route exists | Status updates — lowercase `active`/`inactive` |
+| `POST` | `/v1/employees/organization/positions` | Working route; `400` unless payload matches | **Verified:** `title` (≤ 160) + `departmentId` (UUID) required — the frontend's `{ title, dept, grade, approved, filled }` shape is wrong |
+| `PATCH` | `/v1/employees/organization/positions/:id` | Route exists | Fields unverified |
 | `DELETE` | `/v1/employees/organization/departments/:id` / `/positions/:id` | **Missing** (404) | Frontend marks inactive instead |
 
-Code impact: `src/api/organizationApi.ts` and
-`src/routes/hr/organization.index.tsx` are wired to these endpoints
-(`useOrganization` → `GET /v1/employees/organization`; mutations → the write
-endpoints above).
+## 9. Re-verification checklist (remaining)
 
-## 11. Re-verification checklist
-
-1. Obtain a fresh bearer token (do not reuse `auth_cred.ts`).
-2. Re-run GET on every endpoint in section 1 and record status codes.
-3. Confirm whether `/v1/employees` and `/v1/staffs` are meant to be the same
-   resource; if not, document the relationship.
-4. Fill in real request/response examples for the `/v1/employees` family.
-5. Add the missing endpoints from section 5 or document the intended
-   replacements.
-6. Re-verify the organization write endpoints (section 10) — the create
-   contracts need to be completed per the live 400.
+1. Fill in real request/response examples for the `/v1/employees` family in
+   the Postman collection (shapes in section 1 are a starting point).
+2. Add the missing endpoints from section 3 or document intended replacements.
+3. Fix the client status enum mismatch (section 5) and the position-create
+   payload (section 8).
+4. Confirm the `/v1/employees` ↔ `/v1/staffs` relationship.
+5. Re-verify position PATCH fields and the probation `extend` payload
+   (`newEndDate` required?) with a complete employee record.
+6. Renew probing credentials after 2026-11-26.
