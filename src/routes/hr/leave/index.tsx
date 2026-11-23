@@ -5,43 +5,68 @@ import LeaveStats from "./-components/LeaveStats";
 import LeaveRequestsTable from "./-components/LeaveRequestsTable";
 import LeaveTypesSection from "./-components/LeaveTypesSection";
 import NewLeaveRequestModal from "./-components/NewLeaveRequestModal";
-import { INITIAL_LEAVE_REQUESTS } from "./-components/leaveData";
 import type { LeaveRequest, LeaveType } from "./-components/types";
+import {
+  useCreateLeaveRequest,
+  useDecideLeaveRequest,
+  useLeaveRequests,
+} from "@/api/leaveApi";
+import { extract_message } from "@/helpers/auth";
 import { Plus } from "lucide-react";
 import { toast } from "sonner";
+import type { AxiosError } from "axios";
+import type { ApiResponse } from "@/api/simpleApi";
 
 export const Route = createFileRoute("/hr/leave/")({
   component: RouteComponent,
 });
 
 function RouteComponent() {
-  const [requests, setRequests] = useState<LeaveRequest[]>(
-    INITIAL_LEAVE_REQUESTS,
-  );
   const [isNewRequestOpen, setIsNewRequestOpen] = useState(false);
   const [selectedLeaveType, setSelectedLeaveType] =
     useState<LeaveType>("Annual");
 
-  const handleCreateRequest = (newRequest: LeaveRequest) => {
-    setRequests((prev) => [newRequest, ...prev]);
+  const requestsQuery = useLeaveRequests();
+  const createLeaveRequest = useCreateLeaveRequest();
+  const decideLeaveRequest = useDecideLeaveRequest();
+
+  const requests = requestsQuery.data ?? [];
+
+  const handleCreateRequest = async (newRequest: LeaveRequest) => {
+    await createLeaveRequest.mutateAsync({
+      leaveTypeId: newRequest.type,
+      startDate: newRequest.startDate ?? newRequest.from,
+      endDate: newRequest.endDate ?? newRequest.to,
+      isHalfDay: newRequest.half !== "No",
+      halfDayPeriod:
+        newRequest.half === "Second half"
+          ? "PM"
+          : newRequest.half === "First half"
+            ? "AM"
+            : undefined,
+      coveringEmployeeId: newRequest.coverId,
+      reason: newRequest.reason ?? "",
+      contactPhone: newRequest.phone,
+      contactAddress: newRequest.address,
+    });
   };
 
-  const handleApprove = (id: string) => {
-    setRequests((prev) =>
-      prev.map((r) =>
-        r.id === id ? { ...r, status: "Approved" as const } : r,
-      ),
-    );
-    toast.success(`Leave ${id} approved`);
+  const handleApprove = async (id: string) => {
+    try {
+      await decideLeaveRequest.mutateAsync({ id, decision: "approve" });
+      toast.success(`Leave ${id} approved`);
+    } catch (error) {
+      toast.error(extract_message(error as AxiosError<ApiResponse>));
+    }
   };
 
-  const handleReject = (id: string) => {
-    setRequests((prev) =>
-      prev.map((r) =>
-        r.id === id ? { ...r, status: "Rejected" as const } : r,
-      ),
-    );
-    toast.error(`Leave ${id} rejected`);
+  const handleReject = async (id: string) => {
+    try {
+      await decideLeaveRequest.mutateAsync({ id, decision: "reject" });
+      toast.error(`Leave ${id} rejected`);
+    } catch (error) {
+      toast.error(extract_message(error as AxiosError<ApiResponse>));
+    }
   };
 
   const handleSelectTypeFromCards = (type: LeaveType) => {

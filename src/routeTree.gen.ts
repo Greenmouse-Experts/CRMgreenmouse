@@ -66,6 +66,7 @@ import { Route as AdminProductsIndexRouteImport } from './routes/admin/products/
 import { Route as AdminOrdersIndexRouteImport } from './routes/admin/orders/index'
 import { Route as HrStaffsIdRouteImport } from './routes/hr/staffs/$id'
 import { Route as HrReportsSlugRouteImport } from './routes/hr/reports/$slug'
+import { Route as HrOnboardingEmployeeIdRouteImport } from './routes/hr/onboarding/$employeeId'
 import { Route as AuthForgotPasswordNewPasswordRouteImport } from './routes/auth/forgot-password/new-password'
 import { Route as TenantUsersRolesIndexRouteImport } from './routes/tenant/users/roles/index'
 import { Route as TenantUsersAddIndexRouteImport } from './routes/tenant/users/add/index'
@@ -415,6 +416,11 @@ const HrStaffsIdRoute = HrStaffsIdRouteImport.update({
 const HrReportsSlugRoute = HrReportsSlugRouteImport.update({
   id: '/reports/$slug',
   path: '/reports/$slug',
+  getParentRoute: () => HrRouteRoute,
+} as any)
+const HrOnboardingEmployeeIdRoute = HrOnboardingEmployeeIdRouteImport.update({
+  id: '/onboarding/$employeeId',
+  path: '/onboarding/$employeeId',
   getParentRoute: () => HrRouteRoute,
 } as any)
 const AuthForgotPasswordNewPasswordRoute =
@@ -806,6 +812,7 @@ export interface FileRoutesByFullPath {
   '/tenant/': typeof TenantIndexRoute
   '/test/': typeof TestIndexRoute
   '/auth/forgot-password/new-password': typeof AuthForgotPasswordNewPasswordRoute
+  '/hr/onboarding/$employeeId': typeof HrOnboardingEmployeeIdRoute
   '/hr/reports/$slug': typeof HrReportsSlugRoute
   '/hr/staffs/$id': typeof HrStaffsIdRoute
   '/admin/orders': typeof AdminOrdersIndexRoute
@@ -920,6 +927,7 @@ export interface FileRoutesByTo {
   '/tenant': typeof TenantIndexRoute
   '/test': typeof TestIndexRoute
   '/auth/forgot-password/new-password': typeof AuthForgotPasswordNewPasswordRoute
+  '/hr/onboarding/$employeeId': typeof HrOnboardingEmployeeIdRoute
   '/hr/reports/$slug': typeof HrReportsSlugRoute
   '/hr/staffs/$id': typeof HrStaffsIdRoute
   '/admin/orders': typeof AdminOrdersIndexRoute
@@ -1044,6 +1052,7 @@ export interface FileRoutesById {
   '/tenant/': typeof TenantIndexRoute
   '/test/': typeof TestIndexRoute
   '/auth/forgot-password/new-password': typeof AuthForgotPasswordNewPasswordRoute
+  '/hr/onboarding/$employeeId': typeof HrOnboardingEmployeeIdRoute
   '/hr/reports/$slug': typeof HrReportsSlugRoute
   '/hr/staffs/$id': typeof HrStaffsIdRoute
   '/admin/orders/': typeof AdminOrdersIndexRoute
@@ -1169,6 +1178,7 @@ export interface FileRouteTypes {
     | '/tenant/'
     | '/test/'
     | '/auth/forgot-password/new-password'
+    | '/hr/onboarding/$employeeId'
     | '/hr/reports/$slug'
     | '/hr/staffs/$id'
     | '/admin/orders'
@@ -1283,6 +1293,7 @@ export interface FileRouteTypes {
     | '/tenant'
     | '/test'
     | '/auth/forgot-password/new-password'
+    | '/hr/onboarding/$employeeId'
     | '/hr/reports/$slug'
     | '/hr/staffs/$id'
     | '/admin/orders'
@@ -1406,6 +1417,7 @@ export interface FileRouteTypes {
     | '/tenant/'
     | '/test/'
     | '/auth/forgot-password/new-password'
+    | '/hr/onboarding/$employeeId'
     | '/hr/reports/$slug'
     | '/hr/staffs/$id'
     | '/admin/orders/'
@@ -1930,6 +1942,13 @@ declare module '@tanstack/react-router' {
       path: '/reports/$slug'
       fullPath: '/hr/reports/$slug'
       preLoaderRoute: typeof HrReportsSlugRouteImport
+      parentRoute: typeof HrRouteRoute
+    }
+    '/hr/onboarding/$employeeId': {
+      id: '/hr/onboarding/$employeeId'
+      path: '/onboarding/$employeeId'
+      fullPath: '/hr/onboarding/$employeeId'
+      preLoaderRoute: typeof HrOnboardingEmployeeIdRouteImport
       parentRoute: typeof HrRouteRoute
     }
     '/auth/forgot-password/new-password': {
@@ -2500,6 +2519,7 @@ const HrSettingsRouteRouteWithChildren = HrSettingsRouteRoute._addFileChildren(
 interface HrRouteRouteChildren {
   HrSettingsRouteRoute: typeof HrSettingsRouteRouteWithChildren
   HrIndexRoute: typeof HrIndexRoute
+  HrOnboardingEmployeeIdRoute: typeof HrOnboardingEmployeeIdRoute
   HrReportsSlugRoute: typeof HrReportsSlugRoute
   HrStaffsIdRoute: typeof HrStaffsIdRoute
   HrAttendanceIndexRoute: typeof HrAttendanceIndexRoute
@@ -2520,6 +2540,7 @@ interface HrRouteRouteChildren {
 const HrRouteRouteChildren: HrRouteRouteChildren = {
   HrSettingsRouteRoute: HrSettingsRouteRouteWithChildren,
   HrIndexRoute: HrIndexRoute,
+  HrOnboardingEmployeeIdRoute: HrOnboardingEmployeeIdRoute,
   HrReportsSlugRoute: HrReportsSlugRoute,
   HrStaffsIdRoute: HrStaffsIdRoute,
   HrAttendanceIndexRoute: HrAttendanceIndexRoute,

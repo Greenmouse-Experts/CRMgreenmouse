@@ -1,11 +1,12 @@
 import { useState } from "react";
 import type { ChecklistItem, DepartmentTag, OnboardingHire } from "./types";
-import { Check } from "lucide-react";
+import { ArrowRightLeft, Check } from "lucide-react";
 
 interface OnboardingChecklistProps {
   hire: OnboardingHire;
   checklist: ChecklistItem[];
   onToggleItem: (itemId: string) => void;
+  onReassign?: (item: ChecklistItem) => void;
 }
 
 const DEPARTMENTS: DepartmentTag[] = ["HR", "IT", "Manager", "Payroll"];
@@ -14,6 +15,7 @@ export default function OnboardingChecklist({
   hire,
   checklist,
   onToggleItem,
+  onReassign,
 }: OnboardingChecklistProps) {
   const [filterDept, setFilterDept] = useState<string>("All");
 
@@ -111,6 +113,20 @@ export default function OnboardingChecklist({
               >
                 {item.dept}
               </span>
+
+              {onReassign && !item.completed && (
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onReassign(item);
+                  }}
+                  title="Reassign task"
+                  className="btn btn-ghost btn-xs btn-circle text-base-content/50 hover:text-primary shrink-0"
+                >
+                  <ArrowRightLeft className="size-3.5" />
+                </button>
+              )}
             </li>
           ))
         )}

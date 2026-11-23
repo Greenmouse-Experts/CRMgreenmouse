@@ -1,4 +1,5 @@
 import StatCard from "@/components/StatCard";
+import { useLeaveBalances } from "@/api/leaveApi";
 import { Calendar, CheckCircle2, Clock, CalendarDays } from "lucide-react";
 import type { LeaveRequest } from "./types";
 
@@ -7,8 +8,9 @@ interface LeaveStatsProps {
 }
 
 export default function LeaveStats({ requests }: LeaveStatsProps) {
-  // Compute dynamically based on requests or standards
-  const annualTotal = 24;
+  const { data: balances = [] } = useLeaveBalances();
+  const annualBalance = balances.find((b) => b.type === "Annual") ?? balances[0];
+
   const approvedAnnualDays = requests
     .filter((r) => r.type === "Annual" && r.status === "Approved")
     .reduce((sum, r) => sum + r.days, 0);
@@ -20,10 +22,13 @@ export default function LeaveStats({ requests }: LeaveStatsProps) {
     )
     .reduce((sum, r) => sum + r.days, 0);
 
-  const used = approvedAnnualDays > 0 ? approvedAnnualDays : 8;
-  const pending = pendingAnnualDays > 0 ? pendingAnnualDays : 3;
-  const available = Math.max(0, annualTotal - used - pending);
-  const percentAvailable = Math.round((available / annualTotal) * 100);
+  const annualTotal = annualBalance?.annualEntitlement ?? 0;
+  const used = annualBalance?.used ?? approvedAnnualDays;
+  const pending = annualBalance?.pendingReservation ?? pendingAnnualDays;
+  const available =
+    annualBalance?.available ?? Math.max(0, annualTotal - used - pending);
+  const percentAvailable =
+    annualTotal > 0 ? Math.round((available / annualTotal) * 100) : 0;
 
   return (
     <div className="grid grid-cols-2 gap-4 md:grid-cols-4">

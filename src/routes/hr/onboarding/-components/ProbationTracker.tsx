@@ -1,12 +1,19 @@
 import type { OnboardingHire } from "./types";
 import { PROBATION_STEPS } from "./onboardingData";
-import { Check, CalendarCheck, Award, ArrowRight } from "lucide-react";
+import {
+  Check,
+  CalendarCheck,
+  CalendarClock,
+  Award,
+  ArrowRight,
+} from "lucide-react";
 
 interface ProbationTrackerProps {
   hire: OnboardingHire;
   onUpdateStep: (hireId: string, stepIndex: number) => void;
   onAdvance: (hireId: string) => void;
   onConfirm: (hireId: string) => void;
+  onExtend?: (hireId: string) => void;
 }
 
 export default function ProbationTracker({
@@ -14,6 +21,7 @@ export default function ProbationTracker({
   onUpdateStep,
   onAdvance,
   onConfirm,
+  onExtend,
 }: ProbationTrackerProps) {
   const currentStep = hire.probationStep;
 
@@ -123,14 +131,26 @@ export default function ProbationTracker({
               <ArrowRight className="size-3" />
             </button>
           ) : (
-            <button
-              type="button"
-              onClick={() => onConfirm(hire.id)}
-              className="btn btn-xs bg-emerald-600 text-white hover:bg-emerald-700 border-0 rounded-lg px-3 gap-1"
-            >
-              <Award className="size-3" />
-              <span>Confirm Permanent</span>
-            </button>
+            <>
+              {onExtend && (
+                <button
+                  type="button"
+                  onClick={() => onExtend(hire.id)}
+                  className="btn btn-xs btn-outline border-warning text-warning hover:bg-warning hover:text-white rounded-lg px-3 gap-1"
+                >
+                  <CalendarClock className="size-3" />
+                  <span>Extend</span>
+                </button>
+              )}
+              <button
+                type="button"
+                onClick={() => onConfirm(hire.id)}
+                className="btn btn-xs bg-emerald-600 text-white hover:bg-emerald-700 border-0 rounded-lg px-3 gap-1"
+              >
+                <Award className="size-3" />
+                <span>Confirm Permanent</span>
+              </button>
+            </>
           )}
         </div>
       </div>

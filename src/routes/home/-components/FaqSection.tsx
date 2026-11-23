@@ -91,7 +91,7 @@ export default function FaqSection() {
             </div>
           </div>
 
-          {/* Right: FAQ Accordion List */}
+          {/* Right: FAQs Accordion List */}
           <div className="lg:col-span-8">
             <div className="space-y-4">
               {faqs.map((faq) => {

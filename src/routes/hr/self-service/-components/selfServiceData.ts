@@ -1,4 +1,8 @@
 import type {
+  LeaveRequest as HRLeaveRequest,
+  LeaveStatus as HRLeaveStatus,
+} from "@/routes/hr/leave/-components/types";
+import type {
   LeaveRequest,
   Payslip,
   SelfServiceSummary,
@@ -20,46 +24,11 @@ export const formatDate = (value: string) =>
       })
     : "—";
 
-export const TOTAL_ANNUAL_LEAVE_DAYS = 21;
-
 export const ENROLLED_TRAINING_COURSES = [
   "Advanced Excel for Finance",
   "Customer Service Fundamentals",
   "HR Analytics Basics",
   "Payroll Compliance",
-];
-
-export const INITIAL_LEAVE_REQUESTS: LeaveRequest[] = [
-  {
-    id: "LR-301",
-    employee: "Kelechi Nwosu",
-    type: "Annual Leave",
-    startDate: "2026-11-03",
-    endDate: "2026-11-05",
-    days: 3,
-    status: "Approved",
-    reason: "Family occasion",
-  },
-  {
-    id: "LR-302",
-    employee: "Kelechi Nwosu",
-    type: "Sick Leave",
-    startDate: "2026-11-09",
-    endDate: "2026-11-09",
-    days: 1,
-    status: "Pending",
-    reason: "Personal health",
-  },
-  {
-    id: "LR-303",
-    employee: "Kelechi Nwosu",
-    type: "Unpaid Leave",
-    startDate: "2026-12-21",
-    endDate: "2026-12-26",
-    days: 6,
-    status: "Rejected",
-    reason: "Extended relocation",
-  },
 ];
 
 export const INITIAL_PAYSLIPS: Payslip[] = [
@@ -92,21 +61,46 @@ export const INITIAL_PAYSLIPS: Payslip[] = [
   },
 ];
 
+const HR_STATUS_TO_SELF_SERVICE: Record<HRLeaveStatus, LeaveStatus> = {
+  Approved: "Approved",
+  Rejected: "Rejected",
+  Cancelled: "Cancelled",
+  Submitted: "Submitted",
+  "Pending Manager Approval": "Pending",
+  "Pending HR Approval": "Pending",
+};
+
+/** Map a management-page leave request onto the self-service leave shape. */
+export const mapSelfServiceLeaveRequest = (
+  request: HRLeaveRequest,
+): LeaveRequest => ({
+  id: request.id,
+  employee: request.emp || "—",
+  type: request.type,
+  startDate: request.startDate ?? request.from,
+  endDate: request.endDate ?? request.to,
+  days: request.days,
+  status: HR_STATUS_TO_SELF_SERVICE[request.status],
+  reason: request.reason ?? "",
+});
+
 export const getSelfServiceSummary = (
   requests: LeaveRequest[],
   payslips: Payslip[],
+  annualLeaveEntitlement?: number,
 ): SelfServiceSummary => {
   const approvedAnnualLeaveDays = requests
-    .filter((request) => request.status === "Approved" && request.type === "Annual Leave")
+    .filter(
+      (request) => request.status === "Approved" && request.type === "Annual",
+    )
     .reduce((sum, request) => sum + request.days, 0);
 
   return {
     pendingLeave: requests.filter((request) => request.status === "Pending")
       .length,
-    leaveBalance: Math.max(
-      0,
-      TOTAL_ANNUAL_LEAVE_DAYS - approvedAnnualLeaveDays,
-    ),
+    leaveBalance: annualLeaveEntitlement
+      ? Math.max(0, annualLeaveEntitlement - approvedAnnualLeaveDays)
+      : 0,
     readyPayslips: payslips.filter((payslip) => payslip.status === "Ready")
       .length,
     enrolledCourses: ENROLLED_TRAINING_COURSES.length,

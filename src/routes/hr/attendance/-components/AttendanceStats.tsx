@@ -1,42 +1,46 @@
 import StatCard from "@/components/StatCard";
-import type { AttendanceRecord } from "./types";
+import type { AttendanceDashboard } from "@/api/attendanceApi";
 import { UserCheck, Clock, UserX, Timer } from "lucide-react";
 
 interface AttendanceStatsProps {
-  logs: AttendanceRecord[];
+  stats: AttendanceDashboard;
 }
 
-export default function AttendanceStats({ logs }: AttendanceStatsProps) {
-  const presentCount = logs.filter((l) => l.status === "Present").length;
-  const lateCount = logs.filter((l) => l.status === "Late").length;
-  const absentCount = logs.filter((l) => l.status === "Absent").length;
+const metric = (stats: AttendanceDashboard, ...keys: string[]) => {
+  for (const key of keys) {
+    const value = stats?.[key];
+    if (typeof value === "number") return value;
+  }
+  return 0;
+};
 
+export default function AttendanceStats({ stats }: AttendanceStatsProps) {
   return (
     <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
       <StatCard
         title="Present"
-        value={presentCount > 0 ? 220 + presentCount : 226}
+        value={metric(stats, "present", "presentCount", "presentEmployees")}
         desc="Employees on-site or active remote"
         icon={<UserCheck className="size-5" />}
         variant="success"
       />
       <StatCard
         title="Late"
-        value={lateCount > 0 ? 9 + lateCount : 11}
-        desc="Clock-in recorded after 09:15"
+        value={metric(stats, "late", "lateCount", "lateEmployees")}
+        desc="Clock-in recorded after the grace period"
         icon={<Clock className="size-5" />}
         variant="warning"
       />
       <StatCard
         title="Absent"
-        value={absentCount > 0 ? 7 + absentCount : 8}
+        value={metric(stats, "absent", "absentCount", "absentEmployees")}
         desc="Unplanned absence or no clock-in"
         icon={<UserX className="size-5" />}
         variant="error"
       />
       <StatCard
         title="Overtime hrs (week)"
-        value={46}
+        value={metric(stats, "overtimeHours", "overtime", "weeklyOvertime")}
         desc="Cumulative approved overtime"
         icon={<Timer className="size-5" />}
         variant="info"

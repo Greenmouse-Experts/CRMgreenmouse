@@ -227,6 +227,36 @@ export const useEmployees = () =>
     },
   });
 
+export interface StaffOption {
+  id: string;
+  name: string;
+  email?: string;
+}
+
+/** The people-directory endpoint: `GET /v1/staffs`. */
+export const useStaffs = () =>
+  useQuery<StaffOption[]>({
+    queryKey: [...queryRoot, "staffs"],
+    queryFn: async () => {
+      const { data } = await apiClient.get<any>("/staffs", authConfig());
+      const list = unwrapList<any>(data, ["staffs", "staffMembers"]);
+      return list
+        .map((staff) => ({
+          id: String(staff?.id ?? staff?._id ?? ""),
+          name: String(
+            staff?.name ??
+              [staff?.firstName, staff?.middleName, staff?.lastName]
+                .filter(Boolean)
+                .join(" ") ??
+              staff?.email ??
+              "",
+          ).trim(),
+          email: staff?.email,
+        }))
+        .filter((staff) => staff.id && staff.name);
+    },
+  });
+
 export const useEmployee = (id?: string) =>
   useQuery<EmployeeRecord>({
     queryKey: [...queryRoot, "detail", id],

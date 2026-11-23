@@ -12,7 +12,9 @@ export default function LandingFooter() {
       toast.error("Please enter your email address.");
       return;
     }
-    toast.info("Thanks for your interest — newsletter signup isn't connected yet.");
+    toast.info(
+      "Thanks for your interest — newsletter signup isn't connected yet.",
+    );
     setEmail("");
   };
 
@@ -83,7 +85,7 @@ export default function LandingFooter() {
               to="/home/faq"
               className="hover:text-slate-950 transition-colors"
             >
-              FAQ
+              FAQs
             </Link>
             <Link
               to="/home/contact-us"

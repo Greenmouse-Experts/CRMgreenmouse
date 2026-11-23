@@ -2,10 +2,14 @@ import { useState, useRef, useEffect } from "react";
 import Modal, { type ModalHandle } from "@/components/DialogModal";
 import SimpleInput from "@/components/inputs/SimpleInput";
 import LocalSelect from "@/components/inputs/LocalSelect";
-import { EMPLOYEES_LIST, LEAVE_TYPES } from "./leaveData";
+import { useStaffs } from "@/api/employeesApi";
+import { useLeaveBalances, useLeaveTypes } from "@/api/leaveApi";
 import type { LeaveRequest, LeaveType } from "./types";
+import { extract_message } from "@/helpers/auth";
 import { toast } from "sonner";
 import { Send, Upload } from "lucide-react";
+import type { AxiosError } from "axios";
+import type { ApiResponse } from "@/api/simpleApi";
 
 interface NewLeaveRequestModalProps {
   isOpen: boolean;
@@ -14,6 +18,13 @@ interface NewLeaveRequestModalProps {
   defaultType?: LeaveType;
 }
 
+const dateRangeDefaults = () => ({
+  from: new Date().toISOString().slice(0, 10),
+  to: new Date(Date.now() + 4 * 24 * 60 * 60 * 1000)
+    .toISOString()
+    .slice(0, 10),
+});
+
 export default function NewLeaveRequestModal({
   isOpen,
   onClose,
@@ -21,16 +32,18 @@ export default function NewLeaveRequestModal({
   defaultType = "Annual",
 }: NewLeaveRequestModalProps) {
   const modalRef = useRef<ModalHandle>(null);
+  const { data: staffs = [] } = useStaffs();
+  const { data: leaveTypes = [] } = useLeaveTypes();
+  const { data: balances = [] } = useLeaveBalances();
 
   const [form, setForm] = useState({
-    emp: EMPLOYEES_LIST[0] || "Grace Danjuma",
+    emp: "",
     type: defaultType,
-    from: new Date().toISOString().slice(0, 10),
-    to: new Date(Date.now() + 4 * 24 * 60 * 60 * 1000)
-      .toISOString()
-      .slice(0, 10),
+    from: dateRangeDefaults().from,
+    to: dateRangeDefaults().to,
     half: "No" as "No" | "First half" | "Second half",
-    cover: EMPLOYEES_LIST[1] || "Tunde Adeyemi",
+    cover: "",
+    coverId: "",
     reason: "",
     phone: "",
     address: "",
@@ -46,6 +59,17 @@ export default function NewLeaveRequestModal({
   }, [defaultType]);
 
   useEffect(() => {
+    if (staffs.length > 0 && (!form.emp || !form.cover)) {
+      setForm((p) => ({
+        ...p,
+        emp: p.emp || staffs[0].name,
+        cover: p.cover || staffs[0].name,
+        coverId: p.coverId || staffs[0].id,
+      }));
+    }
+  }, [staffs]);
+
+  useEffect(() => {
     if (isOpen) {
       modalRef.current?.open();
     } else {
@@ -53,7 +77,21 @@ export default function NewLeaveRequestModal({
     }
   }, [isOpen]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const resetForm = () =>
+    setForm({
+      emp: "",
+      type: "Annual",
+      from: dateRangeDefaults().from,
+      to: dateRangeDefaults().to,
+      half: "No",
+      cover: "",
+      coverId: "",
+      reason: "",
+      phone: "",
+      address: "",
+    });
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!form.emp.trim() || !form.reason.trim()) {
@@ -87,7 +125,7 @@ export default function NewLeaveRequestModal({
       });
 
       const newRequest: LeaveRequest = {
-        id: `LV-${307 + Math.floor(Math.random() * 50)}`,
+        id: "",
         emp: form.emp,
         type: form.type,
         from: formattedFrom,
@@ -95,39 +133,33 @@ export default function NewLeaveRequestModal({
         days: form.half !== "No" ? 0.5 : daysCount,
         status: "Submitted",
         reason: form.reason.trim(),
-        cover: form.cover,
+        cover: form.cover.trim() || undefined,
         phone: form.phone.trim() || undefined,
         address: form.address.trim() || undefined,
         half: form.half,
+        startDate: form.from,
+        endDate: form.to,
+        coverId: form.coverId || undefined,
       };
 
-      onSubmitRequest(newRequest);
+      await onSubmitRequest(newRequest);
       toast.success("Leave request submitted", {
         description: `Request for ${newRequest.days} ${newRequest.days === 1 ? "day" : "days"} has been sent to line manager.`,
       });
 
       // Reset
-      setForm({
-        emp: EMPLOYEES_LIST[0] || "Grace Danjuma",
-        type: "Annual",
-        from: new Date().toISOString().slice(0, 10),
-        to: new Date(Date.now() + 4 * 24 * 60 * 60 * 1000)
-          .toISOString()
-          .slice(0, 10),
-        half: "No",
-        cover: EMPLOYEES_LIST[1] || "Tunde Adeyemi",
-        reason: "",
-        phone: "",
-        address: "",
-      });
+      resetForm();
       setFileName("");
       onClose();
-    } catch {
-      toast.error("Failed to submit leave request");
+    } catch (error) {
+      toast.error(extract_message(error as AxiosError<ApiResponse>));
     } finally {
       setIsSubmitting(false);
     }
   };
+
+  const annualBalance =
+    balances.find((b) => b.type === "Annual") ?? balances[0];
 
   return (
     <Modal
@@ -138,8 +170,9 @@ export default function NewLeaveRequestModal({
     >
       <form onSubmit={handleSubmit} className="space-y-4">
         <p className=" text-base-content/80 -mt-1 mb-3">
-          Available balance: 13 days annual leave. Requests go to your manager,
-          then HR.
+          {annualBalance?.available != null
+            ? `Available balance: ${annualBalance.available} days annual leave. Requests go to your manager, then HR.`
+            : "Requests go to your manager, then HR."}
         </p>
 
         {/* Section 1: Leave details */}
@@ -159,9 +192,9 @@ export default function NewLeaveRequestModal({
                   setForm((p) => ({ ...p, emp: e.target.value }))
                 }
               >
-                {EMPLOYEES_LIST.map((emp) => (
-                  <option key={emp} value={emp}>
-                    {emp}
+                {staffs.map((staff) => (
+                  <option key={staff.id} value={staff.name}>
+                    {staff.name}
                   </option>
                 ))}
               </LocalSelect>
@@ -174,10 +207,13 @@ export default function NewLeaveRequestModal({
               <LocalSelect
                 value={form.type}
                 onChange={(e) =>
-                  setForm((p) => ({ ...p, type: e.target.value as LeaveType }))
+                  setForm((p) => ({
+                    ...p,
+                    type: e.target.value as LeaveType,
+                  }))
                 }
               >
-                {LEAVE_TYPES.map((lt) => (
+                {leaveTypes.map((lt) => (
                   <option key={lt.type} value={lt.type}>
                     {lt.type} ({lt.entitlement})
                   </option>
@@ -238,13 +274,18 @@ export default function NewLeaveRequestModal({
               </label>
               <LocalSelect
                 value={form.cover}
-                onChange={(e) =>
-                  setForm((p) => ({ ...p, cover: e.target.value }))
-                }
+                onChange={(e) => {
+                  const staff = staffs.find((s) => s.name === e.target.value);
+                  setForm((p) => ({
+                    ...p,
+                    cover: e.target.value,
+                    coverId: staff?.id ?? "",
+                  }));
+                }}
               >
-                {EMPLOYEES_LIST.map((emp) => (
-                  <option key={emp} value={emp}>
-                    {emp}
+                {staffs.map((staff) => (
+                  <option key={staff.id} value={staff.name}>
+                    {staff.name}
                   </option>
                 ))}
               </LocalSelect>

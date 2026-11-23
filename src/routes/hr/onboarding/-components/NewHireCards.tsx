@@ -1,4 +1,5 @@
 import type { OnboardingHire } from "./types";
+import { Link } from "@tanstack/react-router";
 import { CheckCircle2, ChevronRight } from "lucide-react";
 
 interface NewHireCardsProps {
@@ -67,13 +68,19 @@ export default function NewHireCards({
                 </div>
               </div>
 
-              <ChevronRight
-                className={`size-4 transition-transform ${
+              <Link
+                to="/hr/onboarding/$employeeId"
+                params={{ employeeId: hire.id }}
+                onClick={(e) => e.stopPropagation()}
+                title={`Open ${hire.name}'s onboarding`}
+                className={`shrink-0 rounded-lg p-1 transition-all hover:bg-base-200 ${
                   isSelected
                     ? "text-primary translate-x-0.5"
-                    : "text-base-content/30"
+                    : "text-base-content/30 hover:text-primary"
                 }`}
-              />
+              >
+                <ChevronRight className="size-4" />
+              </Link>
             </div>
 
             {/* Progress Bar */}

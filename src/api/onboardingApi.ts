@@ -157,13 +157,22 @@ export const useDecideProbation = () => {
     mutationFn: async ({
       employeeId,
       decision,
+      newEndDate,
+      reason,
     }: {
       employeeId: string;
       decision: "confirm" | "extend";
+      /** Required by the backend when extending probation. */
+      newEndDate?: string;
+      reason?: string;
     }) => {
       const { data } = await apiClient.post<any>(
         `/employees/${employeeId}/probation/decision`,
-        { decision },
+        {
+          decision,
+          ...(newEndDate ? { newEndDate } : {}),
+          ...(reason ? { reason } : {}),
+        },
       );
       return data?.data ?? data;
     },

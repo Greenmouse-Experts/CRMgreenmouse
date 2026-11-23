@@ -108,7 +108,7 @@ function RouteComponent() {
       <HomeNav />
 
       <main>
-        {/* FAQ Hero + Search */}
+        {/* FAQs Hero + Search */}
         <section
           className="relative overflow-hidden  pb-14 sm:pb-20"
           style={{
@@ -151,13 +151,13 @@ function RouteComponent() {
                 type="submit"
                 className="rounded-full bg-[#5958ed] px-5 py-2 text-xs font-semibold text-white transition hover:bg-[#4b4ad4]"
               >
-                Search FAQ
+                Search FAQs
               </button>
             </form>
           </div>
         </section>
 
-        {/* FAQ Accordion List */}
+        {/* FAQs Accordion List */}
         <section className="pt-5 mt-4 pb-20 sm:pb-28">
           <div className="mx-auto container px-4 sm:px-6 lg:px-8">
             {filteredFaqs.length > 0 ? (

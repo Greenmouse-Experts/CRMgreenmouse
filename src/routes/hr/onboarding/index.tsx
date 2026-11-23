@@ -7,23 +7,25 @@ import OnboardingStats from "./-components/OnboardingStats";
 import NewHireCards from "./-components/NewHireCards";
 import OnboardingChecklist from "./-components/OnboardingChecklist";
 import ProbationTracker from "./-components/ProbationTracker";
+import ProbationReviewsCard from "./-components/ProbationReviewsCard";
 import AddOnboardingModal from "./-components/AddOnboardingModal";
+import ReassignTaskModal from "./-components/ReassignTaskModal";
+import ExtendProbationModal from "./-components/ExtendProbationModal";
+import CompleteReviewModal from "./-components/CompleteReviewModal";
 import { PROBATION_STEPS } from "./-components/onboardingData";
-import type {
-  ChecklistItem,
-  DepartmentTag,
-  OnboardingHire,
-} from "./-components/types";
+import { toChecklistItem, toUiHire } from "./-components/mappers";
+import type { ChecklistItem, OnboardingHire } from "./-components/types";
 import {
   useCompleteOnboardingTask,
   useCompleteProbationReview,
   useDecideProbation,
   useOnboardingTasks,
   useProbationReviews,
+  useReassignOnboardingTask,
   useStartOnboarding,
-  type OnboardingTask,
+  type ProbationReview,
 } from "@/api/onboardingApi";
-import { useEmployees, type EmployeeRecord } from "@/api/employeesApi";
+import { useEmployees } from "@/api/employeesApi";
 import { extract_message } from "@/helpers/auth";
 import { UserPlus } from "lucide-react";
 import { toast } from "sonner";
@@ -32,93 +34,22 @@ export const Route = createFileRoute("/hr/onboarding/")({
   component: RouteComponent,
 });
 
-const UNKNOWN = "—";
-const DEPARTMENT_MAP: Record<string, DepartmentTag> = {
-  hr: "HR",
-  human_resources: "HR",
-  it: "IT",
-  ict: "IT",
-  manager: "Manager",
-  payroll: "Payroll",
-};
-
-function toUiHire(employee: EmployeeRecord): OnboardingHire {
-  const firstName = employee.firstName ?? employee.first_name ?? "";
-  const lastName = employee.lastName ?? employee.last_name ?? "";
-  const name =
-    (employee.name ?? employee.fullName ?? `${firstName} ${lastName}`.trim()) ||
-    UNKNOWN;
-
-  const roleName =
-    typeof employee.position === "object"
-      ? employee.position?.name
-      : typeof employee.role === "object"
-        ? employee.role?.name
-        : (employee.positionName ??
-          employee.position_name ??
-          employee.jobTitle ??
-          employee.position ??
-          UNKNOWN);
-
-  const deptName =
-    typeof employee.department === "object"
-      ? employee.department?.name
-      : (employee.departmentName ??
-        employee.department_name ??
-        employee.department ??
-        UNKNOWN);
-
-  const startFormatted = employee.startDate
-    ? new Date(employee.startDate).toLocaleDateString("en-US", {
-        month: "short",
-        day: "numeric",
-      })
-    : employee.createdAt
-      ? new Date(employee.createdAt).toLocaleDateString("en-US", {
-          month: "short",
-          day: "numeric",
-        })
-      : UNKNOWN;
-
-  return {
-    id: employee.id,
-    name,
-    role: roleName,
-    dept: deptName,
-    email: employee.email ?? UNKNOWN,
-    start: startFormatted,
-    progress: 0,
-    probationStep: 0,
-  };
-}
-
-function toChecklistItem(raw: OnboardingTask): ChecklistItem {
-  const deptKey = String(raw.department ?? raw.dept ?? "hr").toLowerCase();
-  const status = String(raw.status ?? "").toLowerCase();
-
-  return {
-    id: raw.id,
-    dept: DEPARTMENT_MAP[deptKey] ?? "HR",
-    text:
-      raw.title ?? raw.name ?? raw.text ?? raw.description ?? "Untitled task",
-    completed: Boolean(
-      raw.completed ??
-      raw.isCompleted ??
-      (status === "completed" || status === "done"),
-    ),
-  };
-}
-
 function RouteComponent() {
   const employeesQuery = useEmployees();
 
   const startOnboardingMutation = useStartOnboarding();
   const completeTaskMutation = useCompleteOnboardingTask();
+  const reassignTaskMutation = useReassignOnboardingTask();
   const completeReviewMutation = useCompleteProbationReview();
   const decideProbationMutation = useDecideProbation();
 
   const [selectedEmployeeId, setSelectedEmployeeId] = useState("");
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [reassignTask, setReassignTask] = useState<ChecklistItem | null>(null);
+  const [isExtendOpen, setIsExtendOpen] = useState(false);
+  const [completeReview, setCompleteReview] = useState<ProbationReview | null>(
+    null,
+  );
   const [probationOverrides, setProbationOverrides] = useState<
     Record<string, number>
   >({});
@@ -162,6 +93,16 @@ function RouteComponent() {
     });
   };
 
+  const handleReassign = async (taskId: string, assignedTo: string) => {
+    try {
+      await reassignTaskMutation.mutateAsync({ taskId, assignedTo });
+      toast.success("Task reassigned");
+      setReassignTask(null);
+    } catch (error) {
+      toast.error(extract_message(error as never));
+    }
+  };
+
   const handleUpdateStep = (hireId: string, stepIndex: number) => {
     setProbationOverrides((prev) => ({
       ...prev,
@@ -181,14 +122,17 @@ function RouteComponent() {
       return;
     }
 
-    toast.promise(
-      completeReviewMutation.mutateAsync({ reviewId: pendingReview.id }),
-      {
-        loading: "Completing review...",
-        success: "Probation review completed",
-        error: (error) => extract_message(error as never),
-      },
-    );
+    setCompleteReview(pendingReview);
+  };
+
+  const handleCompleteReview = async (reviewId: string, notes: string) => {
+    try {
+      await completeReviewMutation.mutateAsync({ reviewId, notes });
+      toast.success("Probation review completed");
+      setCompleteReview(null);
+    } catch (error) {
+      toast.error(extract_message(error as never));
+    }
   };
 
   const handleConfirmProbation = (hireId: string) => {
@@ -203,6 +147,24 @@ function RouteComponent() {
         error: (error) => extract_message(error as never),
       },
     );
+  };
+
+  const handleExtendProbation = async (values: {
+    newEndDate: string;
+    reason?: string;
+  }) => {
+    if (!selectedHireId) return;
+    try {
+      await decideProbationMutation.mutateAsync({
+        employeeId: selectedHireId,
+        decision: "extend",
+        ...values,
+      });
+      toast.success("Probation extended");
+      setIsExtendOpen(false);
+    } catch (error) {
+      toast.error(extract_message(error as never));
+    }
   };
 
   const handleStartOnboarding = async (employeeId: string) => {
@@ -256,6 +218,7 @@ function RouteComponent() {
                 hire={selectedHire}
                 checklist={checklist}
                 onToggleItem={handleToggleItem}
+                onReassign={setReassignTask}
               />
             </QueryCompLayout>
           )}
@@ -267,6 +230,17 @@ function RouteComponent() {
                 onUpdateStep={handleUpdateStep}
                 onAdvance={handleAdvanceMilestone}
                 onConfirm={handleConfirmProbation}
+                onExtend={() => setIsExtendOpen(true)}
+              />
+            </QueryCompLayout>
+          )}
+
+          {selectedHire && (
+            <QueryCompLayout query={reviewsQuery}>
+              <ProbationReviewsCard
+                hireName={selectedHire.name}
+                reviews={reviewsQuery.data ?? []}
+                onCompleteReview={setCompleteReview}
               />
             </QueryCompLayout>
           )}
@@ -278,6 +252,28 @@ function RouteComponent() {
         onClose={() => setIsAddModalOpen(false)}
         employees={employeesQuery.data ?? []}
         onStartOnboarding={handleStartOnboarding}
+      />
+
+      <ReassignTaskModal
+        isOpen={reassignTask !== null}
+        onClose={() => setReassignTask(null)}
+        task={reassignTask}
+        employees={employeesQuery.data ?? []}
+        onReassign={handleReassign}
+      />
+
+      <ExtendProbationModal
+        isOpen={isExtendOpen}
+        onClose={() => setIsExtendOpen(false)}
+        hireName={selectedHire?.name ?? "this employee"}
+        onExtend={handleExtendProbation}
+      />
+
+      <CompleteReviewModal
+        isOpen={completeReview !== null}
+        onClose={() => setCompleteReview(null)}
+        review={completeReview}
+        onComplete={handleCompleteReview}
       />
     </div>
   );

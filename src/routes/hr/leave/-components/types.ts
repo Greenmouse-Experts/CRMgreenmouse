@@ -28,11 +28,25 @@ export interface LeaveRequest {
   phone?: string;
   address?: string;
   half?: "No" | "First half" | "Second half";
+  /** ISO start/end dates sent to the backend with the create-request payload. */
+  startDate?: string;
+  endDate?: string;
+  /** ID of the covering colleague (the backend's `coveringEmployeeId`). */
+  coverId?: string;
+}
+
+export interface LeaveTypeSummary {
+  type: LeaveType;
+  entitlement: string;
+  description: string;
+  color: string;
+  entitlementDays?: number;
 }
 
 export interface LeaveBalanceSummary {
-  annualEntitlement: number;
-  used: number;
-  pendingReservation: number;
-  available: number;
+  type?: LeaveType;
+  annualEntitlement?: number;
+  used?: number;
+  pendingReservation?: number;
+  available?: number;
 }
