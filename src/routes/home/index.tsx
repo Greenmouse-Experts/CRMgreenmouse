@@ -3,6 +3,7 @@ import HomeNav from "./-components/HomeNav";
 import Hero from "./-components/Hero";
 import ConnectedSessions from "./-components/ConnectedSessions";
 import TogetherInOnePlace from "./-components/TogetherInOnePlace";
+import AllInOneSection from "./-components/AllInOneSection";
 import SupportTicketSection from "./-components/SupportTicketSection";
 import FaqSection from "./-components/FaqSection";
 import CtaBanner from "./-components/CtaBanner";
@@ -28,17 +29,20 @@ function RouteComponent() {
         {/* Section 3: Bring Your Business Tools Together In One Place */}
         <TogetherInOnePlace />
 
-        {/* Section 4: Tell us what you need / Support ticket */}
+        {/* Section 4: Manage your entire business — all in one place */}
+        <AllInOneSection />
+
+        {/* Section 5: Tell us what you need / Support ticket */}
         <SupportTicketSection />
 
-        {/* Section 5: Frequently asked questions */}
+        {/* Section 6: Frequently asked questions */}
         <FaqSection />
 
-        {/* Section 6: Smarter tools banner */}
+        {/* Section 7: Smarter tools banner */}
         <CtaBanner />
       </main>
 
-      {/* Section 7: Footer */}
+      {/* Section 8: Footer */}
       <LandingFooter />
     </div>
   );
