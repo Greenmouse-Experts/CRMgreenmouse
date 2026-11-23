@@ -20,15 +20,13 @@ import {
   Eye,
   UserX,
   Lock,
-  UploadCloud,
-  Trash2,
-  Paperclip,
-  Check,
+  FileText,
 } from "lucide-react";
 import SimpleInput from "@/components/inputs/SimpleInput";
 import SimplePhoneInput from "@/components/inputs/SimplePhoneInput";
 import LocalSelect from "@/components/inputs/LocalSelect";
 import SimpleTextArea from "@/components/inputs/SimpleTextArea";
+import DocUploader from "@/components/documents/DocUploader";
 import EmployeeAvatar from "./-components/EmployeeAvatar";
 import EmployeeStatusBadge from "./-components/EmployeeStatusBadge";
 import { formatSalary } from "./-components/employeeData";
@@ -397,22 +395,16 @@ function StaffDetailPage() {
     setCurrentStep((prev) => Math.min(FORM_STEPS.length - 1, prev + 1));
   };
 
-  const handleFileUpload = (
-    key: string,
-    e: React.ChangeEvent<HTMLInputElement>,
-  ) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const sizeMb = (file.size / (1024 * 1024)).toFixed(2);
-      setUploadedDocs((prev) => ({
-        ...prev,
-        [key]: {
-          name: file.name,
-          size: `${sizeMb} MB`,
-        },
-      }));
-      toast.success(`Attached: ${file.name}`);
-    }
+  const handleFileUpload = (key: string, file: File) => {
+    const sizeMb = (file.size / (1024 * 1024)).toFixed(2);
+    setUploadedDocs((prev) => ({
+      ...prev,
+      [key]: {
+        name: file.name,
+        size: `${sizeMb} MB`,
+      },
+    }));
+    toast.success(`Attached: ${file.name}`);
   };
 
   const handleRemoveDoc = (key: string) => {
@@ -1485,83 +1477,31 @@ function StaffDetailPage() {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {DOCUMENT_ITEMS.map((doc) => {
-                    const uploaded = uploadedDocs[doc.key];
-                    return (
-                      <div
-                        key={doc.key}
-                        className={`relative rounded-2xl border-2 border-dashed p-5 transition-all flex flex-col justify-between ${
-                          uploaded
-                            ? "border-emerald-500/80 bg-emerald-500/5 shadow-xs"
-                            : "border-base-300 bg-base-100 hover:border-primary/80 hover:bg-base-200/30"
-                        }`}
-                      >
-                        <div className="space-y-2">
-                          <div className="flex items-center justify-between">
-                            <div
-                              className={`size-9 rounded-xl flex items-center justify-center ${
-                                uploaded
-                                  ? "bg-emerald-500/15 text-emerald-600"
-                                  : "bg-primary/10 text-primary"
-                              }`}
-                            >
-                              {uploaded ? (
-                                <Check className="size-4 stroke-[2.5]" />
-                              ) : (
-                                <UploadCloud className="size-4" />
-                              )}
-                            </div>
-
-                            {uploaded && (
-                              <button
-                                type="button"
-                                onClick={() => handleRemoveDoc(doc.key)}
-                                className="btn btn-ghost btn-xs text-error hover:bg-error/10 rounded-lg p-1 size-7 flex items-center justify-center"
-                                title="Remove file"
-                              >
-                                <Trash2 className="size-3.5" />
-                              </button>
-                            )}
-                          </div>
-
-                          <div>
-                            <h4 className=" font-semibold text-base-content">
-                              {doc.title}
-                            </h4>
-                            <p className="text-[11px] text-base-content/80 mt-0.5 line-clamp-2">
-                              {doc.description}
-                            </p>
-                          </div>
+                  {DOCUMENT_ITEMS.map((doc) => (
+                    <div
+                      key={doc.key}
+                      className="rounded-2xl border border-base-300 bg-base-100 p-4"
+                    >
+                      <div className="mb-3 flex items-start gap-2">
+                        <div className="size-8 rounded-xl flex shrink-0 items-center justify-center bg-primary/10 text-primary">
+                          <FileText className="size-4" />
                         </div>
-
-                        <div className="pt-4 mt-2 border-t border-base-200/80">
-                          {uploaded ? (
-                            <div className="flex items-center justify-between text-[11px]">
-                              <span
-                                className="font-medium text-emerald-600 truncate max-w-[140px]"
-                                title={uploaded.name}
-                              >
-                                {uploaded.name}
-                              </span>
-                              <span className="text-base-content/80 font-mono">
-                                {uploaded.size}
-                              </span>
-                            </div>
-                          ) : (
-                            <label className="btn btn-xs btn-outline border-base-300 w-full rounded-lg cursor-pointer text-[11px]">
-                              <Paperclip className="size-3 mr-1" />
-                              Browse File
-                              <input
-                                type="file"
-                                className="hidden"
-                                onChange={(e) => handleFileUpload(doc.key, e)}
-                              />
-                            </label>
-                          )}
+                        <div>
+                          <h4 className="font-semibold text-base-content">
+                            {doc.title}
+                          </h4>
+                          <p className="text-[11px] text-base-content/80 mt-0.5 line-clamp-2">
+                            {doc.description}
+                          </p>
                         </div>
                       </div>
-                    );
-                  })}
+                      <DocUploader
+                        doc={uploadedDocs[doc.key]}
+                        onNewFile={(file) => handleFileUpload(doc.key, file)}
+                        onRemoveDoc={() => handleRemoveDoc(doc.key)}
+                      />
+                    </div>
+                  ))}
                 </div>
               </div>
             )}
