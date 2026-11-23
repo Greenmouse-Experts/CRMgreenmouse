@@ -123,6 +123,7 @@ const toUiEmployee = (employee: EmployeeRecord): Employee => {
 
   return {
     id: employee.id || employee._id || UNKNOWN,
+    staffId: employee.staffId || undefined,
     employeeNumber: empNumber,
     name,
     firstName,

@@ -16,6 +16,7 @@ export type EmploymentType =
 export interface Employee {
   id: string;
   employeeNumber?: string;
+  staffId?: string;
   name: string;
   firstName?: string;
   middleName?: string;

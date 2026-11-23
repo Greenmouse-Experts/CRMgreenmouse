@@ -49,6 +49,7 @@ export interface EmployeeRecord {
   isOnProbation?: boolean;
   needsSystemAccount?: boolean;
   isDraft?: boolean;
+  staffId?: string;
   basicSalary?: number;
   payFrequency?: string;
   bankName?: string;

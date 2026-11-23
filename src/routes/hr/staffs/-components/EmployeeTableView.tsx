@@ -76,6 +76,7 @@ export default function EmployeeTableView({
         setLinkStaffEmployeeId(emp.id);
         setIsLinkStaffOpen(true);
       },
+      disable_event: (emp) => Boolean(emp.staffId),
     },
   ];
 
