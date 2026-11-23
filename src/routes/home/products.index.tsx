@@ -68,15 +68,16 @@ function RouteComponent() {
               </div>
 
               {/* Preview */}
-              <div className="lg:col-span-7">
+              <div className="lg:col-span-7  flex flex-col">
                 <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.18em] text-white/80">
                   Inside Kinovia / CRM
                 </p>
-                <div className="overflow-hidden rounded-2xl border border-white/10">
+
+                <div>
                   <img
                     src="/products_page/hero_img.png"
                     alt="Kinovia CRM workspace on a tablet"
-                    className="h-auto w-full"
+                    className="w-full rounded-2xl ring ring-white/20 "
                     loading="eager"
                   />
                 </div>
