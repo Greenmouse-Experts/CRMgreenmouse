@@ -135,6 +135,40 @@ Notes:
 - The executive leader on the Org hierarchy card (`INITIAL_LEADER` in
   `organizationData.ts`) has no verified endpoint yet.
 
+### Leave Management — `src/api/leaveApi.ts` (`/hr/leave`)
+
+The leave pages read from the `/v1/leave` controller endpoints (see
+`Greenmouse CRM API.postman_collection.json` — "Leave Management" group;
+401 without a valid token):
+
+| Hook                       | Method / Endpoint                       |
+| -------------------------- | --------------------------------------- |
+| `useLeaveTypes()`          | `GET /v1/leave/types`                   |
+| `useLeaveRequests()`       | `GET /v1/leave/requests`                |
+| `useMyLeaveRequests()`     | `GET /v1/leave/requests/mine`           |
+| `useLeaveBalances()`       | `GET /v1/leave/balances/mine`           |
+| `useCreateLeaveRequest()`  | `POST /v1/leave/requests`               |
+| `useDecideLeaveRequest()`  | `PATCH /v1/leave/requests/:id/decision` |
+| `useCancelLeaveRequest()`  | `PATCH /v1/leave/requests/:id/cancel`   |
+| `useUpdateLeaveType()`     | `PUT /v1/leave/types`                   |
+
+Notes:
+
+- The management page (`/hr/leave`) lists all requests and maps them onto
+  the page's `LeaveRequest` shape via `mapBackendLeaveRequest`: dates are
+  shown as short `Nov 18` strings, `days` falls back to the start/end dates
+  when the backend omits it, and unknown statuses map to `Submitted`.
+  Approve/reject go through `useDecideLeaveRequest` with
+  `decision: "approve" | "reject"`.
+- The leave-type cards on the management page come from `useLeaveTypes()`
+  (`GET /v1/leave/types`); the self-service tab (`/hr/self-service`) uses
+  `useMyLeaveRequests()`, and its cancel action uses
+  `useCancelLeaveRequest()`.
+- The modal's employee/covering-colleague options come from
+  `useStaffs()` (`GET /v1/staffs`, the people-directory endpoint); the
+  annual balance line on the modal uses `useLeaveBalances()`.
+- All mutations invalidate the `["leave"]` query root.
+
 ### HR onboarding — `src/api/onboardingApi.ts` (`/hr/onboarding`)
 
 The new-hire list comes from the working `GET /staffs` endpoint; the
@@ -150,12 +184,40 @@ onboarding/probation details come from the employee onboarding endpoints:
 | `useCompleteProbationReview()`    | `PATCH /employees/probation/reviews/:reviewId/complete` (`{ notes }`)           |
 | `useDecideProbation()`            | `POST /employees/:id/probation/decision` (`confirm` / `extend`)                 |
 
+Pages:
+
+- `/hr/onboarding` — pipeline overview: stats, new-hire cards, checklist,
+  probation tracker and the probation reviews list for the selected hire.
+- `/hr/onboarding/$employeeId` — per-hire detail page (linked from the chevron
+  on each new-hire card). Shows the hire summary + progress, checklist,
+  probation tracker and reviews. The probation step is derived from the number
+  of completed reviews; a "Start Onboarding" action appears when the hire has
+  no tasks yet.
+
+UI coverage of the endpoints:
+
+- Task reassignment: per-row reassign button on the checklist opens
+  `ReassignTaskModal` (employee UUID select) → `useReassignOnboardingTask`.
+- Probation decisions: "Confirm Permanent" sends `decision: "confirm"`;
+  "Extend" opens `ExtendProbationModal` and sends
+  `{ decision: "extend", newEndDate, reason }` per the Postman contract.
+- Review completion (both "Advance Milestone" and the reviews list) opens
+  `CompleteReviewModal` to capture optional `notes` before calling
+  `useCompleteProbationReview`.
+- Shared API→UI mappers live in `-components/mappers.ts`
+  (`toUiHire`, `toChecklistItem`, `employeeDisplayName`).
+
 Notes:
 
 - There is no endpoint to create or delete individual onboarding tasks, so the
   page only toggles tasks returned by the API.
-- Probation decisions are `confirm` / `extend`.
+- Probation decisions are `confirm` / `extend`; `newEndDate` is required by the
+  backend when extending.
 - Every hook invalidates the `["onboarding"]` query root.
+- `employeesApi.ts` contains older duplicate onboarding/probation hooks
+  (`useEmployeeOnboardingTasks`, `useStartEmployeeOnboarding`, etc.) plus
+  `probation/start-review` and `probation/reviews/:reviewId/submit` hooks whose
+  routes do **not** exist in the Postman collection — prefer `onboardingApi.ts`.
 
 ## Known backend issues
 

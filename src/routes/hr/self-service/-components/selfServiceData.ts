@@ -4,6 +4,7 @@ import type {
 } from "@/routes/hr/leave/-components/types";
 import type {
   LeaveRequest,
+  LeaveStatus,
   Payslip,
   SelfServiceSummary,
 } from "./types";

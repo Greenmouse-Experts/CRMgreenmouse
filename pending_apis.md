@@ -165,6 +165,13 @@ Also wired elsewhere:
 - HR onboarding: `src/api/onboardingApi.ts` (`/v1/employees/:id/onboarding/*`,
   `/probation/*`) — affected by the section 1 failures
 - Staff directory fallback: `src/api/tenantApi.ts` (`/v1/staffs`)
+- Leave management: `src/api/leaveApi.ts` (`/v1/leave/types`,
+  `/v1/leave/requests`, `/v1/leave/requests/mine`, `/v1/leave/balances/mine`,
+  `POST /v1/leave/requests`, `PATCH /v1/leave/requests/:id/decision`,
+  `PATCH /v1/leave/requests/:id/cancel`, `PUT /v1/leave/types`) — wired in
+  `src/routes/hr/leave` and `src/routes/hr/self-service`. No response bodies
+  are documented for the leave GETs in the collection; the frontend reads
+  them defensively (see `integration.md`).
 
 ## 10. Organization module — partial implementation
 

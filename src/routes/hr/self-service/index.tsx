@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { toast } from "sonner";
 import PageHeader from "@/components/Headers/PageHeader";
@@ -9,12 +9,20 @@ import PayslipsTable from "./-components/PayslipsTable";
 import LeaveRequestModal from "./-components/LeaveRequestModal";
 import PayslipModal from "./-components/PayslipModal";
 import {
-  INITIAL_LEAVE_REQUESTS,
   INITIAL_PAYSLIPS,
   formatCurrency,
   getSelfServiceSummary,
+  mapSelfServiceLeaveRequest,
 } from "./-components/selfServiceData";
-import type { LeaveRequest, LeaveStatus, Payslip } from "./-components/types";
+import type { LeaveRequest, Payslip } from "./-components/types";
+import {
+  useCancelLeaveRequest,
+  useLeaveBalances,
+  useMyLeaveRequests,
+} from "@/api/leaveApi";
+import { extract_message } from "@/helpers/auth";
+import type { AxiosError } from "axios";
+import type { ApiResponse } from "@/api/simpleApi";
 
 export const Route = createFileRoute("/hr/self-service/")({
   component: RouteComponent,
@@ -29,31 +37,42 @@ function getEmployeeName(): string {
 }
 
 function RouteComponent() {
-  const [leaveRequests, setLeaveRequests] = useState<LeaveRequest[]>(() =>
-    INITIAL_LEAVE_REQUESTS.map((request) => ({
-      ...request,
-      employee: getEmployeeName() || request.employee,
-    })),
-  );
-  const [payslips] = useState<Payslip[]>(INITIAL_PAYSLIPS);
   const [selectedLeaveRequest, setSelectedLeaveRequest] =
     useState<LeaveRequest | null>(null);
   const [selectedPayslip, setSelectedPayslip] = useState<Payslip | null>(
     null,
   );
 
-  const summary = getSelfServiceSummary(leaveRequests, payslips);
+  const leaveRequestsQuery = useMyLeaveRequests();
+  const cancelLeaveRequest = useCancelLeaveRequest();
+  const { data: balances = [] } = useLeaveBalances();
+  const userName = getEmployeeName();
 
-  const handleCancelLeaveRequest = (request: LeaveRequest) => {
-    setLeaveRequests((prev) =>
-      prev.map((r) =>
-        r.id === request.id
-          ? { ...r, status: "Cancelled" as LeaveStatus }
-          : r,
-      ),
-    );
-    setSelectedLeaveRequest(null);
-    toast.info(`Leave request ${request.id} cancelled`);
+  const leaveRequests = useMemo(
+    () =>
+      (leaveRequestsQuery.data ?? []).map((request) => {
+        const mapped = mapSelfServiceLeaveRequest(request);
+        return { ...mapped, employee: mapped.employee || userName };
+      }),
+    [leaveRequestsQuery.data, userName],
+  );
+
+  const annualBalance = balances.find((b) => b.type === "Annual") ?? balances[0];
+
+  const summary = getSelfServiceSummary(
+    leaveRequests,
+    INITIAL_PAYSLIPS,
+    annualBalance?.annualEntitlement ?? annualBalance?.available,
+  );
+
+  const handleCancelLeaveRequest = async (request: LeaveRequest) => {
+    try {
+      await cancelLeaveRequest.mutateAsync(request.id);
+      toast.info(`Leave request ${request.id} cancelled`);
+      setSelectedLeaveRequest(null);
+    } catch (error) {
+      toast.error(extract_message(error as AxiosError<ApiResponse>));
+    }
   };
 
   const handleDownloadPayslip = (payslip: Payslip) => {
@@ -78,7 +97,7 @@ function RouteComponent() {
           onCancelRequest={handleCancelLeaveRequest}
         />
         <PayslipsTable
-          payslips={payslips}
+          payslips={INITIAL_PAYSLIPS}
           onOpenDetail={setSelectedPayslip}
         />
       </div>
