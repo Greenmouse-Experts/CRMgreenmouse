@@ -165,7 +165,7 @@ export default function ConnectedSessions() {
   return (
     <section
       id="solutions"
-      className="py-16 sm:py-24 bg-white overflow-hidden"
+      className="py-12  bg-white overflow-hidden"
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
     >
@@ -174,10 +174,7 @@ export default function ConnectedSessions() {
         <div className="mx-auto max-w-3xl text-center space-y-4 mb-10 sm:mb-12">
           <h2 className="text-3xl sm:text-4xl lg:text-[44px] font-medium tracking-tight text-slate-900 leading-tight">
             Three solutions. <br />
-            One{" "}
-            <span className="text-[#5958ed] italic font-serif">
-              connected
-            </span>{" "}
+            One <span className="text-[#5958ed] italic ">connected</span>{" "}
             experience.
           </h2>
           <p className="text-sm sm:text-base text-slate-600 font-normal max-w-xl mx-auto leading-relaxed">
