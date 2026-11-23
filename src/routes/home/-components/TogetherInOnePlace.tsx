@@ -6,13 +6,6 @@ const BENEFITS = [
   "Share one clear source of truth across teams",
 ];
 
-const CHART_BARS = [
-  { month: "May", height: "44%" },
-  { month: "Jun", height: "72%" },
-  { month: "Jul", height: "100%", tooltip: true },
-  { month: "Aug", height: "66%" },
-];
-
 export default function TogetherInOnePlace() {
   return (
     <section
@@ -68,11 +61,15 @@ export default function TogetherInOnePlace() {
                   ))}
                 </ul>
               </div>
-              <div>
-                <img src="/homepage/chart.png"></img>
-              </div>
-
               {/* Right: Performance Chart Graphic */}
+              <div>
+                <img
+                  src="/homepage/chart.png"
+                  alt="Performance overview chart showing monthly revenue trend"
+                  className="w-full h-auto"
+                  loading="lazy"
+                />
+              </div>
             </div>
           </div>
         </div>

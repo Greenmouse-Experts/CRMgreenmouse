@@ -1,39 +1,41 @@
 import { Link } from "@tanstack/react-router";
 import {
+  ArrowDown,
   ArrowRight,
-  Clock,
+  ArrowUp,
   FileText,
   ReceiptText,
   UsersRound,
   Wallet,
 } from "lucide-react";
 import { useDashboardStats } from "@/api/tenantApi";
-import { useInvoiceRevenueReport } from "@/api/reportsApi";
 import QueryCompLayout from "@/components/layout/QueryCompLayout";
 
 const formatNumber = (value: number) => new Intl.NumberFormat().format(value);
 const formatMoney = (value: number) => `₦${formatNumber(value)}`;
 
+const previousMonth = new Date();
+previousMonth.setMonth(previousMonth.getMonth() - 1);
+const comparisonLabel = `vs ${previousMonth.toLocaleString("en-NG", { month: "long" })}`;
+
 export default function TenantDashStats() {
   const query = useDashboardStats();
 
-  const debtsQuery = useInvoiceRevenueReport({ currency: "NGN" });
   return (
     <QueryCompLayout query={query}>
       {(stats) => {
         const cards = [
           {
-            title: "Total Income",
+            title: "Total income",
             value:
               stats.totalIncome == null ? "—" : formatMoney(stats.totalIncome),
             change: stats.incomeChange,
             linkLabel: "View income",
             icon: Wallet,
             to: "/tenant/accounts/income-expenses",
-            accent: "bg-primary/10 text-primary",
           },
           {
-            title: "Total Expenses",
+            title: "Total expenses",
             value:
               stats.totalExpenses == null
                 ? "—"
@@ -42,106 +44,97 @@ export default function TenantDashStats() {
             linkLabel: "View expenses",
             icon: ReceiptText,
             to: "/tenant/accounts/income-expenses",
-            accent: "bg-warning/10 text-warning",
           },
           {
-            title: "Total Customers",
+            title: "Total customers",
             value: formatNumber(stats.totalCustomers),
-            change: stats.customerChange,
+            allTime: true,
             linkLabel: "View customers",
             icon: UsersRound,
             to: "/tenant/contacts/customers",
-            accent: "bg-info/10 text-info",
           },
-          // {
-          //   title: "Products",
-          //   value: formatNumber(stats.totalProducts),
-          //   change: stats.totalProductsChange,
-          //   linkLabel: "View products",
-          //   icon: Package,
-          //   to: "/staff/products",
-          //   accent: "bg-primary/10 text-primary",
-          // },
-          // {
-          //   title: "Services",
-          //   value: formatNumber(stats.totalServices),
-          //   change: stats.totalServicesChange,
-          //   linkLabel: "View services",
-          //   icon: ShoppingBag,
-          //   to: "/staff/products/service",
-          //   accent: "bg-info/10 text-info",
-          // },
-          // {
-          //   title: "Total Debts",
-          //   value: debtsQuery.isLoading
-          //     ? "…"
-          //     : debtsQuery.data
-          //       ? formatMoney(debtsQuery.data.outstandingTotal)
-          //       : "—",
-          //   linkLabel: "View Debts",
-          //   icon: Clock,
-          //   to: "/tenant/accounts/Invoices",
-          //   accent: "bg-warning/10 text-warning",
-          // },
           {
-            title: "Total Invoices",
+            title: "Total invoices",
             value: formatNumber(stats.totalInvoices),
             change: stats.invoiceChange,
             linkLabel: "View invoices",
             icon: FileText,
             to: "/tenant/accounts/Invoices",
-            accent: "bg-primary/10 text-primary",
           },
-          // {
-          //   title: "Team Members",
-          //   value: formatNumber(stats.totalStaffs),
-          //   linkLabel: "View team",
-          //   icon: Users,
-          //   to: "/staff/users",
-          //   accent: "bg-info/10 text-info",
-          // },
         ];
 
         return (
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {cards.map((card) => {
               const Icon = card.icon;
+              const change = "change" in card ? card.change : undefined;
+              const isGood =
+                change != null &&
+                (card.title === "Total expenses" ? change < 0 : change > 0);
+              const changeColor =
+                change == null || change === 0
+                  ? "text-base-content/50"
+                  : isGood
+                    ? "text-success"
+                    : "text-error";
+
               return (
                 <Link
                   key={card.title}
                   to={card.to}
-                  className="card border border-base-200 bg-base-100 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md"
+                  className="card rounded-2xl border border-base-200 bg-base-100 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md"
                 >
-                  <div className="card-body gap-3 p-4">
-                    <div className="flex items-start justify-between gap-2">
-                      <div className={`rounded-xl p-2.5 ${card.accent}`}>
-                        <Icon className="size-5" aria-hidden="true" />
-                      </div>
-                    </div>
-                    <div>
-                      <p className="text-base font-semibold tabular-nums text-base-content">
-                        {card.value}
-                      </p>
-                      <p className=" font-semibold text-base-content/80">
+                  <div className="card-body gap-3 p-5">
+                    <div className="flex items-center justify-between gap-2">
+                      <p className="text-sm font-medium text-base-content/60">
                         {card.title}
                       </p>
-                      {card.change != null && Number.isFinite(card.change) && (
-                        <p
-                          className={`mt-1  font-semibold tabular-nums ${card.change === 0 ? "text-base-content/80" : (card.title === "Total Expenses" ? card.change < 0 : card.change > 0) ? "text-success" : "text-error"}`}
-                        >
-                          {card.change > 0 ? "+" : ""}
-                          {card.change.toLocaleString("en-NG", {
-                            maximumFractionDigits: 1,
-                          })}
-                          % change
-                        </p>
-                      )}
+                      <Icon
+                        className="size-5 shrink-0 text-base-content/40"
+                        aria-hidden="true"
+                      />
                     </div>
-                    <span
-                      className={`inline-flex items-center gap-1  font-medium ${card.accent} !bg-transparent`}
-                    >
+
+                    <p className="text-2xl font-bold tabular-nums text-base-content">
+                      {card.value}
+                    </p>
+
+                    {"allTime" in card && card.allTime ? (
+                      <p className="text-sm text-base-content/50">All time</p>
+                    ) : (
+                      change != null &&
+                      Number.isFinite(change) && (
+                        <p className="flex items-center gap-1 text-sm">
+                          {change !== 0 &&
+                            (change < 0 ? (
+                              <ArrowDown
+                                className={`size-3.5 ${changeColor}`}
+                                aria-hidden="true"
+                              />
+                            ) : (
+                              <ArrowUp
+                                className={`size-3.5 ${changeColor}`}
+                                aria-hidden="true"
+                              />
+                            ))}
+                          <span
+                            className={`font-semibold tabular-nums ${changeColor}`}
+                          >
+                            {Math.abs(change).toLocaleString("en-NG", {
+                              maximumFractionDigits: 1,
+                            })}
+                            %
+                          </span>
+                          <span className="text-base-content/50">
+                            {comparisonLabel}
+                          </span>
+                        </p>
+                      )
+                    )}
+
+                    <span className="inline-flex items-center gap-1 text-sm font-medium text-primary">
                       {card.linkLabel}
-                      <ArrowRight className="!size-3" aria-hidden="true" />
+                      <ArrowRight className="size-3.5" aria-hidden="true" />
                     </span>
                   </div>
                 </Link>
