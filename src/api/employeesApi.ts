@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import apiClient from "./simpleApi";
+import { extract_message } from "@/helpers/errors";
 import { get_user_value } from "@/store/authStore";
 
 /* -------------------------------------------------------------------------- */
@@ -192,6 +193,14 @@ const authConfig = () => {
   return { headers: { Authorization: `Bearer ${token}` } };
 };
 
+/**
+ * Normalize a thrown API error into an Error carrying the message extracted
+ * via the shared `extract_message` helper (response body message, payload
+ * message, or the underlying message).
+ */
+const extractError = (error: unknown): Error =>
+  new Error(extract_message(error));
+
 const unwrapList = <T>(data: any, keys: string[]): T[] => {
   if (Array.isArray(data)) return data as T[];
   if (Array.isArray(data?.data)) return data.data as T[];
@@ -358,13 +367,17 @@ export const useCreateEmployee = () => {
   const invalidate = useInvalidateEmployees();
   return useMutation({
     mutationFn: async (payload: CreateEmployeeInput) => {
-      const sanitized = sanitizeEmployeePayload(payload);
-      const { data } = await apiClient.post<any>(
-        "/employees",
-        sanitized,
-        authConfig(),
-      );
-      return unwrapOne<EmployeeRecord>(data);
+      try {
+        const sanitized = sanitizeEmployeePayload(payload);
+        const { data } = await apiClient.post<any>(
+          "/employees",
+          sanitized,
+          authConfig(),
+        );
+        return unwrapOne<EmployeeRecord>(data);
+      } catch (error) {
+        throw extractError(error);
+      }
     },
     onSuccess: invalidate,
   });
@@ -377,13 +390,17 @@ export const useUpdateEmployee = () => {
       id,
       ...payload
     }: { id: string } & UpdateEmployeeInput) => {
-      const sanitized = sanitizeEmployeePayload(payload);
-      const { data } = await apiClient.patch<any>(
-        `/employees/${id}`,
-        sanitized,
-        authConfig(),
-      );
-      return unwrapOne<EmployeeRecord>(data);
+      try {
+        const sanitized = sanitizeEmployeePayload(payload);
+        const { data } = await apiClient.patch<any>(
+          `/employees/${id}`,
+          sanitized,
+          authConfig(),
+        );
+        return unwrapOne<EmployeeRecord>(data);
+      } catch (error) {
+        throw extractError(error);
+      }
     },
     onSuccess: invalidate,
   });
@@ -394,12 +411,16 @@ export const useRemoveEmployee = () => {
   const invalidate = useInvalidateEmployees();
   return useMutation({
     mutationFn: async (id: string) => {
-      const { data } = await apiClient.patch<any>(
-        `/employees/${id}`,
-        { employmentStatus: "inactive" },
-        authConfig(),
-      );
-      return unwrapOne<EmployeeRecord>(data);
+      try {
+        const { data } = await apiClient.patch<any>(
+          `/employees/${id}`,
+          { employmentStatus: "inactive" },
+          authConfig(),
+        );
+        return unwrapOne<EmployeeRecord>(data);
+      } catch (error) {
+        throw extractError(error);
+      }
     },
     onSuccess: invalidate,
   });
@@ -412,12 +433,16 @@ export const useUpdateCompensation = () => {
       id,
       ...payload
     }: { id: string } & Record<string, any>) => {
-      const { data } = await apiClient.patch<any>(
-        `/employees/${id}/compensation`,
-        payload,
-        authConfig(),
-      );
-      return unwrapOne<any>(data);
+      try {
+        const { data } = await apiClient.patch<any>(
+          `/employees/${id}/compensation`,
+          payload,
+          authConfig(),
+        );
+        return unwrapOne<any>(data);
+      } catch (error) {
+        throw extractError(error);
+      }
     },
     onSuccess: invalidate,
   });
@@ -430,12 +455,16 @@ export const useRenewContract = () => {
       id,
       ...payload
     }: { id: string } & Record<string, any>) => {
-      const { data } = await apiClient.patch<any>(
-        `/employees/${id}/contract-renewal`,
-        payload,
-        authConfig(),
-      );
-      return unwrapOne<any>(data);
+      try {
+        const { data } = await apiClient.patch<any>(
+          `/employees/${id}/contract-renewal`,
+          payload,
+          authConfig(),
+        );
+        return unwrapOne<any>(data);
+      } catch (error) {
+        throw extractError(error);
+      }
     },
     onSuccess: invalidate,
   });
@@ -448,12 +477,16 @@ export const useDecideProbation = () => {
       id,
       ...payload
     }: { id: string } & Record<string, any>) => {
-      const { data } = await apiClient.post<any>(
-        `/employees/${id}/probation/decision`,
-        payload,
-        authConfig(),
-      );
-      return unwrapOne<any>(data);
+      try {
+        const { data } = await apiClient.post<any>(
+          `/employees/${id}/probation/decision`,
+          payload,
+          authConfig(),
+        );
+        return unwrapOne<any>(data);
+      } catch (error) {
+        throw extractError(error);
+      }
     },
     onSuccess: invalidate,
   });
@@ -463,12 +496,16 @@ export const useStartEmployeeOnboarding = () => {
   const invalidate = useInvalidateEmployees();
   return useMutation({
     mutationFn: async (id: string) => {
-      const { data } = await apiClient.post<any>(
-        `/employees/${id}/onboarding/start`,
-        {},
-        authConfig(),
-      );
-      return unwrapOne<any>(data);
+      try {
+        const { data } = await apiClient.post<any>(
+          `/employees/${id}/onboarding/start`,
+          {},
+          authConfig(),
+        );
+        return unwrapOne<any>(data);
+      } catch (error) {
+        throw extractError(error);
+      }
     },
     onSuccess: invalidate,
   });
@@ -478,12 +515,16 @@ export const useCompleteEmployeeOnboardingTask = () => {
   const invalidate = useInvalidateEmployees();
   return useMutation({
     mutationFn: async (taskId: string) => {
-      const { data } = await apiClient.patch<any>(
-        `/employees/onboarding/tasks/${taskId}/complete`,
-        {},
-        authConfig(),
-      );
-      return unwrapOne<any>(data);
+      try {
+        const { data } = await apiClient.patch<any>(
+          `/employees/onboarding/tasks/${taskId}/complete`,
+          {},
+          authConfig(),
+        );
+        return unwrapOne<any>(data);
+      } catch (error) {
+        throw extractError(error);
+      }
     },
     onSuccess: invalidate,
   });
@@ -493,12 +534,16 @@ export const useStartEmployeeProbationReview = () => {
   const invalidate = useInvalidateEmployees();
   return useMutation({
     mutationFn: async (id: string) => {
-      const { data } = await apiClient.post<any>(
-        `/employees/${id}/probation/start-review`,
-        {},
-        authConfig(),
-      );
-      return unwrapOne<any>(data);
+      try {
+        const { data } = await apiClient.post<any>(
+          `/employees/${id}/probation/start-review`,
+          {},
+          authConfig(),
+        );
+        return unwrapOne<any>(data);
+      } catch (error) {
+        throw extractError(error);
+      }
     },
     onSuccess: invalidate,
   });
@@ -511,12 +556,16 @@ export const useSubmitEmployeeProbationReview = () => {
       reviewId,
       ...payload
     }: { reviewId: string } & Record<string, any>) => {
-      const { data } = await apiClient.post<any>(
-        `/employees/probation/reviews/${reviewId}/submit`,
-        payload,
-        authConfig(),
-      );
-      return unwrapOne<any>(data);
+      try {
+        const { data } = await apiClient.post<any>(
+          `/employees/probation/reviews/${reviewId}/submit`,
+          payload,
+          authConfig(),
+        );
+        return unwrapOne<any>(data);
+      } catch (error) {
+        throw extractError(error);
+      }
     },
     onSuccess: invalidate,
   });
@@ -540,12 +589,16 @@ export const useCreateDepartment = () => {
       description?: string;
       status?: "active" | "inactive";
     }) => {
-      const { data } = await apiClient.post<any>(
-        "/employees/organization/departments",
-        payload,
-        authConfig(),
-      );
-      return unwrapOne<any>(data);
+      try {
+        const { data } = await apiClient.post<any>(
+          "/employees/organization/departments",
+          payload,
+          authConfig(),
+        );
+        return unwrapOne<any>(data);
+      } catch (error) {
+        throw extractError(error);
+      }
     },
     onSuccess: invalidate,
   });
@@ -569,12 +622,16 @@ export const useUpdateDepartment = () => {
       description?: string;
       status?: "active" | "inactive";
     }) => {
-      const { data } = await apiClient.patch<any>(
-        `/employees/organization/departments/${id}`,
-        payload,
-        authConfig(),
-      );
-      return unwrapOne<any>(data);
+      try {
+        const { data } = await apiClient.patch<any>(
+          `/employees/organization/departments/${id}`,
+          payload,
+          authConfig(),
+        );
+        return unwrapOne<any>(data);
+      } catch (error) {
+        throw extractError(error);
+      }
     },
     onSuccess: invalidate,
   });
@@ -590,12 +647,16 @@ export const useCreatePosition = () => {
       approvedHeadcount?: number;
       status?: "active" | "inactive";
     }) => {
-      const { data } = await apiClient.post<any>(
-        "/employees/organization/positions",
-        payload,
-        authConfig(),
-      );
-      return unwrapOne<any>(data);
+      try {
+        const { data } = await apiClient.post<any>(
+          "/employees/organization/positions",
+          payload,
+          authConfig(),
+        );
+        return unwrapOne<any>(data);
+      } catch (error) {
+        throw extractError(error);
+      }
     },
     onSuccess: invalidate,
   });
@@ -615,12 +676,16 @@ export const useUpdatePosition = () => {
       approvedHeadcount?: number;
       status?: "active" | "inactive";
     }) => {
-      const { data } = await apiClient.patch<any>(
-        `/employees/organization/positions/${id}`,
-        payload,
-        authConfig(),
-      );
-      return unwrapOne<any>(data);
+      try {
+        const { data } = await apiClient.patch<any>(
+          `/employees/organization/positions/${id}`,
+          payload,
+          authConfig(),
+        );
+        return unwrapOne<any>(data);
+      } catch (error) {
+        throw extractError(error);
+      }
     },
     onSuccess: invalidate,
   });
