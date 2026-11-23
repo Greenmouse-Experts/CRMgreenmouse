@@ -9,6 +9,7 @@ interface DepartmentsTableProps {
   onSelectDepartment?: (dept: Department) => void;
   onUpdateStatus?: (deptId: string, status: DepartmentStatus) => void;
   onDeleteDepartment?: (deptId: string) => void;
+  onEditDepartment?: (dept: Department) => void;
 }
 
 function getStatusBadge(status?: DepartmentStatus | string) {
@@ -36,6 +37,7 @@ export default function DepartmentsTable({
   onSelectDepartment,
   onUpdateStatus,
   onDeleteDepartment,
+  onEditDepartment,
 }: DepartmentsTableProps) {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("All");
@@ -104,6 +106,11 @@ export default function DepartmentsTable({
       action: (dept) => onSelectDepartment?.(dept),
     },
     {
+      key: "edit",
+      label: "Edit",
+      action: (dept) => onEditDepartment?.(dept),
+    },
+    {
       key: "toggle",
       label: "Deactivate / Activate",
       render: (dept) => {
@@ -166,7 +173,7 @@ export default function DepartmentsTable({
         columns={columns}
         data={filteredDepartments}
         actions={actions}
-        onRowClick={(dept) => onSelectDepartment?.(dept)}
+        // onRowClick={(dept) => onSelectDepartment?.(dept)}
       />
     </div>
   );

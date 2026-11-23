@@ -76,6 +76,12 @@ export default function EmployeeTableView({
         setLinkStaffEmployeeId(emp.id);
         setIsLinkStaffOpen(true);
       },
+      // render: (item) => {
+      //   return Boolean(item.staffId);
+      // },
+      disabled: (item) => {
+        return Boolean(item.staffId);
+      },
       disable_event: (emp) => Boolean(emp.staffId),
     },
   ];
@@ -84,7 +90,9 @@ export default function EmployeeTableView({
     actions.push({
       key: "delete",
       label: "Remove employee",
-      render: () => <span className="text-error font-medium">Remove employee</span>,
+      render: () => (
+        <span className="text-error font-medium">Remove employee</span>
+      ),
       action: (emp) => {
         removeEmployee(emp.id);
       },

@@ -1,47 +1,34 @@
 import apiClient, { type ApiResponse } from "@/client/api";
 import { useQuery } from "@tanstack/react-query";
-import { useEffect, useState, type PropsWithChildren } from "react";
+import type { PropsWithChildren } from "react";
 
 interface SimpleSelect<T> extends PropsWithChildren {
   route: string;
   value: any;
   onChange: (value: string) => void;
   label?: string;
-  render: (item: T, index: number) => any;
+  render: (item: T, index: number) => React.ReactNode;
+  limit?: number;
 }
 
 export default function SimpleSelect<T>(props: SimpleSelect<T>) {
-  const [internalValue, setInternalValue] = useState(props.value);
   const query = useQuery<ApiResponse>({
     queryKey: ["select", props.route],
     queryFn: async () => {
-      const response = await apiClient.get(`${props.route}`, {
-        params: {
-          limit: 50,
-        },
+      const response = await apiClient.get<any>(props.route, {
+        params: { limit: props.limit && props.limit },
       });
       return response.data;
     },
   });
 
-  useEffect(() => {
-    if (internalValue !== props.value) {
-      if (props.onChange) {
-        props.onChange(internalValue);
-      }
-    }
-  }, [internalValue]);
-
   const label = props.label;
+
   if (query.isLoading)
     return (
       <div className="w-full">
-        {label && (
-          <label htmlFor="" className="mb-2 fieldset-label">
-            {label}
-          </label>
-        )}
-        <select disabled name="" className="select w-full" id="">
+        {label && <label className="mb-2 fieldset-label block">{label}</label>}
+        <select disabled className="select w-full" value="">
           <option value="">Loading</option>
         </select>
       </div>
@@ -49,39 +36,29 @@ export default function SimpleSelect<T>(props: SimpleSelect<T>) {
 
   if (query.isError)
     return (
-      <div className="w-full ">
-        {label && (
-          <label htmlFor="" className="mb-2 fieldset-label">
-            {label}
-          </label>
-        )}
-        <select disabled name="" className="select w-full" id="">
+      <div className="w-full">
+        {label && <label className="mb-2 fieldset-label block">{label}</label>}
+        <select disabled className="select w-full" value="">
           <option value="">Error loading options</option>
         </select>
       </div>
     );
 
-  const items: T[] = query.data?.payload ?? [];
+  // Backend envelopes vary: bare array, { payload }, or { data }.
+  const raw = query.data as any;
+  const items: T[] = Array.isArray(raw)
+    ? raw
+    : (raw?.payload ?? raw?.data ?? []);
 
   return (
     <div className="w-full">
-      {label && (
-        <label htmlFor="" className="mb-2 fieldset-label">
-          {label}
-        </label>
-      )}
+      {label && <label className="mb-2 fieldset-label block">{label}</label>}
       <select
-        value={internalValue}
-        onChange={(e) => {
-          // console.log(e.target.value);
-          setInternalValue(e.target.value);
-        }}
+        value={props.value ?? ""}
+        onChange={(e) => props.onChange(e.target.value)}
         className="select w-full"
       >
         {items.map((item, idx) => props.render(item, idx))}
-        <>
-          <option value="null">All </option>
-        </>
       </select>
     </div>
   );

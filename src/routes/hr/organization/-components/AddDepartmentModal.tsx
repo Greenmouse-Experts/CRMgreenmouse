@@ -1,11 +1,18 @@
 import { useEffect, useRef } from "react";
-import { FormProvider, useForm, type SubmitHandler } from "react-hook-form";
+import {
+  Controller,
+  FormProvider,
+  useForm,
+  type SubmitHandler,
+} from "react-hook-form";
 import Modal, { type ModalHandle } from "@/components/DialogModal";
 import SimpleInput from "@/components/inputs/SimpleInput";
 import LocalSelect from "@/components/inputs/LocalSelect";
-import { AVAILABLE_HEADS, LOCATION_OPTIONS } from "./organizationData";
-import type { Department, DepartmentStatus } from "./types";
-import { toast } from "sonner";
+import SimpleSelect from "@/components/inputs/SimpleSelect";
+import { LOCATION_OPTIONS } from "./organizationData";
+import type { EmployeeRecord } from "@/api/employeesApi";
+import type { CreateDepartmentPayload } from "@/api/organizationApi";
+import type { Department } from "./types";
 import { Send } from "lucide-react";
 
 interface AddDepartmentFormValues {
@@ -23,8 +30,8 @@ interface AddDepartmentFormValues {
 const DEFAULT_VALUES: AddDepartmentFormValues = {
   name: "",
   code: "",
-  head: AVAILABLE_HEADS[0] || "Tunde Adeyemi",
-  parent: "None (top level)",
+  head: "",
+  parent: "",
   costCentre: "",
   location: "Lagos",
   headcount: "10",
@@ -35,7 +42,7 @@ const DEFAULT_VALUES: AddDepartmentFormValues = {
 interface AddDepartmentModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onAddDepartment: (newDept: Department) => void;
+  onAddDepartment: (payload: CreateDepartmentPayload) => Promise<boolean>;
   existingDepartments: Department[];
 }
 
@@ -60,27 +67,24 @@ export default function AddDepartmentModal({
     }
   }, [isOpen]);
 
-  const onSubmit: SubmitHandler<AddDepartmentFormValues> = (values) => {
-    const newDept: Department = {
-      id: `DEP-${Date.now()}`,
+  const onSubmit: SubmitHandler<AddDepartmentFormValues> = async (values) => {
+    const payload: CreateDepartmentPayload = {
       name: values.name.trim(),
       code: values.code.trim().toUpperCase(),
-      head: values.head,
-      count: Number(values.headcount) || 0,
-      status: values.status as DepartmentStatus,
-      parent: values.parent,
+      status: values.status.toLowerCase() as "active" | "inactive",
+      headEmployeeId: values.head || undefined,
+      parentDepartmentId: values.parent || undefined,
       costCentre: values.costCentre.trim() || undefined,
-      location: values.location,
+      primaryLocation: values.location,
+      approvedHeadcount: Number(values.headcount) || 0,
       description: values.description.trim() || undefined,
     };
 
-    onAddDepartment(newDept);
-    toast.success("Department created", {
-      description: `${newDept.name} (${newDept.code}) with head ${newDept.head} has been registered.`,
-    });
-
-    methods.reset(DEFAULT_VALUES);
-    onClose();
+    const created = await onAddDepartment(payload);
+    if (created) {
+      methods.reset(DEFAULT_VALUES);
+      onClose();
+    }
   };
 
   return (
@@ -128,16 +132,36 @@ export default function AddDepartmentModal({
             </div>
 
             <div>
-              <label className=" font-semibold text-base-content/80 mb-1 block">
-                Department Head <span className="text-error">*</span>
-              </label>
-              <LocalSelect {...methods.register("head")}>
-                {AVAILABLE_HEADS.map((h) => (
-                  <option key={h} value={h}>
-                    {h}
-                  </option>
-                ))}
-              </LocalSelect>
+              <Controller
+                control={methods.control}
+                name="head"
+                rules={{ required: "Please select a department head" }}
+                render={({ field }) => (
+                  <SimpleSelect<EmployeeRecord>
+                    route="/employees"
+                    value={field.value}
+                    onChange={field.onChange}
+                    label="Department Head *"
+                    render={(employee, index) => {
+                      const name =
+                        [employee.firstName, employee.lastName]
+                          .filter(Boolean)
+                          .join(" ") || employee.email || "Unnamed";
+                      return (
+                        <>
+                          {index === 0 && (
+                            <option value="">Select a department head</option>
+                          )}
+                          <option key={employee.id} value={employee.id}>
+                            {name}
+                            {employee.email ? ` — ${employee.email}` : ""}
+                          </option>
+                        </>
+                      );
+                    }}
+                  />
+                )}
+              />
             </div>
 
             <div>
@@ -145,9 +169,9 @@ export default function AddDepartmentModal({
                 Parent department
               </label>
               <LocalSelect {...methods.register("parent")}>
-                <option value="None (top level)">None (top level)</option>
+                <option value="">None (top level)</option>
                 {existingDepartments.map((d) => (
-                  <option key={d.id} value={d.name}>
+                  <option key={d.id} value={d.id}>
                     {d.name} ({d.code})
                   </option>
                 ))}
