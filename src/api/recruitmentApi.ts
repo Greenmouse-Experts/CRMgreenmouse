@@ -54,6 +54,16 @@ export interface RecruitmentOption {
   [key: string]: any;
 }
 
+/**
+ * Verified against the live backend (2026-11-23):
+ * - Required: jobTitle (≤ 160), departmentId (UUID), openings (int 1–1000),
+ *   employmentType (≤ 80), reasonForHire (≤ 120), jobDescription (≤ 20000),
+ *   closingDate (ISO 8601), hiringManagerId (UUID), approverId (UUID).
+ * - Optional: gradeId (UUID), workLocation, salaryMinimum/salaryMaximum,
+ *   salaryCurrency, salaryPeriod (hourly/weekly/monthly/annual),
+ *   publishingChannel, saveAsDraft.
+ * - `grade`, `location`, `budget`, `channels`, `type`, `reason` are rejected.
+ */
 export interface CreateVacancyPayload {
   jobTitle: string;
   departmentId: string;
@@ -64,7 +74,14 @@ export interface CreateVacancyPayload {
   closingDate: string;
   hiringManagerId: string;
   approverId: string;
-  [key: string]: any;
+  gradeId?: string;
+  workLocation?: string;
+  salaryMinimum?: number;
+  salaryMaximum?: number;
+  salaryCurrency?: string;
+  salaryPeriod?: "hourly" | "weekly" | "monthly" | "annual";
+  publishingChannel?: string;
+  saveAsDraft?: boolean;
 }
 
 export interface CreateApplicationPayload {

@@ -15,6 +15,7 @@ import {
   useUpdateApplicationStage,
   type RecruitmentApplication,
   type RecruitmentVacancy,
+  type CreateVacancyPayload,
 } from "@/api/recruitmentApi";
 import { useOrganization } from "@/api/organizationApi";
 import { useEmployees } from "@/api/employeesApi";
@@ -197,32 +198,15 @@ function RouteComponent() {
     handleAdvanceStage(candidateId, newStage);
   };
 
-  const handleCreateVacancy = async (newVacancy: Vacancy) => {
-    const department =
-      departmentOptions.find(
-        (d) =>
-          d.id === newVacancy.departmentId ||
-          d.name.toLowerCase() === newVacancy.dept.toLowerCase(),
-      ) ?? departmentOptions[0];
-
-    const approver =
-      approverOptions.find(
-        (a) =>
-          a.id === newVacancy.approverId ||
-          a.name.toLowerCase() === (newVacancy.approver ?? "").toLowerCase(),
-      ) ?? approverOptions[0];
-
-    const hiringManager =
-      approversQuery.data?.[0] ?? approver ?? approverOptions[0];
-
-    if (!department || !department.id) {
+  const handleCreateVacancy = async (payload: CreateVacancyPayload) => {
+    if (!payload.departmentId) {
       toast.error("Recruitment setup incomplete", {
         description: "Configure departments before creating a vacancy.",
       });
       throw new Error("Recruitment setup incomplete: missing department");
     }
 
-    if (!approver || !approver.id) {
+    if (!payload.approverId || !payload.hiringManagerId) {
       toast.error("Recruitment setup incomplete", {
         description:
           "Configure approvers or staff members before creating a vacancy.",
@@ -230,26 +214,13 @@ function RouteComponent() {
       throw new Error("Recruitment setup incomplete: missing approver");
     }
 
-    return await toast.promise(
-      createVacancyMutation.mutateAsync({
-        jobTitle: newVacancy.title,
-        departmentId: department.id,
-        openings: newVacancy.openings,
-        employmentType: newVacancy.type ?? "Full-time",
-        reasonForHire: newVacancy.reason ?? "New position",
-        jobDescription: newVacancy.desc ?? "",
-        closingDate: newVacancy.closingDate
-          ? new Date(newVacancy.closingDate).toISOString()
-          : new Date(newVacancy.closes).toISOString(),
-        hiringManagerId: hiringManager.id,
-        approverId: approver.id,
-      }),
-      {
-        loading: "Submitting vacancy requisition...",
-        success: "Vacancy submitted for approval",
-        error: (error) => extract_message(error as never),
-      },
-    );
+    return await toast.promise(createVacancyMutation.mutateAsync(payload), {
+      loading: "Submitting vacancy requisition...",
+      success: payload.saveAsDraft
+        ? "Vacancy saved as draft"
+        : "Vacancy submitted for approval",
+      error: (error) => extract_message(error as never),
+    });
   };
 
   const handleUpdateVacancyStatus = (
@@ -360,6 +331,7 @@ function RouteComponent() {
         onCreateVacancy={handleCreateVacancy}
         departments={departmentOptions}
         approvers={approverOptions}
+        managers={approverOptions}
       />
 
       <CandidateDetailModal

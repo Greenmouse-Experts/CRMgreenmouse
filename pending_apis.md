@@ -48,7 +48,7 @@ Empty `{}` examples hide requirements the live API enforces (verified via
 | `POST /v1/employees/organization/departments` | `name` (string ≤ 120), `code` (string ≤ 30); lowercase `active`/`inactive` status |
 | `POST /v1/employees/organization/positions` | `title` (string ≤ 160), `departmentId` (existing UUID); optional `approvedHeadcount` (≥ 0), `status` (`active`/`inactive`), `gradeId` (UUID). Rejects `grade`, `dept`, `approved`, `filled`, `openings`, `description` |
 | `PATCH /v1/employees/:id` | `employmentStatus` enum — see section 5 |
-| `POST /v1/recruitment/vacancies` (reference) | `jobTitle`, `departmentId`, `openings`, `employmentType`, `reasonForHire`, `jobDescription`, `closingDate`, `hiringManagerId`, `approverId` |
+| `POST /v1/recruitment/vacancies` | **Verified:** `jobTitle` (≤ 160), `departmentId` (UUID), `openings` (int 1–1000), `employmentType` (≤ 80), `reasonForHire` (≤ 120), `jobDescription` (≤ 20000), `closingDate` (ISO 8601), `hiringManagerId` (UUID), `approverId` (UUID); optional `gradeId`, `workLocation`, salary fields (`salaryPeriod`: hourly/weekly/monthly/annual), `publishingChannel`, `saveAsDraft` |
 
 Needed: real example bodies, required markers, and enum values in the
 collection.

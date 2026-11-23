@@ -126,10 +126,15 @@ Notes:
   `interview`, `assessment`, `offer`, `hired`, `rejected`, `withdrawn`).
 - Vacancy decisions are `approve` / `reject`; offer decisions are `approve`,
   `send`, `accept`, `decline`.
-- Creating a vacancy requires `departmentId`, `hiringManagerId` and
-  `approverId` (UUIDs) resolved from the options/approvers endpoints. The test
-  tenant currently has no departments configured, so creation is blocked until
-  those options exist.
+- Creating a vacancy (verified 2026-11-23) requires `jobTitle` (≤ 160),
+  `departmentId`, `openings` (int 1–1000), `employmentType` (≤ 80),
+  `reasonForHire` (≤ 120), `jobDescription` (≤ 20000), `closingDate` (ISO 8601),
+  `hiringManagerId` and `approverId` (UUIDs resolved from the options/approvers
+  endpoints). Optional: `gradeId`, `workLocation`, `salaryMinimum`/`salaryMaximum`,
+  `salaryCurrency`, `salaryPeriod` (`hourly`/`weekly`/`monthly`/`annual`),
+  `publishingChannel`, `saveAsDraft`. The legacy `grade`/`location`/`budget`/
+  `channels`/`type`/`reason` fields are rejected. The test tenant has no
+  departments configured, so creation is blocked until those options exist.
 
 ### Staff / employees — `src/api/employeesApi.ts` (`/hr/staffs`)
 
