@@ -1,9 +1,12 @@
-import { Link } from "@tanstack/react-router";
+import { useState } from "react";
+import { useNavigate } from "@tanstack/react-router";
 import type { Employee } from "./types";
 import EmployeeAvatar from "./EmployeeAvatar";
 import EmployeeStatusBadge from "./EmployeeStatusBadge";
+import LinkToStaffModal from "./LinkToStaffModal";
 import CustomTable, { type columnType } from "@/components/tables/CustomTable";
-import { Trash2 } from "lucide-react";
+import type { Actions } from "@/components/tables/pop-up";
+import { useStaffs, type StaffOption } from "@/api/employeesApi";
 
 interface EmployeeTableViewProps {
   employees: Employee[];
@@ -16,8 +19,58 @@ export default function EmployeeTableView({
   onSelectEmployee,
   onDeleteEmployee,
 }: EmployeeTableViewProps) {
+  const navigate = useNavigate();
+  const staffsQuery = useStaffs();
+  const [isLinkStaffOpen, setIsLinkStaffOpen] = useState(false);
+
   if (employees.length === 0) {
     return null;
+  }
+
+  const removeEmployee = onDeleteEmployee;
+
+  const handleAcceptLinkStaff = (staff: StaffOption) => {
+    setIsLinkStaffOpen(false);
+    navigate({ to: "/hr/staffs/$id", params: { id: staff.id } });
+  };
+
+  const actions: Actions<Employee>[] = [
+    {
+      key: "edit",
+      label: "Edit",
+      action: (emp, nav) => {
+        nav({
+          to: "/hr/staffs/$id",
+          params: { id: emp.id },
+          search: { mode: "edit" },
+        });
+      },
+    },
+    {
+      key: "view",
+      label: "View →",
+      action: (emp) => {
+        onSelectEmployee(emp);
+      },
+    },
+    {
+      key: "linkStaff",
+      label: "Link to staff",
+      action: () => {
+        setIsLinkStaffOpen(true);
+      },
+    },
+  ];
+
+  if (removeEmployee) {
+    actions.push({
+      key: "delete",
+      label: "Remove employee",
+      render: () => <span className="text-error font-medium">Remove employee</span>,
+      action: (emp) => {
+        removeEmployee(emp.id);
+      },
+    });
   }
 
   const columns: columnType<Employee>[] = [
@@ -38,7 +91,7 @@ export default function EmployeeTableView({
                 </span>
               )}
             </div>
-            <div className="flex items-center gap-1.5  text-base-content/80 truncate">
+            <div className="flex items-center gap-1.5 text-base-content/80 truncate">
               {emp.title !== "—" && <span>{emp.title}</span>}
               {emp.title !== "—" && emp.email !== "—" && <span>·</span>}
               {emp.email !== "—" && (
@@ -53,7 +106,7 @@ export default function EmployeeTableView({
       key: "employeeNumber",
       label: "Employee ID",
       render: (_value: string, emp: Employee) => (
-        <span className="bg-base-200/80 px-2 py-0.5 rounded-md font-mono  text-base-content/80 font-medium">
+        <span className="bg-base-200/80 px-2 py-0.5 rounded-md font-mono text-base-content/80 font-medium">
           {emp.employeeNumber ||
             (emp.id && emp.id.length > 8 ? emp.id.slice(0, 8) : emp.id)}
         </span>
@@ -63,21 +116,21 @@ export default function EmployeeTableView({
       key: "dept",
       label: "Department",
       render: (value: string) => (
-        <span className="font-medium  text-base-content/80">{value}</span>
+        <span className="font-medium text-base-content/80">{value}</span>
       ),
     },
     {
       key: "type",
       label: "Type",
       render: (value: string) => (
-        <span className=" text-base-content/80">{value}</span>
+        <span className="text-base-content/80">{value}</span>
       ),
     },
     {
       key: "location",
       label: "Location",
       render: (value: string) => (
-        <span className=" text-base-content/80">{value}</span>
+        <span className="text-base-content/80">{value}</span>
       ),
     },
     {
@@ -91,52 +144,23 @@ export default function EmployeeTableView({
       key: "start",
       label: "Start Date",
       render: (value: string) => (
-        <span className="font-mono  text-base-content/80">{value || "—"}</span>
-      ),
-    },
-    {
-      key: "action",
-      label: "Action",
-      render: (_value: unknown, emp: Employee) => (
-        <div className="flex items-center justify-end gap-1">
-          <Link
-            to="/hr/staffs/$id"
-            params={{ id: emp.id }}
-            search={{ mode: "edit" }}
-            onClick={(e) => e.stopPropagation()}
-            className="btn btn-xs btn-ghost text-base-content/80 hover:text-primary font-medium"
-          >
-            Edit
-          </Link>
-          <button
-            type="button"
-            onClick={() => onSelectEmployee(emp)}
-            className="btn btn-xs btn-ghost text-primary font-semibold hover:bg-primary/10"
-          >
-            View →
-          </button>
-          {onDeleteEmployee && (
-            <button
-              type="button"
-              title="Remove employee"
-              onClick={() => onDeleteEmployee(emp.id)}
-              className="btn btn-xs btn-ghost text-error hover:bg-error/10"
-            >
-              <Trash2 className="size-3.5" />
-            </button>
-          )}
-        </div>
+        <span className="font-mono text-base-content/80">{value || "—"}</span>
       ),
     },
   ];
 
   return (
-    <div className="card bg-base-100 border border-base-200/80 shadow-xs overflow-hidden rounded-2xl">
-      <CustomTable
-        data={employees}
-        columns={columns}
-        onRowClick={(item) => onSelectEmployee(item as Employee)}
+    <>
+      <div className="card bg-base-100 border border-base-200/80 shadow-xs overflow-hidden rounded-2xl">
+        <CustomTable data={employees} columns={columns} actions={actions} />
+      </div>
+      <LinkToStaffModal
+        isOpen={isLinkStaffOpen}
+        staffs={staffsQuery.data ?? []}
+        isLoading={staffsQuery.isLoading}
+        onClose={() => setIsLinkStaffOpen(false)}
+        onAccept={handleAcceptLinkStaff}
       />
-    </div>
+    </>
   );
 }
