@@ -17,7 +17,7 @@ export interface EmployeeRecord {
   phone?: string;
   employeeNumber?: string;
   status?: string;
-  employmentStatus?: string;
+  // employmentStatus?: string;
   employmentType?: string;
   employeeType?: string;
   startDate?: string;
@@ -109,7 +109,7 @@ export interface CreateEmployeeInput {
   contractEndDate?: string;
   workSchedule?: string;
   isDraft?: boolean;
-  employmentStatus?: string;
+  // employmentStatus?: string;
   status?: string;
   isOnProbation?: boolean;
   needsSystemAccount?: boolean;
@@ -407,7 +407,7 @@ export const useUpdateEmployee = () => {
   });
 };
 
-/** There is no DELETE route — removing an employee sets an inactive status. */
+/** There is no DELETE route — removing an employee sets an exited status. */
 export const useRemoveEmployee = () => {
   const invalidate = useInvalidateEmployees();
   return useMutation({
@@ -415,7 +415,83 @@ export const useRemoveEmployee = () => {
       try {
         const { data } = await apiClient.patch<any>(
           `/employees/${id}`,
-          { employmentStatus: "inactive" },
+          { employmentStatus: "exited" },
+          authConfig(),
+        );
+        return unwrapOne<EmployeeRecord>(data);
+      } catch (error) {
+        throw extractError(error);
+      }
+    },
+    onSuccess: invalidate,
+  });
+};
+
+export const useActivateEmployee = () => {
+  const invalidate = useInvalidateEmployees();
+  return useMutation({
+    mutationFn: async (id: string) => {
+      try {
+        const { data } = await apiClient.patch<any>(
+          `/employees/${id}`,
+          { employmentStatus: "active" },
+          authConfig(),
+        );
+        return unwrapOne<EmployeeRecord>(data);
+      } catch (error) {
+        throw extractError(error);
+      }
+    },
+    onSuccess: invalidate,
+  });
+};
+
+export const useSuspendEmployee = () => {
+  const invalidate = useInvalidateEmployees();
+  return useMutation({
+    mutationFn: async (id: string) => {
+      try {
+        const { data } = await apiClient.patch<any>(
+          `/employees/${id}`,
+          { employmentStatus: "suspended" },
+          authConfig(),
+        );
+        return unwrapOne<EmployeeRecord>(data);
+      } catch (error) {
+        throw extractError(error);
+      }
+    },
+    onSuccess: invalidate,
+  });
+};
+
+export const useReactivateEmployee = () => {
+  const invalidate = useInvalidateEmployees();
+  return useMutation({
+    mutationFn: async (id: string) => {
+      try {
+        const { data } = await apiClient.patch<any>(
+          `/employees/${id}`,
+          { employmentStatus: "active" },
+          authConfig(),
+        );
+        return unwrapOne<EmployeeRecord>(data);
+      } catch (error) {
+        throw extractError(error);
+      }
+    },
+    onSuccess: invalidate,
+  });
+};
+
+export const useFinalizeEmployee = () => {
+  const invalidate = useInvalidateEmployees();
+  return useMutation({
+    mutationFn: async (id: string) => {
+      try {
+        const { data } = await apiClient.patch<any>(
+          `/employees/${id}`,
+          { employmentStatus: "exited" },
           authConfig(),
         );
         return unwrapOne<EmployeeRecord>(data);

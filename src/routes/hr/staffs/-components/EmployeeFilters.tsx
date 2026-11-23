@@ -14,9 +14,9 @@ interface EmployeeFiltersProps {
 const statusOptions: StatusFilterOption[] = [
   "All",
   "Active",
-  "Probation",
   "Notice Period",
   "Suspended",
+  "Exited",
 ];
 
 export default function EmployeeFilters({

@@ -21,6 +21,8 @@ import {
   UserX,
   Lock,
   FileText,
+  Pause,
+  Play,
 } from "lucide-react";
 import SimpleInput from "@/components/inputs/SimpleInput";
 import SimplePhoneInput from "@/components/inputs/SimplePhoneInput";
@@ -32,12 +34,16 @@ import EmployeeAvatar from "./-components/EmployeeAvatar";
 import EmployeeStatusBadge from "./-components/EmployeeStatusBadge";
 import { formatSalary } from "./-components/employeeData";
 import {
+  useActivateEmployee,
   useCreateEmployee,
   useEmployee,
   useEmployees,
   useEmployeeOrganization,
-  useUpdateEmployee,
+  useFinalizeEmployee,
+  useReactivateEmployee,
   useRemoveEmployee,
+  useSuspendEmployee,
+  useUpdateEmployee,
   type CreateEmployeeInput,
 } from "@/api/employeesApi";
 import { extract_message } from "@/helpers/auth";
@@ -78,7 +84,6 @@ export interface EmployeeFormData {
   jobTitle?: string;
   positionId?: string;
   employeeType?: string;
-  employmentStatus?: string;
   workLocation?: string;
   grade?: string;
   managerId?: string;
@@ -167,13 +172,6 @@ const EMPLOYMENT_TYPES = [
   "Intern",
   "Casual",
 ];
-const EMPLOYMENT_STATUSES = [
-  { value: "active", label: "Active" },
-  { value: "probation", label: "Probation" },
-  { value: "suspended", label: "Suspended" },
-  { value: "notice", label: "Notice Period" },
-  { value: "inactive", label: "Inactive" },
-];
 const WORK_LOCATIONS = [
   "Remote",
   "On-site (Lagos)",
@@ -219,6 +217,10 @@ function StaffDetailPage() {
   const createEmployee = useCreateEmployee();
   const updateEmployee = useUpdateEmployee();
   const removeEmployee = useRemoveEmployee();
+  const activateEmployee = useActivateEmployee();
+  const suspendEmployee = useSuspendEmployee();
+  const reactivateEmployee = useReactivateEmployee();
+  const finalizeEmployee = useFinalizeEmployee();
 
   const methods = useForm<EmployeeFormData>({
     mode: "onSubmit",
@@ -238,7 +240,6 @@ function StaffDetailPage() {
       jobTitle: "",
       positionId: "",
       employeeType: "Full-time",
-      employmentStatus: "active",
       workLocation: "Remote",
       grade: "G2",
       managerId: "",
@@ -324,7 +325,6 @@ function StaffDetailPage() {
         jobTitle: posTitle,
         positionId: posId,
         employeeType: emp.employeeType ?? emp.employmentType ?? "Full-time",
-        employmentStatus: emp.employmentStatus ?? emp.status ?? "active",
         workLocation: emp.workLocation ?? emp.location ?? "Remote",
         grade: emp.grade ?? "G2",
         managerId: mgrId,
@@ -456,7 +456,6 @@ function StaffDetailPage() {
         department: deptName,
         jobTitle,
         employeeType: values.employeeType || undefined,
-        employmentStatus: values.employmentStatus || undefined,
         workLocation: values.workLocation || undefined,
         grade: values.grade || undefined,
         managerId: values.managerId?.trim() || undefined,
@@ -497,6 +496,59 @@ function StaffDetailPage() {
       }
     } catch (error: any) {
       toast.error(extract_message(error));
+    }
+  };
+
+  const handleActivate = () => {
+    if (confirm("Are you sure you want to activate this employee?")) {
+      toast.promise(activateEmployee.mutateAsync(id), {
+        loading: "Activating employee...",
+        success: () => {
+          employeeQuery.refetch();
+          return "Employee activated";
+        },
+        error: (error) => extract_message(error as never),
+      });
+    }
+  };
+
+  const handleSuspend = () => {
+    if (confirm("Are you sure you want to suspend this employee?")) {
+      toast.promise(suspendEmployee.mutateAsync(id), {
+        loading: "Suspending employee...",
+        success: () => {
+          employeeQuery.refetch();
+          return "Employee suspended";
+        },
+        error: (error) => extract_message(error as never),
+      });
+    }
+  };
+
+  const handleReactivate = () => {
+    if (confirm("Are you sure you want to reactivate this employee?")) {
+      toast.promise(reactivateEmployee.mutateAsync(id), {
+        loading: "Reactivating employee...",
+        success: () => {
+          employeeQuery.refetch();
+          return "Employee reactivated";
+        },
+        error: (error) => extract_message(error as never),
+      });
+    }
+  };
+
+  const handleFinalize = () => {
+    if (confirm("Are you sure you want to finalize this employee's employment?")) {
+      toast.promise(finalizeEmployee.mutateAsync(id), {
+        loading: "Finalizing employment...",
+        success: () => {
+          employeeQuery.refetch();
+          navigate({ to: "/hr/staffs" });
+          return "Employment finalized";
+        },
+        error: (error) => extract_message(error as never),
+      });
     }
   };
 
@@ -579,7 +631,13 @@ function StaffDetailPage() {
     : emp.employmentStatus || emp.status || "Active";
 
   const isPending =
-    isSubmitting || createEmployee.isPending || updateEmployee.isPending;
+    isSubmitting ||
+    createEmployee.isPending ||
+    updateEmployee.isPending ||
+    activateEmployee.isPending ||
+    suspendEmployee.isPending ||
+    reactivateEmployee.isPending ||
+    finalizeEmployee.isPending;
 
   const currentDept =
     departmentsList.find(
@@ -704,6 +762,100 @@ function StaffDetailPage() {
                   <Clock className="size-3.5" />
                   {effectiveOnLeave ? "Mark Returned" : "Mark On Leave"}
                 </button>
+                {(() => {
+                  const rawStatus = String(
+                    emp.employmentStatus || emp.status || "active",
+                  ).toLowerCase();
+                  const isActive = rawStatus === "active";
+                  const isSuspended = rawStatus === "suspended";
+                  const isExited = rawStatus === "exited";
+                  const isNotice = rawStatus === "notice_period";
+                  const isDraft = rawStatus === "draft";
+
+                  return (
+                    <>
+                      {isDraft && (
+                        <button
+                          type="button"
+                          onClick={handleActivate}
+                          className="btn btn-sm btn-outline border-primary text-primary hover:bg-primary hover:text-primary-content rounded-xl"
+                        >
+                          <Play className="size-3.5" /> Activate
+                        </button>
+                      )}
+                      {isActive && (
+                        <>
+                          <button
+                            type="button"
+                            onClick={handleSuspend}
+                            className="btn btn-sm btn-outline border-warning text-warning hover:bg-warning hover:text-white rounded-xl"
+                          >
+                            <Pause className="size-3.5" /> Suspend
+                          </button>
+                          <button
+                            type="button"
+                            onClick={handleFinalize}
+                            className="btn btn-sm btn-ghost text-error hover:bg-error/10 rounded-xl"
+                          >
+                            <UserX className="size-3.5" /> Finalize
+                          </button>
+                        </>
+                      )}
+                      {isSuspended && (
+                        <>
+                          <button
+                            type="button"
+                            onClick={handleReactivate}
+                            className="btn btn-sm btn-outline border-primary text-primary hover:bg-primary hover:text-primary-content rounded-xl"
+                          >
+                            <Play className="size-3.5" /> Reactivate
+                          </button>
+                          <button
+                            type="button"
+                            onClick={handleFinalize}
+                            className="btn btn-sm btn-ghost text-error hover:bg-error/10 rounded-xl"
+                          >
+                            <UserX className="size-3.5" /> Finalize
+                          </button>
+                        </>
+                      )}
+                      {isExited && (
+                        <button
+                          type="button"
+                          onClick={handleReactivate}
+                          className="btn btn-sm btn-outline border-primary text-primary hover:bg-primary hover:text-primary-content rounded-xl"
+                        >
+                          <Play className="size-3.5" /> Reactivate
+                        </button>
+                      )}
+                      {isNotice && (
+                        <>
+                          <button
+                            type="button"
+                            onClick={handleActivate}
+                            className="btn btn-sm btn-outline border-primary text-primary hover:bg-primary hover:text-primary-content rounded-xl"
+                          >
+                            <Play className="size-3.5" /> Activate
+                          </button>
+                          <button
+                            type="button"
+                            onClick={handleSuspend}
+                            className="btn btn-sm btn-outline border-warning text-warning hover:bg-warning hover:text-white rounded-xl"
+                          >
+                            <Pause className="size-3.5" /> Suspend
+                          </button>
+                          <button
+                            type="button"
+                            onClick={handleFinalize}
+                            className="btn btn-sm btn-ghost text-error hover:bg-error/10 rounded-xl"
+                          >
+                            <UserX className="size-3.5" /> Finalize
+                          </button>
+                        </>
+                      )}
+                    </>
+                  );
+                })()}
                 <button
                   type="button"
                   onClick={handleDeactivate}
@@ -1292,17 +1444,6 @@ function StaffDetailPage() {
                     </LocalSelect>
 
                     <LocalSelect
-                      label="Employment Status"
-                      {...register("employmentStatus")}
-                    >
-                      {EMPLOYMENT_STATUSES.map((status) => (
-                        <option key={status.value} value={status.value}>
-                          {status.label}
-                        </option>
-                      ))}
-                    </LocalSelect>
-
-                    <LocalSelect
                       label="Work Location"
                       {...register("workLocation")}
                     >
@@ -1708,8 +1849,7 @@ function StaffDetailPage() {
                           Type / Status:
                         </span>{" "}
                         <span className="font-semibold">
-                          {formValues.employeeType} ·{" "}
-                          {formValues.employmentStatus}
+                          {formValues.employeeType}
                         </span>
                       </p>
                       <p>

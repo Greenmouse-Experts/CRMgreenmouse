@@ -74,6 +74,10 @@ function RouteComponent() {
   const selectedHire = useMemo<OnboardingHire | null>(() => {
     if (!selectedBaseHire) return null;
     const completed = checklist.filter((i) => i.completed).length;
+    const reviewsDone = (reviewsQuery.data ?? []).filter(
+      (r) =>
+        r.completed || String(r.status ?? "").toLowerCase() === "completed",
+    ).length;
     return {
       ...selectedBaseHire,
       progress: checklist.length
@@ -81,9 +85,9 @@ function RouteComponent() {
         : 0,
       probationStep:
         probationOverrides[selectedBaseHire.id] ??
-        selectedBaseHire.probationStep,
+        Math.min(reviewsDone, PROBATION_STEPS.length - 1),
     };
-  }, [selectedBaseHire, checklist, probationOverrides]);
+  }, [selectedBaseHire, checklist, reviewsQuery.data, probationOverrides]);
 
   const handleToggleItem = (itemId: string) => {
     toast.promise(completeTaskMutation.mutateAsync({ taskId: itemId }), {

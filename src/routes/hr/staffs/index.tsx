@@ -52,14 +52,14 @@ const toUiEmployee = (employee: EmployeeRecord): Employee => {
 
   const statusKey = rawStatus?.toLowerCase();
   const status =
-    statusKey === "inactive" || statusKey === "suspended"
-      ? "Suspended"
-      : statusKey === "probation"
-        ? "Probation"
-        : statusKey === "notice" || statusKey === "notice_period"
-          ? "Notice Period"
-          : statusKey === "active"
-            ? "Active"
+    statusKey === "active"
+      ? "Active"
+      : statusKey === "notice_period"
+        ? "Notice Period"
+        : statusKey === "suspended"
+          ? "Suspended"
+          : statusKey === "exited"
+            ? "Exited"
             : statusKey === "draft"
               ? "Draft"
               : titleCase(rawStatus);

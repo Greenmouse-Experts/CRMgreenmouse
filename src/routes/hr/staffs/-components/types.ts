@@ -40,9 +40,9 @@ export interface Employee {
 export type StatusFilterOption =
   | "All"
   | "Active"
-  | "Probation"
   | "Notice Period"
-  | "Suspended";
+  | "Suspended"
+  | "Exited";
 
 export type ViewMode = "list" | "grid";
 
