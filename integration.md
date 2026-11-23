@@ -32,6 +32,41 @@ if (Array.isArray(data?.vacancies)) return data.vacancies;
 return [];
 ```
 
+## Error handling
+
+The shared error-extraction helper is `extract_message` in
+`src/helpers/errors.ts`:
+
+```ts
+import { extract_message } from "@/helpers/errors";
+```
+
+It accepts `unknown` and returns the most useful message, trying in order:
+
+1. `error.response.data.message` — standard axios error body messages
+2. `error.response.data` when the body is a plain string
+3. `error.payload.message` — some CRM responses wrap the message in `payload`
+4. `error.message` — plain errors, including `Error` instances
+5. `"An unexpected error occurred"` as the final fallback
+
+Typical use in a page or component:
+
+```ts
+toast.error(extract_message(error));
+```
+
+Notes:
+
+- Some code paths read the raw axios error instead — e.g. `PageLoader`
+  checks `query.error.response?.status === 403` to render the
+  access-denied state.
+- `src/api/employeesApi.ts` wraps mutation errors with `extractError`
+  (`new Error(extract_message(error))`), so callers of `mutateAsync` get
+  plain `Error` objects carrying the extracted message.
+- The older `extract_message` in `src/helpers/auth.ts` (typed for axios
+  errors) is still used across pages; new code should prefer
+  `@/helpers/errors`.
+
 ## UI conventions
 
 - **Loading / error / empty states**: use `PageLoader` for a page-level query,
@@ -98,18 +133,19 @@ Notes:
 
 ### Staff / employees — `src/api/employeesApi.ts` (`/hr/staffs`)
 
-The people directory uses the working staffs endpoints:
+The people directory reads the employees module (fixed backend-side;
+re-verified 2026-11-23):
 
-- `useEmployees()` — `GET /staffs` (the people directory endpoint;
-  `GET /v1/employees` returns 500 — see Known Backend Issues).
-- `useCreateEmployee()` — `POST /staffs` — accepts only `email`,
-  `firstName`, `lastName`, `phoneNumber` (plus optional `roleId`, `profilePic`).
-  Extra properties are rejected, so the Add Employee form collects only those
-  fields.
+- `useEmployees()` — `GET /employees` (200, array).
+- `useStaffs()` — `GET /staffs` (200, array; separate resource, used by the
+  leave request modal).
+- `useCreateEmployee()` — `POST /employees` (201; `{}` creates a draft, so
+  the form validates required fields client-side).
 - `useUpdateEmployee()` — `PATCH /v1/employees/:id`.
 - `useRemoveEmployee()` — `PATCH /v1/employees/:id` with
-  `{ status: "inactive" }` (the remove-employee pattern; there is no DELETE
-  route — see Known Backend Issues).
+  `{ employmentStatus: "inactive" }` — **broken**: the verified enum is
+  `active`, `notice_period`, `suspended`, `exited` (no DELETE route exists;
+  see `pending_apis.md`).
 
 ### Organization — `src/api/organizationApi.ts` (`/hr/organization`)
 
@@ -221,35 +257,28 @@ Notes:
 
 ## Known backend issues
 
-Full probe results live in `pending_apis.md` (probed on 2026-11-19 with the
-`auth_cred.ts` test token, since expired).
+Full probe results live in `pending_apis.md` (originally probed 2026-11-19,
+re-probed **2026-11-23** with a token renewed via `tenant/auth/refresh`).
 
-### 500s — employee endpoints
+The employee-module 500s recorded on 2026-11-19 (`GET /v1/employees`,
+`upcoming-milestones`, onboarding tasks, probation reviews,
+`POST .../onboarding/start`, `PATCH /v1/staffs/:id`) are **fixed** — all now
+return 200/201 or proper 400/404 validation responses.
 
-| Method  | Endpoint                              | Observed | Expected                | Notes                                     |
-| ------- | ------------------------------------- | -------- | ----------------------- | ----------------------------------------- |
-| `GET`   | `/v1/employees`                       | 500      | 200 + employee list     | —                                         |
-| `GET`   | `/v1/employees/upcoming-milestones`   | 500      | 200 + milestones list   | No milestone data in the UI yet           |
-| `GET`   | `/v1/employees/:id/onboarding/tasks`  | 500      | 200 + task list         | Onboarding checklist shows an error state |
-| `GET`   | `/v1/employees/:id/probation/reviews` | 500      | 200 + reviews list      | Probation tracker cannot load reviews     |
-| `POST`  | `/v1/employees/:id/onboarding/start`  | 500      | 201 + onboarding        | Starting onboarding from the UI fails     |
-| `PATCH` | `/v1/staffs/:id`                      | 500      | 404 unknown / 200 valid | Unverified                                |
+### Open issues
 
-The nested employee endpoints also return 500 with a **real** staff ID — the
-staff record used for probing was created and deleted; the staffs table and
-the employees resource appear to be separate.
-
-### Working endpoints (for reference)
-
-- `GET /v1/staffs` — 200 (array; empty for the test tenant).
-- `POST /v1/staffs` — 201 (only `email`, `firstName`, `lastName`,
-  `phoneNumber`; optional `roleId`, `profilePic`).
-- `DELETE /v1/staffs/:id` — 200.
-- **`GET /v1/employees/organization` — 200, `{ departments: [], positions: [] }`**
-  (used by `useOrganization`).
-- `GET /v1/employees/recent-activity` — 200
-  (`{ items, total, page, limit, totalPages }`).
-- Recruitment read endpoints return 200 (arrays; empty for the test tenant).
+- **Employment status enum mismatch**: the backend accepts only `active`,
+  `notice_period`, `suspended`, `exited`. `useRemoveEmployee` sends
+  `inactive` (400), and the staff form offers `probation` / `notice` /
+  `inactive` options that the backend rejects.
+- **Position create payload**: backend requires `title` (≤ 160) +
+  `departmentId` (UUID); the organization page's
+  `{ title, dept, grade, approved, filled }` shape is wrong.
+- **No pagination**: `GET /v1/employees` rejects `page` / `limit`; `search`
+  is accepted but unverified against named records.
+- Missing endpoints (employee delete, task creation, probation review
+  creation, manager/grade/location lookups, employee import, org deletes) —
+  see `pending_apis.md` section 3.
 
 ### Configuration gaps
 
@@ -281,28 +310,19 @@ the employees resource appear to be separate.
 
 ## Pending Issues
 
-- **Employee endpoints — 500s** (see "Known backend Issues"):
-  `GET /v1/employees` (the staffs list now uses `GET /v1/staffs`),
-  `GET /v1/employees/upcoming-milestones`,
-  `GET /v1/employees/:id/onboarding/tasks`,
-  `GET /v1/employees/:id/probation/reviews`,
-  `POST /v1/employees/:id/onboarding/start`, `PATCH /v1/staffs/:id`.
-- **Organization writes**: `POST /v1/employees/organization/departments`,
-  `PATCH /v1/employees/organization/departments/:id`,
-  `POST /v1/employees/organization/positions`,
-  `PATCH /v1/employees/organization/positions/:id` — verified as routes
-  (401 without token).
-  - The create-department contract was discovered via a 400 from the backend:
-    it accepts `code`, `name`, `status` and rejects `id`, `head`, `count`,
-    `parent`, `location` ("property X should not exist"); `status` must be one
-    of `active`, `inactive` (lowercase). The frontend sends
-    `{ code, name, status }`.
-  - The create-position contract is unverified (no Postman sample; empty
-    `{}` sample). The frontend sends `{ title, dept, grade, approved, filled }`.
+- **Status enum mismatch** (see "Known backend issues"): `useRemoveEmployee`
+  sends `inactive`, which the backend rejects; the staff form's status options
+  need aligning with `active` / `notice_period` / `suspended` / `exited`.
+- **Organization writes**:
+  - Create-department contract (verified via live 400): `{ code, name, status }`,
+    lowercase `active`/`inactive`; rejects `id`, `head`, `count`, `parent`,
+    `location`. The frontend matches.
+  - Create-position contract (verified 2026-11-23): `title` (≤ 160) +
+    `departmentId` (UUID) required. The frontend's
+    `{ title, dept, grade, approved, filled }` shape needs updating.
   - There are no DELETE routes for departments/positions, so the frontend
     marks inactive (see the Organization integration).
-- **Test token expired.** The `auth_cred.ts` access token has `exp` =
-  2026-11-19 10:38:55 WAT; probing with it returns
-  `401 "Invalid or expired token"` — renewal is needed for authenticated
-  probing of the organization write endpoints.
-- Full probe record: `pending_apis.md` (probed on 2026-11-19).
+- **Probing credentials**: the `auth_cred.ts` refresh token expires
+  2026-11-26; renew via `tenant/auth/refresh` before then, or log in fresh.
+- Full probe record and remaining backend gaps: `pending_apis.md`
+  (re-probed 2026-11-23).
