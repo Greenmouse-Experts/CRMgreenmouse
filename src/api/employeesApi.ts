@@ -426,6 +426,32 @@ export const useRemoveEmployee = () => {
   });
 };
 
+/** Links an employee account to a staff account (the people-directory staff). */
+export const useLinkStaffAccount = () => {
+  const invalidate = useInvalidateEmployees();
+  return useMutation({
+    mutationFn: async ({
+      employeeId,
+      staffId,
+    }: {
+      employeeId: string;
+      staffId: string;
+    }) => {
+      try {
+        const { data } = await apiClient.patch<any>(
+          `/employees/${employeeId}/staff-account`,
+          { staffId },
+          authConfig(),
+        );
+        return unwrapOne<EmployeeRecord>(data);
+      } catch (error) {
+        throw extractError(error);
+      }
+    },
+    onSuccess: invalidate,
+  });
+};
+
 export const useUpdateCompensation = () => {
   const invalidate = useInvalidateEmployees();
   return useMutation({

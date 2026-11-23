@@ -1,12 +1,17 @@
 import { useState } from "react";
-import { useNavigate } from "@tanstack/react-router";
+import { toast } from "sonner";
 import type { Employee } from "./types";
 import EmployeeAvatar from "./EmployeeAvatar";
 import EmployeeStatusBadge from "./EmployeeStatusBadge";
 import LinkToStaffModal from "./LinkToStaffModal";
 import CustomTable, { type columnType } from "@/components/tables/CustomTable";
 import type { Actions } from "@/components/tables/pop-up";
-import { useStaffs, type StaffOption } from "@/api/employeesApi";
+import {
+  useLinkStaffAccount,
+  useStaffs,
+  type StaffOption,
+} from "@/api/employeesApi";
+import { extract_message } from "@/helpers/auth";
 
 interface EmployeeTableViewProps {
   employees: Employee[];
@@ -19,9 +24,12 @@ export default function EmployeeTableView({
   onSelectEmployee,
   onDeleteEmployee,
 }: EmployeeTableViewProps) {
-  const navigate = useNavigate();
   const staffsQuery = useStaffs();
+  const linkStaffAccount = useLinkStaffAccount();
   const [isLinkStaffOpen, setIsLinkStaffOpen] = useState(false);
+  const [linkStaffEmployeeId, setLinkStaffEmployeeId] = useState<string | null>(
+    null,
+  );
 
   if (employees.length === 0) {
     return null;
@@ -29,9 +37,17 @@ export default function EmployeeTableView({
 
   const removeEmployee = onDeleteEmployee;
 
-  const handleAcceptLinkStaff = (staff: StaffOption) => {
-    setIsLinkStaffOpen(false);
-    navigate({ to: "/hr/staffs/$id", params: { id: staff.id } });
+  const handleAcceptLinkStaff = async (staff: StaffOption) => {
+    const employeeId = linkStaffEmployeeId;
+    if (!employeeId) return;
+    try {
+      await linkStaffAccount.mutateAsync({ employeeId, staffId: staff.id });
+      setIsLinkStaffOpen(false);
+      setLinkStaffEmployeeId(null);
+      toast.success("Employee linked to staff account.");
+    } catch (error) {
+      toast.error(extract_message(error as never));
+    }
   };
 
   const actions: Actions<Employee>[] = [
@@ -56,7 +72,8 @@ export default function EmployeeTableView({
     {
       key: "linkStaff",
       label: "Link to staff",
-      action: () => {
+      action: (emp) => {
+        setLinkStaffEmployeeId(emp.id);
         setIsLinkStaffOpen(true);
       },
     },
@@ -158,7 +175,10 @@ export default function EmployeeTableView({
         isOpen={isLinkStaffOpen}
         staffs={staffsQuery.data ?? []}
         isLoading={staffsQuery.isLoading}
-        onClose={() => setIsLinkStaffOpen(false)}
+        onClose={() => {
+          setIsLinkStaffOpen(false);
+          setLinkStaffEmployeeId(null);
+        }}
         onAccept={handleAcceptLinkStaff}
       />
     </>
