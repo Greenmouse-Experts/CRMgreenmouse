@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useForm, Controller, FormProvider } from "react-hook-form";
 import { toast } from "sonner";
@@ -27,6 +27,7 @@ import SimplePhoneInput from "@/components/inputs/SimplePhoneInput";
 import LocalSelect from "@/components/inputs/LocalSelect";
 import SimpleTextArea from "@/components/inputs/SimpleTextArea";
 import DocUploader from "@/components/documents/DocUploader";
+import { useDocumentUploads } from "@/hooks/useDocumentUploads";
 import EmployeeAvatar from "./-components/EmployeeAvatar";
 import EmployeeStatusBadge from "./-components/EmployeeStatusBadge";
 import { formatSalary } from "./-components/employeeData";
@@ -207,9 +208,8 @@ function StaffDetailPage() {
     isNew || search.mode === "edit" ? "edit" : "view",
   );
   const [currentStep, setCurrentStep] = useState(0);
-  const [uploadedDocs, setUploadedDocs] = useState<
-    Record<string, { name: string; size: string }>
-  >({});
+  const docUploads = useDocumentUploads();
+  const seededDocsFor = useRef<string | null>(null);
   const [onLeaveLocal, setOnLeaveLocal] = useState<boolean | null>(null);
 
   const employeeQuery = useEmployee(isNew ? undefined : id);
@@ -276,6 +276,12 @@ function StaffDetailPage() {
   useEffect(() => {
     if (employeeQuery.data && !isNew) {
       const emp = employeeQuery.data;
+
+      // Seed previously uploaded documents once per employee record.
+      if (seededDocsFor.current !== id) {
+        seededDocsFor.current = id;
+        docUploads.seed(emp.documents);
+      }
 
       const deptName =
         typeof emp.department === "object"
@@ -345,7 +351,7 @@ function StaffDetailPage() {
         bankAccountNumber: emp.bankAccountNumber ?? "",
       });
     }
-  }, [employeeQuery.data, isNew, reset]);
+  }, [employeeQuery.data, isNew, reset, id, docUploads.seed]);
 
   const departmentsList =
     organizationQuery.data?.departments &&
@@ -396,26 +402,29 @@ function StaffDetailPage() {
   };
 
   const handleFileUpload = (key: string, file: File) => {
-    const sizeMb = (file.size / (1024 * 1024)).toFixed(2);
-    setUploadedDocs((prev) => ({
-      ...prev,
-      [key]: {
-        name: file.name,
-        size: `${sizeMb} MB`,
-      },
-    }));
-    toast.success(`Attached: ${file.name}`);
-  };
-
-  const handleRemoveDoc = (key: string) => {
-    setUploadedDocs((prev) => {
-      const copy = { ...prev };
-      delete copy[key];
-      return copy;
+    toast.promise(docUploads.upload(key, file), {
+      loading: `Uploading ${file.name}...`,
+      success: `Uploaded: ${file.name}`,
+      error: (error) => extract_message(error as never),
     });
   };
 
+  const handleRemoveDoc = (key: string) => {
+    docUploads.remove(key);
+  };
+
   const onSubmit = async (values: EmployeeFormData) => {
+    if (docUploads.isUploading) {
+      toast.error("Please wait for the document uploads to finish.");
+      return;
+    }
+    if (docUploads.hasErrors) {
+      toast.error(
+        "Some documents failed to upload. Retry or remove them before saving.",
+      );
+      return;
+    }
+
     try {
       const selectedDept = departmentsList.find(
         (d) => d.id === values.departmentId || d.name === values.department,
@@ -472,6 +481,9 @@ function StaffDetailPage() {
         payFrequency: values.payFrequency || undefined,
         bankName: values.bankName?.trim() || undefined,
         bankAccountNumber: values.bankAccountNumber?.trim() || undefined,
+        documents: docUploads.documents.length
+          ? docUploads.documents
+          : undefined,
       };
 
       if (isNew) {
@@ -1496,9 +1508,26 @@ function StaffDetailPage() {
                         </div>
                       </div>
                       <DocUploader
-                        doc={uploadedDocs[doc.key]}
+                        doc={
+                          docUploads.entries[doc.key]
+                            ? {
+                                name: docUploads.entries[doc.key].fileName,
+                                size:
+                                  docUploads.entries[doc.key].status ===
+                                  "uploading"
+                                    ? "Uploading…"
+                                    : docUploads.entries[doc.key].status ===
+                                        "error"
+                                      ? "Upload failed — choose the file again"
+                                      : docUploads.entries[doc.key].size,
+                              }
+                            : undefined
+                        }
                         onNewFile={(file) => handleFileUpload(doc.key, file)}
                         onRemoveDoc={() => handleRemoveDoc(doc.key)}
+                        disabled={
+                          docUploads.entries[doc.key]?.status === "uploading"
+                        }
                       />
                     </div>
                   ))}
@@ -1760,8 +1789,7 @@ function StaffDetailPage() {
                           Attached Files:
                         </span>{" "}
                         <span className="font-semibold text-emerald-600">
-                          {Object.keys(uploadedDocs).length} document(s)
-                          uploaded
+                          {docUploads.documents.length} document(s) uploaded
                         </span>
                       </p>
                     </div>
