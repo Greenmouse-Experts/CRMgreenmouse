@@ -239,6 +239,10 @@ UI coverage of the endpoints:
 
 - Task reassignment: per-row reassign button on the checklist opens
   `ReassignTaskModal` (employee UUID select) → `useReassignOnboardingTask`.
+- Task creation: the checklist header's **Add Task** button opens
+  `AddTaskModal` → `useCreateTask()` (`src/api/tasksApi.ts`,
+  `POST /v1/tasks`) with `assignedTo` set to the onboarding employee;
+  success refetches `useOnboardingTasks`.
 - Probation decisions: "Confirm Permanent" sends `decision: "confirm"`;
   "Extend" opens `ExtendProbationModal` and sends
   `{ decision: "extend", newEndDate, reason }` per the Postman contract.
@@ -250,8 +254,10 @@ UI coverage of the endpoints:
 
 Notes:
 
-- There is no endpoint to create or delete individual onboarding tasks, so the
-  page only toggles tasks returned by the API.
+- There is no endpoint to create or delete individual onboarding tasks; the
+  checklist's **Add Task** button instead creates a generic task via
+  `POST /v1/tasks` (`useCreateTask`) with `assignedTo` = the onboarding
+  employee, then refetches the onboarding tasks.
 - Probation decisions are `confirm` / `extend`; `newEndDate` is required by the
   backend when extending.
 - Every hook invalidates the `["onboarding"]` query root.

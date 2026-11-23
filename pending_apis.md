@@ -61,7 +61,10 @@ collection.
 3. Locations / grades — no list endpoints to populate those fields.
 4. `POST /v1/employees/:id/probation/reviews` — only list and complete exist.
 5. `POST` onboarding task creation — start/tasks/complete/assignment exist, but
-   tasks cannot be added individually.
+   tasks cannot be added individually. (The frontend's **Add Task** button on
+   `/hr/onboarding/:id` creates tasks via the generic **`POST /v1/tasks`**
+   endpoint — `useCreateTask` — with `assignedTo` set to the onboarding
+   employee. Sample request: `{"title": "...", "assignedTo": "<uuid>"}`.)
 6. Bank details / documents — nothing exposed for payroll or compliance.
 7. `POST /v1/employees/import` — imports exist for companies, contacts,
    products, services and leads, but not employees.

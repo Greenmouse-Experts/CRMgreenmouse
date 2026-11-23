@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import PageLoader from "@/components/layout/PageLoader";
 import QueryCompLayout from "@/components/layout/QueryCompLayout";
+import AddTaskModal from "./-components/AddTaskModal";
 import OnboardingChecklist from "./-components/OnboardingChecklist";
 import ProbationTracker from "./-components/ProbationTracker";
 import ProbationReviewsCard from "./-components/ProbationReviewsCard";
@@ -51,6 +52,7 @@ function OnboardingDetailPage() {
   const decideProbationMutation = useDecideProbation();
 
   const [reassignTask, setReassignTask] = useState<ChecklistItem | null>(null);
+  const [isAddTaskOpen, setIsAddTaskOpen] = useState(false);
   const [isExtendOpen, setIsExtendOpen] = useState(false);
   const [completeReview, setCompleteReview] = useState<ProbationReview | null>(
     null,
@@ -273,6 +275,7 @@ function OnboardingDetailPage() {
                 checklist={checklist}
                 onToggleItem={handleToggleItem}
                 onReassign={setReassignTask}
+                onAddTask={() => setIsAddTaskOpen(true)}
               />
             </QueryCompLayout>
 
@@ -310,6 +313,14 @@ function OnboardingDetailPage() {
         task={reassignTask}
         employees={employeesQuery.data ?? []}
         onReassign={handleReassign}
+      />
+
+      <AddTaskModal
+        isOpen={isAddTaskOpen}
+        onClose={() => setIsAddTaskOpen(false)}
+        employeeId={employeeId}
+        employeeName={hire?.name}
+        onTaskCreated={() => void tasksQuery.refetch()}
       />
 
       <ExtendProbationModal

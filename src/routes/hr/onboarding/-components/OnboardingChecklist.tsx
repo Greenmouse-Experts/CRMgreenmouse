@@ -1,12 +1,14 @@
 import { useState } from "react";
 import type { ChecklistItem, DepartmentTag, OnboardingHire } from "./types";
-import { ArrowRightLeft, Check } from "lucide-react";
+import { ArrowRightLeft, Check, Plus } from "lucide-react";
 
 interface OnboardingChecklistProps {
   hire: OnboardingHire;
   checklist: ChecklistItem[];
   onToggleItem: (itemId: string) => void;
   onReassign?: (item: ChecklistItem) => void;
+  /** Absent on the overview page (no open employee to assign tasks to). */
+  onAddTask?: () => void;
 }
 
 const DEPARTMENTS: DepartmentTag[] = ["HR", "IT", "Manager", "Payroll"];
@@ -16,6 +18,7 @@ export default function OnboardingChecklist({
   checklist,
   onToggleItem,
   onReassign,
+  onAddTask,
 }: OnboardingChecklistProps) {
   const [filterDept, setFilterDept] = useState<string>("All");
 
@@ -59,18 +62,31 @@ export default function OnboardingChecklist({
           </p>
         </div>
 
-        <select
-          value={filterDept}
-          onChange={(e) => setFilterDept(e.target.value)}
-          className="select select-xs bg-base-200/80 border-base-300 rounded-lg "
-        >
-          <option value="All">All Departments</option>
-          {DEPARTMENTS.map((dept) => (
-            <option key={dept} value={dept}>
-              {dept}
-            </option>
-          ))}
-        </select>
+        <div className="flex items-center gap-2">
+          {onAddTask && (
+            <button
+              type="button"
+              onClick={onAddTask}
+              className="btn btn-sm btn-ghost rounded-lg gap-1 text-base-content/70 hover:text-primary self-start"
+            >
+              <Plus className="size-3.5" />
+              <span>Add Task</span>
+            </button>
+          )}
+
+          <select
+            value={filterDept}
+            onChange={(e) => setFilterDept(e.target.value)}
+            className="select select-xs bg-base-200/80 border-base-300 rounded-lg "
+          >
+            <option value="All">All Departments</option>
+            {DEPARTMENTS.map((dept) => (
+              <option key={dept} value={dept}>
+                {dept}
+              </option>
+            ))}
+          </select>
+        </div>
       </div>
 
       <ul className="divide-y divide-base-200">
