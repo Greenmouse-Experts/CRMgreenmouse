@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { createFileRoute, Outlet } from "@tanstack/react-router";
 import {
   LayoutDashboard,
@@ -227,6 +228,7 @@ export const Route = createFileRoute("/admin")({
 
 function RouteComponent() {
   const url = useLocation();
+  const [openMenu, setOpenMenu] = useState<string | null>(null);
 
   return (
     <div className="drawer lg:drawer-open">
@@ -254,7 +256,16 @@ function RouteComponent() {
                 // Submenus closed by default
                 return (
                   <li key={link.path} className="mb-2">
-                    <details>
+                    <details
+                      open={openMenu === link.path}
+                      onToggle={(e) => {
+                        if (e.currentTarget.open) setOpenMenu(link.path);
+                        else
+                          setOpenMenu((current) =>
+                            current === link.path ? null : current,
+                          );
+                      }}
+                    >
                       <summary className="text-sm  ">
                         {link.icon}
                         {link.label}

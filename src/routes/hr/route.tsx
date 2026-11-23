@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
 import {
   BarChart3,
@@ -206,6 +207,7 @@ export const Route = createFileRoute("/hr")({
 function RouteComponent() {
   const url = useLocation();
   const pathname = url.pathname.replace(/\/$/, "") || "/";
+  const [openMenu, setOpenMenu] = useState<string | null>(null);
   const activeLinkPath = nav_links
     .flatMap((link) => link.children?.map((child) => child.path) ?? [link.path])
     .filter(
@@ -251,7 +253,16 @@ function RouteComponent() {
                 // Submenus closed by default
                 return (
                   <li key={link.path} className="mb-2">
-                    <details>
+                    <details
+                      open={openMenu === link.path}
+                      onToggle={(e) => {
+                        if (e.currentTarget.open) setOpenMenu(link.path);
+                        else
+                          setOpenMenu((current) =>
+                            current === link.path ? null : current,
+                          );
+                      }}
+                    >
                       <summary className="text-md">
                         {link.icon}
                         {link.label}
