@@ -43,7 +43,7 @@ export default function Hero() {
           <img
             src="/homepage/new_hero_img.png"
             alt="KINOVIA CRM tenant dashboard preview"
-            className="w-full h-auto mask-b-from-1%"
+            className="w-full h-auto mask-b-from-5%"
             loading="eager"
           />
         </div>
