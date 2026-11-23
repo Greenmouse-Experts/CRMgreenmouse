@@ -2,11 +2,9 @@
 import { render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { useDashboardStats } from "@/api/tenantApi";
-import { useInvoiceRevenueReport } from "@/api/reportsApi";
 import TenantDashStats from "./TenantDashStats";
 
 vi.mock("@/api/tenantApi", () => ({ useDashboardStats: vi.fn() }));
-vi.mock("@/api/reportsApi", () => ({ useInvoiceRevenueReport: vi.fn() }));
 vi.mock("@/components/layout/QueryCompLayout", () => ({
   default: ({
     query,
@@ -25,7 +23,7 @@ vi.mock("@tanstack/react-router", () => ({
 afterEach(() => vi.clearAllMocks());
 
 describe("tenant dashboard stats", () => {
-  it("shows totals and percentage changes from dashboard stats while keeping debts separate", () => {
+  it("shows totals, month-over-month changes and the all-time customer count", () => {
     vi.mocked(useDashboardStats).mockReturnValue({
       data: {
         totalStaffs: 0,
@@ -43,17 +41,18 @@ describe("tenant dashboard stats", () => {
       isLoading: false,
       isError: false,
     } as ReturnType<typeof useDashboardStats>);
-    vi.mocked(useInvoiceRevenueReport).mockReturnValue({
-      data: { outstandingTotal: 125 },
-      isLoading: false,
-    } as ReturnType<typeof useInvoiceRevenueReport>);
 
     render(<TenantDashStats />);
 
+    // Income and expenses both render ₦0.
     expect(screen.getAllByText("₦0")).toHaveLength(2);
-    expect(screen.getAllByText("0% change")).toHaveLength(2);
-    expect(screen.getByText("+12.5% change")).toBeTruthy();
-    expect(screen.getByText("-100% change")).toBeTruthy();
-    expect(screen.getByText("₦125")).toBeTruthy();
+    // Zero changes render as 0% (income + invoices); expenses show 12.5%.
+    expect(screen.getAllByText("0%")).toHaveLength(2);
+    expect(screen.getByText("12.5%")).toBeTruthy();
+    // Three cards compare against the previous month.
+    expect(screen.getAllByText(/^vs /)).toHaveLength(3);
+    // Customers card shows the all-time count instead of a change.
+    expect(screen.getByText("All time")).toBeTruthy();
+    expect(screen.getByText("1")).toBeTruthy();
   });
 });
