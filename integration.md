@@ -160,7 +160,7 @@ invalidate the `["organization"]` query root:
 | `useCreateDepartment()` | `POST /v1/employees/organization/departments` — `{ code, name, status }` (status lowercase `active`/`inactive`) |
 | `useUpdateDepartment()` | `PATCH /v1/employees/organization/departments/:id` — `{ status }` (lowercase)                                   |
 | `useDeleteDepartment()` | `PATCH /v1/employees/organization/departments/:id` (`{ status: "inactive" }` — no DELETE route)                 |
-| `useCreatePosition()`   | `POST /v1/employees/organization/positions` — `{ title, dept, grade, approved, filled }` (unverified)           |
+| `useCreatePosition()`   | `POST /v1/employees/organization/positions` — `{ title, departmentId, approvedHeadcount?, status? }` (verified)     |
 | `useUpdatePosition()`   | `PATCH /v1/employees/organization/positions/:id`                                                                |
 
 Notes:
@@ -271,9 +271,6 @@ return 200/201 or proper 400/404 validation responses.
   `notice_period`, `suspended`, `exited`. `useRemoveEmployee` sends
   `inactive` (400), and the staff form offers `probation` / `notice` /
   `inactive` options that the backend rejects.
-- **Position create payload**: backend requires `title` (≤ 160) +
-  `departmentId` (UUID); the organization page's
-  `{ title, dept, grade, approved, filled }` shape is wrong.
 - **No pagination**: `GET /v1/employees` rejects `page` / `limit`; `search`
   is accepted but unverified against named records.
 - Missing endpoints (employee delete, task creation, probation review
@@ -317,9 +314,10 @@ return 200/201 or proper 400/404 validation responses.
   - Create-department contract (verified via live 400): `{ code, name, status }`,
     lowercase `active`/`inactive`; rejects `id`, `head`, `count`, `parent`,
     `location`. The frontend matches.
-  - Create-position contract (verified 2026-11-23): `title` (≤ 160) +
-    `departmentId` (UUID) required. The frontend's
-    `{ title, dept, grade, approved, filled }` shape needs updating.
+  - Create-position contract (verified 2026-11-23, now wired): `title` (≤ 160)
+    + `departmentId` (existing UUID) required; `approvedHeadcount` (≥ 0) and
+    `status` (`active`/`inactive`) optional. `grade`, `dept`, `approved`,
+    `filled`, `openings`, `description` are rejected by the validator.
   - There are no DELETE routes for departments/positions, so the frontend
     marks inactive (see the Organization integration).
 - **Probing credentials**: the `auth_cred.ts` refresh token expires

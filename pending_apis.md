@@ -46,7 +46,7 @@ Empty `{}` examples hide requirements the live API enforces (verified via
 | `PATCH /v1/employees/onboarding/tasks/:taskId/assignment` | `assignedTo` must be a UUID |
 | `POST /v1/employees/:id/probation/decision` | `decision` must be `confirm` or `extend` (Postman sample also shows `newEndDate`, `reason`) |
 | `POST /v1/employees/organization/departments` | `name` (string ≤ 120), `code` (string ≤ 30); lowercase `active`/`inactive` status |
-| `POST /v1/employees/organization/positions` | `title` (string ≤ 160), `departmentId` (UUID) |
+| `POST /v1/employees/organization/positions` | `title` (string ≤ 160), `departmentId` (existing UUID); optional `approvedHeadcount` (≥ 0), `status` (`active`/`inactive`), `gradeId` (UUID). Rejects `grade`, `dept`, `approved`, `filled`, `openings`, `description` |
 | `PATCH /v1/employees/:id` | `employmentStatus` enum — see section 5 |
 | `POST /v1/recruitment/vacancies` (reference) | `jobTitle`, `departmentId`, `openings`, `employmentType`, `reasonForHire`, `jobDescription`, `closingDate`, `hiringManagerId`, `approverId` |
 
@@ -161,7 +161,7 @@ Also wired elsewhere:
 | `GET` | `/v1/employees/organization` | **Working** — `200` `{ departments: [], positions: [] }` | — |
 | `POST` | `/v1/employees/organization/departments` | Working route; `400` unless payload matches | `name` (≤ 120), `code` (≤ 30), lowercase `active`/`inactive` status; rejects `id`, `head`, `count`, `parent`, `location` |
 | `PATCH` | `/v1/employees/organization/departments/:id` | Route exists | Status updates — lowercase `active`/`inactive` |
-| `POST` | `/v1/employees/organization/positions` | Working route; `400` unless payload matches | **Verified:** `title` (≤ 160) + `departmentId` (UUID) required — the frontend's `{ title, dept, grade, approved, filled }` shape is wrong |
+| `POST` | `/v1/employees/organization/positions` | Working route; `400` unless payload matches | **Verified:** `title` (≤ 160) + `departmentId` (existing UUID) required; optional `approvedHeadcount` (≥ 0), `status` (`active`/`inactive`), `gradeId` (UUID). Frontend now sends this shape |
 | `PATCH` | `/v1/employees/organization/positions/:id` | Route exists | Fields unverified |
 | `DELETE` | `/v1/employees/organization/departments/:id` / `/positions/:id` | **Missing** (404) | Frontend marks inactive instead |
 
@@ -170,8 +170,7 @@ Also wired elsewhere:
 1. Fill in real request/response examples for the `/v1/employees` family in
    the Postman collection (shapes in section 1 are a starting point).
 2. Add the missing endpoints from section 3 or document intended replacements.
-3. Fix the client status enum mismatch (section 5) and the position-create
-   payload (section 8).
+3. Fix the client status enum mismatch (section 5).
 4. Confirm the `/v1/employees` ↔ `/v1/staffs` relationship.
 5. Re-verify position PATCH fields and the probation `extend` payload
    (`newEndDate` required?) with a complete employee record.

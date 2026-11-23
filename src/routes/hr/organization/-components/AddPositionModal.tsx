@@ -3,31 +3,28 @@ import { FormProvider, useForm, type SubmitHandler } from "react-hook-form";
 import Modal, { type ModalHandle } from "@/components/DialogModal";
 import SimpleInput from "@/components/inputs/SimpleInput";
 import LocalSelect from "@/components/inputs/LocalSelect";
-import { GRADE_OPTIONS } from "./organizationData";
-import type { Department, Position } from "./types";
-import { toast } from "sonner";
+import type { Department } from "./types";
+import type { CreatePositionPayload } from "@/api/organizationApi";
 import { Send } from "lucide-react";
 
 interface AddPositionFormValues {
   title: string;
-  dept: string;
-  grade: string;
-  approved: string;
-  filled: string;
+  departmentId: string;
+  approvedHeadcount: string;
+  status: "active" | "inactive";
 }
 
 const emptyForm = (departments: Department[]): AddPositionFormValues => ({
   title: "",
-  dept: departments[0]?.name || "Engineering",
-  grade: "G3",
-  approved: "5",
-  filled: "0",
+  departmentId: departments[0]?.id ?? "",
+  approvedHeadcount: "1",
+  status: "active",
 });
 
 interface AddPositionModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onAddPosition: (newPos: Position) => void;
+  onAddPosition: (payload: CreatePositionPayload) => void;
   departments: Department[];
 }
 
@@ -50,23 +47,16 @@ export default function AddPositionModal({
     } else {
       modalRef.current?.close();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen]);
 
   const onSubmit: SubmitHandler<AddPositionFormValues> = (values) => {
-    const newPos: Position = {
-      id: `POS-${Date.now()}`,
+    onAddPosition({
       title: values.title.trim(),
-      dept: values.dept,
-      grade: values.grade,
-      approved: Number(values.approved) || 1,
-      filled: Number(values.filled) || 0,
-    };
-
-    onAddPosition(newPos);
-    toast.success("Position created", {
-      description: `${newPos.title} (${newPos.grade}) added to ${newPos.dept}.`,
+      departmentId: values.departmentId,
+      approvedHeadcount: Number(values.approvedHeadcount) || 0,
+      status: values.status,
     });
-
     methods.reset(emptyForm(departments));
     onClose();
   };
@@ -80,32 +70,46 @@ export default function AddPositionModal({
     >
       <FormProvider {...methods}>
         <form onSubmit={methods.handleSubmit(onSubmit)} className="space-y-4">
-          <p className=" text-base-content/80 -mt-1 mb-3">
-            Define a standardized role, department, pay grade, and target
-            approved headcount.
+          <p className="text-base-content/80 -mt-1 mb-3">
+            Define a role within a department and its approved headcount.
           </p>
 
+          {departments.length === 0 && (
+            <p className="rounded-xl bg-warning/10 border border-warning/30 px-4 py-3 text-sm text-base-content/80">
+              No departments exist yet. Create a department first — positions
+              must be attached to one.
+            </p>
+          )}
+
           <div>
-            <label className=" font-semibold text-base-content/80 mb-1 block">
+            <label className="font-semibold text-base-content/80 mb-1 block">
               Position title <span className="text-error">*</span>
             </label>
             <SimpleInput
               placeholder="e.g. Senior Product Designer"
-              required
               {...methods.register("title", {
                 required: "Please provide a position title",
+                maxLength: {
+                  value: 160,
+                  message: "Title must be 160 characters or fewer",
+                },
               })}
             />
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className=" font-semibold text-base-content/80 mb-1 block">
-                Department
+              <label className="font-semibold text-base-content/80 mb-1 block">
+                Department <span className="text-error">*</span>
               </label>
-              <LocalSelect {...methods.register("dept")}>
+              <LocalSelect
+                {...methods.register("departmentId", {
+                  required: "Please select a department",
+                })}
+              >
+                <option value="">Select department</option>
                 {departments.map((d) => (
-                  <option key={d.id} value={d.name}>
+                  <option key={d.id} value={d.id}>
                     {d.name}
                   </option>
                 ))}
@@ -113,45 +117,28 @@ export default function AddPositionModal({
             </div>
 
             <div>
-              <label className=" font-semibold text-base-content/80 mb-1 block">
-                Job grade
+              <label className="font-semibold text-base-content/80 mb-1 block">
+                Status
               </label>
-              <LocalSelect {...methods.register("grade")}>
-                {GRADE_OPTIONS.map((g) => (
-                  <option key={g} value={g}>
-                    {g}
-                  </option>
-                ))}
+              <LocalSelect {...methods.register("status")}>
+                <option value="active">Active</option>
+                <option value="inactive">Inactive</option>
               </LocalSelect>
             </div>
 
             <div>
-              <label className=" font-semibold text-base-content/80 mb-1 block">
+              <label className="font-semibold text-base-content/80 mb-1 block">
                 Approved headcount
               </label>
               <input
                 type="number"
-                min="1"
-                required
-                {...methods.register("approved", {
-                  required: "Please provide the approved headcount",
+                min="0"
+                {...methods.register("approvedHeadcount", {
                   valueAsNumber: true,
                   validate: (v) =>
-                    Number(v) >= 1 || "Approved headcount must be at least 1",
+                    Number(v) >= 0 || "Headcount cannot be negative",
                 })}
-                className="input input-bordered w-full  rounded-xl bg-base-200/80"
-              />
-            </div>
-
-            <div>
-              <label className=" font-semibold text-base-content/80 mb-1 block">
-                Currently filled
-              </label>
-              <input
-                type="number"
-                min="0"
-                {...methods.register("filled", { valueAsNumber: true })}
-                className="input input-bordered w-full  rounded-xl bg-base-200/80"
+                className="input input-bordered w-full rounded-xl bg-base-200/80"
               />
             </div>
           </div>
@@ -167,7 +154,9 @@ export default function AddPositionModal({
 
             <button
               type="submit"
-              disabled={methods.formState.isSubmitting}
+              disabled={
+                methods.formState.isSubmitting || departments.length === 0
+              }
               className="btn btn-sm bg-primary text-white hover:bg-primary/90 rounded-xl px-5 gap-1.5 shadow-sm shadow-primary/20"
             >
               <Send className="size-3.5" />

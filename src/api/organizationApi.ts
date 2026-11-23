@@ -13,6 +13,12 @@ export interface CreateDepartmentPayload {
   code: string;
   name: string;
   status: "active" | "inactive";
+  headEmployeeId?: string;
+  parentDepartmentId?: string;
+  costCentre?: string;
+  primaryLocation?: string;
+  approvedHeadcount?: number;
+  description?: string;
 }
 
 export interface UpdateDepartmentPayload {
@@ -21,12 +27,19 @@ export interface UpdateDepartmentPayload {
   name?: string;
 }
 
+/**
+ * Verified against the live backend (2026-11-23):
+ * - `title` (string ≤ 160) and `departmentId` (existing UUID) are required.
+ * - `approvedHeadcount` (number ≥ 0) and `status` (active/inactive) optional.
+ * - `gradeId` (UUID) is accepted but there is no grades list endpoint yet.
+ * - `grade`, `dept`, `approved`, `filled`, `openings`, `description` are
+ *   rejected by the whitelist validator.
+ */
 export interface CreatePositionPayload {
   title: string;
-  dept: string;
-  grade: string;
-  approved: number;
-  filled: number;
+  departmentId: string;
+  approvedHeadcount?: number;
+  status?: "active" | "inactive";
 }
 
 export type UpdatePositionPayload = Partial<CreatePositionPayload>;
@@ -83,11 +96,20 @@ export function toUiDepartment(raw: any): Department {
 }
 
 export function toUiPosition(raw: any): Position {
+  const deptName =
+    (typeof raw?.department === "object"
+      ? raw?.department?.name
+      : raw?.department) ??
+    raw?.departmentName ??
+    raw?.dept ??
+    "General";
+
   return {
     ...raw,
     id: raw?.id ?? "",
     title: raw?.title ?? raw?.jobTitle ?? raw?.name ?? "Untitled Position",
-    dept: raw?.dept ?? raw?.department ?? raw?.departmentName ?? "General",
+    departmentId: raw?.departmentId ?? raw?.department?.id ?? undefined,
+    dept: deptName,
     grade: raw?.grade ?? raw?.jobGrade ?? "—",
     approved: Number(
       raw?.approved ?? raw?.approvedHeadcount ?? raw?.openings ?? 1,

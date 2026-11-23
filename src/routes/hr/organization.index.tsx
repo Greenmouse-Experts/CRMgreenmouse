@@ -7,6 +7,8 @@ import {
   useDeleteDepartment,
   useOrganization,
   useUpdateDepartment,
+  type CreateDepartmentPayload,
+  type CreatePositionPayload,
 } from "@/api/organizationApi";
 import OrganizationStats from "./organization/-components/OrganizationStats";
 import OrgHierarchy from "./organization/-components/OrgHierarchy";
@@ -14,12 +16,13 @@ import DepartmentsTable from "./organization/-components/DepartmentsTable";
 import PositionsTable from "./organization/-components/PositionsTable";
 import AddDepartmentModal from "./organization/-components/AddDepartmentModal";
 import AddPositionModal from "./organization/-components/AddPositionModal";
+import EditDepartmentModal from "./organization/-components/EditDepartmentModal";
 import { INITIAL_LEADER } from "./organization/-components/organizationData";
 import type {
   Department,
   DepartmentStatus,
-  Position,
 } from "./organization/-components/types";
+import { extract_message } from "@/helpers/auth";
 import { Plus } from "lucide-react";
 import { toast } from "sonner";
 
@@ -36,6 +39,8 @@ function RouteComponent() {
   // Modals state
   const [isAddDeptModalOpen, setIsAddDeptModalOpen] = useState(false);
   const [isAddPosModalOpen, setIsAddPosModalOpen] = useState(false);
+  const [isEditDeptModalOpen, setIsEditDeptModalOpen] = useState(false);
+  const [editDept, setEditDept] = useState<Department | null>(null);
 
   // Organization mutations
   const createDepartment = useCreateDepartment();
@@ -44,15 +49,14 @@ function RouteComponent() {
   const createPosition = useCreatePosition();
 
   // Department handlers
-  const handleAddDepartment = (newDept: Department) => {
-    createDepartment.mutate(
-      {
-        code: newDept.code,
-        name: newDept.name,
-        status: newDept.status.toLowerCase() as "active" | "inactive",
-      },
-      { onError: () => toast.error("Failed to create department") },
-    );
+  const handleAddDepartment = async (payload: CreateDepartmentPayload) => {
+    const promise = createDepartment.mutateAsync(payload);
+    toast.promise(promise, {
+      loading: "Creating department...",
+      success: "Department created",
+      error: (error) => extract_message(error as never),
+    });
+    return promise.then(() => true).catch(() => false);
   };
 
   const handleUpdateDeptStatus = (deptId: string, status: DepartmentStatus) => {
@@ -68,18 +72,30 @@ function RouteComponent() {
     });
   };
 
-  // Position handlers
-  const handleAddPosition = (newPos: Position) => {
-    createPosition.mutate(
+  const handleEditDepartment = (updated: {
+    id: string;
+    name: string;
+    code: string;
+    status: string;
+  }) => {
+    updateDepartment.mutate(
       {
-        title: newPos.title,
-        dept: newPos.dept,
-        grade: newPos.grade,
-        approved: newPos.approved,
-        filled: newPos.filled,
+        id: updated.id,
+        name: updated.name,
+        code: updated.code,
+        status: updated.status.toLowerCase() as "active" | "inactive",
       },
-      { onError: () => toast.error("Failed to create position") },
+      { onError: () => toast.error("Failed to update department") },
     );
+  };
+
+  // Position handlers
+  const handleAddPosition = (payload: CreatePositionPayload) => {
+    toast.promise(createPosition.mutateAsync(payload), {
+      loading: "Creating position...",
+      success: "Position created",
+      error: (error) => extract_message(error as never),
+    });
   };
 
   return (
@@ -132,6 +148,10 @@ function RouteComponent() {
           }}
           onUpdateStatus={handleUpdateDeptStatus}
           onDeleteDepartment={handleDeleteDepartment}
+          onEditDepartment={(dept) => {
+            setEditDept(dept);
+            setIsEditDeptModalOpen(true);
+          }}
         />
 
         <PositionsTable
@@ -153,6 +173,13 @@ function RouteComponent() {
         onClose={() => setIsAddPosModalOpen(false)}
         onAddPosition={handleAddPosition}
         departments={departments}
+      />
+
+      <EditDepartmentModal
+        isOpen={isEditDeptModalOpen}
+        department={editDept}
+        onClose={() => setIsEditDeptModalOpen(false)}
+        onEditDepartment={handleEditDepartment}
       />
     </div>
   );

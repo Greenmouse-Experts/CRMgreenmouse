@@ -21,6 +21,7 @@ export interface Department {
 export interface Position {
   id: string;
   title: string;
+  departmentId?: string;
   dept: string;
   grade: string;
   approved: number;
