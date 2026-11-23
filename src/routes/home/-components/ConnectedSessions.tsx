@@ -165,7 +165,7 @@ export default function ConnectedSessions() {
   return (
     <section
       id="solutions"
-      className="py-12  bg-white overflow-hidden"
+      className="py-12  bg-white overflow-hidden border-t fade"
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
     >
