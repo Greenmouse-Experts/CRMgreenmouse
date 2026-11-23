@@ -71,18 +71,18 @@ export default function TenantDashStats() {
           //   to: "/staff/products/service",
           //   accent: "bg-info/10 text-info",
           // },
-          {
-            title: "Total Debts",
-            value: debtsQuery.isLoading
-              ? "…"
-              : debtsQuery.data
-                ? formatMoney(debtsQuery.data.outstandingTotal)
-                : "—",
-            linkLabel: "View Debts",
-            icon: Clock,
-            to: "/tenant/accounts/Invoices",
-            accent: "bg-warning/10 text-warning",
-          },
+          // {
+          //   title: "Total Debts",
+          //   value: debtsQuery.isLoading
+          //     ? "…"
+          //     : debtsQuery.data
+          //       ? formatMoney(debtsQuery.data.outstandingTotal)
+          //       : "—",
+          //   linkLabel: "View Debts",
+          //   icon: Clock,
+          //   to: "/tenant/accounts/Invoices",
+          //   accent: "bg-warning/10 text-warning",
+          // },
           {
             title: "Total Invoices",
             value: formatNumber(stats.totalInvoices),
@@ -103,7 +103,7 @@ export default function TenantDashStats() {
         ];
 
         return (
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-3 lg:grid-cols-5">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-3 lg:grid-cols-4">
             {cards.map((card) => {
               const Icon = card.icon;
               return (
