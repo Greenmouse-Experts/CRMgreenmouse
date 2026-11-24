@@ -90,11 +90,10 @@ export default function CreateTaskModal({
     const title = values.title?.trim();
     if (!title) return;
 
-    const payload = {
+    const basePayload = {
       title,
       description: values.description?.trim() || undefined,
       type: values.type || undefined,
-      status: values.status || undefined,
       priority: values.priority || undefined,
       dueAt: values.dueAt || undefined,
       assignedTo: values.assignedTo || undefined,
@@ -102,10 +101,13 @@ export default function CreateTaskModal({
 
     try {
       if (initialTask) {
-        await updateTask.mutateAsync({ id: initialTask.id, ...payload });
+        await updateTask.mutateAsync({ id: initialTask.id, ...basePayload });
         toast.success("Task updated");
       } else {
-        await createTask.mutateAsync(payload);
+        await createTask.mutateAsync({
+          ...basePayload,
+          status: values.status || undefined,
+        });
         toast.success("Task created");
       }
       reset(defaultValues);
@@ -178,7 +180,9 @@ export default function CreateTaskModal({
             />
           </div>
 
-          <div className="grid grid-cols-3 gap-3">
+          <div
+            className={`grid gap-3 ${isEditing ? "grid-cols-2" : "grid-cols-3"}`}
+          >
             <LocalSelect label="Type" {...register("type")}>
               {TYPE_OPTIONS.map((option) => (
                 <option key={option} value={option}>
@@ -186,13 +190,15 @@ export default function CreateTaskModal({
                 </option>
               ))}
             </LocalSelect>
-            <LocalSelect label="Status" {...register("status")}>
-              {STATUS_OPTIONS.map((option) => (
-                <option key={option} value={option}>
-                  {option}
-                </option>
-              ))}
-            </LocalSelect>
+            {!isEditing && (
+              <LocalSelect label="Status" {...register("status")}>
+                {STATUS_OPTIONS.map((option) => (
+                  <option key={option} value={option}>
+                    {option}
+                  </option>
+                ))}
+              </LocalSelect>
+            )}
             <LocalSelect label="Priority" {...register("priority")}>
               {PRIORITY_OPTIONS.map((option) => (
                 <option key={option} value={option}>
