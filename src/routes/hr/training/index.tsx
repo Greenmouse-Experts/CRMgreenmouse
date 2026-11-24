@@ -5,6 +5,10 @@ import PageLoader from "@/components/layout/PageLoader";
 import CourseCardsGrid from "./-components/CourseCardsGrid";
 import UpcomingSessionsTable from "./-components/UpcomingSessionsTable";
 import CreateCourseModal from "./-components/CreateCourseModal";
+import ScheduleSessionModal from "./-components/ScheduleSessionModal";
+import CourseDetailModal from "./-components/CourseDetailModal";
+import SessionDetailModal from "./-components/SessionDetailModal";
+import MyLearningSection from "./-components/MyLearningSection";
 import type { Course, TrainingSession } from "./-components/types";
 import {
   mapBackendCourseToUi,
@@ -23,7 +27,7 @@ import {
   type TrainingDashboardData,
 } from "@/api/trainingApi";
 import { extract_message } from "@/helpers/errors";
-import { Plus } from "lucide-react";
+import { CalendarPlus, Plus } from "lucide-react";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/hr/training/")({
@@ -32,6 +36,13 @@ export const Route = createFileRoute("/hr/training/")({
 
 function RouteComponent() {
   const [isCreateCourseOpen, setIsCreateCourseOpen] = useState(false);
+  const [isScheduleSessionOpen, setIsScheduleSessionOpen] = useState(false);
+  const [scheduleDefaultCourseId, setScheduleDefaultCourseId] = useState<
+    string | undefined
+  >(undefined);
+  const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
+  const [selectedSession, setSelectedSession] =
+    useState<TrainingSession | null>(null);
 
   const dashboardQuery = useTrainingDashboard();
 
@@ -75,76 +86,96 @@ function RouteComponent() {
     }
   };
 
-  const handlePublishCourse = (courseId: string) => {
-    toast.promise(publishCourseMutation.mutateAsync(courseId), {
-      loading: "Publishing course...",
-      success: "Course published successfully!",
-      error: (err) => extract_message(err),
-    });
+  const handleScheduleSession = async (
+    payload: CreateTrainingSessionPayload,
+  ) => {
+    try {
+      await createSessionMutation.mutateAsync(payload);
+      toast.success("Training session scheduled");
+    } catch (err) {
+      toast.error(extract_message(err));
+      throw err;
+    }
   };
 
-  const handleArchiveCourse = (courseId: string) => {
-    toast.promise(archiveCourseMutation.mutateAsync(courseId), {
-      loading: "Archiving course...",
-      success: "Course archived.",
-      error: (err) => extract_message(err),
-    });
+  const handlePublishCourse = async (courseId: string) => {
+    try {
+      await publishCourseMutation.mutateAsync(courseId);
+      toast.success("Course published successfully!");
+    } catch (err) {
+      toast.error(extract_message(err));
+    }
   };
 
-  const handleAdvanceSessionStatus = (
+  const handleArchiveCourse = async (courseId: string) => {
+    try {
+      await archiveCourseMutation.mutateAsync(courseId);
+      toast.success("Course archived.");
+    } catch (err) {
+      toast.error(extract_message(err));
+    }
+  };
+
+  const handleAdvanceSessionStatus = async (
     sessionId: string,
     status: "in_progress" | "completed",
   ) => {
-    const label =
-      status === "in_progress"
-        ? "Starting session..."
-        : "Completing session...";
-    toast.promise(advanceSessionMutation.mutateAsync({ sessionId, status }), {
-      loading: label,
-      success:
+    try {
+      await advanceSessionMutation.mutateAsync({ sessionId, status });
+      toast.success(
         status === "in_progress"
           ? "Session marked as In Progress."
           : "Session marked as Completed.",
-      error: (err) => extract_message(err),
-    });
+      );
+    } catch (err) {
+      toast.error(extract_message(err));
+    }
   };
 
-  const handleCancelSession = (sessionId: string, reason: string) => {
-    toast.promise(cancelSessionMutation.mutateAsync({ sessionId, reason }), {
-      loading: "Cancelling session...",
-      success: "Training session cancelled.",
-      error: (err) => extract_message(err),
-    });
+  const handleCancelSession = async (sessionId: string, reason: string) => {
+    try {
+      await cancelSessionMutation.mutateAsync({ sessionId, reason });
+      toast.success("Training session cancelled.");
+    } catch (err) {
+      toast.error(extract_message(err));
+    }
   };
 
-  const handleSelectCourse = (course: Course) => {
-    toast.info(`Course: ${course.title}`, {
-      description: `Category: ${course.category} · Enrolled: ${course.enrolled} staff · Completion: ${course.completionRate}%`,
-    });
-  };
-
-  const handleSelectSession = (session: TrainingSession) => {
-    toast.info(`Session: ${session.course}`, {
-      description: `Date: ${session.date} · Trainer: ${session.trainer} · Status: ${session.status}`,
-    });
-  };
+  const courses = (dashboardQuery.data?.courses ?? []).map(
+    mapBackendCourseToUi,
+  );
 
   return (
     <div className="space-y-6 pb-12">
-      {/* Page Header */}
       <PageHeader
         title="Training & Development"
         description="Course catalog, certifications and upcoming training sessions."
       >
-        <button
-          type="button"
-          onClick={() => setIsCreateCourseOpen(true)}
-          className="btn btn-sm bg-primary text-white hover:bg-primary/90 border-0 rounded-xl px-4 font-medium gap-1.5 shadow-sm shadow-primary/20"
-        >
-          <Plus className="size-4" />
-          <span>Create course</span>
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => {
+              setScheduleDefaultCourseId(courses[0]?.id);
+              setIsScheduleSessionOpen(true);
+            }}
+            disabled={courses.length === 0}
+            className="btn btn-sm btn-outline border-base-300 hover:bg-base-200 text-base-content rounded-xl px-4 font-medium gap-1.5"
+          >
+            <CalendarPlus className="size-4" />
+            <span>Schedule session</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => setIsCreateCourseOpen(true)}
+            className="btn btn-sm bg-primary text-white hover:bg-primary/90 border-0 rounded-xl px-4 font-medium gap-1.5 shadow-sm shadow-primary/20"
+          >
+            <Plus className="size-4" />
+            <span>Create course</span>
+          </button>
+        </div>
       </PageHeader>
+
+      <MyLearningSection />
 
       <PageLoader<TrainingDashboardData>
         query={dashboardQuery}
@@ -157,25 +188,23 @@ function RouteComponent() {
         }}
       >
         {(data) => {
-          const courses = data.courses.map(mapBackendCourseToUi);
+          const loadedCourses = data.courses.map(mapBackendCourseToUi);
           const sessions = data.upcomingSessions.map(
             mapBackendUpcomingSessionToUi,
           );
 
           return (
             <div className="space-y-6">
-              {/* Top 4 KPI Stat Cards + Active Course Grid */}
               <CourseCardsGrid
-                courses={courses}
-                onSelectCourse={handleSelectCourse}
+                courses={loadedCourses}
+                onSelectCourse={(course) => setSelectedCourse(course)}
                 onPublishCourse={handlePublishCourse}
                 onArchiveCourse={handleArchiveCourse}
               />
 
-              {/* Upcoming Training Sessions Table */}
               <UpcomingSessionsTable
                 sessions={sessions}
-                onSelectSession={handleSelectSession}
+                onSelectSession={(session) => setSelectedSession(session)}
                 onAdvanceStatus={handleAdvanceSessionStatus}
                 onCancelSession={handleCancelSession}
               />
@@ -184,11 +213,38 @@ function RouteComponent() {
         }}
       </PageLoader>
 
-      {/* Create Course Modal */}
       <CreateCourseModal
         isOpen={isCreateCourseOpen}
         onClose={() => setIsCreateCourseOpen(false)}
         onSubmitCourse={handleCreateCourse}
+      />
+
+      <ScheduleSessionModal
+        isOpen={isScheduleSessionOpen}
+        onClose={() => setIsScheduleSessionOpen(false)}
+        courses={courses}
+        defaultCourseId={scheduleDefaultCourseId}
+        onScheduleSession={handleScheduleSession}
+      />
+
+      <CourseDetailModal
+        isOpen={Boolean(selectedCourse)}
+        onClose={() => setSelectedCourse(null)}
+        course={selectedCourse}
+        onPublish={handlePublishCourse}
+        onArchive={handleArchiveCourse}
+        onScheduleSession={(courseId) => {
+          setScheduleDefaultCourseId(courseId);
+          setIsScheduleSessionOpen(true);
+        }}
+      />
+
+      <SessionDetailModal
+        isOpen={Boolean(selectedSession)}
+        onClose={() => setSelectedSession(null)}
+        session={selectedSession}
+        onAdvanceStatus={handleAdvanceSessionStatus}
+        onCancelSession={handleCancelSession}
       />
     </div>
   );
