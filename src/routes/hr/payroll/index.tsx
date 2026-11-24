@@ -7,7 +7,11 @@ import PayslipsTable from "./-components/PayslipsTable";
 import PayrollConfigSection from "./-components/PayrollConfigSection";
 import NewPayrollRunModal from "./-components/NewPayrollRunModal";
 import { formatCurrency } from "./-components/payrollData";
-import type { PayrollRun, Payslip } from "./-components/types";
+import type {
+  PayrollCycle,
+  PayrollRun,
+  Payslip,
+} from "./-components/types";
 import {
   usePayrollRuns,
   useMyPayslips,
@@ -43,18 +47,29 @@ function RouteComponent() {
 
   const runs = useMemo<PayrollRun[]>(() => {
     const base = (runsQuery.data ?? []).map((r) => ({
-      ...r,
-      status: toPayrollRunStatus(r.status),
+      id: r.id,
+      period: r.period ?? "",
+      cycle: (r.cycle as PayrollCycle) ?? "Monthly",
+      payDate: r.payDate ?? "",
+      employees: (r.employees as number) ?? 0,
+      gross: (r.gross as number) ?? 0,
+      deductions: (r.deductions as number) ?? 0,
+      net: (r.net as number) ?? 0,
+      status: toPayrollRunStatus(r.status) as PayrollRun["status"],
+      preparedBy: (r.preparedBy as string) ?? "",
+      notes: r.notes as string | undefined,
     }));
     return base.map((r) =>
       cancelledRuns[r.id] ? { ...r, status: "Cancelled" } : r,
     );
   }, [runsQuery.data, cancelledRuns]);
 
-  const payslips = useMemo<Payslip[]>(
-    () => (payslipsQuery.data as Payslip[] | undefined) ?? [],
-    [payslipsQuery.data],
-  );
+  const payslips = useMemo<Payslip[]>(() => {
+    const base = (payslipsQuery.data as Payslip[] | undefined) ?? [];
+    return base.map((p) =>
+      p.id in holds ? { ...p, status: holds[p.id] ? "On hold" : "Ready" } : p,
+    );
+  }, [payslipsQuery.data, holds]);
 
   const handleNewRun = async (payload: {
     periodStart: string;
@@ -152,13 +167,6 @@ function RouteComponent() {
     });
   };
 
-  const handleRunPayroll = () => {
-    toast.info("Active payroll calculation triggered", {
-      description:
-        "Processing timecard inputs, bonuses, and statutory deductions.",
-    });
-  };
-
   return (
     <div className="space-y-6 pb-12">
       {/* Page Header */}
@@ -185,7 +193,7 @@ function RouteComponent() {
           </button>
           <button
             type="button"
-            onClick={handleRunPayroll}
+            onClick={handleProcessRun}
             className="btn btn-sm bg-primary text-white hover:bg-primary/90 border-0 rounded-xl px-4 font-medium gap-1.5 shadow-sm shadow-primary/20"
           >
             <Play className="size-4" />

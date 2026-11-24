@@ -47,7 +47,16 @@ export interface PayrollRun {
   periodEnd?: string;
   payDate?: string;
   status?: string;
-  [key: string]: unknown;
+  /** Optional display fields (used by the UI table and stats cards). */
+  period?: string;
+  cycle?: string;
+  employees?: number;
+  gross?: number;
+  deductions?: number;
+  net?: number;
+  preparedBy?: string;
+  notes?: string;
+  [key: string]: any;
 }
 
 export interface Payslip {

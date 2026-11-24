@@ -266,6 +266,44 @@ Notes:
   `probation/start-review` and `probation/reviews/:reviewId/submit` hooks whose
   routes do **not** exist in the Postman collection — prefer `onboardingApi.ts`.
 
+## HR payroll — `src/api/payrollApi.ts` (`/hr/payroll`)
+
+Wired to the "Payroll Controller …" endpoints in the Postman collection
+(`/v1/payroll/*`):
+
+| Hook | Endpoint |
+| ------------------------------------- | -------------------------------------------------------------- |
+| `usePayrollSettings()`                 | `GET/PUT /payroll/settings` (`{ jurisdiction, currency, payFrequency }`) |
+| `useStatutoryRules()`                  | `GET /payroll/statutory-rules`                                   |
+| `useCreateStatutoryRule()`             | `POST /payroll/statutory-rules`                                  |
+| `useUpdateStatutoryRule(id)`           | `PATCH /payroll/statutory-rules/:id`                             |
+| `useEmployeeCompensations(employeeId)` | `GET /payroll/employees/:id/compensations`                       |
+| `useCreateCompensation()`              | `POST /payroll/compensations`                                    |
+| `usePayrollRuns()`                     | `GET /payroll/runs`                                              |
+| `usePayrollRun(id)`                    | `GET /payroll/runs/:id`                                          |
+| `useCreatePayrollRun()`                | `POST /payroll/runs` (`{ periodStart, periodEnd, payDate }`)     |
+| `useCalculatePayrollRun()`             | `POST /payroll/runs/:id/calculate`                               |
+| `useApprovePayrollRun()`               | `POST /payroll/runs/:id/approve`                                 |
+| `useFinalizePayrollRun()`              | `POST /payroll/runs/:id/finalize`                                |
+| `useMarkPayrollRunPaid()`              | `POST /payroll/runs/:id/paid` (`{ paymentReference, paidAt }`)  |
+| `useMyPayslips()`                      | `GET /payroll/my/payslips`                                       |
+
+Page coverage (`/hr/payroll`):
+
+- **New run** — `NewPayrollRunModal` → `useCreatePayrollRun` (modal also gained
+  `isPending`).
+- **Run lifecycle** — Submit → `useCalculatePayrollRun`, Approve →
+  `useApprovePayrollRun`, Mark paid → `useMarkPayrollRunPaid` (auto
+  `paymentReference: PR-<id> payment`).
+- **Process run** (PageHeader) — calculates the first Draft/Pending run.
+- **Payslips list** — `useMyPayslips`; holds stay local (no payslip
+  endpoints in the collection).
+- **Payroll config** — `usePayrollSettings` (frequency) +
+  `useStatutoryRules` (server-rule count).
+
+All queries/mutations invalidate the `["payroll"]` root and use
+`toast.promise` + `extract_message`.
+
 ## Known backend issues
 
 Full probe results live in `pending_apis.md` (originally probed 2026-11-19,
