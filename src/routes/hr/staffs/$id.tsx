@@ -153,19 +153,6 @@ const DOCUMENT_ITEMS = [
   },
 ];
 
-const DEFAULT_DEPARTMENTS = [
-  "Engineering",
-  "Product",
-  "Design",
-  "Marketing",
-  "Sales",
-  "Finance",
-  "Customer Success",
-  "Human Resources",
-  "Operations",
-  "Legal",
-];
-
 const DEFAULT_GRADES = ["G1", "G2", "G3", "G4", "G5", "G6", "G7"];
 const EMPLOYMENT_TYPES = [
   "Full-time",
@@ -355,17 +342,9 @@ function StaffDetailPage() {
     }
   }, [employeeQuery.data, isNew, reset, id, docUploads.seed]);
 
-  const departmentsList =
-    organizationQuery.data?.departments &&
-    organizationQuery.data.departments.length > 0
-      ? organizationQuery.data.departments
-      : DEFAULT_DEPARTMENTS.map((name) => ({ id: name, name }));
+  const departmentsList = organizationQuery.data?.departments ?? [];
 
-  const positionsList =
-    organizationQuery.data?.positions &&
-    organizationQuery.data.positions.length > 0
-      ? organizationQuery.data.positions
-      : [];
+  const positionsList = organizationQuery.data?.positions ?? [];
 
   const potentialManagers = (allEmployeesQuery.data ?? []).filter(
     (e) => isNew || e.id !== id,
@@ -541,7 +520,9 @@ function StaffDetailPage() {
   };
 
   const handleFinalize = () => {
-    if (confirm("Are you sure you want to finalize this employee's employment?")) {
+    if (
+      confirm("Are you sure you want to finalize this employee's employment?")
+    ) {
       toast.promise(finalizeEmployee.mutateAsync(id), {
         loading: "Finalizing employment...",
         success: () => {
@@ -1387,31 +1368,33 @@ function StaffDetailPage() {
                       control={methods.control}
                       name="departmentId"
                       render={({ field }) => (
-                        <SimpleSelect<{ id?: string; name: string }>
-                          route="/employees/organization"
-                          value={field.value}
-                          onChange={(value) => {
+                        <LocalSelect
+                          label="Department"
+                          value={field.value ?? ""}
+                          disabled={organizationQuery.isLoading}
+                          onChange={(e) => {
+                            const value = e.target.value;
                             field.onChange(value);
                             const sel = departmentsList.find(
-                              (d) => d.id === value,
+                              (d) => (d.id || d.name) === value,
                             );
-                            if (sel) methods.setValue("department", sel.name);
+                            methods.setValue("department", sel?.name ?? "");
                           }}
-                          label="Department"
-                          render={(dept, index) => (
-                            <>
-                              {index === 0 && (
-                                <option value="">Select Department</option>
-                              )}
-                              <option
-                                key={dept.id || dept.name}
-                                value={dept.id || dept.name}
-                              >
-                                {dept.name}
-                              </option>
-                            </>
-                          )}
-                        />
+                        >
+                          <option value="">
+                            {organizationQuery.isLoading
+                              ? "Loading departments..."
+                              : "Select Department"}
+                          </option>
+                          {departmentsList.map((dept) => (
+                            <option
+                              key={dept.id || dept.name}
+                              value={dept.id || dept.name}
+                            >
+                              {dept.name}
+                            </option>
+                          ))}
+                        </LocalSelect>
                       )}
                     />
 
@@ -1420,28 +1403,29 @@ function StaffDetailPage() {
                         control={methods.control}
                         name="positionId"
                         render={({ field }) => (
-                          <SimpleSelect<{ id?: string; name: string }>
-                            route="/employees/organization"
-                            value={field.value}
-                            onChange={(value) => {
+                          <LocalSelect
+                            label="Position / Role"
+                            value={field.value ?? ""}
+                            disabled={organizationQuery.isLoading}
+                            onChange={(e) => {
+                              const value = e.target.value;
                               field.onChange(value);
                               const sel = positionsList.find(
-                                (p) => p.id === value,
+                                (p) => (p.id || p.name) === value,
                               );
-                              if (sel) methods.setValue("jobTitle", sel.name);
+                              methods.setValue("jobTitle", sel?.name ?? "");
                             }}
-                            label="Position / Role"
-                            render={(pos, index) => (
-                              <>
-                                {index === 0 && (
-                                  <option value="">Select Position</option>
-                                )}
-                                <option key={pos.id} value={pos.id}>
-                                  {pos.name}
-                                </option>
-                              </>
-                            )}
-                          />
+                          >
+                            <option value="">Select Position</option>
+                            {positionsList.map((pos) => (
+                              <option
+                                key={pos.id || pos.name}
+                                value={pos.id || pos.name}
+                              >
+                                {pos.name}
+                              </option>
+                            ))}
+                          </LocalSelect>
                         )}
                       />
                     ) : (
