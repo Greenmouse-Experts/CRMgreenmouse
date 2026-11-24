@@ -5,7 +5,11 @@ import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 import SimpleInput from "@/components/inputs/SimpleInput";
 import { new_url } from "@/client/api";
-import { set_user_value, set_profile_value } from "@/store/authStore";
+import {
+  set_user_value,
+  set_profile_value,
+  type AuthUser,
+} from "@/store/authStore";
 import axios from "axios";
 
 export const Route = createFileRoute("/auth/staff/")({
@@ -39,6 +43,10 @@ function RouteComponent() {
       set_profile_value(null);
       set_user_value(res);
       toast.success("Login successful");
+      const current_user = res as AuthUser;
+      if (current_user.user.userType.includes("hr")) {
+        nav({ to: "/hr" });
+      }
       nav({ to: "/tenant" });
     },
     onError: (err: any) => {
