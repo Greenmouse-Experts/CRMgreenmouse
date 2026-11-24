@@ -9,13 +9,15 @@ import {
   type DisciplinaryOptions,
 } from "@/api/disciplinaryApi";
 import { toast } from "sonner";
-import { Plus, ShieldAlert } from "lucide-react";
+import { Plus, Settings, ShieldAlert } from "lucide-react";
 
 interface OpenCaseModalProps {
   isOpen: boolean;
   onClose: () => void;
   onOpenCase: (payload: CreateDisciplinaryCasePayload) => Promise<void>;
   options: DisciplinaryOptions;
+  isLoadingOptions?: boolean;
+  onOpenOptions?: () => void;
 }
 
 interface OpenCaseFormValues {
@@ -40,6 +42,8 @@ export default function OpenCaseModal({
   onClose,
   onOpenCase,
   options,
+  isLoadingOptions = false,
+  onOpenOptions,
 }: OpenCaseModalProps) {
   const modalRef = useRef<ModalHandle>(null);
   const employeesQuery = useDisciplinaryEmployees();
@@ -53,9 +57,9 @@ export default function OpenCaseModal({
   } = useForm<OpenCaseFormValues>({
     defaultValues: {
       employeeId: "",
-      category: options.categories[0] ?? "Policy breach",
+      category: options.categories[0] ?? "",
       incidentDate: new Date().toISOString().slice(0, 10),
-      severity: options.severities[0] ?? "Minor",
+      severity: options.severities[0] ?? "",
       reportedByEmployeeId: "",
       investigatorEmployeeId: "",
       description: "",
@@ -68,9 +72,9 @@ export default function OpenCaseModal({
     if (isOpen) {
       reset({
         employeeId: "",
-        category: options.categories[0] ?? "Policy breach",
+        category: options.categories[0] ?? "",
         incidentDate: new Date().toISOString().slice(0, 10),
-        severity: options.severities[0] ?? "Minor",
+        severity: options.severities[0] ?? "",
         reportedByEmployeeId: "",
         investigatorEmployeeId: "",
         description: "",
@@ -83,7 +87,18 @@ export default function OpenCaseModal({
     }
   }, [isOpen, options.categories, options.severities, reset]);
 
+  const missingOptions =
+    !isLoadingOptions &&
+    (options.categories.length === 0 || options.severities.length === 0);
+
   const onSubmit = async (values: OpenCaseFormValues) => {
+    if (!values.category || !values.severity) {
+      toast.error(
+        "Please configure categories and severities before opening a case.",
+      );
+      return;
+    }
+
     if (!values.description.trim()) {
       toast.error("Please provide a description of the incident.");
       return;
@@ -127,6 +142,27 @@ export default function OpenCaseModal({
           compliance.
         </p>
 
+        {missingOptions && (
+          <div className="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-amber-500/30 bg-amber-500/10 p-3 text-sm">
+            <span className="text-base-content">
+              No categories or severities configured yet.
+            </span>
+            {onOpenOptions && (
+              <button
+                type="button"
+                onClick={() => {
+                  onClose();
+                  onOpenOptions();
+                }}
+                className="btn btn-xs btn-outline rounded-lg gap-1"
+              >
+                <Settings className="size-3.5" />
+                <span>Configure options</span>
+              </button>
+            )}
+          </div>
+        )}
+
         <div className="space-y-3">
           <div className="flex items-center gap-1.5 pb-1 border-b border-base-200">
             <ShieldAlert className="size-4 text-primary" />
@@ -154,7 +190,17 @@ export default function OpenCaseModal({
               <label className="font-semibold text-base-content/80 mb-1 block">
                 Category <span className="text-error">*</span>
               </label>
-              <LocalSelect {...register("category", { required: true })}>
+              <LocalSelect
+                {...register("category", { required: true })}
+                disabled={isLoadingOptions || options.categories.length === 0}
+              >
+                <option value="">
+                  {isLoadingOptions
+                    ? "Loading categories..."
+                    : options.categories.length === 0
+                      ? "No categories configured"
+                      : "Select category"}
+                </option>
                 {options.categories.map((cat) => (
                   <option key={cat} value={cat}>
                     {cat}
@@ -178,7 +224,17 @@ export default function OpenCaseModal({
               <label className="font-semibold text-base-content/80 mb-1 block">
                 Severity <span className="text-error">*</span>
               </label>
-              <LocalSelect {...register("severity", { required: true })}>
+              <LocalSelect
+                {...register("severity", { required: true })}
+                disabled={isLoadingOptions || options.severities.length === 0}
+              >
+                <option value="">
+                  {isLoadingOptions
+                    ? "Loading severities..."
+                    : options.severities.length === 0
+                      ? "No severities configured"
+                      : "Select severity"}
+                </option>
                 {options.severities.map((sev) => (
                   <option key={sev} value={sev}>
                     {sev}
@@ -269,7 +325,9 @@ export default function OpenCaseModal({
           </button>
           <button
             type="submit"
-            disabled={isSubmitting || employeesQuery.isLoading}
+            disabled={
+              isSubmitting || employeesQuery.isLoading || missingOptions
+            }
             className="btn btn-sm bg-primary text-white hover:bg-primary/90 rounded-xl px-5 gap-1.5 shadow-sm shadow-primary/20"
           >
             <Plus className="size-4" />

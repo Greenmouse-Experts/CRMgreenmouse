@@ -8,10 +8,6 @@ import DisciplinaryCasesTable from "./-components/DisciplinaryCasesTable";
 import OpenCaseModal from "./-components/OpenCaseModal";
 import CaseDetailModal from "./-components/CaseDetailModal";
 import ConfigureOptionsModal from "./-components/ConfigureOptionsModal";
-import {
-  DEFAULT_CASE_CATEGORIES,
-  DEFAULT_CASE_SEVERITIES,
-} from "./-components/disciplinaryData";
 import type { DisciplinaryCase, WorkflowStep } from "./-components/types";
 import {
   STAGE_TO_API,
@@ -47,15 +43,13 @@ function RouteComponent() {
 
   const cases = casesQuery.data ?? [];
 
-  const resolvedOptions = useMemo(() => {
-    const categories = optionsQuery.data?.categories?.length
-      ? optionsQuery.data.categories
-      : DEFAULT_CASE_CATEGORIES;
-    const severities = optionsQuery.data?.severities?.length
-      ? optionsQuery.data.severities
-      : DEFAULT_CASE_SEVERITIES;
-    return { categories, severities };
-  }, [optionsQuery.data]);
+  const resolvedOptions = useMemo(
+    () => ({
+      categories: optionsQuery.data?.categories ?? [],
+      severities: optionsQuery.data?.severities ?? [],
+    }),
+    [optionsQuery.data],
+  );
 
   const handleOpenCase = async (payload: CreateDisciplinaryCasePayload) => {
     try {
@@ -160,6 +154,8 @@ function RouteComponent() {
         onClose={() => setIsOpenCaseModalOpen(false)}
         onOpenCase={handleOpenCase}
         options={resolvedOptions}
+        isLoadingOptions={optionsQuery.isLoading}
+        onOpenOptions={() => setIsOptionsModalOpen(true)}
       />
 
       <ConfigureOptionsModal

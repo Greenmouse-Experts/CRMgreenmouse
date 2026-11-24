@@ -243,13 +243,19 @@ export const useDisciplinaryOptions = () =>
     queryFn: async () => {
       const { data } = await apiClient.get<any>("/disciplinary-cases/options");
       const obj = unwrapObject<any>(data);
+      const toStrings = (list: unknown): string[] =>
+        Array.isArray(list)
+          ? list
+              .map((item) =>
+                typeof item === "string"
+                  ? item
+                  : String(item?.name ?? item?.label ?? item?.value ?? ""),
+              )
+              .filter(Boolean)
+          : [];
       return {
-        categories: Array.isArray(obj?.categories)
-          ? obj.categories.map(String)
-          : [],
-        severities: Array.isArray(obj?.severities)
-          ? obj.severities.map(String)
-          : [],
+        categories: toStrings(obj?.categories),
+        severities: toStrings(obj?.severities),
       };
     },
   });
