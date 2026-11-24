@@ -99,6 +99,9 @@ Notes:
   with `toast.promise(...)`, passing API errors through `extract_message`.
 - **Extra hooks / components**: check `src/api/` and `src/components/` first and
   reuse what exists before creating new ones.
+- **Typography**: no arbitrary text sizes (e.g. `text-[10px]`, `text-[11px]`).
+  Stick to standard Tailwind scale classes (`text-base`, `text-lg`, `text-xl`,
+  etc.). `text-xs` is banned, and `text-sm` should be used sparsely.
 
 ## Implemented integrations
 
