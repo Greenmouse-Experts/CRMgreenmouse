@@ -34,6 +34,7 @@ import { Route as TenantProductsIndexRouteImport } from './routes/tenant/product
 import { Route as TenantOrdersIndexRouteImport } from './routes/tenant/orders/index'
 import { Route as TenantNotificationsIndexRouteImport } from './routes/tenant/notifications.index'
 import { Route as HrTrainingIndexRouteImport } from './routes/hr/training/index'
+import { Route as HrTasksIndexRouteImport } from './routes/hr/tasks/index'
 import { Route as HrStaffsIndexRouteImport } from './routes/hr/staffs/index'
 import { Route as HrSettingsIndexRouteImport } from './routes/hr/settings/index'
 import { Route as HrSelfServiceIndexRouteImport } from './routes/hr/self-service/index'
@@ -256,6 +257,11 @@ const TenantNotificationsIndexRoute =
 const HrTrainingIndexRoute = HrTrainingIndexRouteImport.update({
   id: '/training/',
   path: '/training/',
+  getParentRoute: () => HrRouteRoute,
+} as any)
+const HrTasksIndexRoute = HrTasksIndexRouteImport.update({
+  id: '/tasks/',
+  path: '/tasks/',
   getParentRoute: () => HrRouteRoute,
 } as any)
 const HrStaffsIndexRoute = HrStaffsIndexRouteImport.update({
@@ -845,6 +851,7 @@ export interface FileRoutesByFullPath {
   '/hr/self-service': typeof HrSelfServiceIndexRoute
   '/hr/settings/': typeof HrSettingsIndexRoute
   '/hr/staffs': typeof HrStaffsIndexRoute
+  '/hr/tasks': typeof HrTasksIndexRoute
   '/hr/training': typeof HrTrainingIndexRoute
   '/tenant/notifications': typeof TenantNotificationsIndexRoute
   '/tenant/orders': typeof TenantOrdersIndexRoute
@@ -960,6 +967,7 @@ export interface FileRoutesByTo {
   '/hr/self-service': typeof HrSelfServiceIndexRoute
   '/hr/settings': typeof HrSettingsIndexRoute
   '/hr/staffs': typeof HrStaffsIndexRoute
+  '/hr/tasks': typeof HrTasksIndexRoute
   '/hr/training': typeof HrTrainingIndexRoute
   '/tenant/notifications': typeof TenantNotificationsIndexRoute
   '/tenant/orders': typeof TenantOrdersIndexRoute
@@ -1085,6 +1093,7 @@ export interface FileRoutesById {
   '/hr/self-service/': typeof HrSelfServiceIndexRoute
   '/hr/settings/': typeof HrSettingsIndexRoute
   '/hr/staffs/': typeof HrStaffsIndexRoute
+  '/hr/tasks/': typeof HrTasksIndexRoute
   '/hr/training/': typeof HrTrainingIndexRoute
   '/tenant/notifications/': typeof TenantNotificationsIndexRoute
   '/tenant/orders/': typeof TenantOrdersIndexRoute
@@ -1211,6 +1220,7 @@ export interface FileRouteTypes {
     | '/hr/self-service'
     | '/hr/settings/'
     | '/hr/staffs'
+    | '/hr/tasks'
     | '/hr/training'
     | '/tenant/notifications'
     | '/tenant/orders'
@@ -1326,6 +1336,7 @@ export interface FileRouteTypes {
     | '/hr/self-service'
     | '/hr/settings'
     | '/hr/staffs'
+    | '/hr/tasks'
     | '/hr/training'
     | '/tenant/notifications'
     | '/tenant/orders'
@@ -1450,6 +1461,7 @@ export interface FileRouteTypes {
     | '/hr/self-service/'
     | '/hr/settings/'
     | '/hr/staffs/'
+    | '/hr/tasks/'
     | '/hr/training/'
     | '/tenant/notifications/'
     | '/tenant/orders/'
@@ -1718,6 +1730,13 @@ declare module '@tanstack/react-router' {
       path: '/training'
       fullPath: '/hr/training'
       preLoaderRoute: typeof HrTrainingIndexRouteImport
+      parentRoute: typeof HrRouteRoute
+    }
+    '/hr/tasks/': {
+      id: '/hr/tasks/'
+      path: '/tasks'
+      fullPath: '/hr/tasks'
+      preLoaderRoute: typeof HrTasksIndexRouteImport
       parentRoute: typeof HrRouteRoute
     }
     '/hr/staffs/': {
@@ -2534,6 +2553,7 @@ interface HrRouteRouteChildren {
   HrReportsIndexRoute: typeof HrReportsIndexRoute
   HrSelfServiceIndexRoute: typeof HrSelfServiceIndexRoute
   HrStaffsIndexRoute: typeof HrStaffsIndexRoute
+  HrTasksIndexRoute: typeof HrTasksIndexRoute
   HrTrainingIndexRoute: typeof HrTrainingIndexRoute
 }
 
@@ -2555,6 +2575,7 @@ const HrRouteRouteChildren: HrRouteRouteChildren = {
   HrReportsIndexRoute: HrReportsIndexRoute,
   HrSelfServiceIndexRoute: HrSelfServiceIndexRoute,
   HrStaffsIndexRoute: HrStaffsIndexRoute,
+  HrTasksIndexRoute: HrTasksIndexRoute,
   HrTrainingIndexRoute: HrTrainingIndexRoute,
 }
 

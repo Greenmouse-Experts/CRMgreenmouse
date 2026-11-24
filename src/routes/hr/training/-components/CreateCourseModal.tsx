@@ -7,25 +7,32 @@ import {
   DELIVERY_MODES,
   TARGET_AUDIENCE_OPTIONS,
 } from "./trainingData";
+import type { CourseCategory, DeliveryMode } from "./types";
+import {
+  toBackendCategory,
+  toBackendDeliveryMode,
+  toBackendTargetType,
+} from "./mappers";
 import type {
-  Course,
-  CourseCategory,
-  DeliveryMode,
-  TrainingSession,
-} from "./types";
+  CreateTrainingCoursePayload,
+  CreateTrainingSessionPayload,
+} from "@/api/trainingApi";
 import { toast } from "sonner";
 import { BookOpen, Calendar, Plus } from "lucide-react";
 
 interface CreateCourseModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onCreateCourse: (course: Course, session?: TrainingSession) => void;
+  onSubmitCourse: (
+    coursePayload: CreateTrainingCoursePayload,
+    sessionPayload?: Omit<CreateTrainingSessionPayload, "courseId">,
+  ) => Promise<void>;
 }
 
 export default function CreateCourseModal({
   isOpen,
   onClose,
-  onCreateCourse,
+  onSubmitCourse,
 }: CreateCourseModalProps) {
   const modalRef = useRef<ModalHandle>(null);
 
@@ -43,6 +50,8 @@ export default function CreateCourseModal({
     end: "",
     audience: "All staff",
     cert: true,
+    location: "Main Training Hall, Lagos HQ",
+    meetingUrl: "",
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -59,7 +68,7 @@ export default function CreateCourseModal({
     setForm((prev) => ({ ...prev, [field]: value }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!form.title.trim()) {
@@ -75,48 +84,53 @@ export default function CreateCourseModal({
     setIsSubmitting(true);
 
     try {
-      const courseId = `CRS-${Date.now().toString().slice(-4)}`;
-      const newCourse: Course = {
-        id: courseId,
+      const coursePayload: CreateTrainingCoursePayload = {
         title: form.title.trim(),
-        category: form.category,
-        enrolled: 0,
-        completionRate: 0,
-        mode: form.mode,
-        trainer: form.trainer.trim(),
-        duration: Number(form.duration) || 2,
-        mandatory: form.mandatory,
+        category: toBackendCategory(form.category),
+        defaultDeliveryMode: toBackendDeliveryMode(form.mode),
+        learningObjectives:
+          form.desc.trim() ||
+          `Core syllabus and learning objectives for ${form.title.trim()}`,
+        mandatory: Boolean(form.mandatory),
+        certificateOnCompletion: Boolean(form.cert),
+        targetType: toBackendTargetType(form.audience),
+        targetIds: [],
+        costPerPerson: form.cost
+          ? String(Number(String(form.cost).replace(/[^0-9.]/g, "")) || 0)
+          : "0",
       };
 
-      // Also create an upcoming training session if a start date is set
-      let newSession: TrainingSession | undefined;
+      let sessionPayload:
+        | Omit<CreateTrainingSessionPayload, "courseId">
+        | undefined;
       if (form.start) {
-        const dateObj = new Date(form.start);
-        const formattedDate = dateObj.toLocaleDateString("en-US", {
-          month: "short",
-          day: "numeric",
-        });
+        const startsAt = new Date(`${form.start}T09:00:00.000Z`).toISOString();
+        const endsAt = form.end
+          ? new Date(`${form.end}T17:00:00.000Z`).toISOString()
+          : new Date(
+              new Date(startsAt).getTime() +
+                (Number(form.duration) || 3) * 3600 * 1000,
+            ).toISOString();
 
-        newSession = {
-          id: `SES-${Date.now().toString().slice(-4)}`,
-          course: form.title.trim(),
-          date: formattedDate,
-          trainer: form.trainer.trim(),
-          status: "Scheduled",
-          mode: form.mode,
+        sessionPayload = {
+          startsAt,
+          endsAt,
+          deliveryMode: toBackendDeliveryMode(form.mode),
           location:
             form.mode === "Virtual"
-              ? "Virtual Room (Link to follow)"
-              : form.mode === "Self-paced online"
-                ? "LMS Portal"
-                : "Main Training Hall, Lagos HQ",
+              ? undefined
+              : form.location || "Main Training Hall, Lagos HQ",
+          meetingUrl:
+            form.mode === "Virtual"
+              ? form.meetingUrl || "https://meet.google.com"
+              : undefined,
+          capacity: Number(form.capacity) || 25,
+          trainerType: "external",
+          externalProvider: form.trainer.trim() || "External Trainer",
         };
       }
 
-      onCreateCourse(newCourse, newSession);
-      toast.success("Course created successfully", {
-        description: `"${newCourse.title}" has been added to training catalog.`,
-      });
+      await onSubmitCourse(coursePayload, sessionPayload);
 
       // Reset form
       setForm({
@@ -133,11 +147,13 @@ export default function CreateCourseModal({
         end: "",
         audience: "All staff",
         cert: true,
+        location: "Main Training Hall, Lagos HQ",
+        meetingUrl: "",
       });
 
       onClose();
     } catch {
-      toast.error("Failed to create course");
+      // Errors handled by mutation / toast
     } finally {
       setIsSubmitting(false);
     }
@@ -151,7 +167,7 @@ export default function CreateCourseModal({
       onClose={onClose}
     >
       <form onSubmit={handleSubmit} className="space-y-5">
-        <p className=" text-base-content/80 -mt-1">
+        <p className="text-xs text-base-content/80 -mt-1">
           Add a new training course, specify delivery mode, trainer details, and
           scheduling.
         </p>
@@ -160,14 +176,14 @@ export default function CreateCourseModal({
         <div className="space-y-3">
           <div className="flex items-center gap-1.5 pb-1 border-b border-base-200">
             <BookOpen className="size-3.5 text-primary" />
-            <h4 className=" font-semibold uppercase tracking-wider text-base-content/80">
+            <h4 className="text-xs font-semibold uppercase tracking-wider text-base-content/80">
               Course Details
             </h4>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 text-xs">
             <div className="sm:col-span-2">
-              <label className=" font-semibold text-base-content/80 mb-1 block">
+              <label className="font-semibold text-base-content/80 mb-1 block">
                 Course title <span className="text-error">*</span>
               </label>
               <SimpleInput
@@ -179,7 +195,7 @@ export default function CreateCourseModal({
             </div>
 
             <div>
-              <label className=" font-semibold text-base-content/80 mb-1 block">
+              <label className="font-semibold text-base-content/80 mb-1 block">
                 Category <span className="text-error">*</span>
               </label>
               <LocalSelect
@@ -197,7 +213,7 @@ export default function CreateCourseModal({
             </div>
 
             <div>
-              <label className=" font-semibold text-base-content/80 mb-1 block">
+              <label className="font-semibold text-base-content/80 mb-1 block">
                 Delivery mode <span className="text-error">*</span>
               </label>
               <LocalSelect
@@ -215,7 +231,7 @@ export default function CreateCourseModal({
             </div>
 
             <div>
-              <label className=" font-semibold text-base-content/80 mb-1 block">
+              <label className="font-semibold text-base-content/80 mb-1 block">
                 Trainer / Provider <span className="text-error">*</span>
               </label>
               <SimpleInput
@@ -227,7 +243,7 @@ export default function CreateCourseModal({
             </div>
 
             <div>
-              <label className=" font-semibold text-base-content/80 mb-1 block">
+              <label className="font-semibold text-base-content/80 mb-1 block">
                 Duration (hours)
               </label>
               <input
@@ -236,13 +252,13 @@ export default function CreateCourseModal({
                 step="0.5"
                 value={form.duration}
                 onChange={(e) => handleChange("duration", e.target.value)}
-                className="input input-bordered w-full  rounded-xl bg-base-200/80"
+                className="input input-sm input-bordered w-full rounded-xl bg-base-200/80 text-xs"
                 placeholder="e.g. 4"
               />
             </div>
 
             <div>
-              <label className=" font-semibold text-base-content/80 mb-1 block">
+              <label className="font-semibold text-base-content/80 mb-1 block">
                 Max Capacity
               </label>
               <input
@@ -250,13 +266,13 @@ export default function CreateCourseModal({
                 min="1"
                 value={form.capacity}
                 onChange={(e) => handleChange("capacity", e.target.value)}
-                className="input input-bordered w-full  rounded-xl bg-base-200/80"
+                className="input input-sm input-bordered w-full rounded-xl bg-base-200/80 text-xs"
                 placeholder="e.g. 30"
               />
             </div>
 
             <div>
-              <label className=" font-semibold text-base-content/80 mb-1 block">
+              <label className="font-semibold text-base-content/80 mb-1 block">
                 Cost per participant (₦)
               </label>
               <SimpleInput
@@ -267,7 +283,7 @@ export default function CreateCourseModal({
             </div>
 
             <div className="sm:col-span-2">
-              <label className=" font-semibold text-base-content/80 mb-1 block">
+              <label className="font-semibold text-base-content/80 mb-1 block">
                 Learning objectives & description
               </label>
               <textarea
@@ -275,7 +291,7 @@ export default function CreateCourseModal({
                 onChange={(e) => handleChange("desc", e.target.value)}
                 rows={2}
                 placeholder="Key outcomes, syllabus outline, or prerequisites..."
-                className="textarea textarea-bordered w-full  rounded-xl bg-base-200/80"
+                className="textarea textarea-bordered w-full rounded-xl bg-base-200/80 text-xs"
               />
             </div>
           </div>
@@ -285,39 +301,63 @@ export default function CreateCourseModal({
         <div className="space-y-3">
           <div className="flex items-center gap-1.5 pb-1 border-b border-base-200">
             <Calendar className="size-3.5 text-primary" />
-            <h4 className=" font-semibold uppercase tracking-wider text-base-content/80">
+            <h4 className="text-xs font-semibold uppercase tracking-wider text-base-content/80">
               Schedule & Enrollment
             </h4>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 text-xs">
             <div>
-              <label className=" font-semibold text-base-content/80 mb-1 block">
+              <label className="font-semibold text-base-content/80 mb-1 block">
                 Start date <span className="text-error">*</span>
               </label>
               <input
                 type="date"
                 value={form.start}
                 onChange={(e) => handleChange("start", e.target.value)}
-                className="input input-bordered w-full  rounded-xl bg-base-200/80"
+                className="input input-sm input-bordered w-full rounded-xl bg-base-200/80 text-xs"
                 required
               />
             </div>
 
             <div>
-              <label className=" font-semibold text-base-content/80 mb-1 block">
+              <label className="font-semibold text-base-content/80 mb-1 block">
                 End date (optional)
               </label>
               <input
                 type="date"
                 value={form.end}
                 onChange={(e) => handleChange("end", e.target.value)}
-                className="input input-bordered w-full  rounded-xl bg-base-200/80"
+                className="input input-sm input-bordered w-full rounded-xl bg-base-200/80 text-xs"
               />
             </div>
 
+            {form.mode === "Virtual" ? (
+              <div className="sm:col-span-2">
+                <label className="font-semibold text-base-content/80 mb-1 block">
+                  Virtual Meeting URL
+                </label>
+                <SimpleInput
+                  value={form.meetingUrl}
+                  onChange={(e) => handleChange("meetingUrl", e.target.value)}
+                  placeholder="https://meet.google.com/..."
+                />
+              </div>
+            ) : (
+              <div className="sm:col-span-2">
+                <label className="font-semibold text-base-content/80 mb-1 block">
+                  Physical Venue / Room
+                </label>
+                <SimpleInput
+                  value={form.location}
+                  onChange={(e) => handleChange("location", e.target.value)}
+                  placeholder="Main Training Hall, Lagos HQ"
+                />
+              </div>
+            )}
+
             <div>
-              <label className=" font-semibold text-base-content/80 mb-1 block">
+              <label className="font-semibold text-base-content/80 mb-1 block">
                 Target audience
               </label>
               <LocalSelect
@@ -340,7 +380,7 @@ export default function CreateCourseModal({
                   onChange={(e) => handleChange("mandatory", e.target.checked)}
                   className="checkbox checkbox-sm checkbox-primary rounded"
                 />
-                <span className=" font-medium text-base-content">
+                <span className="font-medium text-base-content text-xs">
                   Mandatory for staff
                 </span>
               </label>
@@ -352,7 +392,7 @@ export default function CreateCourseModal({
                   onChange={(e) => handleChange("cert", e.target.checked)}
                   className="checkbox checkbox-sm checkbox-primary rounded"
                 />
-                <span className=" font-medium text-base-content">
+                <span className="font-medium text-base-content text-xs">
                   Certificate issued
                 </span>
               </label>
@@ -365,6 +405,7 @@ export default function CreateCourseModal({
           <button
             type="button"
             onClick={onClose}
+            disabled={isSubmitting}
             className="btn btn-sm btn-ghost rounded-xl"
           >
             Cancel
@@ -374,7 +415,11 @@ export default function CreateCourseModal({
             disabled={isSubmitting}
             className="btn btn-sm bg-primary text-white hover:bg-primary/90 rounded-xl px-5 gap-1.5 shadow-sm shadow-primary/20"
           >
-            <Plus className="size-3.5" />
+            {isSubmitting ? (
+              <span className="loading loading-spinner loading-xs" />
+            ) : (
+              <Plus className="size-3.5" />
+            )}
             <span>Create course</span>
           </button>
         </div>

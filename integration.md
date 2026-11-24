@@ -165,7 +165,7 @@ invalidate the `["organization"]` query root:
 | `useCreateDepartment()` | `POST /v1/employees/organization/departments` — `{ code, name, status }` (status lowercase `active`/`inactive`) |
 | `useUpdateDepartment()` | `PATCH /v1/employees/organization/departments/:id` — `{ status }` (lowercase)                                   |
 | `useDeleteDepartment()` | `PATCH /v1/employees/organization/departments/:id` (`{ status: "inactive" }` — no DELETE route)                 |
-| `useCreatePosition()`   | `POST /v1/employees/organization/positions` — `{ title, departmentId, approvedHeadcount?, status? }` (verified)     |
+| `useCreatePosition()`   | `POST /v1/employees/organization/positions` — `{ title, departmentId, approvedHeadcount?, status? }` (verified) |
 | `useUpdatePosition()`   | `PATCH /v1/employees/organization/positions/:id`                                                                |
 
 Notes:
@@ -182,23 +182,23 @@ The leave pages read from the `/v1/leave` controller endpoints (see
 `Greenmouse CRM API.postman_collection.json` — "Leave Management" group;
 401 without a valid token):
 
-| Hook                       | Method / Endpoint                       |
-| -------------------------- | --------------------------------------- |
-| `useLeaveTypes()`          | `GET /v1/leave/types`                   |
-| `useLeaveRequests()`       | `GET /v1/leave/requests`                |
-| `useMyLeaveRequests()`     | `GET /v1/leave/requests/mine`           |
-| `useLeaveBalances()`       | `GET /v1/leave/balances/mine`           |
-| `useCreateLeaveRequest()`  | `POST /v1/leave/requests`               |
-| `useDecideLeaveRequest()`  | `PATCH /v1/leave/requests/:id/decision` |
-| `useCancelLeaveRequest()`  | `PATCH /v1/leave/requests/:id/cancel`   |
-| `useUpdateLeaveType()`     | `PUT /v1/leave/types`                   |
+| Hook                      | Method / Endpoint                       |
+| ------------------------- | --------------------------------------- |
+| `useLeaveTypes()`         | `GET /v1/leave/types`                   |
+| `useLeaveRequests()`      | `GET /v1/leave/requests`                |
+| `useMyLeaveRequests()`    | `GET /v1/leave/requests/mine`           |
+| `useLeaveBalances()`      | `GET /v1/leave/balances/mine`           |
+| `useCreateLeaveRequest()` | `POST /v1/leave/requests`               |
+| `useDecideLeaveRequest()` | `PATCH /v1/leave/requests/:id/decision` |
+| `useCancelLeaveRequest()` | `PATCH /v1/leave/requests/:id/cancel`   |
+| `useUpdateLeaveType()`    | `PUT /v1/leave/types`                   |
 
 Notes:
 
 - The management page (`/hr/leave`) lists all requests and maps them onto
   the page's `LeaveRequest` shape via `mapBackendLeaveRequest`: dates are
   shown as short `Nov 18` strings, `days` falls back to the start/end dates
-  when the backend omits it, and unknown statuses map to `Submitted`.
+  when the backend omits it, and unknown statuses map to `Submitted`.\
   Approve/reject go through `useDecideLeaveRequest` with
   `decision: "approve" | "reject"`.
 - The leave-type cards on the management page come from `useLeaveTypes()`
@@ -271,22 +271,22 @@ Notes:
 Wired to the "Payroll Controller …" endpoints in the Postman collection
 (`/v1/payroll/*`):
 
-| Hook | Endpoint |
-| ------------------------------------- | -------------------------------------------------------------- |
+| Hook                                   | Endpoint                                                                 |
+| -------------------------------------- | ------------------------------------------------------------------------ |
 | `usePayrollSettings()`                 | `GET/PUT /payroll/settings` (`{ jurisdiction, currency, payFrequency }`) |
-| `useStatutoryRules()`                  | `GET /payroll/statutory-rules`                                   |
-| `useCreateStatutoryRule()`             | `POST /payroll/statutory-rules`                                  |
-| `useUpdateStatutoryRule(id)`           | `PATCH /payroll/statutory-rules/:id`                             |
-| `useEmployeeCompensations(employeeId)` | `GET /payroll/employees/:id/compensations`                       |
-| `useCreateCompensation()`              | `POST /payroll/compensations`                                    |
-| `usePayrollRuns()`                     | `GET /payroll/runs`                                              |
-| `usePayrollRun(id)`                    | `GET /payroll/runs/:id`                                          |
-| `useCreatePayrollRun()`                | `POST /payroll/runs` (`{ periodStart, periodEnd, payDate }`)     |
-| `useCalculatePayrollRun()`             | `POST /payroll/runs/:id/calculate`                               |
-| `useApprovePayrollRun()`               | `POST /payroll/runs/:id/approve`                                 |
-| `useFinalizePayrollRun()`              | `POST /payroll/runs/:id/finalize`                                |
-| `useMarkPayrollRunPaid()`              | `POST /payroll/runs/:id/paid` (`{ paymentReference, paidAt }`)  |
-| `useMyPayslips()`                      | `GET /payroll/my/payslips`                                       |
+| `useStatutoryRules()`                  | `GET /payroll/statutory-rules`                                           |
+| `useCreateStatutoryRule()`             | `POST /payroll/statutory-rules`                                          |
+| `useUpdateStatutoryRule(id)`           | `PATCH /payroll/statutory-rules/:id`                                     |
+| `useEmployeeCompensations(employeeId)` | `GET /payroll/employees/:id/compensations`                               |
+| `useCreateCompensation()`              | `POST /payroll/compensations`                                            |
+| `usePayrollRuns()`                     | `GET /payroll/runs`                                                      |
+| `usePayrollRun(id)`                    | `GET /payroll/runs/:id`                                                  |
+| `useCreatePayrollRun()`                | `POST /payroll/runs` (`{ periodStart, periodEnd, payDate }`)             |
+| `useCalculatePayrollRun()`             | `POST /payroll/runs/:id/calculate`                                       |
+| `useApprovePayrollRun()`               | `POST /payroll/runs/:id/approve`                                         |
+| `useFinalizePayrollRun()`              | `POST /payroll/runs/:id/finalize`                                        |
+| `useMarkPayrollRunPaid()`              | `POST /payroll/runs/:id/paid` (`{ paymentReference, paidAt }`)           |
+| `useMyPayslips()`                      | `GET /payroll/my/payslips`                                               |
 
 Page coverage (`/hr/payroll`):
 
@@ -303,6 +303,32 @@ Page coverage (`/hr/payroll`):
 
 All queries/mutations invalidate the `["payroll"]` root and use
 `toast.promise` + `extract_message`.
+
+### Training & Development — `src/api/trainingApi.ts` (`/hr/training`)
+
+Wired to the "Training Controller …" endpoints in the Postman collection (`/v1/training/*`):
+
+| Hook                                 | Method / Endpoint                            | Purpose / Scope                                             |
+| ------------------------------------ | -------------------------------------------- | ----------------------------------------------------------- |
+| `useTrainingDashboard()`             | `GET /v1/training/dashboard`                 | Main page view: courses array + upcoming scheduled sessions |
+| `useTrainingCourses()`               | `GET /v1/training/courses`                   | Full course catalog list                                    |
+| `useTrainingCourse(id)`              | `GET /v1/training/courses/:id`               | Course detail                                               |
+| `useCreateTrainingCourse()`          | `POST /v1/training/courses`                  | Create new course draft                                     |
+| `useUpdateTrainingCourse(id)`        | `PATCH /v1/training/courses/:id`             | Update course details                                       |
+| `usePublishTrainingCourse()`         | `POST /v1/training/courses/:id/publish`      | Publish course (requires ≥1 scheduled session)              |
+| `useArchiveTrainingCourse()`         | `POST /v1/training/courses/:id/archive`      | Archive course                                              |
+| `useCreateTrainingSession()`         | `POST /v1/training/courses/:id/sessions`     | Schedule session for course                                 |
+| `useAdvanceTrainingSessionStatus()`  | `PATCH /v1/training/sessions/:id/status`     | Mark session `in_progress` or `completed`                   |
+| `useCancelTrainingSession()`         | `POST /v1/training/sessions/:id/cancel`      | Cancel scheduled session (`{ reason }`)                     |
+| `useTrainingSessionParticipants(id)` | `GET /v1/training/sessions/:id/participants` | Session enrolled participants                               |
+
+Page coverage (`/hr/training`):
+
+- **KPI Metrics**: Derived live from `useTrainingDashboard()`: active courses count, total enrolled learners, and average completion rate.
+- **Course Catalog Grid**: Lists courses with category badges, delivery modes, completion progress bars, and actions (Publish for drafts, Archive for active courses).
+- **Training Sessions Table**: Displays cohorts and schedules with search, filter tabs (`All`, `Scheduled`, `In Progress`, `Completed`, `Cancelled`), and lifecycle actions (`Start`, `Complete`, and `Cancel` with prompt).
+- **Create Course Modal**: Creates the course record and optionally schedules the inaugural training session in one unified flow.
+- All mutations invalidate the `["training"]` query root.
 
 ## Known backend issues
 
@@ -354,6 +380,32 @@ return 200/201 or proper 400/404 validation responses.
 5. Wire mutations with invalidation, toasts, and `extract_message`.
 6. Run `bun run typecheck` and `bun run build` before committing.
 
+## Rules for Updating `pending_apis.md` (Backend Handoff)
+
+`pending_apis.md` is exported and sent directly to the backend development team to communicate missing endpoints, bugs, schema gaps, and contract mismatches. It must serve as a clean, actionable backend technical specification rather than an internal frontend tracker.
+
+### 1. Backend-Relevant Information Only
+
+- **What to include:**
+  - Exact HTTP method and route path (e.g. `POST /v1/employees/organization/departments`).
+  - Clear classification: Missing Route (404), Internal Server Error (500), Validation Failure (400), Unsupported Query Param/Filter, or Postman Documentation Gap.
+  - Concrete observed vs. expected behavior: status codes, error payloads returned by backend validators, and expected response bodies.
+  - Precise payload specifications: field names, data types, constraints (e.g., UUID format, max string lengths), and accepted enum literals (e.g., `active | notice_period | suspended | exited`).
+- **What to omit (No frontend-internal details):**
+  - Do **not** mention internal React hook names (`useEmployees`, `useUpdateEmployee`, `useDecideProbation`).
+  - Do **not** mention TanStack Query cache keys (`["employees"]`, `["onboarding"]`).
+  - Do **not** reference UI component files, route files (`src/routes/hr/...`), or modals.
+  - Do **not** describe internal frontend workarounds (e.g. "UI marks inactive instead"), unless directly specifying the expected API contract payload.
+
+### 2. Status Updates on Availability (Lifecycle & Freshness)
+
+- **Immediate Re-verification**: Whenever a pending or missing API is implemented, deployed, or fixed:
+  - Re-probe the endpoint against the live backend API using valid test credentials.
+  - Immediately update `pending_apis.md`:
+    - Move verified endpoints out of the active issues / gaps list into the "Verified / Available APIs" section with the verification date, HTTP status code, and confirmed response shape.
+    - If an endpoint was previously listed as missing or problematic and is now fully operational, remove or archive it from the active blocker list.
+  - Keep the active sections of the document strictly focused on unresolved items so backend developers have a concise, actionable punch list.
+
 ## Pending Issues
 
 - **Status enum mismatch** (see "Known backend issues"): `useRemoveEmployee`
@@ -364,9 +416,9 @@ return 200/201 or proper 400/404 validation responses.
     lowercase `active`/`inactive`; rejects `id`, `head`, `count`, `parent`,
     `location`. The frontend matches.
   - Create-position contract (verified 2026-11-23, now wired): `title` (≤ 160)
-    + `departmentId` (existing UUID) required; `approvedHeadcount` (≥ 0) and
-    `status` (`active`/`inactive`) optional. `grade`, `dept`, `approved`,
-    `filled`, `openings`, `description` are rejected by the validator.
+    - `departmentId` (existing UUID) required; `approvedHeadcount` (≥ 0) and
+      `status` (`active`/`inactive`) optional. `grade`, `dept`, `approved`,
+      `filled`, `openings`, `description` are rejected by the validator.
   - There are no DELETE routes for departments/positions, so the frontend
     marks inactive (see the Organization integration).
 - **Probing credentials**: the `auth_cred.ts` refresh token expires

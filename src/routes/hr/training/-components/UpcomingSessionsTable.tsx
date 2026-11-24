@@ -1,15 +1,31 @@
 import { useState } from "react";
 import type { SessionStatus, TrainingSession } from "./types";
-import { Calendar, Search, MapPin, Video, Monitor } from "lucide-react";
+import {
+  Calendar,
+  Search,
+  MapPin,
+  Video,
+  Monitor,
+  Play,
+  CheckCircle2,
+  XCircle,
+} from "lucide-react";
 
 interface UpcomingSessionsTableProps {
   sessions: TrainingSession[];
   onSelectSession?: (session: TrainingSession) => void;
+  onAdvanceStatus?: (
+    sessionId: string,
+    status: "in_progress" | "completed",
+  ) => void;
+  onCancelSession?: (sessionId: string, reason: string) => void;
 }
 
 export default function UpcomingSessionsTable({
   sessions,
   onSelectSession,
+  onAdvanceStatus,
+  onCancelSession,
 }: UpcomingSessionsTableProps) {
   const [searchTerm, setSearchTerm] = useState("");
   const [filterStatus, setFilterStatus] = useState<string>("All");
@@ -31,21 +47,21 @@ export default function UpcomingSessionsTable({
     switch (status) {
       case "Scheduled":
         return (
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-blue-50 px-2.5 py-0.5  font-semibold text-blue-700 border border-blue-200">
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-blue-50 px-2.5 py-0.5 text-xs font-semibold text-blue-700 border border-blue-200">
             <span className="size-1.5 rounded-full bg-blue-500 animate-pulse" />
             Scheduled
           </span>
         );
       case "In Progress":
         return (
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-50 px-2.5 py-0.5  font-semibold text-amber-700 border border-amber-200">
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-50 px-2.5 py-0.5 text-xs font-semibold text-amber-700 border border-amber-200">
             <span className="size-1.5 rounded-full bg-amber-500 animate-pulse" />
             In Progress
           </span>
         );
       case "Completed":
         return (
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-0.5  font-semibold text-emerald-700 border border-emerald-200">
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-semibold text-emerald-700 border border-emerald-200">
             <span className="size-1.5 rounded-full bg-emerald-500" />
             Completed
           </span>
@@ -53,7 +69,7 @@ export default function UpcomingSessionsTable({
       case "Cancelled":
       default:
         return (
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-100 px-2.5 py-0.5  font-semibold text-slate-600 border border-slate-200">
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-semibold text-slate-600 border border-slate-200">
             Cancelled
           </span>
         );
@@ -66,9 +82,22 @@ export default function UpcomingSessionsTable({
         return <Video className="size-3.5 text-info" />;
       case "Self-paced online":
         return <Monitor className="size-3.5 text-purple-600" />;
+      case "Blended":
+        return <Video className="size-3.5 text-warning" />;
       case "In-person":
       default:
         return <MapPin className="size-3.5 text-emerald-600" />;
+    }
+  };
+
+  const handleCancelClick = (e: React.MouseEvent, sessionId: string) => {
+    e.stopPropagation();
+    const reason = window.prompt(
+      "Reason for cancelling session:",
+      "Rescheduling",
+    );
+    if (reason && reason.trim()) {
+      onCancelSession?.(sessionId, reason.trim());
     }
   };
 
@@ -79,13 +108,13 @@ export default function UpcomingSessionsTable({
         <div>
           <div className="flex items-center gap-2">
             <h2 className="text-lg font-bold text-base-content">
-              Upcoming sessions
+              Training sessions
             </h2>
-            <span className="badge badge-sm badge-ghost  font-semibold">
+            <span className="badge badge-sm badge-ghost font-semibold">
               {filteredSessions.length}
             </span>
           </div>
-          <p className=" text-base-content/80 mt-0.5">
+          <p className="text-xs text-base-content/80 mt-0.5">
             Classroom, live virtual training, and cohort schedules.
           </p>
         </div>
@@ -98,46 +127,49 @@ export default function UpcomingSessionsTable({
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             placeholder="Search session, trainer..."
-            className="input input-sm input-bordered w-full pl-9  rounded-xl bg-base-200/80"
+            className="input input-sm input-bordered w-full pl-9 rounded-xl bg-base-200/80"
           />
         </div>
       </div>
 
       {/* Filter Tabs */}
       <div className="flex flex-wrap gap-1.5 border-b border-base-200 pb-2">
-        {["All", "Scheduled", "Completed"].map((tab) => (
-          <button
-            key={tab}
-            type="button"
-            onClick={() => setFilterStatus(tab)}
-            className={`px-3 py-1  font-semibold rounded-lg transition-all ${
-              filterStatus === tab
-                ? "bg-primary text-white shadow-2xs"
-                : "text-base-content/80 hover:bg-base-200"
-            }`}
-          >
-            {tab}
-          </button>
-        ))}
+        {["All", "Scheduled", "In Progress", "Completed", "Cancelled"].map(
+          (tab) => (
+            <button
+              key={tab}
+              type="button"
+              onClick={() => setFilterStatus(tab)}
+              className={`px-3 py-1 text-xs font-semibold rounded-lg transition-all ${
+                filterStatus === tab
+                  ? "bg-primary text-white shadow-2xs"
+                  : "text-base-content/80 hover:bg-base-200"
+              }`}
+            >
+              {tab}
+            </button>
+          ),
+        )}
       </div>
 
       {/* Table */}
       <div className="overflow-x-auto">
         <table className="table table-sm w-full">
           <thead>
-            <tr className="border-b border-base-200  font-semibold text-base-content/80">
+            <tr className="border-b border-base-200 font-semibold text-base-content/80 text-xs">
               <th>Course</th>
               <th>Date</th>
               <th>Delivery & Location</th>
               <th>Trainer</th>
-              <th className="text-right">Status</th>
+              <th>Status</th>
+              <th className="text-right">Actions</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-base-200 ">
+          <tbody className="divide-y divide-base-200 text-xs">
             {filteredSessions.length === 0 ? (
               <tr>
                 <td
-                  colSpan={5}
+                  colSpan={6}
                   className="py-8 text-center text-base-content/80 italic"
                 >
                   No training sessions found.
@@ -174,8 +206,56 @@ export default function UpcomingSessionsTable({
                     {session.trainer}
                   </td>
 
-                  <td className="text-right">
-                    {getStatusBadge(session.status)}
+                  <td>{getStatusBadge(session.status)}</td>
+
+                  <td
+                    className="text-right"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <div className="flex items-center justify-end gap-1">
+                      {session.status === "Scheduled" && (
+                        <>
+                          {onAdvanceStatus && (
+                            <button
+                              type="button"
+                              onClick={() =>
+                                onAdvanceStatus(session.id, "in_progress")
+                              }
+                              className="btn btn-ghost btn-xs text-primary hover:bg-primary/10 gap-1 rounded-lg"
+                              title="Start Session (Mark In Progress)"
+                            >
+                              <Play className="size-3" />
+                              <span>Start</span>
+                            </button>
+                          )}
+                          {onCancelSession && (
+                            <button
+                              type="button"
+                              onClick={(e) => handleCancelClick(e, session.id)}
+                              className="btn btn-ghost btn-xs text-error hover:bg-error/10 gap-1 rounded-lg"
+                              title="Cancel Session"
+                            >
+                              <XCircle className="size-3" />
+                              <span>Cancel</span>
+                            </button>
+                          )}
+                        </>
+                      )}
+
+                      {session.status === "In Progress" && onAdvanceStatus && (
+                        <button
+                          type="button"
+                          onClick={() =>
+                            onAdvanceStatus(session.id, "completed")
+                          }
+                          className="btn btn-ghost btn-xs text-success hover:bg-success/10 gap-1 rounded-lg"
+                          title="Complete Session"
+                        >
+                          <CheckCircle2 className="size-3" />
+                          <span>Complete</span>
+                        </button>
+                      )}
+                    </div>
                   </td>
                 </tr>
               ))

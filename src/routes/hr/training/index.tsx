@@ -1,14 +1,28 @@
 import { useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import PageHeader from "@/components/Headers/PageHeader";
+import PageLoader from "@/components/layout/PageLoader";
 import CourseCardsGrid from "./-components/CourseCardsGrid";
 import UpcomingSessionsTable from "./-components/UpcomingSessionsTable";
 import CreateCourseModal from "./-components/CreateCourseModal";
-import {
-  INITIAL_COURSES,
-  INITIAL_SESSIONS,
-} from "./-components/trainingData";
 import type { Course, TrainingSession } from "./-components/types";
+import {
+  mapBackendCourseToUi,
+  mapBackendUpcomingSessionToUi,
+} from "./-components/mappers";
+import {
+  useTrainingDashboard,
+  useCreateTrainingCourse,
+  useCreateTrainingSession,
+  usePublishTrainingCourse,
+  useArchiveTrainingCourse,
+  useAdvanceTrainingSessionStatus,
+  useCancelTrainingSession,
+  type CreateTrainingCoursePayload,
+  type CreateTrainingSessionPayload,
+  type TrainingDashboardData,
+} from "@/api/trainingApi";
+import { extract_message } from "@/helpers/errors";
 import { Plus } from "lucide-react";
 import { toast } from "sonner";
 
@@ -17,15 +31,90 @@ export const Route = createFileRoute("/hr/training/")({
 });
 
 function RouteComponent() {
-  const [courses, setCourses] = useState<Course[]>(INITIAL_COURSES);
-  const [sessions, setSessions] = useState<TrainingSession[]>(INITIAL_SESSIONS);
   const [isCreateCourseOpen, setIsCreateCourseOpen] = useState(false);
 
-  const handleCreateCourse = (newCourse: Course, newSession?: TrainingSession) => {
-    setCourses((prev) => [newCourse, ...prev]);
-    if (newSession) {
-      setSessions((prev) => [newSession, ...prev]);
+  const dashboardQuery = useTrainingDashboard();
+
+  const createCourseMutation = useCreateTrainingCourse();
+  const createSessionMutation = useCreateTrainingSession();
+  const publishCourseMutation = usePublishTrainingCourse();
+  const archiveCourseMutation = useArchiveTrainingCourse();
+  const advanceSessionMutation = useAdvanceTrainingSessionStatus();
+  const cancelSessionMutation = useCancelTrainingSession();
+
+  const handleCreateCourse = async (
+    coursePayload: CreateTrainingCoursePayload,
+    sessionPayload?: Omit<CreateTrainingSessionPayload, "courseId">,
+  ) => {
+    try {
+      const createdCourse =
+        await createCourseMutation.mutateAsync(coursePayload);
+
+      if (sessionPayload) {
+        try {
+          await createSessionMutation.mutateAsync({
+            ...sessionPayload,
+            courseId: createdCourse.id,
+          });
+        } catch (sessionErr) {
+          toast.warning("Course created, but session scheduling failed", {
+            description: extract_message(sessionErr),
+          });
+          return;
+        }
+      }
+
+      toast.success("Course created successfully", {
+        description: `"${createdCourse.title}" is now added to the course catalog.`,
+      });
+    } catch (err) {
+      toast.error("Failed to create course", {
+        description: extract_message(err),
+      });
+      throw err;
     }
+  };
+
+  const handlePublishCourse = (courseId: string) => {
+    toast.promise(publishCourseMutation.mutateAsync(courseId), {
+      loading: "Publishing course...",
+      success: "Course published successfully!",
+      error: (err) => extract_message(err),
+    });
+  };
+
+  const handleArchiveCourse = (courseId: string) => {
+    toast.promise(archiveCourseMutation.mutateAsync(courseId), {
+      loading: "Archiving course...",
+      success: "Course archived.",
+      error: (err) => extract_message(err),
+    });
+  };
+
+  const handleAdvanceSessionStatus = (
+    sessionId: string,
+    status: "in_progress" | "completed",
+  ) => {
+    const label =
+      status === "in_progress"
+        ? "Starting session..."
+        : "Completing session...";
+    toast.promise(advanceSessionMutation.mutateAsync({ sessionId, status }), {
+      loading: label,
+      success:
+        status === "in_progress"
+          ? "Session marked as In Progress."
+          : "Session marked as Completed.",
+      error: (err) => extract_message(err),
+    });
+  };
+
+  const handleCancelSession = (sessionId: string, reason: string) => {
+    toast.promise(cancelSessionMutation.mutateAsync({ sessionId, reason }), {
+      loading: "Cancelling session...",
+      success: "Training session cancelled.",
+      error: (err) => extract_message(err),
+    });
   };
 
   const handleSelectCourse = (course: Course) => {
@@ -57,23 +146,49 @@ function RouteComponent() {
         </button>
       </PageHeader>
 
-      {/* Top 4 KPI Stat Cards + Active Course Grid */}
-      <CourseCardsGrid
-        courses={courses}
-        onSelectCourse={handleSelectCourse}
-      />
+      <PageLoader<TrainingDashboardData>
+        query={dashboardQuery}
+        emptyState={{
+          title: "No training data",
+          description:
+            "No courses or sessions found. Get started by creating your first course.",
+          actionText: "Create course",
+          onAction: () => setIsCreateCourseOpen(true),
+        }}
+      >
+        {(data) => {
+          const courses = data.courses.map(mapBackendCourseToUi);
+          const sessions = data.upcomingSessions.map(
+            mapBackendUpcomingSessionToUi,
+          );
 
-      {/* Upcoming Training Sessions Table */}
-      <UpcomingSessionsTable
-        sessions={sessions}
-        onSelectSession={handleSelectSession}
-      />
+          return (
+            <div className="space-y-6">
+              {/* Top 4 KPI Stat Cards + Active Course Grid */}
+              <CourseCardsGrid
+                courses={courses}
+                onSelectCourse={handleSelectCourse}
+                onPublishCourse={handlePublishCourse}
+                onArchiveCourse={handleArchiveCourse}
+              />
+
+              {/* Upcoming Training Sessions Table */}
+              <UpcomingSessionsTable
+                sessions={sessions}
+                onSelectSession={handleSelectSession}
+                onAdvanceStatus={handleAdvanceSessionStatus}
+                onCancelSession={handleCancelSession}
+              />
+            </div>
+          );
+        }}
+      </PageLoader>
 
       {/* Create Course Modal */}
       <CreateCourseModal
         isOpen={isCreateCourseOpen}
         onClose={() => setIsCreateCourseOpen(false)}
-        onCreateCourse={handleCreateCourse}
+        onSubmitCourse={handleCreateCourse}
       />
     </div>
   );
