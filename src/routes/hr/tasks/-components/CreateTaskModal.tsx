@@ -102,25 +102,16 @@ export default function CreateTaskModal({
 
     try {
       if (initialTask) {
-        await toast.promise(
-          updateTask.mutateAsync({ id: initialTask.id, ...payload }),
-          {
-            loading: "Updating task...",
-            success: "Task updated",
-            error: (error) => extract_message(error),
-          },
-        );
+        await updateTask.mutateAsync({ id: initialTask.id, ...payload });
+        toast.success("Task updated");
       } else {
-        await toast.promise(createTask.mutateAsync(payload), {
-          loading: "Creating task...",
-          success: "Task created",
-          error: (error) => extract_message(error),
-        });
+        await createTask.mutateAsync(payload);
+        toast.success("Task created");
       }
       reset(defaultValues);
       onClose();
-    } catch {
-      // Error toast is shown by toast.promise.
+    } catch (error) {
+      toast.error(extract_message(error));
     }
   };
 

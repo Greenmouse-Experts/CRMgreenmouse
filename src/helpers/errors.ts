@@ -10,19 +10,30 @@ export const extract_message = (error: unknown): string => {
     payload?: { message?: string };
   };
 
-  if (err.response?.data?.message) {
-    return err.response.data.message;
+  const responseData = err.response?.data as
+    | { message?: string | string[] }
+    | string
+    | undefined;
+  const msg =
+    typeof responseData === "object" && responseData !== null
+      ? responseData.message
+      : undefined;
+  if (Array.isArray(msg) && msg.length > 0) {
+    return msg.filter(Boolean).join(", ");
   }
-  if (typeof err.response?.data === "string") {
-    return err.response.data;
+  if (typeof msg === "string" && msg.trim()) {
+    return msg;
   }
-  if (typeof err.payload?.message === "string") {
+  if (typeof responseData === "string" && responseData.trim()) {
+    return responseData;
+  }
+  if (typeof err.payload?.message === "string" && err.payload.message.trim()) {
     return err.payload.message;
   }
-  if (typeof err.message === "string") {
+  if (typeof err.message === "string" && err.message.trim()) {
     return err.message;
   }
-  if (error instanceof Error) {
+  if (error instanceof Error && error.message.trim()) {
     return error.message;
   }
   return "An unexpected error occurred";
