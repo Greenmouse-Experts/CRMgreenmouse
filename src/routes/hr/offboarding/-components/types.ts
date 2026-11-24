@@ -29,6 +29,9 @@ export interface ClearanceItem {
   department: ClearanceDepartment;
   item: string;
   owner: string;
+  assignedToId?: string;
+  taskType?: string;
+  required?: boolean;
   status: ClearanceStatus;
   dueDate?: string;
   notes?: string;
@@ -45,7 +48,8 @@ export type OffboardingStatus =
   | "Notice period"
   | "Clearance in progress"
   | "Settlement ready"
-  | "Completed";
+  | "Completed"
+  | "Cancelled";
 
 export interface OffboardingCase {
   id: string;
@@ -61,6 +65,9 @@ export interface OffboardingCase {
   handoverTo: string;
   severancePay?: number;
   notes?: string;
+  stage?: string;
+  settlementStatus?: string;
+  tasks?: ClearanceItem[];
 }
 
 export interface InitiateOffboardingPayload {

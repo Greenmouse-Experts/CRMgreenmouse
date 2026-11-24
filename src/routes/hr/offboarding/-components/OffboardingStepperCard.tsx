@@ -1,29 +1,84 @@
-import { ArrowRight, Check, ChevronDown, UserMinus } from "lucide-react";
+import {
+  Check,
+  CheckCircle2,
+  ChevronDown,
+  ShieldOff,
+  UserMinus,
+} from "lucide-react";
 import { OFFBOARDING_STEPS } from "./offboardingData";
-import type { OffboardingCase, OffboardingStep } from "./types";
+import type { OffboardingCase } from "./types";
+import {
+  useAcceptOffboardingCase,
+  useApproveOffboardingSettlement,
+  useAuthorizeOffboardingRevocation,
+  useSubmitOffboardingSettlement,
+} from "@/api/offboardingApi";
+import { extract_message } from "@/helpers/errors";
+import { toast } from "sonner";
 
 interface OffboardingStepperCardProps {
   activeCase: OffboardingCase;
   allCases: OffboardingCase[];
   onSelectCase: (caseItem: OffboardingCase) => void;
-  onAdvanceStep?: (nextStep: OffboardingStep) => void;
 }
 
 export default function OffboardingStepperCard({
   activeCase,
   allCases,
   onSelectCase,
-  onAdvanceStep,
 }: OffboardingStepperCardProps) {
-  const currentStepIndex = OFFBOARDING_STEPS.indexOf(activeCase.currentStep);
-  const nextStep =
-    currentStepIndex < OFFBOARDING_STEPS.length - 1
-      ? OFFBOARDING_STEPS[currentStepIndex + 1]
-      : null;
+  const acceptCase = useAcceptOffboardingCase();
+  const submitSettlement = useSubmitOffboardingSettlement();
+  const approveSettlement = useApproveOffboardingSettlement();
+  const authorizeRevocation = useAuthorizeOffboardingRevocation();
 
-  const formattedLastDay = new Date(
-    activeCase.lastWorkingDay,
-  ).toLocaleDateString("en-US", { month: "short", day: "numeric" });
+  const currentStepIndex = Math.max(
+    0,
+    OFFBOARDING_STEPS.indexOf(activeCase.currentStep),
+  );
+
+  const formattedLastDay = activeCase.lastWorkingDay
+    ? new Date(activeCase.lastWorkingDay).toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+      })
+    : "—";
+
+  const handleAccept = async () => {
+    try {
+      await acceptCase.mutateAsync({ id: activeCase.id });
+      toast.success(`Offboarding notice accepted for ${activeCase.employee}`);
+    } catch (error) {
+      toast.error(extract_message(error));
+    }
+  };
+
+  const handleAuthorizeRevocation = async () => {
+    try {
+      await authorizeRevocation.mutateAsync({
+        caseId: activeCase.id,
+        revokeAt: new Date().toISOString(),
+        reason: "Authorized from offboarding pipeline",
+      });
+      toast.success(`Access revocation authorized for ${activeCase.employee}`);
+    } catch (error) {
+      toast.error(extract_message(error));
+    }
+  };
+
+  const handleSettlementAction = async () => {
+    try {
+      if (activeCase.settlementStatus === "submitted") {
+        await approveSettlement.mutateAsync({ caseId: activeCase.id });
+        toast.success(`Final settlement approved for ${activeCase.employee}`);
+      } else {
+        await submitSettlement.mutateAsync(activeCase.id);
+        toast.success(`Final settlement submitted for ${activeCase.employee}`);
+      }
+    } catch (error) {
+      toast.error(extract_message(error));
+    }
+  };
 
   return (
     <div className="card bg-base-100 border border-base-200 shadow-sm p-5 sm:p-6 space-y-5">
@@ -38,7 +93,7 @@ export default function OffboardingStepperCard({
               <h2 className="text-base sm:text-lg font-bold text-base-content">
                 {activeCase.employee}
               </h2>
-              <span className="badge badge-sm badge-outline text-[11px] font-medium">
+              <span className="badge badge-sm badge-outline text-sm font-medium">
                 {activeCase.role} · {activeCase.department}
               </span>
               <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-50 px-2.5 py-0.5  font-semibold text-amber-700 border border-amber-200">
@@ -56,24 +111,24 @@ export default function OffboardingStepperCard({
           </div>
         </div>
 
-        {/* Switch Case Dropdown & Advance Button */}
-        <div className="flex items-center gap-2 self-start sm:self-auto">
+        {/* Switch Case Dropdown & Stage Actions */}
+        <div className="flex flex-wrap items-center gap-2 self-start sm:self-auto">
           {allCases.length > 1 && (
             <div className="dropdown dropdown-end">
               <div
                 tabIndex={0}
                 role="button"
-                className="btn btn-sm btn-ghost border border-base-200 rounded-xl px-3  gap-1"
+                className="btn btn-sm btn-ghost border border-base-200 rounded-xl px-3 gap-1"
               >
-                <UserMinus className="size-3.5 text-base-content/80" />
+                <UserMinus className="size-4 text-base-content/80" />
                 <span className="hidden md:inline">Switch Employee</span>
-                <ChevronDown className="size-3 text-base-content/80" />
+                <ChevronDown className="size-4 text-base-content/80" />
               </div>
               <ul
                 tabIndex={0}
-                className="dropdown-content z-20 menu p-2 shadow-lg bg-base-100 rounded-box w-56 border border-base-200  mt-1"
+                className="dropdown-content z-20 menu p-2 shadow-lg bg-base-100 rounded-box w-56 border border-base-200 mt-1"
               >
-                <li className="menu-title px-2 py-1 text-[11px] uppercase tracking-wider text-base-content/80">
+                <li className="menu-title px-2 py-1 text-sm uppercase tracking-wider text-base-content/80">
                   Select offboarding record
                 </li>
                 {allCases.map((c) => (
@@ -87,7 +142,7 @@ export default function OffboardingStepperCard({
                     >
                       <div className="flex flex-col items-start text-left">
                         <span>{c.employee}</span>
-                        <span className="text-[10px] text-base-content/80">
+                        <span className="text-sm text-base-content/80">
                           {c.department} · {c.status}
                         </span>
                       </div>
@@ -98,23 +153,59 @@ export default function OffboardingStepperCard({
             </div>
           )}
 
-          {nextStep && onAdvanceStep && (
+          {activeCase.currentStep === "Resignation" && (
             <button
               type="button"
-              onClick={() => onAdvanceStep(nextStep)}
-              className="btn btn-sm bg-primary text-white hover:bg-primary/90 rounded-xl px-3.5 gap-1.5  shadow-sm shadow-primary/20"
+              onClick={handleAccept}
+              disabled={acceptCase.isPending}
+              className="btn btn-sm bg-primary text-white hover:bg-primary/90 rounded-xl px-3.5 gap-1.5 shadow-sm shadow-primary/20"
             >
-              <span>Advance to {nextStep}</span>
-              <ArrowRight className="size-3.5" />
+              <CheckCircle2 className="size-4" />
+              <span>
+                {acceptCase.isPending ? "Accepting..." : "Accept Notice"}
+              </span>
             </button>
           )}
+
+          {activeCase.status !== "Completed" &&
+            activeCase.status !== "Cancelled" && (
+              <>
+                <button
+                  type="button"
+                  onClick={handleSettlementAction}
+                  disabled={
+                    submitSettlement.isPending || approveSettlement.isPending
+                  }
+                  className="btn btn-sm btn-outline rounded-xl px-3.5 gap-1.5"
+                >
+                  <span>
+                    {activeCase.settlementStatus === "submitted"
+                      ? "Approve Settlement"
+                      : "Submit Settlement"}
+                  </span>
+                </button>
+                <button
+                  type="button"
+                  onClick={handleAuthorizeRevocation}
+                  disabled={authorizeRevocation.isPending}
+                  className="btn btn-sm btn-outline btn-error rounded-xl px-3.5 gap-1.5"
+                >
+                  <ShieldOff className="size-4" />
+                  <span>
+                    {authorizeRevocation.isPending
+                      ? "Authorizing..."
+                      : "Authorize Revocation"}
+                  </span>
+                </button>
+              </>
+            )}
         </div>
       </div>
 
       {/* 8-Step Workflow Horizontal Stepper */}
       <div className="space-y-2">
-        <div className="flex items-center justify-between  font-semibold text-base-content/80">
-          <span className="uppercase tracking-wider text-[11px]">
+        <div className="flex items-center justify-between font-semibold text-base-content/80">
+          <span className="uppercase tracking-wider text-sm">
             Offboarding Milestone Pipeline
           </span>
           <span className="text-primary font-bold">
@@ -141,7 +232,7 @@ export default function OffboardingStepperCard({
               >
                 <div className="flex items-center justify-between w-full mb-1.5">
                   <span
-                    className={`inline-flex items-center justify-center size-5 rounded-full text-[10px] font-bold ${
+                    className={`inline-flex items-center justify-center size-5 rounded-full text-sm font-bold ${
                       isCurrent
                         ? "bg-primary text-white"
                         : isCompleted
@@ -160,7 +251,7 @@ export default function OffboardingStepperCard({
                   )}
                 </div>
                 <span
-                  className={`text-[11px] font-semibold leading-tight line-clamp-1 ${
+                  className={`text-sm font-semibold leading-tight line-clamp-1 ${
                     isCurrent
                       ? "text-primary"
                       : isCompleted
@@ -171,7 +262,7 @@ export default function OffboardingStepperCard({
                 >
                   {step}
                 </span>
-                <span className="text-[9px] text-base-content/80 mt-0.5">
+                <span className="text-sm text-base-content/80 mt-0.5">
                   {isCompleted ? "Done" : isCurrent ? "Active" : "Pending"}
                 </span>
               </div>

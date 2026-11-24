@@ -6,24 +6,29 @@ import type {
   ClearanceItem,
   ClearanceStatus,
 } from "./types";
+import {
+  useUpdateOffboardingTask,
+  useWaiveOffboardingTask,
+} from "@/api/offboardingApi";
+import { extract_message } from "@/helpers/errors";
 import { Clock, Plus, Search } from "lucide-react";
 import { toast } from "sonner";
 
 interface ClearanceSectionProps {
   items: ClearanceItem[];
   employeeName: string;
-  onUpdateStatus: (id: string, status: ClearanceStatus) => void;
   onOpenAddItemModal: () => void;
 }
 
 export default function ClearanceSection({
   items,
   employeeName,
-  onUpdateStatus,
   onOpenAddItemModal,
 }: ClearanceSectionProps) {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedDept, setSelectedDept] = useState<string>("All");
+  const updateTask = useUpdateOffboardingTask();
+  const waiveTask = useWaiveOffboardingTask();
 
   const filteredItems = items.filter((item) => {
     if (selectedDept !== "All" && item.department !== selectedDept)
@@ -65,6 +70,13 @@ export default function ClearanceSection({
             Scheduled
           </span>
         );
+      case "Waived":
+        return (
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-100 px-2.5 py-0.5 font-semibold text-slate-700 border border-slate-200">
+            <span className="size-1.5 rounded-full bg-slate-500" />
+            Waived
+          </span>
+        );
       case "Pending":
       default:
         return (
@@ -97,7 +109,7 @@ export default function ClearanceSection({
       label: "Department",
       render: (dept: ClearanceDepartment) => (
         <span
-          className={`inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-semibold border ${getDepartmentBadge(
+          className={`inline-flex items-center px-2 py-0.5 rounded-md text-sm font-semibold border ${getDepartmentBadge(
             dept,
           )}`}
         >
@@ -112,7 +124,7 @@ export default function ClearanceSection({
         <div className="space-y-0.5">
           <div className="font-semibold  text-base-content">{itemText}</div>
           {row.notes && (
-            <div className="text-[11px] text-base-content/80 max-w-sm line-clamp-1">
+            <div className="text-sm text-base-content/80 max-w-sm line-clamp-1">
               {row.notes}
             </div>
           )}
@@ -147,29 +159,48 @@ export default function ClearanceSection({
     },
   ];
 
+  const handleTaskStatus = async (
+    item: ClearanceItem,
+    status: "pending" | "in_progress" | "completed",
+    label: string,
+  ) => {
+    try {
+      await updateTask.mutateAsync({ id: item.id, status });
+      toast.success(`Marked "${item.item}" as ${label}`);
+    } catch (error) {
+      toast.error(extract_message(error));
+    }
+  };
+
   const actions: Actions<ClearanceItem>[] = [
     {
       key: "complete",
       label: "Mark Completed",
-      action: (item) => {
-        onUpdateStatus(item.id, "Completed");
-        toast.success(`Marked "${item.item}" as completed`);
-      },
+      action: (item) => handleTaskStatus(item, "completed", "completed"),
     },
     {
       key: "in_progress",
       label: "Mark In Progress",
-      action: (item) => {
-        onUpdateStatus(item.id, "In Progress");
-        toast.info(`Marked "${item.item}" as in progress`);
-      },
+      action: (item) => handleTaskStatus(item, "in_progress", "in progress"),
     },
     {
       key: "pending",
       label: "Set as Pending",
-      action: (item) => {
-        onUpdateStatus(item.id, "Pending");
-        toast.info(`Reset "${item.item}" to pending`);
+      action: (item) => handleTaskStatus(item, "pending", "pending"),
+    },
+    {
+      key: "waive",
+      label: "Waive Task",
+      action: async (item) => {
+        try {
+          await waiveTask.mutateAsync({
+            id: item.id,
+            reason: "Waived by HR",
+          });
+          toast.info(`Waived "${item.item}"`);
+        } catch (error) {
+          toast.error(extract_message(error));
+        }
       },
     },
   ];

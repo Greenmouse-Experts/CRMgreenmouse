@@ -2,6 +2,11 @@ import { useState } from "react";
 import CustomTable, { type columnType } from "@/components/tables/CustomTable";
 import type { Actions } from "@/components/tables/pop-up";
 import type { OffboardingCase, OffboardingStatus } from "./types";
+import {
+  useAcceptOffboardingCase,
+  useCancelOffboardingCase,
+} from "@/api/offboardingApi";
+import { extract_message } from "@/helpers/errors";
 import { Search } from "lucide-react";
 import { toast } from "sonner";
 
@@ -9,7 +14,6 @@ interface OffboardingCasesTableProps {
   cases: OffboardingCase[];
   activeCaseId: string;
   onSelectCase: (caseItem: OffboardingCase) => void;
-  onCompleteCase: (id: string) => void;
 }
 
 const TABS: (OffboardingStatus | "All")[] = [
@@ -17,6 +21,7 @@ const TABS: (OffboardingStatus | "All")[] = [
   "Notice period",
   "Clearance in progress",
   "Completed",
+  "Cancelled",
 ];
 
 const getInitials = (name: string) =>
@@ -31,12 +36,13 @@ export default function OffboardingCasesTable({
   cases,
   activeCaseId,
   onSelectCase,
-  onCompleteCase,
 }: OffboardingCasesTableProps) {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedTab, setSelectedTab] = useState<OffboardingStatus | "All">(
     "All",
   );
+  const acceptCase = useAcceptOffboardingCase();
+  const cancelCase = useCancelOffboardingCase();
 
   const filteredCases = cases.filter((c) => {
     if (selectedTab !== "All" && c.status !== selectedTab) return false;
@@ -60,6 +66,13 @@ export default function OffboardingCasesTable({
           <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-0.5  font-semibold text-emerald-700 border border-emerald-200">
             <span className="size-1.5 rounded-full bg-emerald-500" />
             Completed
+          </span>
+        );
+      case "Cancelled":
+        return (
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-100 px-2.5 py-0.5 font-semibold text-slate-700 border border-slate-200">
+            <span className="size-1.5 rounded-full bg-slate-500" />
+            Cancelled
           </span>
         );
       case "Notice period":
@@ -89,7 +102,7 @@ export default function OffboardingCasesTable({
         return (
           <div className="flex items-center gap-2.5">
             <div
-              className={`size-8 rounded-full font-bold flex items-center justify-center text-[10px] ${
+              className={`size-8 rounded-full font-bold flex items-center justify-center text-sm ${
                 isActive
                   ? "bg-primary text-white"
                   : "bg-primary/10 text-primary"
@@ -103,12 +116,12 @@ export default function OffboardingCasesTable({
                   {row.employee}
                 </span>
                 {isActive && (
-                  <span className="badge badge-xs badge-primary text-[9px] font-bold">
+                  <span className="badge badge-xs badge-primary text-sm font-bold">
                     Active view
                   </span>
                 )}
               </div>
-              <div className="text-[11px] text-base-content/80">
+              <div className="text-sm text-base-content/80">
                 {row.role} · {row.department}
               </div>
             </div>
@@ -162,11 +175,33 @@ export default function OffboardingCasesTable({
       },
     },
     {
-      key: "conclude_exit",
-      label: "Mark Offboarding Completed",
-      action: (item) => {
-        onCompleteCase(item.id);
-        toast.success(`Offboarding for ${item.employee} concluded`);
+      key: "accept_case",
+      label: "Accept Notice",
+      action: async (item) => {
+        try {
+          await acceptCase.mutateAsync({ id: item.id });
+          toast.success(`Accepted offboarding notice for ${item.employee}`);
+        } catch (error) {
+          toast.error(extract_message(error));
+        }
+      },
+    },
+    {
+      key: "cancel_case",
+      label: "Cancel Offboarding",
+      render: () => (
+        <span className="text-error font-medium">Cancel Offboarding</span>
+      ),
+      action: async (item) => {
+        try {
+          await cancelCase.mutateAsync({
+            id: item.id,
+            reason: "Cancelled by HR",
+          });
+          toast.info(`Offboarding cancelled for ${item.employee}`);
+        } catch (error) {
+          toast.error(extract_message(error));
+        }
       },
     },
   ];
