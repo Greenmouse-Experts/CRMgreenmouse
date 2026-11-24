@@ -1646,21 +1646,21 @@ function StaffDetailPage() {
                   </p>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                   {DOCUMENT_ITEMS.map((doc) => (
                     <div
                       key={doc.key}
-                      className="rounded-2xl border border-base-300 bg-base-100 p-4"
+                      className="rounded-2xl border border-base-300 bg-base-100 p-4 min-w-0"
                     >
-                      <div className="mb-3 flex items-start gap-2">
+                      <div className="mb-3 flex items-start gap-2.5">
                         <div className="size-8 rounded-xl flex shrink-0 items-center justify-center bg-primary/10 text-primary">
                           <FileText className="size-4" />
                         </div>
-                        <div>
+                        <div className="min-w-0">
                           <h4 className="font-semibold text-base-content">
                             {doc.title}
                           </h4>
-                          <p className="text-[11px] text-base-content/80 mt-0.5 line-clamp-2">
+                          <p className="text-sm text-base-content/80 mt-0.5 line-clamp-2">
                             {doc.description}
                           </p>
                         </div>

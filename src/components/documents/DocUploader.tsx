@@ -66,24 +66,29 @@ export default function DocUploader({
           }}
         />
         <UploadCloud className="size-10 text-primary" aria-hidden="true" />
-        <span className="mt-2 font-semibold">Choose document</span>
-        <span className="text-sm text-base-content/80">
+        <span className="mt-2 font-semibold text-center">Choose document</span>
+        <span className="text-sm text-base-content/80 text-center">
           Up to {maxSizeMb} MB
         </span>
       </label>
 
       {doc ? (
-        <div className="relative h-40 rounded-lg bg-base-200/80">
-          <div className="flex h-full flex-col items-center justify-center gap-2 px-4">
-            <FileText className="size-8 text-primary" aria-hidden="true" />
+        <div className="relative h-40 min-w-0 overflow-hidden rounded-lg bg-base-200/80">
+          <div className="flex h-full min-w-0 flex-col items-center justify-center gap-2 px-4">
+            <FileText
+              className="size-8 shrink-0 text-primary"
+              aria-hidden="true"
+            />
             <span
-              className="truncate text-sm font-semibold text-emerald-600"
+              className="w-full max-w-full truncate text-center text-sm font-semibold text-emerald-600"
               title={doc.name}
             >
               {doc.name}
             </span>
             {doc.size && (
-              <span className="text-xs text-base-content/80">{doc.size}</span>
+              <span className="text-sm text-base-content/80 truncate max-w-full">
+                {doc.size}
+              </span>
             )}
           </div>
           <button
