@@ -3,41 +3,60 @@ import Modal, { type ModalHandle } from "@/components/DialogModal";
 import SimpleInput from "@/components/inputs/SimpleInput";
 import LocalSelect from "@/components/inputs/LocalSelect";
 import {
-  EMPLOYEES_SELECTION,
   GOAL_CATEGORIES,
   REVIEW_CYCLES,
 } from "./performanceData";
 import type { TeamGoal } from "./types";
 import { toast } from "sonner";
 import { Send } from "lucide-react";
+import { useCreatePerformanceGoal } from "@/api/performanceApi";
+import type { PerformanceCycle } from "@/api/performanceApi";
 
 interface AssignGoalModalProps {
   isOpen: boolean;
   onClose: () => void;
   onAssignGoal: (goal: TeamGoal) => void;
+  cycle?: PerformanceCycle | null;
+  employees?: { id: string; name: string }[];
+}
+
+interface FormData {
+  emp: string;
+  cycle: string;
+  title: string;
+  category: TeamGoal["category"];
+  kpi: string;
+  target: string;
+  weight: number;
+  start: string;
+  due: string;
+  desc: string;
 }
 
 export default function AssignGoalModal({
   isOpen,
   onClose,
   onAssignGoal,
+  cycle,
+  employees,
 }: AssignGoalModalProps) {
   const modalRef = useRef<ModalHandle>(null);
 
-  const [form, setForm] = useState({
-    emp: EMPLOYEES_SELECTION[0] || "Whole team",
-    cycle: "Q4 2026",
+  const [form, setForm] = useState<FormData>({
+    emp: employees?.[0]?.name ?? "Whole team",
+    cycle: cycle?.name ?? REVIEW_CYCLES[0] ?? "Q4 2026",
     title: "",
     category: "Business" as const,
     kpi: "",
     target: "",
     weight: 25,
     start: new Date().toISOString().slice(0, 10),
-    due: "2026-12-15",
+    due: cycle?.dueDate ?? new Date().toISOString().slice(0, 10),
     desc: "",
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const createGoal = useCreatePerformanceGoal();
 
   useEffect(() => {
     if (isOpen) {
@@ -47,11 +66,21 @@ export default function AssignGoalModal({
     }
   }, [isOpen]);
 
+  useEffect(() => {
+    if (cycle) {
+      setForm((prev) => ({
+        ...prev,
+        cycle: cycle.name,
+        due: cycle.dueDate,
+      }));
+    }
+  }, [cycle]);
+
   const handleChange = (field: string, value: any) => {
     setForm((prev) => ({ ...prev, [field]: value }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!form.title.trim() || !form.target.trim()) {
@@ -68,29 +97,40 @@ export default function AssignGoalModal({
         progress: 0,
         assignedTo: form.emp,
         cycle: form.cycle,
-        category: form.category,
+        category: form.category as TeamGoal["category"],
         kpi: form.kpi.trim() || undefined,
         target: form.target.trim(),
         weight: Number(form.weight) || 20,
         due: form.due,
       };
 
+      await createGoal.mutateAsync({
+        cycleId: cycle?.id ?? "",
+        employeeId: form.emp,
+        title: form.title.trim(),
+        category: form.category as string,
+        measure: form.kpi.trim() || undefined,
+        targetValue: form.target ? Number(form.target) : undefined,
+        weight: Number(form.weight) || 20,
+        startDate: form.start,
+        dueDate: form.due,
+      });
+
       onAssignGoal(newGoal);
       toast.success("Goal assigned", {
         description: `${newGoal.title} has been assigned to ${newGoal.assignedTo}.`,
       });
 
-      // Reset
       setForm({
-        emp: EMPLOYEES_SELECTION[0] || "Whole team",
-        cycle: "Q4 2026",
+        emp: employees?.[0]?.name ?? "Whole team",
+        cycle: cycle?.name ?? REVIEW_CYCLES[0] ?? "Q4 2026",
         title: "",
         category: "Business",
         kpi: "",
         target: "",
         weight: 25,
         start: new Date().toISOString().slice(0, 10),
-        due: "2026-12-15",
+        due: cycle?.dueDate ?? new Date().toISOString().slice(0, 10),
         desc: "",
       });
       onClose();
@@ -123,9 +163,9 @@ export default function AssignGoalModal({
               value={form.emp}
               onChange={(e) => handleChange("emp", e.target.value)}
             >
-              {EMPLOYEES_SELECTION.map((emp) => (
-                <option key={emp} value={emp}>
-                  {emp}
+              {(employees ?? []).map((emp) => (
+                <option key={emp.id} value={emp.id}>
+                  {emp.name}
                 </option>
               ))}
             </LocalSelect>
