@@ -162,9 +162,9 @@ export default function HrDashboard() {
   }).length;
 
   const attendanceRaw: Record<string, any> =
-    attendanceDashboardQuery.data as Record<string, any>;
+    (attendanceDashboardQuery.data ?? {}) as Record<string, any>;
   const recruitmentRaw: Record<string, any> =
-    recruitmentDashboardQuery.data as Record<string, any>;
+    (recruitmentDashboardQuery.data ?? {}) as Record<string, any>;
 
   const presentToday = Number(
     attendanceRaw.presentToday ?? attendanceRaw.present ?? attendanceRaw.presentCount ?? 0,
