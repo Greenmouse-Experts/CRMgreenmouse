@@ -413,11 +413,7 @@ export const useRemoveEmployee = () => {
   return useMutation({
     mutationFn: async (id: string) => {
       try {
-        const { data } = await apiClient.patch<any>(
-          `/employees/${id}`,
-          { employmentStatus: "exited" },
-          authConfig(),
-        );
+        const { data } = await apiClient.delete<any>(`/employees/${id}`);
         return unwrapOne<EmployeeRecord>(data);
       } catch (error) {
         throw extractError(error);

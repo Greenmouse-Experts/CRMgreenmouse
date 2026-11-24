@@ -1,17 +1,24 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import PageHeader from "@/components/Headers/PageHeader";
 import PayrollStats from "./-components/PayrollStats";
 import PayrollRunsTable from "./-components/PayrollRunsTable";
 import PayslipsTable from "./-components/PayslipsTable";
 import PayrollConfigSection from "./-components/PayrollConfigSection";
-import {
-  INITIAL_PAYROLL_RUNS,
-  INITIAL_PAYSLIPS,
-  formatCurrency,
-} from "./-components/payrollData";
+import NewPayrollRunModal from "./-components/NewPayrollRunModal";
+import { formatCurrency } from "./-components/payrollData";
 import type { PayrollRun, Payslip } from "./-components/types";
-import { Download, Play } from "lucide-react";
+import {
+  usePayrollRuns,
+  useMyPayslips,
+  useCreatePayrollRun,
+  useCalculatePayrollRun,
+  useApprovePayrollRun,
+  useMarkPayrollRunPaid,
+  toPayrollRunStatus,
+} from "@/api/payrollApi";
+import { extract_message } from "@/helpers/auth";
+import { Download, Play, Plus } from "lucide-react";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/hr/payroll/")({
@@ -19,35 +26,101 @@ export const Route = createFileRoute("/hr/payroll/")({
 });
 
 function RouteComponent() {
-  const [runs, setRuns] = useState<PayrollRun[]>(INITIAL_PAYROLL_RUNS);
-  const [payslips, setPayslips] = useState<Payslip[]>(INITIAL_PAYSLIPS);
+  const [newRunOpen, setNewRunOpen] = useState(false);
+
+  const runsQuery = usePayrollRuns();
+  const payslipsQuery = useMyPayslips();
+
+  const createRunMutation = useCreatePayrollRun();
+  const calculateRunMutation = useCalculatePayrollRun();
+  const approveRunMutation = useApprovePayrollRun();
+  const markPaidMutation = useMarkPayrollRunPaid();
+
+  const [cancelledRuns, setCancelledRuns] = useState<Record<string, boolean>>(
+    {},
+  );
+  const [holds, setHolds] = useState<Record<string, boolean>>({});
+
+  const runs = useMemo<PayrollRun[]>(() => {
+    const base = (runsQuery.data ?? []).map((r) => ({
+      ...r,
+      status: toPayrollRunStatus(r.status),
+    }));
+    return base.map((r) =>
+      cancelledRuns[r.id] ? { ...r, status: "Cancelled" } : r,
+    );
+  }, [runsQuery.data, cancelledRuns]);
+
+  const payslips = useMemo<Payslip[]>(
+    () => (payslipsQuery.data as Payslip[] | undefined) ?? [],
+    [payslipsQuery.data],
+  );
+
+  const handleNewRun = async (payload: {
+    periodStart: string;
+    periodEnd: string;
+    payDate: string;
+  }) => {
+    try {
+      await toast.promise(createRunMutation.mutateAsync(payload), {
+        loading: "Creating payroll run...",
+        success: "Payroll run created",
+        error: (error) => extract_message(error as never),
+      });
+      setNewRunOpen(false);
+    } catch {
+      // Error toast shown by toast.promise.
+    }
+  };
+
+  const handleProcessRun = () => {
+    const activeRun = runs.find((r) =>
+      ["Draft", "Pending Approval"].includes(r.status),
+    );
+    if (!activeRun) {
+      toast.info("No draft or pending payroll run to process.");
+      return;
+    }
+    toast.promise(calculateRunMutation.mutateAsync({ id: activeRun.id }), {
+      loading: "Calculating payroll run...",
+      success: "Payroll run calculated",
+      error: (error) => extract_message(error as never),
+    });
+  };
 
   const handleSubmitRun = (id: string) => {
-    setRuns((prev) =>
-      prev.map((r) => (r.id === id ? { ...r, status: "Pending Approval" } : r)),
-    );
-    toast.success("Payroll run submitted for approval");
+    toast.promise(calculateRunMutation.mutateAsync({ id }), {
+      loading: "Calculating payroll run...",
+      success: "Payroll run submitted for approval",
+      error: (error) => extract_message(error as never),
+    });
   };
 
   const handleApproveRun = (id: string) => {
-    setRuns((prev) =>
-      prev.map((r) => (r.id === id ? { ...r, status: "Approved" } : r)),
-    );
-    toast.success("Payroll run approved by finance");
+    toast.promise(approveRunMutation.mutateAsync({ id }), {
+      loading: "Approving payroll run...",
+      success: "Payroll run approved by finance",
+      error: (error) => extract_message(error as never),
+    });
   };
 
   const handleMarkPaid = (id: string) => {
-    setRuns((prev) =>
-      prev.map((r) => (r.id === id ? { ...r, status: "Paid" } : r)),
+    toast.promise(
+      markPaidMutation.mutateAsync({
+        id,
+        paymentReference: `PR-${id} payment`,
+        paidAt: new Date().toISOString(),
+      }),
+      {
+        loading: "Recording payment...",
+        success: "Payroll marked as paid and disbursed",
+        error: (error) => extract_message(error as never),
+      },
     );
-    setPayslips((prev) => prev.map((p) => ({ ...p, status: "Paid" })));
-    toast.success("Payroll marked as paid and disbursed");
   };
 
   const handleCancelRun = (id: string) => {
-    setRuns((prev) =>
-      prev.map((r) => (r.id === id ? { ...r, status: "Cancelled" } : r)),
-    );
+    setCancelledRuns((prev) => ({ ...prev, [id]: true }));
     toast.info("Payroll run cancelled");
   };
 
@@ -56,19 +129,13 @@ function RouteComponent() {
   };
 
   const handleToggleHold = (id: string) => {
-    setPayslips((prev) =>
-      prev.map((p) => {
-        if (p.id === id) {
-          const newStatus = p.status === "On hold" ? "Ready" : "On hold";
-          toast.info(
-            newStatus === "On hold"
-              ? `Payslip for ${p.employee} placed on hold`
-              : `Payslip for ${p.employee} marked ready`,
-          );
-          return { ...p, status: newStatus };
-        }
-        return p;
-      }),
+    const slip = payslips.find((p) => p.id === id);
+    const wasHeld = holds[id] ?? slip?.status === "On hold";
+    setHolds((prev) => ({ ...prev, [id]: !wasHeld }));
+    toast.info(
+      wasHeld
+        ? `Payslip for ${slip?.employee} marked ready`
+        : `Payslip for ${slip?.employee} placed on hold`,
     );
   };
 
@@ -110,6 +177,14 @@ function RouteComponent() {
           </button>
           <button
             type="button"
+            onClick={() => setNewRunOpen(true)}
+            className="btn btn-sm bg-primary text-white hover:bg-primary/90 border-0 rounded-xl px-4 gap-1.5 shadow-sm shadow-primary/20"
+          >
+            <Plus className="size-4" />
+            <span>New run</span>
+          </button>
+          <button
+            type="button"
             onClick={handleRunPayroll}
             className="btn btn-sm bg-primary text-white hover:bg-primary/90 border-0 rounded-xl px-4 font-medium gap-1.5 shadow-sm shadow-primary/20"
           >
@@ -145,6 +220,13 @@ function RouteComponent() {
           <PayrollConfigSection />
         </div>
       </div>
+
+      <NewPayrollRunModal
+        isOpen={newRunOpen}
+        onClose={() => setNewRunOpen(false)}
+        isPending={createRunMutation.isPending}
+        onSubmitRun={handleNewRun}
+      />
     </div>
   );
 }

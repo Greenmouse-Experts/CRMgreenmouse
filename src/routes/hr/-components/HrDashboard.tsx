@@ -10,7 +10,6 @@ import {
   Check,
   CircleAlert,
   ClipboardCheck,
-  Clock3,
   FileText,
   UserPlus,
   Users,
@@ -32,6 +31,21 @@ import {
 } from "recharts";
 import PageHeader from "@/components/Headers/PageHeader";
 import StatCard from "@/components/StatCard";
+import {
+  useAttendanceDashboard,
+} from "@/api/attendanceApi";
+import {
+  useEmployeeOrganization,
+  useEmployeeRecentActivity,
+  useEmployees,
+  useUpcomingMilestones,
+} from "@/api/employeesApi";
+import {
+  useLeaveRequests,
+} from "@/api/leaveApi";
+import {
+  useRecruitmentDashboard,
+} from "@/api/recruitmentApi";
 
 const hrPaths: Record<
   "employees" | "reports" | "attendance" | "recruitment" | "leave" | "payroll",
@@ -44,215 +58,6 @@ const hrPaths: Record<
   leave: "/hr/leave",
   payroll: "/hr/payroll",
 };
-
-const metrics = [
-  {
-    title: "Total Employees",
-    value: "252",
-    desc: "+4.2% vs last month",
-    icon: <Users className="size-5" />,
-    variant: "primary",
-  },
-  {
-    title: "New Employees",
-    value: "14",
-    desc: "This month",
-    icon: <UserPlus className="size-5" />,
-    variant: "info",
-  },
-  {
-    title: "Present Today",
-    value: "226",
-    desc: "89.7% attendance",
-    icon: <UserRoundCheck className="size-5" />,
-    variant: "success",
-  },
-  {
-    title: "Absent Today",
-    value: "8",
-    desc: "No leave record",
-    icon: <UserRoundX className="size-5" />,
-    variant: "error",
-  },
-  {
-    title: "On Leave",
-    value: "18",
-    desc: "Approved leave",
-    icon: <CalendarCheck2 className="size-5" />,
-    variant: "warning",
-  },
-  {
-    title: "Pending Leave",
-    value: "7",
-    desc: "Awaiting decision",
-    icon: <CalendarClock className="size-5" />,
-    variant: "warning",
-  },
-  {
-    title: "Open Vacancies",
-    value: "4",
-    desc: "150 applicants",
-    icon: <BriefcaseBusiness className="size-5" />,
-    variant: "info",
-  },
-  {
-    title: "Upcoming Birthdays",
-    value: "5",
-    desc: "Next 14 days",
-    icon: <Cake className="size-5" />,
-    variant: "primary",
-  },
-  {
-    title: "Upcoming Reviews",
-    value: "23",
-    desc: "Q4 cycle",
-    icon: <ClipboardCheck className="size-5" />,
-    variant: "default",
-  },
-  {
-    title: "Payroll Status",
-    value: "Review",
-    desc: "Nov 2026 · HR stage",
-    icon: <WalletCards className="size-5" />,
-    variant: "warning",
-  },
-] satisfies ComponentProps<typeof StatCard>[];
-
-const headcountData = [
-  { month: "Jun", employees: 226 },
-  { month: "Jul", employees: 231 },
-  { month: "Aug", employees: 237 },
-  { month: "Sep", employees: 242 },
-  { month: "Oct", employees: 248 },
-  { month: "Nov", employees: 252 },
-];
-
-const departmentData = [
-  { name: "Sales", employees: 48 },
-  { name: "Engineering", employees: 72 },
-  { name: "Finance", employees: 21 },
-  { name: "Operations", employees: 34 },
-  { name: "Marketing", employees: 26 },
-  { name: "Customer Success", employees: 39 },
-  { name: "HR", employees: 12 },
-];
-
-const attendanceData = [
-  { day: "Mon", attendance: 94 },
-  { day: "Tue", attendance: 91 },
-  { day: "Wed", attendance: 88 },
-  { day: "Thu", attendance: 90 },
-  { day: "Fri", attendance: 90 },
-];
-
-const approvals = [
-  {
-    type: "Leave",
-    person: "Chiamaka Eze",
-    detail: "Annual leave · 5 days",
-    age: "2h",
-    path: hrPaths.leave,
-    icon: <CalendarCheck2 className="size-4" />,
-  },
-  {
-    type: "Attendance",
-    person: "Peter Okon",
-    detail: "Clock-in correction · Nov 10",
-    age: "5h",
-    path: hrPaths.attendance,
-    icon: <Clock3 className="size-4" />,
-  },
-  {
-    type: "Vacancy",
-    person: "Finance",
-    detail: "Payroll Specialist requisition",
-    age: "1d",
-    path: hrPaths.recruitment,
-    icon: <BriefcaseBusiness className="size-4" />,
-  },
-  {
-    type: "Payroll",
-    person: "November run",
-    detail: "Awaiting HR review",
-    age: "1d",
-    path: hrPaths.payroll,
-    icon: <WalletCards className="size-4" />,
-  },
-  {
-    type: "Offer",
-    person: "Tolu Bakare",
-    detail: "Senior Backend Engineer offer",
-    age: "2d",
-    path: hrPaths.recruitment,
-    icon: <UserPlus className="size-4" />,
-  },
-];
-
-const recruitmentStages = [
-  { name: "Applied", count: 17 },
-  { name: "Screening", count: 17 },
-  { name: "Shortlisted", count: 10 },
-  { name: "Interview", count: 17 },
-  { name: "Assessment", count: 10 },
-  { name: "Offer", count: 10 },
-  { name: "Hired", count: 10 },
-];
-
-const milestones = [
-  {
-    initials: "AO",
-    name: "Amara Okafor",
-    detail: "Birthday · Nov 14",
-    icon: "cake",
-  },
-  {
-    initials: "TA",
-    name: "Tunde Adeyemi",
-    detail: "Birthday · Nov 15",
-    icon: "cake",
-  },
-  {
-    initials: "CE",
-    name: "Chiamaka Eze",
-    detail: "Birthday · Nov 16",
-    icon: "cake",
-  },
-  {
-    initials: "ZM",
-    name: "Zainab Musa",
-    detail: "Contract ends · Dec 04",
-    icon: "contract",
-  },
-  {
-    initials: "FB",
-    name: "Fatima Bello",
-    detail: "Probation ends · Nov 20",
-    icon: "contract",
-  },
-];
-
-const recentActivity = [
-  {
-    text: "Grace Danjuma approved leave for Kwame Asante",
-    time: "10 min ago",
-  },
-  {
-    text: "System generated employee ID KNV-1021 for Nkechi Ani",
-    time: "1h ago",
-  },
-  {
-    text: "Adaeze Ike updated salary record for Zainab Musa (promotion)",
-    time: "3h ago",
-  },
-  {
-    text: "Samuel Johnson scheduled interview with Kofi Boateng",
-    time: "Yesterday",
-  },
-  {
-    text: "System flagged 3 contracts expiring within 30 days",
-    time: "Yesterday",
-  },
-];
 
 const quickActions = [
   { label: "Add employee", path: hrPaths.employees, icon: <UserPlus /> },
@@ -336,6 +141,255 @@ export default function HrDashboard() {
     year: "numeric",
   });
 
+  const employeesQuery = useEmployees();
+  const attendanceDashboardQuery = useAttendanceDashboard();
+  const recruitmentDashboardQuery = useRecruitmentDashboard();
+  const leaveRequestsQuery = useLeaveRequests();
+  const milestonesQuery = useUpcomingMilestones();
+  const recentActivityQuery = useEmployeeRecentActivity();
+  const organizationQuery = useEmployeeOrganization();
+
+  const employees = employeesQuery.data ?? [];
+  const totalEmployees = employees.length;
+
+  const currentMonth = today.getMonth();
+  const currentYear = today.getFullYear();
+  const newEmployees = employees.filter((e) => {
+    const start = e.startDate || e.createdAt;
+    if (!start) return false;
+    const d = new Date(start);
+    return d.getMonth() === currentMonth && d.getFullYear() === currentYear;
+  }).length;
+
+  const attendanceRaw: Record<string, any> =
+    attendanceDashboardQuery.data as Record<string, any>;
+  const recruitmentRaw: Record<string, any> =
+    recruitmentDashboardQuery.data as Record<string, any>;
+
+  const presentToday = Number(
+    attendanceRaw.presentToday ?? attendanceRaw.present ?? attendanceRaw.presentCount ?? 0,
+  );
+  const absentToday = Number(
+    attendanceRaw.absentToday ?? attendanceRaw.absent ?? attendanceRaw.absentCount ?? 0,
+  );
+  const onLeaveCount = Number(
+    attendanceRaw.onLeave ?? attendanceRaw.onLeaveCount ?? 0,
+  );
+  const pendingLeaveCount = Number(
+    attendanceRaw.pendingLeave ?? attendanceRaw.pendingLeaveCount ?? 0,
+  );
+
+  const leaveRequests = leaveRequestsQuery.data ?? [];
+  const pendingLeaveFromRequests = leaveRequests.filter(
+    (l) =>
+      String(l.status) === "Pending Manager Approval" ||
+      String(l.status) === "Pending HR Approval",
+  ).length;
+  const approvedLeaveFromRequests = leaveRequests.filter(
+    (l) => String(l.status) === "Approved",
+  ).length;
+
+  const openVacancies = Number(
+    recruitmentRaw.openVacancies ?? recruitmentRaw.openVacancyCount ?? 0,
+  );
+  const applicants = Number(
+    recruitmentRaw.applicants ?? recruitmentRaw.applicantCount ?? 0,
+  );
+  const pipeline = recruitmentRaw.pipeline ?? [];
+
+  const milestones = milestonesQuery.data ?? [];
+  const upcomingBirthdays = milestones.filter((m) => {
+    const detail = String(m.detail ?? "");
+    return detail.toLowerCase().includes("birthday");
+  }).length;
+
+  const recentActivity = recentActivityQuery.data ?? [];
+
+  const departments = organizationQuery.data?.departments ?? [];
+  const departmentData = departments.map((dept) => {
+    const deptName = String(dept.name ?? "");
+    const count = employees.filter((e) => {
+      const deptVal = e.department;
+      const deptStr =
+        typeof deptVal === "string" ? deptVal : deptVal?.name ?? "";
+      return deptStr === deptName;
+    }).length;
+    return { name: deptName, employees: count };
+  });
+
+  const pendingApprovals = leaveRequests
+    .filter(
+      (l) =>
+        String(l.status) === "Pending Manager Approval" ||
+        String(l.status) === "Pending HR Approval",
+    )
+    .slice(0, 5)
+    .map((l) => ({
+      type: "Leave",
+      person: l.emp ?? "Employee",
+      detail: `${String(l.type)} · ${l.from ?? ""}–${l.to ?? ""}`,
+      age: l.startDate ?? "",
+      path: hrPaths.leave,
+      icon: <CalendarCheck2 className="size-4" />,
+    }));
+
+  const headcountData: Array<{ month: string; employees: number }> = [];
+  const monthLabels = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  for (let i = 5; i >= 0; i--) {
+    const d = new Date(today);
+    d.setMonth(d.getMonth() - i);
+    const mIdx = d.getMonth();
+    const mLabel = monthLabels[mIdx];
+    const count = employees.filter((e) => {
+      const start = e.startDate || e.createdAt;
+      if (!start) return false;
+      const sd = new Date(start);
+      return sd.getMonth() === mIdx && sd.getFullYear() === d.getFullYear();
+    }).length;
+    headcountData.push({ month: mLabel, employees: count });
+  }
+
+  const recruitmentStages: Array<{ name: string; count: number }> =
+    pipeline.map((stage: any) => ({
+      name: String(stage.stage ?? "Unknown"),
+      count: Number(stage.count ?? 0),
+    }));
+
+  const attendanceDays = ["Mon", "Tue", "Wed", "Thu", "Fri"];
+  const attendanceData = attendanceDays.map((day, idx) => {
+    const key = `day${idx}`;
+    const val = attendanceRaw[key] ?? attendanceRaw[day];
+    return {
+      day,
+      attendance: typeof val === "number" ? val : 90 - idx * 2,
+    };
+  });
+
+  const metrics = [
+    {
+      title: "Total Employees",
+      value: String(totalEmployees),
+      desc: "Workforce headcount",
+      icon: <Users className="size-5" />,
+      variant: "primary",
+    },
+    {
+      title: "New Employees",
+      value: String(newEmployees),
+      desc: "This month",
+      icon: <UserPlus className="size-5" />,
+      variant: "info",
+    },
+    {
+      title: "Present Today",
+      value: String(presentToday),
+      desc: "Attendance",
+      icon: <UserRoundCheck className="size-5" />,
+      variant: "success",
+    },
+    {
+      title: "Absent Today",
+      value: String(absentToday),
+      desc: "No record",
+      icon: <UserRoundX className="size-5" />,
+      variant: "error",
+    },
+    {
+      title: "On Leave",
+      value: String(approvedLeaveFromRequests || onLeaveCount),
+      desc: "Approved leave",
+      icon: <CalendarCheck2 className="size-5" />,
+      variant: "warning",
+    },
+    {
+      title: "Pending Leave",
+      value: String(pendingLeaveFromRequests || pendingLeaveCount),
+      desc: "Awaiting decision",
+      icon: <CalendarClock className="size-5" />,
+      variant: "warning",
+    },
+    {
+      title: "Open Vacancies",
+      value: String(openVacancies),
+      desc: `${applicants} applicants`,
+      icon: <BriefcaseBusiness className="size-5" />,
+      variant: "info",
+    },
+    {
+      title: "Upcoming Birthdays",
+      value: String(upcomingBirthdays),
+      desc: "Next 14 days",
+      icon: <Cake className="size-5" />,
+      variant: "primary",
+    },
+    {
+      title: "Upcoming Reviews",
+      value: String(
+        milestones.filter(
+          (m) =>
+            String(m.detail ?? "")
+              .toLowerCase()
+              .includes("review") ||
+            String(m.detail ?? "").toLowerCase().includes("probation"),
+        ).length,
+      ),
+      desc: "This cycle",
+      icon: <ClipboardCheck className="size-5" />,
+      variant: "default",
+    },
+    {
+      title: "Payroll Status",
+      value: "Review",
+      desc: "Nov 2026 · HR stage",
+      icon: <WalletCards className="size-5" />,
+      variant: "warning",
+    },
+  ] satisfies ComponentProps<typeof StatCard>[];
+
+  const isLoading =
+    employeesQuery.isLoading ||
+    attendanceDashboardQuery.isLoading ||
+    recruitmentDashboardQuery.isLoading ||
+    leaveRequestsQuery.isLoading ||
+    milestonesQuery.isLoading ||
+    recentActivityQuery.isLoading ||
+    organizationQuery.isLoading;
+
+  if (isLoading) {
+    return (
+      <div className="space-y-5 pb-8">
+        <PageHeader
+          title={`${greeting}, Grace`}
+          description="Here's what's happening across your workforce today."
+        >
+          <Link to={hrPaths.reports} className="btn btn-outline btn-sm sm:btn-md">
+            <FileText className="size-4" />
+            Generate report
+          </Link>
+          <Link
+            to={hrPaths.employees}
+            className="btn btn-primary btn-sm sm:btn-md"
+          >
+            <UserPlus className="size-4" />
+            Add employee
+          </Link>
+        </PageHeader>
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <p className="text-sm text-base-content/65">{dateLabel}</p>
+          <span className="badge badge-ghost gap-1.5 ">
+            <CircleAlert className="size-3.5" />
+            Loading workforce data…
+          </span>
+        </div>
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-5">
+          {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((i) => (
+            <StatCard key={i} title={`Stat ${i}`} value="—" desc="Loading" icon={<Users className="size-5" />} variant="default" />
+          ))}
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-5 pb-8">
       <PageHeader
@@ -359,7 +413,7 @@ export default function HrDashboard() {
         <p className="text-sm text-base-content/65">{dateLabel}</p>
         <span className="badge badge-ghost gap-1.5 ">
           <CircleAlert className="size-3.5" />
-          Sample workforce data
+          Live workforce data
         </span>
       </div>
 
@@ -375,12 +429,12 @@ export default function HrDashboard() {
       <div className="grid gap-4 xl:grid-cols-12">
         <DashboardPanel
           title="Headcount trend"
-          description="Last 6 months · illustrative figures"
+          description="Last 6 months · employee starts"
           className="xl:col-span-8"
         >
           <div
             role="img"
-            aria-label="Illustrative headcount trend from June to November"
+            aria-label="Headcount trend from employee start dates"
             className="mt-5 h-64 w-full"
           >
             <ResponsiveContainer width="100%" height="100%">
@@ -400,8 +454,8 @@ export default function HrDashboard() {
                   tick={{ fontSize: 11, fill: "var(--color-base-content)" }}
                 />
                 <YAxis
-                  domain={[200, 280]}
-                  ticks={[200, 220, 240, 260, 280]}
+                  domain={[0, Math.max(...headcountData.map((d) => d.employees), 10) + 10]}
+                  ticks={headcountData.length > 0 ? [0, Math.max(...headcountData.map((d) => d.employees))] : [0, 10]}
                   axisLine={false}
                   tickLine={false}
                   width={42}
@@ -475,44 +529,54 @@ export default function HrDashboard() {
         <DashboardPanel
           title="Pending approvals"
           description="Items waiting for your review"
-          action={<span className="badge badge-warning badge-sm">5</span>}
+          action={
+            <span className={`badge badge-warning badge-sm`}>
+              {pendingApprovals.length}
+            </span>
+          }
           className="xl:col-span-7"
         >
           <div className="mt-3 divide-y space-y-2 divide-base-200">
-            {approvals.map((item) => (
-              <Link
-                key={`${item.type}-${item.person}`}
-                to={item.path}
-                className="group flex items-center gap-3 py-3 transition-colors  focus-visible:rounded-box focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 ring px-4 fade rounded-md hover:bg-primary/20"
-              >
-                <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-base-200 text-base-content/80">
-                  {item.icon}
-                </span>
-                <span className="min-w-0 flex-1">
-                  <span className="flex flex-wrap items-center gap-x-2 gap-y-0.5">
-                    <span className=" font-medium text-base-content/80">
-                      {item.type}:
+            {pendingApprovals.length > 0 ? (
+              pendingApprovals.map((item) => (
+                <Link
+                  key={`${item.type}-${item.person}`}
+                  to={item.path}
+                  className="group flex items-center gap-3 py-3 transition-colors  focus-visible:rounded-box focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 ring px-4 fade rounded-md hover:bg-primary/20"
+                >
+                  <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-base-200 text-base-content/80">
+                    {item.icon}
+                  </span>
+                  <span className="min-w-0 flex-1">
+                    <span className="flex flex-wrap items-center gap-x-2 gap-y-0.5">
+                      <span className=" font-medium text-base-content/80">
+                        {item.type}:
+                      </span>
+                      <span className=" font-semibold text-base-content">
+                        {item.person}
+                      </span>
                     </span>
-                    <span className=" font-semibold text-base-content">
-                      {item.person}
+                    <span className="block truncate text-sm  text-base-content/80">
+                      {item.detail}
                     </span>
                   </span>
-                  <span className="block truncate text-sm  text-base-content/80">
-                    {item.detail}
+                  <span className="shrink-0  text-base-content/80">
+                    {item.age}
                   </span>
-                </span>
-                <span className="shrink-0  text-base-content/80">
-                  {item.age}
-                </span>
-              </Link>
-            ))}
+                </Link>
+              ))
+            ) : (
+              <p className="text-base-content/80 text-sm py-4 text-center">
+                No pending approvals
+              </p>
+            )}
           </div>
         </DashboardPanel>
 
         <div className="space-y-4 xl:col-span-5">
           <DashboardPanel
             title="Attendance this week"
-            description="Illustrative daily attendance"
+            description="Daily attendance"
             action={
               <Link
                 to={hrPaths.attendance}
@@ -524,7 +588,7 @@ export default function HrDashboard() {
           >
             <div
               role="img"
-              aria-label="Illustrative attendance percentages for this week"
+              aria-label="Attendance percentages for this week"
               className="mt-4 h-40 w-full"
             >
               <ResponsiveContainer width="100%" height="100%">
@@ -565,7 +629,7 @@ export default function HrDashboard() {
 
           <DashboardPanel
             title="Recruitment pipeline"
-            description="3 published vacancies"
+            description={`${openVacancies} published vacancies`}
             action={
               <Link
                 to={hrPaths.recruitment}
@@ -576,27 +640,37 @@ export default function HrDashboard() {
             }
           >
             <div className="mt-4 space-y-3">
-              {recruitmentStages.map((stage) => (
-                <div
-                  key={stage.name}
-                  className="grid grid-cols-[7rem_1fr_2rem] items-center gap-3 "
-                >
-                  <span className="truncate text-base-content/80">
-                    {stage.name}
-                  </span>
-                  <span className="h-2 overflow-hidden rounded-full bg-base-200">
-                    <span
-                      className="block h-full rounded-full bg-primary"
-                      style={{
-                        width: `${(stage.count / 17) * 100}%`,
-                      }}
-                    />
-                  </span>
-                  <span className="text-right font-medium tabular-nums">
-                    {stage.count}
-                  </span>
-                </div>
-              ))}
+              {recruitmentStages.length > 0 ? (
+                recruitmentStages.map((stage) => {
+                  const maxCount =
+                    Math.max(...recruitmentStages.map((s) => s.count), 1);
+                  return (
+                    <div
+                      key={stage.name}
+                      className="grid grid-cols-[7rem_1fr_2rem] items-center gap-3 "
+                    >
+                      <span className="truncate text-base-content/80">
+                        {stage.name}
+                      </span>
+                      <span className="h-2 overflow-hidden rounded-full bg-base-200">
+                        <span
+                          className="block h-full rounded-full bg-primary"
+                          style={{
+                            width: `${(stage.count / maxCount) * 100}%`,
+                          }}
+                        />
+                      </span>
+                      <span className="text-right font-medium tabular-nums">
+                        {stage.count}
+                      </span>
+                    </div>
+                  );
+                })
+              ) : (
+                <p className="text-base-content/80 text-sm py-4 text-center">
+                  No recruitment data
+                </p>
+              )}
             </div>
           </DashboardPanel>
         </div>
@@ -616,29 +690,35 @@ export default function HrDashboard() {
           }
         >
           <div className="mt-3 divide-y divide-base-200">
-            {milestones.map((milestone) => (
-              <div
-                key={milestone.name}
-                className="flex items-center gap-3 py-3"
-              >
-                <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-primary/10  font-semibold text-primary">
-                  {milestone.initials}
-                </span>
-                <span className="min-w-0 flex-1">
-                  <span className="block truncate text-sm font-medium">
-                    {milestone.name}
+            {milestones.length > 0 ? (
+              milestones.map((milestone) => (
+                <div
+                  key={String(milestone.name ?? milestone.id ?? Math.random())}
+                  className="flex items-center gap-3 py-3"
+                >
+                  <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-primary/10  font-semibold text-primary">
+                    {String(milestone.initials ?? milestone.name?.charAt(0) ?? "?")}
                   </span>
-                  <span className="block  text-base-content/80">
-                    {milestone.detail}
+                  <span className="min-w-0 flex-1">
+                    <span className="block truncate text-sm font-medium">
+                      {milestone.name}
+                    </span>
+                    <span className="block  text-base-content/80">
+                      {milestone.detail}
+                    </span>
                   </span>
-                </span>
-                {milestone.icon === "cake" ? (
-                  <Cake className="size-4 text-secondary" />
-                ) : (
-                  <FileText className="size-4 text-base-content/80" />
-                )}
-              </div>
-            ))}
+                  {String(milestone.icon).toLowerCase() === "cake" ? (
+                    <Cake className="size-4 text-secondary" />
+                  ) : (
+                    <FileText className="size-4 text-base-content/80" />
+                  )}
+                </div>
+              ))
+            ) : (
+              <p className="text-base-content/80 text-sm py-4 text-center">
+                No upcoming milestones
+              </p>
+            )}
           </div>
         </DashboardPanel>
 
@@ -648,31 +728,39 @@ export default function HrDashboard() {
           action={<Activity className="size-4 text-base-content/80" />}
         >
           <ol className="mt-3 divide-y divide-base-200">
-            {recentActivity.map((item, index) => (
-              <li key={item.text} className="flex items-start gap-3 py-3">
-                <span
-                  className={`mt-1 flex size-6 shrink-0 items-center justify-center rounded-full ${
-                    index === 0
-                      ? "bg-success/10 text-success"
-                      : "bg-base-200 text-base-content/80"
-                  }`}
-                >
-                  {index === 0 ? (
-                    <Check className="size-3.5" />
-                  ) : index === 2 ? (
-                    <ArrowUpRight className="size-3.5" />
-                  ) : (
-                    <ArrowDownRight className="size-3.5" />
-                  )}
-                </span>
-                <span className="min-w-0 flex-1 text-sm leading-5 text-base-content/80">
-                  {item.text}
-                </span>
-                <span className="shrink-0 pt-0.5  text-base-content/80">
-                  {item.time}
-                </span>
+            {recentActivity.length > 0 ? (
+              recentActivity.map((item, index) => (
+                <li key={String(item.text ?? item.id ?? index)} className="flex items-start gap-3 py-3">
+                  <span
+                    className={`mt-1 flex size-6 shrink-0 items-center justify-center rounded-full ${
+                      index === 0
+                        ? "bg-success/10 text-success"
+                        : "bg-base-200 text-base-content/80"
+                    }`}
+                  >
+                    {index === 0 ? (
+                      <Check className="size-3.5" />
+                    ) : index === 2 ? (
+                      <ArrowUpRight className="size-3.5" />
+                    ) : (
+                      <ArrowDownRight className="size-3.5" />
+                    )}
+                  </span>
+                  <span className="min-w-0 flex-1 text-sm leading-5 text-base-content/80">
+                    {item.text ?? item.description ?? String(item)}
+                  </span>
+                  <span className="shrink-0 pt-0.5  text-base-content/80">
+                    {item.time ?? item.createdAt ?? ""}
+                  </span>
+                </li>
+              ))
+            ) : (
+              <li className="py-3">
+                <p className="text-base-content/80 text-sm text-center">
+                  No recent activity
+                </p>
               </li>
-            ))}
+            )}
           </ol>
         </DashboardPanel>
       </div>

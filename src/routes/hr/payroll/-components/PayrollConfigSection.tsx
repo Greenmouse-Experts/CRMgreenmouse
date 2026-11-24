@@ -1,8 +1,13 @@
 import { Info, Settings2 } from "lucide-react";
 import { PAYROLL_POLICIES } from "./payrollData";
+import { usePayrollSettings, useStatutoryRules } from "@/api/payrollApi";
 import { toast } from "sonner";
 
 export default function PayrollConfigSection() {
+  const settingsQuery = usePayrollSettings();
+  const rulesQuery = useStatutoryRules();
+  const settings = settingsQuery.data;
+
   return (
     <div className="card bg-base-100 border border-base-200 shadow-sm p-4 sm:p-6 space-y-4">
       <div>
@@ -61,7 +66,9 @@ export default function PayrollConfigSection() {
         <dl className="grid grid-cols-2 gap-2 text-[11px] text-base-content/80">
           <div>
             <dt className="text-base-content/80">Frequency</dt>
-            <dd className="font-semibold text-base-content">Monthly</dd>
+            <dd className="font-semibold text-base-content">
+              {settings?.payFrequency ?? "Monthly"}
+            </dd>
           </div>
           <div>
             <dt className="text-base-content/80">Cut-off</dt>
@@ -70,6 +77,12 @@ export default function PayrollConfigSection() {
           <div>
             <dt className="text-base-content/80">Pay date</dt>
             <dd className="font-semibold text-base-content">28th</dd>
+          </div>
+          <div>
+            <dt className="text-base-content/80">Statutory rules (server)</dt>
+            <dd className="font-semibold text-base-content">
+              {rulesQuery.data?.length ?? 0}
+            </dd>
           </div>
           <div>
             <dt className="text-base-content/80">Approver</dt>
