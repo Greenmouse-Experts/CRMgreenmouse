@@ -13,6 +13,8 @@ interface EmployeeFiltersProps {
 
 const statusOptions: StatusFilterOption[] = [
   "All",
+  "Draft",
+  "Preboarding",
   "Active",
   "Notice Period",
   "Suspended",

@@ -15,6 +15,7 @@ export default function EmployeeStatusBadge({
     switch (s.toLowerCase()) {
       case "active":
         return "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20";
+      case "preboarding":
       case "probation":
         return "bg-sky-500/10 text-sky-600 dark:text-sky-400 border-sky-500/20";
       case "notice period":

@@ -16,6 +16,7 @@ export interface EmployeeRecord {
   phoneNumber?: string;
   phone?: string;
   employeeNumber?: string;
+  lifecycleStatus?: string;
   status?: string;
   // employmentStatus?: string;
   employmentType?: string;
@@ -109,6 +110,7 @@ export interface CreateEmployeeInput {
   contractEndDate?: string;
   workSchedule?: string;
   isDraft?: boolean;
+  lifecycleStatus?: string;
   // employmentStatus?: string;
   status?: string;
   isOnProbation?: boolean;
@@ -428,9 +430,9 @@ export const useActivateEmployee = () => {
   return useMutation({
     mutationFn: async (id: string) => {
       try {
-        const { data } = await apiClient.patch<any>(
-          `/employees/${id}`,
-          { employmentStatus: "active" },
+        const { data } = await apiClient.post<any>(
+          `/employees/${id}/activate`,
+          {},
           authConfig(),
         );
         return unwrapOne<EmployeeRecord>(data);
@@ -447,9 +449,9 @@ export const useSuspendEmployee = () => {
   return useMutation({
     mutationFn: async (id: string) => {
       try {
-        const { data } = await apiClient.patch<any>(
-          `/employees/${id}`,
-          { employmentStatus: "suspended" },
+        const { data } = await apiClient.post<any>(
+          `/employees/${id}/suspend`,
+          {},
           authConfig(),
         );
         return unwrapOne<EmployeeRecord>(data);
@@ -466,9 +468,9 @@ export const useReactivateEmployee = () => {
   return useMutation({
     mutationFn: async (id: string) => {
       try {
-        const { data } = await apiClient.patch<any>(
-          `/employees/${id}`,
-          { employmentStatus: "active" },
+        const { data } = await apiClient.post<any>(
+          `/employees/${id}/reactivate`,
+          {},
           authConfig(),
         );
         return unwrapOne<EmployeeRecord>(data);
@@ -485,9 +487,34 @@ export const useFinalizeEmployee = () => {
   return useMutation({
     mutationFn: async (id: string) => {
       try {
+        const { data } = await apiClient.post<any>(
+          `/employees/${id}/finalize`,
+          {},
+          authConfig(),
+        );
+        return unwrapOne<EmployeeRecord>(data);
+      } catch (error) {
+        throw extractError(error);
+      }
+    },
+    onSuccess: invalidate,
+  });
+};
+
+export const useUpdateEmployeeLifecycleStatus = () => {
+  const invalidate = useInvalidateEmployees();
+  return useMutation({
+    mutationFn: async ({
+      id,
+      lifecycleStatus,
+    }: {
+      id: string;
+      lifecycleStatus: string;
+    }) => {
+      try {
         const { data } = await apiClient.patch<any>(
           `/employees/${id}`,
-          { employmentStatus: "exited" },
+          { lifecycleStatus },
           authConfig(),
         );
         return unwrapOne<EmployeeRecord>(data);

@@ -1,9 +1,11 @@
 export type EmploymentStatus =
   | "Active"
+  | "Preboarding"
   | "Probation"
   | "Notice Period"
   | "Suspended"
   | "Draft"
+  | "Exited"
   | string;
 
 export type EmploymentType =
@@ -28,6 +30,7 @@ export interface Employee {
   location: string;
   type: EmploymentType;
   status: EmploymentStatus;
+  lifecycleStatus?: string;
   isDraft?: boolean;
   onLeave: boolean;
   manager?: string;
@@ -39,6 +42,8 @@ export interface Employee {
 
 export type StatusFilterOption =
   | "All"
+  | "Draft"
+  | "Preboarding"
   | "Active"
   | "Notice Period"
   | "Suspended"

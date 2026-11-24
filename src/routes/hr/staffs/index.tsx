@@ -46,23 +46,26 @@ const relationName = (
 
 const toUiEmployee = (employee: EmployeeRecord): Employee => {
   const rawStatus =
+    employee.lifecycleStatus ||
     employee.employmentStatus ||
     employee.status ||
-    (employee.isDraft ? "Draft" : "Active");
+    (employee.isDraft ? "draft" : "active");
 
   const statusKey = rawStatus?.toLowerCase();
   const status =
     statusKey === "active"
       ? "Active"
-      : statusKey === "notice_period"
-        ? "Notice Period"
-        : statusKey === "suspended"
-          ? "Suspended"
-          : statusKey === "exited"
-            ? "Exited"
-            : statusKey === "draft"
-              ? "Draft"
-              : titleCase(rawStatus);
+      : statusKey === "preboarding"
+        ? "Preboarding"
+        : statusKey === "notice_period"
+          ? "Notice Period"
+          : statusKey === "suspended"
+            ? "Suspended"
+            : statusKey === "exited"
+              ? "Exited"
+              : statusKey === "draft"
+                ? "Draft"
+                : titleCase(rawStatus);
 
   const firstName = employee.firstName ?? employee.first_name ?? "";
   const middleName = employee.middleName ?? employee.middle_name ?? "";
@@ -140,7 +143,8 @@ const toUiEmployee = (employee: EmployeeRecord): Employee => {
     location,
     type,
     status,
-    isDraft: Boolean(employee.isDraft),
+    lifecycleStatus: statusKey,
+    isDraft: Boolean(employee.isDraft || statusKey === "draft"),
     onLeave: Boolean(employee.onLeave || employee.isOnLeave),
     manager:
       relationName(employee.manager) === UNKNOWN
