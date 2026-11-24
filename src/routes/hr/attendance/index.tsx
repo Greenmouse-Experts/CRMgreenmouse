@@ -81,21 +81,35 @@ const staffName = (raw: {
   raw.staffName ||
   UNKNOWN;
 
-const toUiCorrection = (raw: CorrectionApi): CorrectionRequest => {
-  const date = formatDate(raw.date);
-  const label = correctionLabel(raw.correctionType);
-  const statusKey = raw.status?.toLowerCase();
+const toUiCorrection = (
+  raw: CorrectionApi,
+  staffNameMap?: Map<string, string>,
+): CorrectionRequest => {
+  const item =
+    raw?.correction ?? raw?.request ?? raw?.attendanceCorrection ?? raw;
+  const date = formatDate(item?.date ?? raw?.date);
+  const label = correctionLabel(item?.correctionType ?? raw?.correctionType);
+  const statusKey = (item?.status ?? raw?.status)?.toLowerCase();
+  const resolvedStaffId = item?.staffId ?? raw?.staffId ?? "";
+  const resolvedName =
+    staffName(raw) !== UNKNOWN
+      ? staffName(raw)
+      : staffName(item) !== UNKNOWN
+        ? staffName(item)
+        : staffNameMap?.get(resolvedStaffId) || UNKNOWN;
 
   return {
-    id: raw.id,
-    employeeName: staffName(raw),
+    id: String(item?.id ?? raw?.id ?? raw?.correctionId ?? ""),
+    employeeName: resolvedName,
     date,
     type: label,
     detail: `${date} · ${label.toLowerCase()}`,
     status: (statusKey && CORRECTION_STATUS_MAP[statusKey]) || "Pending",
-    correctIn: formatTime(raw.correctedClockInAt),
-    correctOut: formatTime(raw.correctedClockOutAt),
-    reason: raw.reason,
+    correctIn: formatTime(item?.correctedClockInAt ?? raw?.correctedClockInAt),
+    correctOut: formatTime(
+      item?.correctedClockOutAt ?? raw?.correctedClockOutAt,
+    ),
+    reason: item?.reason ?? raw?.reason,
   };
 };
 
@@ -182,8 +196,11 @@ function RouteComponent() {
   );
 
   const corrections = useMemo(
-    () => (correctionsQuery.data ?? []).map(toUiCorrection),
-    [correctionsQuery.data],
+    () =>
+      (correctionsQuery.data ?? []).map((raw) =>
+        toUiCorrection(raw, staffNameMap),
+      ),
+    [correctionsQuery.data, staffNameMap],
   );
 
   const todayFormatted = `Today · ${new Intl.DateTimeFormat("en-GB", {
@@ -230,6 +247,10 @@ function RouteComponent() {
   };
 
   const handleDecide = async (id: string, decision: "approve" | "reject") => {
+    if (!id) {
+      toast.error("Unable to determine correction request ID.");
+      return;
+    }
     try {
       await decideCorrectionMutation.mutateAsync({ id, decision });
       toast.success(
