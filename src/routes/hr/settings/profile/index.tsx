@@ -21,7 +21,7 @@ export const Route = createFileRoute("/hr/settings/profile/")({
   component: RouteComponent,
   loader: () => {
     if (get_user_value()?.user.userType === "staff") {
-      return redirect({ to: "/tenant/settings/notifications" });
+      return redirect({ to: "/hr/settings/notifications" });
     }
   },
 });
