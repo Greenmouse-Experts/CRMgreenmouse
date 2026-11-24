@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import Modal, { type ModalHandle } from "@/components/DialogModal";
 import SimpleInput from "@/components/inputs/SimpleInput";
+import LocalSelect from "@/components/inputs/LocalSelect";
 import { useUpdateLeaveType } from "@/api/leaveApi";
 import type { LeaveTypeSummary } from "./types";
 import { extract_message } from "@/helpers/auth";
@@ -17,15 +18,24 @@ interface LeaveTypeModalProps {
 
 const currentYear = new Date().getFullYear();
 
-const toSlug = (value: string) =>
-  value
-    .trim()
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "_")
-    .replace(/^_+|_+$/g, "");
+const LEAVE_TYPE_CODES = [
+  { value: "annual", label: "Annual (annual)" },
+  { value: "sick", label: "Sick (sick)" },
+  { value: "maternity", label: "Maternity (maternity)" },
+  { value: "paternity", label: "Paternity (paternity)" },
+  { value: "compassionate", label: "Compassionate (compassionate)" },
+  { value: "study", label: "Study (study)" },
+  { value: "unpaid", label: "Unpaid (unpaid)" },
+] as const;
+
+const normalizeCode = (value?: string): string => {
+  const key = (value ?? "").trim().toLowerCase();
+  const match = LEAVE_TYPE_CODES.find((c) => c.value === key);
+  return match ? match.value : "annual";
+};
 
 const defaultFormState = () => ({
-  code: "",
+  code: "annual",
   name: "",
   entitlementDays: "20",
   year: String(currentYear),
@@ -44,7 +54,6 @@ export default function LeaveTypeModal({
   const updateLeaveType = useUpdateLeaveType();
 
   const [form, setForm] = useState(defaultFormState);
-  const [codeEdited, setCodeEdited] = useState(false);
 
   const isEditing = Boolean(initialType);
 
@@ -56,7 +65,7 @@ export default function LeaveTypeModal({
 
     if (initialType) {
       setForm({
-        code: initialType.code ?? toSlug(initialType.type),
+        code: normalizeCode(initialType.code ?? initialType.type),
         name: initialType.name ?? initialType.type,
         entitlementDays: String(initialType.entitlementDays ?? 0),
         year: String(initialType.year ?? currentYear),
@@ -67,22 +76,12 @@ export default function LeaveTypeModal({
         evidenceAlwaysRequired: initialType.evidenceAlwaysRequired ?? false,
         isActive: initialType.isActive ?? true,
       });
-      setCodeEdited(true);
     } else {
       setForm(defaultFormState());
-      setCodeEdited(false);
     }
 
     modalRef.current?.open();
   }, [isOpen, initialType]);
-
-  const handleNameChange = (value: string) => {
-    setForm((prev) => ({
-      ...prev,
-      name: value,
-      code: !isEditing && !codeEdited ? toSlug(value) : prev.code,
-    }));
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -163,7 +162,7 @@ export default function LeaveTypeModal({
             </label>
             <SimpleInput
               value={form.name}
-              onChange={(e) => handleNameChange(e.target.value)}
+              onChange={(e) => setForm((p) => ({ ...p, name: e.target.value }))}
               placeholder="e.g. Annual Leave"
               required
             />
@@ -173,18 +172,17 @@ export default function LeaveTypeModal({
             <label className="font-semibold text-base-content/80 mb-1 block">
               Code <span className="text-error">*</span>
             </label>
-            <SimpleInput
+            <LocalSelect
               value={form.code}
-              onChange={(e) => {
-                setCodeEdited(true);
-                setForm((p) => ({ ...p, code: e.target.value }));
-              }}
-              placeholder="e.g. annual"
+              onChange={(e) => setForm((p) => ({ ...p, code: e.target.value }))}
               required
-            />
-            <span className="text-[11px] text-base-content/60 mt-1 block">
-              Unique identifier (e.g. annual, sick, study)
-            </span>
+            >
+              {LEAVE_TYPE_CODES.map((opt) => (
+                <option key={opt.value} value={opt.value}>
+                  {opt.label}
+                </option>
+              ))}
+            </LocalSelect>
           </div>
 
           <div>
