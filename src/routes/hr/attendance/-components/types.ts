@@ -1,20 +1,22 @@
-export type AttendanceStatus = "Present" | "Late" | "Absent" | "Half-day";
+export type AttendanceStatus =
+  | "Clocked In"
+  | "Clocked Out"
+  | "Present"
+  | "Late"
+  | "Absent"
+  | "Half-day";
 
 export type CorrectionStatus = "Pending" | "Approved" | "Rejected";
 
 export interface AttendanceRecord {
   id: string;
-  staffId?: string;
+  staffId: string;
   name: string;
   date: string;
   rawDate?: string;
-  clockInAt?: string | null;
-  clockOutAt?: string | null;
-  timeIn: string;
-  timeOut: string;
+  clockInAt: string;
+  clockOutAt: string;
   status: AttendanceStatus;
-  workMode?: "On-site" | "Remote" | "Field work";
-  location?: string;
 }
 
 export interface CorrectionRequest {

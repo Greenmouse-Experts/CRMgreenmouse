@@ -6,7 +6,6 @@ import AttendanceStats from "./-components/AttendanceStats";
 import TodayAttendanceLog from "./-components/TodayAttendanceLog";
 import CorrectionRequests from "./-components/CorrectionRequests";
 import RequestCorrectionModal from "./-components/RequestCorrectionModal";
-import EditAttendanceModal from "./-components/EditAttendanceModal";
 import { correctionLabel } from "./-components/attendanceData";
 import type {
   AttendanceRecord,
@@ -19,7 +18,6 @@ import {
   useAttendanceRecords,
   useClockIn,
   useClockOut,
-  useCorrectAttendanceRecord,
   useCorrectionRequests,
   useCreateCorrection,
   useDecideCorrection,
@@ -62,11 +60,11 @@ const formatTime = (value?: string | null) => {
     : date.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" });
 };
 
-const formatDate = (value?: string | null) => {
+const formatDate = (value?: string) => {
   if (!value) return UNKNOWN;
   const date = new Date(value);
   return Number.isNaN(date.getTime())
-    ? UNKNOWN
+    ? value
     : date.toLocaleDateString("en-GB", {
         day: "numeric",
         month: "short",
@@ -74,55 +72,23 @@ const formatDate = (value?: string | null) => {
       });
 };
 
-const staffName = (
-  raw: {
-    staffId?: string;
-    staff?: { firstName?: string; lastName?: string; name?: string };
-    staffName?: string;
-  },
-  staffLookup: Map<string, string>,
-) =>
+const staffName = (raw: {
+  staff?: { firstName?: string; lastName?: string; name?: string };
+  staffName?: string;
+}) =>
   `${raw.staff?.firstName ?? ""} ${raw.staff?.lastName ?? ""}`.trim() ||
   raw.staff?.name ||
   raw.staffName ||
-  (raw.staffId ? staffLookup.get(raw.staffId) : undefined) ||
-  raw.staffId ||
   UNKNOWN;
 
-const toUiRecord = (
-  raw: AttendanceRecordApi,
-  staffLookup: Map<string, string>,
-): AttendanceRecord => {
-  const statusKey = raw.status?.toLowerCase();
-  return {
-    id: raw.id,
-    staffId: raw.staffId,
-    name: staffName(raw, staffLookup),
-    date: formatDate(raw.date ?? raw.clockInAt),
-    rawDate: raw.date ?? raw.clockInAt ?? undefined,
-    clockInAt: raw.clockInAt ?? null,
-    clockOutAt: raw.clockOutAt ?? null,
-    timeIn: formatTime(raw.clockInAt),
-    timeOut: formatTime(raw.clockOutAt),
-    status:
-      (statusKey && STATUS_MAP[statusKey]) ||
-      (raw.clockInAt ? "Present" : "Absent"),
-    workMode: raw.workMode as AttendanceRecord["workMode"],
-    location: raw.location,
-  };
-};
-
-const toUiCorrection = (
-  raw: CorrectionApi,
-  staffLookup: Map<string, string>,
-): CorrectionRequest => {
+const toUiCorrection = (raw: CorrectionApi): CorrectionRequest => {
   const date = formatDate(raw.date);
   const label = correctionLabel(raw.correctionType);
   const statusKey = raw.status?.toLowerCase();
 
   return {
     id: raw.id,
-    employeeName: staffName(raw, staffLookup),
+    employeeName: staffName(raw),
     date,
     type: label,
     detail: `${date} · ${label.toLowerCase()}`,
@@ -140,58 +106,84 @@ function RouteComponent() {
   const dashboardQuery = useAttendanceDashboard();
   const recordsQuery = useAttendanceRecords();
   const correctionsQuery = useCorrectionRequests();
-  const staffsQuery = useStaffs();
+  const staffQuery = useStaffs();
 
   const clockInMutation = useClockIn();
   const clockOutMutation = useClockOut();
-  const correctRecordMutation = useCorrectAttendanceRecord();
   const createCorrectionMutation = useCreateCorrection();
   const decideCorrectionMutation = useDecideCorrection();
 
   const [isCorrectionOpen, setIsCorrectionOpen] = useState(false);
-  const [editingRecord, setEditingRecord] = useState<AttendanceRecord | null>(
-    null,
-  );
 
-  const staffLookup = useMemo(() => {
+  const staffNameMap = useMemo(() => {
     const map = new Map<string, string>();
-    if (auth?.user?.id) {
+    for (const member of staffQuery.data ?? []) {
       const fullName =
-        `${auth.user.firstName ?? ""} ${auth.user.lastName ?? ""}`.trim();
-      if (fullName || auth.user.email) {
-        map.set(auth.user.id, fullName || auth.user.email);
+        `${member.firstName ?? ""} ${member.lastName ?? ""}`.trim() ||
+        member.email;
+      if (member.id && fullName) {
+        map.set(member.id, fullName);
       }
     }
-    for (const member of staffsQuery.data ?? []) {
-      const fullName =
-        `${member.firstName ?? ""} ${member.lastName ?? ""}`.trim();
-      if (member.id && (fullName || member.email)) {
-        map.set(member.id, fullName || member.email);
+    if (auth?.user?.id) {
+      const selfName =
+        `${auth.user.firstName ?? ""} ${auth.user.lastName ?? ""}`.trim() ||
+        auth.user.email;
+      if (selfName && !map.has(auth.user.id)) {
+        map.set(auth.user.id, selfName);
       }
     }
     return map;
-  }, [auth?.user, staffsQuery.data]);
+  }, [staffQuery.data, auth?.user]);
 
-  const logs = useMemo(
-    () => (recordsQuery.data ?? []).map((raw) => toUiRecord(raw, staffLookup)),
-    [recordsQuery.data, staffLookup],
-  );
-  const corrections = useMemo(
+  const logs = useMemo<AttendanceRecord[]>(() => {
+    return (recordsQuery.data ?? []).map((raw: AttendanceRecordApi) => {
+      const statusKey = raw.status?.toLowerCase();
+      const resolvedName =
+        staffNameMap.get(raw.staffId ?? "") ||
+        (staffName(raw) !== UNKNOWN ? staffName(raw) : undefined) ||
+        (raw.staffId ? `Staff (${raw.staffId.slice(0, 8)})` : UNKNOWN);
+
+      const derivedStatus: AttendanceStatus =
+        (statusKey && STATUS_MAP[statusKey]) ||
+        (raw.clockInAt && raw.clockOutAt
+          ? "Clocked Out"
+          : raw.clockInAt
+            ? "Clocked In"
+            : "Absent");
+
+      return {
+        id: raw.id,
+        staffId: raw.staffId ?? "",
+        name: resolvedName,
+        date: formatDate(raw.date),
+        rawDate: raw.date,
+        clockInAt: formatTime(raw.clockInAt),
+        clockOutAt: formatTime(raw.clockOutAt),
+        status: derivedStatus,
+      };
+    });
+  }, [recordsQuery.data, staffNameMap]);
+
+  const todayIso = new Date().toISOString().slice(0, 10);
+  const hasOpenShiftToday = useMemo(
     () =>
-      (correctionsQuery.data ?? []).map((raw) =>
-        toUiCorrection(raw, staffLookup),
+      Boolean(
+        currentUserId &&
+        (recordsQuery.data ?? []).some(
+          (r) =>
+            r.staffId === currentUserId &&
+            r.date === todayIso &&
+            Boolean(r.clockInAt) &&
+            !r.clockOutAt,
+        ),
       ),
-    [correctionsQuery.data, staffLookup],
+    [recordsQuery.data, currentUserId, todayIso],
   );
 
-  const openShift = useMemo(
-    () =>
-      currentUserId
-        ? (recordsQuery.data ?? []).find(
-            (r) => r.staffId === currentUserId && !r.clockOutAt,
-          )
-        : undefined,
-    [recordsQuery.data, currentUserId],
+  const corrections = useMemo(
+    () => (correctionsQuery.data ?? []).map(toUiCorrection),
+    [correctionsQuery.data],
   );
 
   const todayFormatted = `Today · ${new Intl.DateTimeFormat("en-GB", {
@@ -210,44 +202,30 @@ function RouteComponent() {
       await clockInMutation.mutateAsync(currentUserId);
       toast.success("Clocked in successfully");
     } catch (error) {
-      toast.error(extract_message(error as never));
+      toast.error(extract_message(error as any));
     }
   };
 
-  const handleClockOut = async (staffId = currentUserId) => {
-    if (!staffId) {
-      toast.error("Unable to identify the staff member.");
+  const handleClockOut = async () => {
+    if (!currentUserId) {
+      toast.error("Unable to identify the logged-in user.");
       return;
     }
     try {
-      await clockOutMutation.mutateAsync(staffId);
+      await clockOutMutation.mutateAsync(currentUserId);
       toast.success("Clocked out successfully");
     } catch (error) {
-      toast.error(extract_message(error as never));
-    }
-  };
-
-  const handleSaveRecordEdit = async (payload: {
-    id: string;
-    clockInAt: string;
-    clockOutAt: string;
-  }) => {
-    try {
-      await correctRecordMutation.mutateAsync(payload);
-      toast.success("Attendance record updated");
-      setEditingRecord(null);
-    } catch (error) {
-      toast.error(extract_message(error as never));
+      toast.error(extract_message(error as any));
     }
   };
 
   const handleCreateCorrection = async (payload: CreateCorrectionPayload) => {
     try {
       await createCorrectionMutation.mutateAsync(payload);
-      toast.success("Correction request submitted");
       setIsCorrectionOpen(false);
+      toast.success("Correction request submitted");
     } catch (error) {
-      toast.error(extract_message(error as never));
+      toast.error(extract_message(error as any));
     }
   };
 
@@ -258,7 +236,7 @@ function RouteComponent() {
         decision === "approve" ? "Correction approved" : "Correction rejected",
       );
     } catch (error) {
-      toast.error(extract_message(error as never));
+      toast.error(extract_message(error as any));
     }
   };
 
@@ -274,12 +252,12 @@ function RouteComponent() {
             <Clock className="size-4" />
             <span>Request correction</span>
           </button>
-          {openShift ? (
+          {hasOpenShiftToday ? (
             <button
               type="button"
-              onClick={() => handleClockOut(currentUserId)}
+              onClick={handleClockOut}
               disabled={clockOutMutation.isPending}
-              className="btn btn-sm btn-outline border-primary text-primary hover:bg-primary hover:text-white rounded-xl px-4 font-medium gap-1.5"
+              className="btn btn-sm btn-outline border-error/40 text-error hover:bg-error/10 rounded-xl px-4 font-medium gap-1.5"
             >
               <LogOut className="size-4" />
               <span>
@@ -318,11 +296,7 @@ function RouteComponent() {
               description: "Clock in to start tracking attendance.",
             }}
           >
-            <TodayAttendanceLog
-              logs={logs}
-              onClockOut={(staffId) => handleClockOut(staffId)}
-              onEditRecord={(record) => setEditingRecord(record)}
-            />
+            <TodayAttendanceLog logs={logs} />
           </PageLoader>
         </div>
         <div className="lg:col-span-4">
@@ -346,12 +320,6 @@ function RouteComponent() {
         isOpen={isCorrectionOpen}
         onClose={() => setIsCorrectionOpen(false)}
         onSubmitCorrection={handleCreateCorrection}
-      />
-
-      <EditAttendanceModal
-        record={editingRecord}
-        onClose={() => setEditingRecord(null)}
-        onSave={handleSaveRecordEdit}
       />
     </div>
   );
