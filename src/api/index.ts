@@ -1,5 +1,6 @@
 export * from "./simpleApi";
 export * from "./adminApi";
+export * from "./disciplinaryApi";
 export * from "./catalogApi";
 export * from "./crmApi";
 export * from "./fileApi";
@@ -10,6 +11,7 @@ export * from "./organizationApi";
 export * from "./salesApi";
 export * from "./supportApi";
 export * from "./tasksApi";
+export * from "./trainingApi";
 export {
   useTenantMe,
   useTenantOnboarding,
