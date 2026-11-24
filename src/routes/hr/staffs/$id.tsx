@@ -28,6 +28,7 @@ import SimpleInput from "@/components/inputs/SimpleInput";
 import SimplePhoneInput from "@/components/inputs/SimplePhoneInput";
 import LocalSelect from "@/components/inputs/LocalSelect";
 import SimpleTextArea from "@/components/inputs/SimpleTextArea";
+import SimpleSelect from "@/components/inputs/SimpleSelect";
 import DocUploader from "@/components/documents/DocUploader";
 import { useDocumentUploads } from "@/hooks/useDocumentUploads";
 import EmployeeAvatar from "./-components/EmployeeAvatar";
@@ -45,6 +46,7 @@ import {
   useSuspendEmployee,
   useUpdateEmployee,
   type CreateEmployeeInput,
+  type EmployeeRecord,
 } from "@/api/employeesApi";
 import { extract_message } from "@/helpers/auth";
 
@@ -1381,47 +1383,67 @@ function StaffDetailPage() {
                       {...register("employeeNumber")}
                     />
 
-                    <LocalSelect
-                      label="Department"
-                      {...register("departmentId", {
-                        onChange: (e) => {
-                          const sel = departmentsList.find(
-                            (d) => d.id === e.target.value,
-                          );
-                          if (sel) methods.setValue("department", sel.name);
-                        },
-                      })}
-                    >
-                      <option value="">Select Department</option>
-                      {departmentsList.map((dept) => (
-                        <option
-                          key={dept.id || dept.name}
-                          value={dept.id || dept.name}
-                        >
-                          {dept.name}
-                        </option>
-                      ))}
-                    </LocalSelect>
+                    <Controller
+                      control={methods.control}
+                      name="departmentId"
+                      render={({ field }) => (
+                        <SimpleSelect<{ id?: string; name: string }>
+                          route="/employees/organization"
+                          value={field.value}
+                          onChange={(value) => {
+                            field.onChange(value);
+                            const sel = departmentsList.find(
+                              (d) => d.id === value,
+                            );
+                            if (sel) methods.setValue("department", sel.name);
+                          }}
+                          label="Department"
+                          render={(dept, index) => (
+                            <>
+                              {index === 0 && (
+                                <option value="">Select Department</option>
+                              )}
+                              <option
+                                key={dept.id || dept.name}
+                                value={dept.id || dept.name}
+                              >
+                                {dept.name}
+                              </option>
+                            </>
+                          )}
+                        />
+                      )}
+                    />
 
                     {positionsList.length > 0 ? (
-                      <LocalSelect
-                        label="Position / Role"
-                        {...register("positionId", {
-                          onChange: (e) => {
-                            const sel = positionsList.find(
-                              (p) => p.id === e.target.value,
-                            );
-                            if (sel) methods.setValue("jobTitle", sel.name);
-                          },
-                        })}
-                      >
-                        <option value="">Select Position</option>
-                        {positionsList.map((pos) => (
-                          <option key={pos.id} value={pos.id}>
-                            {pos.name}
-                          </option>
-                        ))}
-                      </LocalSelect>
+                      <Controller
+                        control={methods.control}
+                        name="positionId"
+                        render={({ field }) => (
+                          <SimpleSelect<{ id?: string; name: string }>
+                            route="/employees/organization"
+                            value={field.value}
+                            onChange={(value) => {
+                              field.onChange(value);
+                              const sel = positionsList.find(
+                                (p) => p.id === value,
+                              );
+                              if (sel) methods.setValue("jobTitle", sel.name);
+                            }}
+                            label="Position / Role"
+                            render={(pos, index) => (
+                              <>
+                                {index === 0 && (
+                                  <option value="">Select Position</option>
+                                )}
+                                <option key={pos.id} value={pos.id}>
+                                  {pos.name}
+                                </option>
+                              </>
+                            )}
+                          />
+                        )}
+                      />
                     ) : (
                       <SimpleInput
                         label="Job Title"
@@ -1464,23 +1486,34 @@ function StaffDetailPage() {
                       ))}
                     </LocalSelect>
 
-                    <LocalSelect
-                      label="Reporting Manager / Supervisor"
-                      {...register("managerId")}
-                    >
-                      <option value="">None / Self</option>
-                      {potentialManagers.map((mgr) => {
-                        const name =
-                          mgr.name ??
-                          `${mgr.firstName ?? ""} ${mgr.lastName ?? ""}`.trim() ??
-                          mgr.email;
-                        return (
-                          <option key={mgr.id} value={mgr.id}>
-                            {name} ({mgr.departmentName ?? "Staff"})
-                          </option>
-                        );
-                      })}
-                    </LocalSelect>
+                    <Controller
+                      control={methods.control}
+                      name="managerId"
+                      render={({ field }) => (
+                        <SimpleSelect<EmployeeRecord>
+                          route="/employees"
+                          value={field.value}
+                          onChange={field.onChange}
+                          label="Reporting Manager / Supervisor"
+                          render={(mgr, index) => {
+                            const name =
+                              mgr.name ||
+                              `${mgr.firstName ?? ""} ${mgr.lastName ?? ""}`.trim() ||
+                              mgr.email;
+                            return (
+                              <>
+                                {index === 0 && (
+                                  <option value="">None / Self</option>
+                                )}
+                                <option key={mgr.id} value={mgr.id}>
+                                  {name} ({mgr.departmentName ?? "Staff"})
+                                </option>
+                              </>
+                            );
+                          }}
+                        />
+                      )}
+                    />
 
                     <SimpleInput
                       label="Start Date *"
