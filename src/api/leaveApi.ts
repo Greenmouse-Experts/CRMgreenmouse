@@ -123,10 +123,24 @@ const normalizeLeaveStatus = (value?: string): LeaveStatus => {
 };
 
 export const mapBackendLeaveType = (raw: any): LeaveTypeSummary => {
-  const type = toLeaveType(raw?.code ?? raw?.name ?? raw?.type);
-  const entitlementDays = raw?.entitlementDays ?? raw?.entitlement_days;
+  const nested =
+    raw?.type && typeof raw.type === "object"
+      ? raw.type
+      : raw?.leaveType && typeof raw.leaveType === "object"
+        ? raw.leaveType
+        : raw;
+  const type = toLeaveType(
+    nested?.code ??
+      nested?.name ??
+      (typeof raw?.type === "string" ? raw.type : undefined),
+  );
+  const entitlementDays =
+    raw?.entitlementDays ??
+    raw?.entitlement_days ??
+    nested?.entitlementDays ??
+    nested?.entitlement_days;
   return {
-    id: raw?.id ?? undefined,
+    id: nested?.id ?? raw?.id ?? undefined,
     type,
     entitlementDays: entitlementDays ?? undefined,
     entitlement:
@@ -135,21 +149,28 @@ export const mapBackendLeaveType = (raw: any): LeaveTypeSummary => {
         : typeof raw?.entitlement === "number"
           ? `${raw.entitlement} days`
           : (raw?.entitlement ?? raw?.policy ?? ""),
-    description: raw?.description ?? raw?.policyDescription ?? "",
+    description:
+      raw?.description ?? raw?.policyDescription ?? nested?.description ?? "",
     color: TYPE_COLORS[type] ?? TYPE_COLORS.Annual,
-    code: raw?.code ?? undefined,
-    name: raw?.name ?? undefined,
-    isPaid: typeof raw?.isPaid === "boolean" ? raw.isPaid : undefined,
+    code: nested?.code ?? undefined,
+    name: nested?.name ?? undefined,
+    isPaid: typeof nested?.isPaid === "boolean" ? nested.isPaid : undefined,
     evidenceAlwaysRequired:
-      typeof raw?.evidenceAlwaysRequired === "boolean"
-        ? raw.evidenceAlwaysRequired
+      typeof nested?.evidenceAlwaysRequired === "boolean"
+        ? nested.evidenceAlwaysRequired
         : undefined,
     requiresEvidenceOverDays:
-      typeof raw?.requiresEvidenceOverDays === "number"
-        ? raw.requiresEvidenceOverDays
+      typeof nested?.requiresEvidenceOverDays === "number"
+        ? nested.requiresEvidenceOverDays
         : undefined,
-    isActive: typeof raw?.isActive === "boolean" ? raw.isActive : undefined,
-    year: typeof raw?.year === "number" ? raw.year : undefined,
+    isActive:
+      typeof nested?.isActive === "boolean" ? nested.isActive : undefined,
+    year:
+      typeof raw?.year === "number"
+        ? raw.year
+        : typeof nested?.year === "number"
+          ? nested.year
+          : undefined,
   };
 };
 

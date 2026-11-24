@@ -42,7 +42,8 @@ export default function NewLeaveRequestModal({
 }: NewLeaveRequestModalProps) {
   const modalRef = useRef<ModalHandle>(null);
   const { data: staffs = [] } = useStaffs();
-  const { data: leaveTypes = [] } = useLeaveTypes();
+  const { data: leaveTypesData } = useLeaveTypes();
+  const leaveTypes = leaveTypesData ?? [];
   const { data: balances = [] } = useLeaveBalances();
 
   const [form, setForm] = useState({
@@ -63,15 +64,21 @@ export default function NewLeaveRequestModal({
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
-    const matched =
-      leaveTypes.find((lt) => lt.type === defaultType) ?? leaveTypes[0];
+    const list = leaveTypesData ?? [];
+    const matched = list.find((lt) => lt.type === defaultType) ?? list[0];
     const resolvedId = matched?.id ?? matched?.code ?? "";
-    setForm((p) => ({
-      ...p,
-      type: defaultType,
-      leaveTypeId: resolvedId || p.leaveTypeId,
-    }));
-  }, [defaultType, leaveTypes]);
+    setForm((p) => {
+      const nextLeaveTypeId = resolvedId || p.leaveTypeId;
+      if (p.type === defaultType && p.leaveTypeId === nextLeaveTypeId) {
+        return p;
+      }
+      return {
+        ...p,
+        type: defaultType,
+        leaveTypeId: nextLeaveTypeId,
+      };
+    });
+  }, [defaultType, leaveTypesData]);
 
   useEffect(() => {
     if (staffs.length > 0 && (!form.emp || !form.cover)) {
@@ -234,17 +241,37 @@ export default function NewLeaveRequestModal({
                     type: matched?.type ?? toLeaveType(selectedValue),
                   }));
                 }}
-                render={(lt, index) => {
-                  const optionValue =
-                    lt.id ?? lt.code ?? lt.name ?? String(index);
-                  const days = lt.entitlementDays ?? lt.entitlement_days;
+                render={(rawItem: any, index) => {
+                  const lt =
+                    rawItem?.type && typeof rawItem.type === "object"
+                      ? rawItem.type
+                      : rawItem?.leaveType &&
+                          typeof rawItem.leaveType === "object"
+                        ? rawItem.leaveType
+                        : rawItem;
+                  const optionValue = String(
+                    lt?.id ?? rawItem?.id ?? lt?.code ?? lt?.name ?? index,
+                  );
+                  const days =
+                    rawItem?.entitlementDays ??
+                    rawItem?.entitlement_days ??
+                    lt?.entitlementDays ??
+                    lt?.entitlement_days;
                   const entitlementText =
                     typeof days === "number"
                       ? `${days} days`
-                      : lt.entitlement
-                        ? String(lt.entitlement)
+                      : rawItem?.entitlement &&
+                          typeof rawItem.entitlement !== "object"
+                        ? String(rawItem.entitlement)
                         : "";
-                  const labelText = lt.name ?? lt.code ?? lt.type ?? "Leave";
+                  const rawLabel =
+                    lt?.name ??
+                    lt?.code ??
+                    (typeof rawItem?.type === "string"
+                      ? rawItem.type
+                      : undefined) ??
+                    "Leave";
+                  const labelText = String(rawLabel);
                   return (
                     <option key={optionValue} value={optionValue}>
                       {entitlementText
