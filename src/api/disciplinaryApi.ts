@@ -161,8 +161,16 @@ export const mapCaseFromApi = (raw: any): DisciplinaryCase => {
 
   const currentStep: WorkflowStep = API_TO_STAGE[stageKey] ?? "Report";
 
-  let status: CaseStatus = API_TO_STATUS[statusKey] ?? "Under Review";
-  if (!c?.status && !raw?.status) {
+  const rawStatus = c?.status ?? raw?.status;
+  const formatUnknownStatus = (val: string): CaseStatus =>
+    val
+      .replace(/_/g, " ")
+      .replace(/\b\w/g, (ch) => ch.toUpperCase()) as CaseStatus;
+
+  let status: CaseStatus = rawStatus
+    ? (API_TO_STATUS[statusKey] ?? formatUnknownStatus(String(rawStatus)))
+    : "Under Review";
+  if (!rawStatus) {
     if (c?.closedAt || c?.outcome || raw?.closedAt || raw?.outcome) {
       status = "Closed";
     } else if (currentStep === "Hearing") {
