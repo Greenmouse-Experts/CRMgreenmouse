@@ -1,26 +1,23 @@
-import { useEffect, useRef } from "react";
-import { FormProvider, useForm } from "react-hook-form";
+import { Fragment, useEffect, useRef } from "react";
+import { Controller, FormProvider, useForm } from "react-hook-form";
 import Modal, { type ModalHandle } from "@/components/DialogModal";
 import SimpleInput from "@/components/inputs/SimpleInput";
 import SimpleTextArea from "@/components/inputs/SimpleTextArea";
 import LocalSelect from "@/components/inputs/LocalSelect";
-import { useCreateTask } from "@/api/tasksApi";
+import SimpleSelect from "@/components/inputs/SimpleSelect";
+import { useCreateTask, useUpdateTask, type Task } from "@/api/tasksApi";
+import type { EmployeeRecord } from "@/api/employeesApi";
 import { extract_message } from "@/helpers/auth";
-import { Plus } from "lucide-react";
+import { Plus, Save } from "lucide-react";
 import { toast } from "sonner";
 
 interface CreateTaskModalProps {
   isOpen: boolean;
   onClose: () => void;
+  initialTask?: Task | null;
 }
 
-const TYPE_OPTIONS = [
-  "email",
-  "call",
-  "meeting",
-  "follow_up",
-  "task",
-] as const;
+const TYPE_OPTIONS = ["email", "call", "meeting", "follow_up", "task"] as const;
 
 const STATUS_OPTIONS = [
   "open",
@@ -38,61 +35,89 @@ interface TaskFormData {
   status?: string;
   priority?: string;
   dueAt?: string;
+  assignedTo?: string;
 }
+
+const defaultValues: TaskFormData = {
+  title: "",
+  description: "",
+  type: "task",
+  status: "open",
+  priority: "medium",
+  dueAt: "",
+  assignedTo: "",
+};
 
 export default function CreateTaskModal({
   isOpen,
   onClose,
+  initialTask,
 }: CreateTaskModalProps) {
   const modalRef = useRef<ModalHandle>(null);
   const methods = useForm<TaskFormData>({
     mode: "onSubmit",
-    defaultValues: {
-      title: "",
-      description: "",
-      type: "task",
-      status: "open",
-      priority: "medium",
-    },
+    defaultValues,
   });
-  const { register, handleSubmit, reset } = methods;
+  const { control, register, handleSubmit, reset } = methods;
   const createTask = useCreateTask();
+  const updateTask = useUpdateTask();
+
+  const isEditing = Boolean(initialTask);
+  const isPending = createTask.isPending || updateTask.isPending;
 
   useEffect(() => {
     if (isOpen) {
       modalRef.current?.open();
-      reset({
-        title: "",
-        description: "",
-        type: "task",
-        status: "open",
-        priority: "medium",
-      });
+      if (initialTask) {
+        reset({
+          title: initialTask.title ?? "",
+          description: initialTask.description ?? "",
+          type: initialTask.type || "task",
+          status: initialTask.status || "open",
+          priority: initialTask.priority || "medium",
+          dueAt: initialTask.dueAt ? initialTask.dueAt.slice(0, 10) : "",
+          assignedTo: initialTask.assignedTo ?? initialTask.assignee?.id ?? "",
+        });
+      } else {
+        reset(defaultValues);
+      }
     } else {
       modalRef.current?.close();
     }
-  }, [isOpen]);
+  }, [isOpen, initialTask, reset]);
 
   const onSubmit = async (values: TaskFormData) => {
     const title = values.title?.trim();
     if (!title) return;
+
+    const payload = {
+      title,
+      description: values.description?.trim() || undefined,
+      type: values.type || undefined,
+      status: values.status || undefined,
+      priority: values.priority || undefined,
+      dueAt: values.dueAt || undefined,
+      assignedTo: values.assignedTo || undefined,
+    };
+
     try {
-      await toast.promise(
-        createTask.mutateAsync({
-          title,
-          description: values.description?.trim() || undefined,
-          type: values.type || undefined,
-          status: values.status || undefined,
-          priority: values.priority || undefined,
-          dueAt: values.dueAt || undefined,
-        }),
-        {
+      if (initialTask) {
+        await toast.promise(
+          updateTask.mutateAsync({ id: initialTask.id, ...payload }),
+          {
+            loading: "Updating task...",
+            success: "Task updated",
+            error: (error) => extract_message(error as never),
+          },
+        );
+      } else {
+        await toast.promise(createTask.mutateAsync(payload), {
           loading: "Creating task...",
           success: "Task created",
           error: (error) => extract_message(error as never),
-        },
-      );
-      reset();
+        });
+      }
+      reset(defaultValues);
       onClose();
     } catch {
       // Error toast is shown by toast.promise.
@@ -102,8 +127,8 @@ export default function CreateTaskModal({
   return (
     <Modal
       ref={modalRef}
-      title="Add Task"
-      maxWidth="max-w-md"
+      title={isEditing ? "Edit Task" : "Add Task"}
+      maxWidth="max-w-lg"
       onClose={onClose}
     >
       <FormProvider {...methods}>
@@ -113,25 +138,56 @@ export default function CreateTaskModal({
             placeholder="e.g. Send the Q3 report"
             required
             {...register("title", { required: "A title is required." })}
-            disabled={createTask.isPending}
+            disabled={isPending}
           />
 
           <SimpleTextArea
             label="Description (optional)"
             rows={3}
             {...register("description")}
-            disabled={createTask.isPending}
+            disabled={isPending}
           />
 
-          <SimpleInput
-            label="Due date (optional)"
-            type="date"
-            min={new Date().toISOString().slice(0, 10)}
-            {...register("dueAt")}
-            disabled={createTask.isPending}
-          />
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <SimpleInput
+              label="Due date (optional)"
+              type="date"
+              min={
+                isEditing ? undefined : new Date().toISOString().slice(0, 10)
+              }
+              {...register("dueAt")}
+              disabled={isPending}
+            />
 
-          <div className="grid grid-cols-2 gap-3">
+            <Controller
+              name="assignedTo"
+              control={control}
+              render={({ field }) => (
+                <SimpleSelect<EmployeeRecord>
+                  route="/employees"
+                  value={field.value ?? ""}
+                  onChange={field.onChange}
+                  label="Assign to (optional)"
+                  render={(employee, index) => {
+                    const name =
+                      [employee.firstName, employee.lastName]
+                        .filter(Boolean)
+                        .join(" ") ||
+                      employee.email ||
+                      "Unnamed";
+                    return (
+                      <Fragment key={employee.id}>
+                        {index === 0 && <option value="">Unassigned</option>}
+                        <option value={employee.id}>{name}</option>
+                      </Fragment>
+                    );
+                  }}
+                />
+              )}
+            />
+          </div>
+
+          <div className="grid grid-cols-3 gap-3">
             <LocalSelect label="Type" {...register("type")}>
               {TYPE_OPTIONS.map((option) => (
                 <option key={option} value={option}>
@@ -160,17 +216,29 @@ export default function CreateTaskModal({
               type="button"
               onClick={onClose}
               className="btn btn-sm btn-ghost rounded-xl"
-              disabled={createTask.isPending}
+              disabled={isPending}
             >
               Cancel
             </button>
             <button
               type="submit"
-              disabled={createTask.isPending}
+              disabled={isPending}
               className="btn btn-sm bg-primary text-white hover:bg-primary/90 rounded-xl px-5 gap-1.5 shadow-sm shadow-primary/20"
             >
-              <Plus className="size-3.5" />
-              <span>{createTask.isPending ? "Creating..." : "Create task"}</span>
+              {isEditing ? (
+                <Save className="size-3.5" />
+              ) : (
+                <Plus className="size-3.5" />
+              )}
+              <span>
+                {isPending
+                  ? isEditing
+                    ? "Saving..."
+                    : "Creating..."
+                  : isEditing
+                    ? "Save changes"
+                    : "Create task"}
+              </span>
             </button>
           </div>
         </form>

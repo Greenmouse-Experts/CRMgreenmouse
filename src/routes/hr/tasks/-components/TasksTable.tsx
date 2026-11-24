@@ -1,12 +1,8 @@
-import { CheckCircle2, Trash2 } from "lucide-react";
+import { CheckCircle2, Pencil, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import CustomTable, { type columnType } from "@/components/tables/CustomTable";
 import type { Actions } from "@/components/tables/pop-up";
-import {
-  useDeleteTask,
-  useUpdateTaskStatus,
-  type Task,
-} from "@/api/tasksApi";
+import { useDeleteTask, useUpdateTaskStatus, type Task } from "@/api/tasksApi";
 import { extract_message } from "@/helpers/auth";
 
 const STATUS_STYLES: Record<string, string> = {
@@ -26,11 +22,33 @@ const PRIORITY_STYLES: Record<string, string> = {
 const formatDate = (value?: string) =>
   value ? new Date(value).toLocaleDateString() : "—";
 
-export default function TasksTable({ tasks }: { tasks: Task[] }) {
+interface TasksTableProps {
+  tasks: Task[];
+  onEdit?: (task: Task) => void;
+}
+
+export default function TasksTable({ tasks, onEdit }: TasksTableProps) {
   const updateStatus = useUpdateTaskStatus();
   const removeTask = useDeleteTask();
 
   const actions: Actions<Task>[] = [
+    ...(onEdit
+      ? [
+          {
+            key: "edit",
+            label: "Edit task",
+            render: () => (
+              <span className="flex items-center gap-1.5">
+                <Pencil className="size-3.5" />
+                Edit
+              </span>
+            ),
+            action: (task: Task) => {
+              onEdit(task);
+            },
+          },
+        ]
+      : []),
     {
       key: "complete",
       label: "Mark completed",
@@ -138,14 +156,16 @@ export default function TasksTable({ tasks }: { tasks: Task[] }) {
     {
       key: "assignee",
       label: "Assignee",
-      render: (_value, task) => (
-        <span className="text-sm text-base-content/80">
-          {task.assignee?.name ||
-            task.assignee?.firstName ||
-            task.assignee?.email ||
-            "—"}
-        </span>
-      ),
+      render: (_value, task) => {
+        const fullName = [task.assignee?.firstName, task.assignee?.lastName]
+          .filter(Boolean)
+          .join(" ");
+        return (
+          <span className="text-sm text-base-content/80">
+            {task.assignee?.name || fullName || task.assignee?.email || "—"}
+          </span>
+        );
+      },
     },
   ];
 

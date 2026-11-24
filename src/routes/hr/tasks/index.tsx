@@ -5,7 +5,7 @@ import PageHeader from "@/components/Headers/PageHeader";
 import PageLoader from "@/components/layout/PageLoader";
 import TasksTable from "./-components/TasksTable";
 import CreateTaskModal from "./-components/CreateTaskModal";
-import { useTasks } from "@/api/tasksApi";
+import { useTasks, type Task } from "@/api/tasksApi";
 
 export const Route = createFileRoute("/hr/tasks/")({
   component: RouteComponent,
@@ -13,8 +13,24 @@ export const Route = createFileRoute("/hr/tasks/")({
 
 function RouteComponent() {
   const [isCreateTaskOpen, setIsCreateTaskOpen] = useState(false);
+  const [editingTask, setEditingTask] = useState<Task | null>(null);
   const tasksQuery = useTasks();
   const tasks = tasksQuery.data ?? [];
+
+  const handleOpenCreate = () => {
+    setEditingTask(null);
+    setIsCreateTaskOpen(true);
+  };
+
+  const handleOpenEdit = (task: Task) => {
+    setEditingTask(task);
+    setIsCreateTaskOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsCreateTaskOpen(false);
+    setEditingTask(null);
+  };
 
   return (
     <div className="space-y-6 pb-16">
@@ -28,7 +44,7 @@ function RouteComponent() {
         >
           <button
             type="button"
-            onClick={() => setIsCreateTaskOpen(true)}
+            onClick={handleOpenCreate}
             className="btn btn-sm btn-primary gap-1.5 rounded-lg font-medium shadow-xs"
           >
             <Plus className="size-4" /> Add Task
@@ -43,15 +59,16 @@ function RouteComponent() {
           description:
             "Create your first task to start tracking and following up.",
           actionText: "Add Task",
-          onAction: () => setIsCreateTaskOpen(true),
+          onAction: handleOpenCreate,
         }}
       >
-        {(data) => <TasksTable tasks={data ?? []} />}
+        {(data) => <TasksTable tasks={data ?? []} onEdit={handleOpenEdit} />}
       </PageLoader>
 
       <CreateTaskModal
         isOpen={isCreateTaskOpen}
-        onClose={() => setIsCreateTaskOpen(false)}
+        onClose={handleCloseModal}
+        initialTask={editingTask}
       />
     </div>
   );
