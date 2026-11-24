@@ -4,14 +4,14 @@ export type CorrectionStatus = "Pending" | "Approved" | "Rejected";
 
 export interface AttendanceRecord {
   id: string;
+  staffId?: string;
   name: string;
-  shift: string;
+  date: string;
   timeIn: string;
   timeOut: string;
   status: AttendanceStatus;
   workMode?: "On-site" | "Remote" | "Field work";
   location?: string;
-  date?: string;
 }
 
 export interface CorrectionRequest {

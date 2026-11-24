@@ -17,7 +17,8 @@ export default function TodayAttendanceLog({ logs }: TodayAttendanceLogProps) {
       const q = searchTerm.toLowerCase();
       return (
         log.name.toLowerCase().includes(q) ||
-        log.shift.toLowerCase().includes(q) ||
+        log.date.toLowerCase().includes(q) ||
+        (log.staffId && log.staffId.toLowerCase().includes(q)) ||
         (log.location && log.location.toLowerCase().includes(q))
       );
     }
@@ -66,13 +67,13 @@ export default function TodayAttendanceLog({ logs }: TodayAttendanceLogProps) {
       label: "Employee",
       render: (_value: string, log: AttendanceRecord) => (
         <div className="flex items-center gap-2.5">
-          <div className="size-7 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-[11px] shrink-0 border border-primary/20">
+          <div className="size-7 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-sm shrink-0 border border-primary/20">
             {getInitials(log.name)}
           </div>
           <div className="flex flex-col">
             <span className="font-semibold">{log.name}</span>
             {log.workMode && (
-              <span className="text-[10px] text-base-content/70 font-normal">
+              <span className="text-sm text-base-content/70 font-normal">
                 {log.workMode} {log.location ? `· ${log.location}` : ""}
               </span>
             )}
@@ -81,22 +82,22 @@ export default function TodayAttendanceLog({ logs }: TodayAttendanceLogProps) {
       ),
     },
     {
-      key: "shift",
-      label: "Shift",
+      key: "date",
+      label: "Date",
       render: (value: string) => (
-        <span className="font-mono text-base-content/80">{value}</span>
+        <span className="text-base-content/80">{value}</span>
       ),
     },
     {
       key: "timeIn",
-      label: "In",
+      label: "Clock In",
       render: (value: string) => (
         <span className="font-mono font-semibold">{value}</span>
       ),
     },
     {
       key: "timeOut",
-      label: "Out",
+      label: "Clock Out",
       render: (value: string) => (
         <span className="font-mono text-base-content/80">{value}</span>
       ),
@@ -112,9 +113,11 @@ export default function TodayAttendanceLog({ logs }: TodayAttendanceLogProps) {
     <div className="card bg-base-100 border border-base-200 shadow-sm p-4 sm:p-6 space-y-4">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h2 className="text-lg font-bold text-base-content">Today&apos;s log</h2>
+          <h2 className="text-lg font-bold text-base-content">
+            Attendance log
+          </h2>
           <p className="text-base-content/80">
-            Real-time clock-in logs and shift status for active staff members
+            Clock-in and clock-out logs for staff members
           </p>
         </div>
 
@@ -144,7 +147,9 @@ export default function TodayAttendanceLog({ logs }: TodayAttendanceLogProps) {
       </div>
 
       {filteredLogs.length > 0 ? (
-        <CustomTable data={filteredLogs} columns={columns} />
+        <div className="overflow-hidden rounded-xl border border-base-200">
+          <CustomTable ring={false} data={filteredLogs} columns={columns} />
+        </div>
       ) : (
         <div className="py-8 text-center text-sm text-base-content/70">
           No attendance records found matching filters.

@@ -5,7 +5,6 @@ import PageLoader from "@/components/layout/PageLoader";
 import AttendanceStats from "./-components/AttendanceStats";
 import TodayAttendanceLog from "./-components/TodayAttendanceLog";
 import CorrectionRequests from "./-components/CorrectionRequests";
-import ClockInModal from "./-components/ClockInModal";
 import RequestCorrectionModal from "./-components/RequestCorrectionModal";
 import { correctionLabel } from "./-components/attendanceData";
 import type {
@@ -18,6 +17,7 @@ import {
   useAttendanceDashboard,
   useAttendanceRecords,
   useClockIn,
+  useClockOut,
   useCorrectionRequests,
   useCreateCorrection,
   useDecideCorrection,
@@ -25,8 +25,10 @@ import {
   type CorrectionApi,
   type CreateCorrectionPayload,
 } from "@/api/attendanceApi";
-import { extract_message } from "@/helpers/auth";
-import { Clock, LogIn } from "lucide-react";
+import { useStaffs } from "@/api/tenantApi";
+import { useAuth } from "@/store/authStore";
+import { extract_message } from "@/helpers/errors";
+import { Clock, LogIn, LogOut } from "lucide-react";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/hr/attendance/")({
@@ -49,7 +51,7 @@ const CORRECTION_STATUS_MAP: Record<string, CorrectionStatus> = {
   rejected: "Rejected",
 };
 
-const formatTime = (value?: string) => {
+const formatTime = (value?: string | null) => {
   if (!value) return UNKNOWN;
   if (!value.includes("T")) return value;
   const date = new Date(value);
@@ -58,32 +60,43 @@ const formatTime = (value?: string) => {
     : date.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" });
 };
 
-const formatDate = (value?: string) => {
+const formatDate = (value?: string | null) => {
   if (!value) return UNKNOWN;
   const date = new Date(value);
   return Number.isNaN(date.getTime())
     ? UNKNOWN
-    : date.toLocaleDateString("en-GB", { month: "short", day: "numeric" });
+    : date.toLocaleDateString("en-GB", {
+        day: "numeric",
+        month: "short",
+        year: "numeric",
+      });
 };
 
-const staffName = (raw: {
-  staff?: { firstName?: string; lastName?: string; name?: string };
-  staffName?: string;
-}) =>
+const staffName = (
+  raw: {
+    staffId?: string;
+    staff?: { firstName?: string; lastName?: string; name?: string };
+    staffName?: string;
+  },
+  staffLookup: Map<string, string>,
+) =>
   `${raw.staff?.firstName ?? ""} ${raw.staff?.lastName ?? ""}`.trim() ||
   raw.staff?.name ||
   raw.staffName ||
+  (raw.staffId ? staffLookup.get(raw.staffId) : undefined) ||
+  raw.staffId ||
   UNKNOWN;
 
-const toUiRecord = (raw: AttendanceRecordApi): AttendanceRecord => {
+const toUiRecord = (
+  raw: AttendanceRecordApi,
+  staffLookup: Map<string, string>,
+): AttendanceRecord => {
   const statusKey = raw.status?.toLowerCase();
   return {
     id: raw.id,
-    name: staffName(raw),
-    shift:
-      typeof raw.shift === "object"
-        ? raw.shift?.name ?? UNKNOWN
-        : raw.shift ?? UNKNOWN,
+    staffId: raw.staffId,
+    name: staffName(raw, staffLookup),
+    date: formatDate(raw.date ?? raw.clockInAt),
     timeIn: formatTime(raw.clockInAt),
     timeOut: formatTime(raw.clockOutAt),
     status:
@@ -91,23 +104,24 @@ const toUiRecord = (raw: AttendanceRecordApi): AttendanceRecord => {
       (raw.clockInAt ? "Present" : "Absent"),
     workMode: raw.workMode as AttendanceRecord["workMode"],
     location: raw.location,
-    date: raw.date,
   };
 };
 
-const toUiCorrection = (raw: CorrectionApi): CorrectionRequest => {
+const toUiCorrection = (
+  raw: CorrectionApi,
+  staffLookup: Map<string, string>,
+): CorrectionRequest => {
   const date = formatDate(raw.date);
   const label = correctionLabel(raw.correctionType);
   const statusKey = raw.status?.toLowerCase();
 
   return {
     id: raw.id,
-    employeeName: staffName(raw),
+    employeeName: staffName(raw, staffLookup),
     date,
     type: label,
     detail: `${date} · ${label.toLowerCase()}`,
-    status:
-      (statusKey && CORRECTION_STATUS_MAP[statusKey]) || "Pending",
+    status: (statusKey && CORRECTION_STATUS_MAP[statusKey]) || "Pending",
     correctIn: formatTime(raw.correctedClockInAt),
     correctOut: formatTime(raw.correctedClockOutAt),
     reason: raw.reason,
@@ -115,24 +129,60 @@ const toUiCorrection = (raw: CorrectionApi): CorrectionRequest => {
 };
 
 function RouteComponent() {
+  const [auth] = useAuth();
+  const currentUserId = auth?.user?.id;
+
   const dashboardQuery = useAttendanceDashboard();
   const recordsQuery = useAttendanceRecords();
   const correctionsQuery = useCorrectionRequests();
+  const staffsQuery = useStaffs();
 
   const clockInMutation = useClockIn();
+  const clockOutMutation = useClockOut();
   const createCorrectionMutation = useCreateCorrection();
   const decideCorrectionMutation = useDecideCorrection();
 
-  const [isClockInOpen, setIsClockInOpen] = useState(false);
   const [isCorrectionOpen, setIsCorrectionOpen] = useState(false);
 
+  const staffLookup = useMemo(() => {
+    const map = new Map<string, string>();
+    if (auth?.user?.id) {
+      const fullName =
+        `${auth.user.firstName ?? ""} ${auth.user.lastName ?? ""}`.trim();
+      if (fullName || auth.user.email) {
+        map.set(auth.user.id, fullName || auth.user.email);
+      }
+    }
+    for (const member of staffsQuery.data ?? []) {
+      const fullName =
+        `${member.firstName ?? ""} ${member.lastName ?? ""}`.trim();
+      if (member.id && (fullName || member.email)) {
+        map.set(member.id, fullName || member.email);
+      }
+    }
+    return map;
+  }, [auth?.user, staffsQuery.data]);
+
   const logs = useMemo(
-    () => (recordsQuery.data ?? []).map(toUiRecord),
-    [recordsQuery.data],
+    () => (recordsQuery.data ?? []).map((raw) => toUiRecord(raw, staffLookup)),
+    [recordsQuery.data, staffLookup],
   );
   const corrections = useMemo(
-    () => (correctionsQuery.data ?? []).map(toUiCorrection),
-    [correctionsQuery.data],
+    () =>
+      (correctionsQuery.data ?? []).map((raw) =>
+        toUiCorrection(raw, staffLookup),
+      ),
+    [correctionsQuery.data, staffLookup],
+  );
+
+  const openShift = useMemo(
+    () =>
+      currentUserId
+        ? (recordsQuery.data ?? []).find(
+            (r) => r.staffId === currentUserId && !r.clockOutAt,
+          )
+        : undefined,
+    [recordsQuery.data, currentUserId],
   );
 
   const todayFormatted = `Today · ${new Intl.DateTimeFormat("en-GB", {
@@ -142,36 +192,51 @@ function RouteComponent() {
     year: "numeric",
   }).format(new Date())}`;
 
-  const handleClockIn = (staffId: string) => {
-    const promise = clockInMutation
-      .mutateAsync(staffId)
-      .then(() => setIsClockInOpen(false));
-    toast.promise(promise, {
-      loading: "Clocking in...",
-      success: "Clocked in successfully",
-      error: (error) => extract_message(error as never),
-    });
-    return promise.catch(() => undefined);
+  const handleClockIn = async () => {
+    if (!currentUserId) {
+      toast.error("Unable to identify the logged-in user.");
+      return;
+    }
+    try {
+      await clockInMutation.mutateAsync(currentUserId);
+      toast.success("Clocked in successfully");
+    } catch (error) {
+      toast.error(extract_message(error as never));
+    }
   };
 
-  const handleCreateCorrection = (payload: CreateCorrectionPayload) => {
-    const promise = createCorrectionMutation
-      .mutateAsync(payload)
-      .then(() => setIsCorrectionOpen(false));
-    toast.promise(promise, {
-      loading: "Submitting correction...",
-      success: "Correction request submitted",
-      error: (error) => extract_message(error as never),
-    });
-    return promise.catch(() => undefined);
+  const handleClockOut = async () => {
+    if (!currentUserId) {
+      toast.error("Unable to identify the logged-in user.");
+      return;
+    }
+    try {
+      await clockOutMutation.mutateAsync(currentUserId);
+      toast.success("Clocked out successfully");
+    } catch (error) {
+      toast.error(extract_message(error as never));
+    }
   };
 
-  const handleDecide = (id: string, decision: "approve" | "reject") => {
-    toast.promise(decideCorrectionMutation.mutateAsync({ id, decision }), {
-      loading: "Updating correction request...",
-      success: decision === "approve" ? "Correction approved" : "Correction rejected",
-      error: (error) => extract_message(error as never),
-    });
+  const handleCreateCorrection = async (payload: CreateCorrectionPayload) => {
+    try {
+      await createCorrectionMutation.mutateAsync(payload);
+      toast.success("Correction request submitted");
+      setIsCorrectionOpen(false);
+    } catch (error) {
+      toast.error(extract_message(error as never));
+    }
+  };
+
+  const handleDecide = async (id: string, decision: "approve" | "reject") => {
+    try {
+      await decideCorrectionMutation.mutateAsync({ id, decision });
+      toast.success(
+        decision === "approve" ? "Correction approved" : "Correction rejected",
+      );
+    } catch (error) {
+      toast.error(extract_message(error as never));
+    }
   };
 
   return (
@@ -186,14 +251,31 @@ function RouteComponent() {
             <Clock className="size-4" />
             <span>Request correction</span>
           </button>
-          <button
-            type="button"
-            onClick={() => setIsClockInOpen(true)}
-            className="btn btn-sm bg-primary text-white hover:bg-primary/90 border-0 rounded-xl px-4 font-medium gap-1.5 shadow-sm shadow-primary/20"
-          >
-            <LogIn className="size-4" />
-            <span>Clock in</span>
-          </button>
+          {openShift ? (
+            <button
+              type="button"
+              onClick={handleClockOut}
+              disabled={clockOutMutation.isPending}
+              className="btn btn-sm btn-outline border-primary text-primary hover:bg-primary hover:text-white rounded-xl px-4 font-medium gap-1.5"
+            >
+              <LogOut className="size-4" />
+              <span>
+                {clockOutMutation.isPending ? "Clocking out..." : "Clock out"}
+              </span>
+            </button>
+          ) : (
+            <button
+              type="button"
+              onClick={handleClockIn}
+              disabled={clockInMutation.isPending || !currentUserId}
+              className="btn btn-sm bg-primary text-white hover:bg-primary/90 border-0 rounded-xl px-4 font-medium gap-1.5 shadow-sm shadow-primary/20"
+            >
+              <LogIn className="size-4" />
+              <span>
+                {clockInMutation.isPending ? "Clocking in..." : "Clock in"}
+              </span>
+            </button>
+          )}
         </div>
       </PageHeader>
 
@@ -232,12 +314,6 @@ function RouteComponent() {
           </PageLoader>
         </div>
       </div>
-
-      <ClockInModal
-        isOpen={isClockInOpen}
-        onClose={() => setIsClockInOpen(false)}
-        onClockIn={handleClockIn}
-      />
 
       <RequestCorrectionModal
         isOpen={isCorrectionOpen}
