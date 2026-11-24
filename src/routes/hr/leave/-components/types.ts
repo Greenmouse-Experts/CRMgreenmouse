@@ -41,6 +41,13 @@ export interface LeaveTypeSummary {
   description: string;
   color: string;
   entitlementDays?: number;
+  code?: string;
+  name?: string;
+  isPaid?: boolean;
+  evidenceAlwaysRequired?: boolean;
+  requiresEvidenceOverDays?: number;
+  isActive?: boolean;
+  year?: number;
 }
 
 export interface LeaveBalanceSummary {

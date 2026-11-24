@@ -379,6 +379,7 @@ return 200/201 or proper 400/404 validation responses.
    for tabular data.
 5. Wire mutations with invalidation, toasts, and `extract_message`.
 6. Run `bun run typecheck` and `bun run build` before committing.
+7. **Commit when done**: Once validation passes, stage and commit the relevant changes with a clear, concise commit message (leaving unrelated dirty files unstaged).
 
 ## Rules for Updating `pending_apis.md` (Backend Handoff)
 

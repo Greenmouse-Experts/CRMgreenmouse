@@ -65,7 +65,9 @@ export const toLeaveType = (value?: string): LeaveType => {
     .toLowerCase()
     .replace(/[^a-z]/g, "");
   if (LEAVE_TYPE_MAP[key]) return LEAVE_TYPE_MAP[key];
-  return (key ? key.charAt(0).toUpperCase() + key.slice(1) : "Annual") as LeaveType;
+  return (
+    key ? key.charAt(0).toUpperCase() + key.slice(1) : "Annual"
+  ) as LeaveType;
 };
 
 const TYPE_COLORS: Record<LeaveType, string> = {
@@ -131,9 +133,22 @@ export const mapBackendLeaveType = (raw: any): LeaveTypeSummary => {
         ? `${entitlementDays} days`
         : typeof raw?.entitlement === "number"
           ? `${raw.entitlement} days`
-          : raw?.entitlement ?? raw?.policy ?? "",
+          : (raw?.entitlement ?? raw?.policy ?? ""),
     description: raw?.description ?? raw?.policyDescription ?? "",
     color: TYPE_COLORS[type] ?? TYPE_COLORS.Annual,
+    code: raw?.code ?? undefined,
+    name: raw?.name ?? undefined,
+    isPaid: typeof raw?.isPaid === "boolean" ? raw.isPaid : undefined,
+    evidenceAlwaysRequired:
+      typeof raw?.evidenceAlwaysRequired === "boolean"
+        ? raw.evidenceAlwaysRequired
+        : undefined,
+    requiresEvidenceOverDays:
+      typeof raw?.requiresEvidenceOverDays === "number"
+        ? raw.requiresEvidenceOverDays
+        : undefined,
+    isActive: typeof raw?.isActive === "boolean" ? raw.isActive : undefined,
+    year: typeof raw?.year === "number" ? raw.year : undefined,
   };
 };
 
@@ -196,7 +211,9 @@ export const mapBackendLeaveBalance = (raw: any): LeaveBalanceSummary => ({
       raw?.entitlement ??
       raw?.totalEntitlement,
   ),
-  used: toOptionalNumber(raw?.used ?? raw?.usedDays ?? raw?.taken ?? raw?.daysUsed),
+  used: toOptionalNumber(
+    raw?.used ?? raw?.usedDays ?? raw?.taken ?? raw?.daysUsed,
+  ),
   pendingReservation: toOptionalNumber(
     raw?.pendingReservation ?? raw?.pending ?? raw?.pendingDays,
   ),

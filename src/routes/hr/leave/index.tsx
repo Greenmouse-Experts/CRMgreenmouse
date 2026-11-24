@@ -5,7 +5,12 @@ import LeaveStats from "./-components/LeaveStats";
 import LeaveRequestsTable from "./-components/LeaveRequestsTable";
 import LeaveTypesSection from "./-components/LeaveTypesSection";
 import NewLeaveRequestModal from "./-components/NewLeaveRequestModal";
-import type { LeaveRequest, LeaveType } from "./-components/types";
+import LeaveTypeModal from "./-components/LeaveTypeModal";
+import type {
+  LeaveRequest,
+  LeaveType,
+  LeaveTypeSummary,
+} from "./-components/types";
 import {
   useCreateLeaveRequest,
   useDecideLeaveRequest,
@@ -25,6 +30,9 @@ function RouteComponent() {
   const [isNewRequestOpen, setIsNewRequestOpen] = useState(false);
   const [selectedLeaveType, setSelectedLeaveType] =
     useState<LeaveType>("Annual");
+  const [isLeaveTypeModalOpen, setIsLeaveTypeModalOpen] = useState(false);
+  const [editingLeaveType, setEditingLeaveType] =
+    useState<LeaveTypeSummary | null>(null);
 
   const requestsQuery = useLeaveRequests();
   const createLeaveRequest = useCreateLeaveRequest();
@@ -105,7 +113,17 @@ function RouteComponent() {
       />
 
       {/* Leave Types & Policy Reference */}
-      <LeaveTypesSection onSelectType={handleSelectTypeFromCards} />
+      <LeaveTypesSection
+        onSelectType={handleSelectTypeFromCards}
+        onAddType={() => {
+          setEditingLeaveType(null);
+          setIsLeaveTypeModalOpen(true);
+        }}
+        onEditType={(leaveType) => {
+          setEditingLeaveType(leaveType);
+          setIsLeaveTypeModalOpen(true);
+        }}
+      />
 
       {/* New Leave Request Modal */}
       <NewLeaveRequestModal
@@ -113,6 +131,16 @@ function RouteComponent() {
         onClose={() => setIsNewRequestOpen(false)}
         onSubmitRequest={handleCreateRequest}
         defaultType={selectedLeaveType}
+      />
+
+      {/* Create / Configure Leave Type Modal */}
+      <LeaveTypeModal
+        isOpen={isLeaveTypeModalOpen}
+        onClose={() => {
+          setIsLeaveTypeModalOpen(false);
+          setEditingLeaveType(null);
+        }}
+        initialType={editingLeaveType}
       />
     </div>
   );
