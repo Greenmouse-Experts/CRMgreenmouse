@@ -25,21 +25,19 @@ export default function CaseWorkflowStepper({
           <h2 className="text-base font-bold text-base-content">
             Mandatory Due-Process Workflow
           </h2>
-          <p className=" text-base-content/80">
+          <p className="text-sm text-base-content/80">
             Every formal complaint follows strict fair-hearing and statutory
             compliance stages.
           </p>
         </div>
         <div className="flex items-center gap-1.5 self-start sm:self-auto">
-          <span className="badge badge-sm badge-outline text-[11px] font-medium text-primary border-primary/30 bg-primary/5">
+          <span className="badge badge-sm badge-outline text-sm font-medium text-primary border-primary/30 bg-primary/5">
             Stage {currentIndex + 1} of {WORKFLOW_STEPS.length}
           </span>
         </div>
       </div>
 
-      {/* Stepper Flow */}
       <div className="relative">
-        {/* Desktop / Tablet Stepper */}
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
           {WORKFLOW_STEPS.map((step, idx) => {
             const isCompleted = idx < currentIndex;
@@ -60,7 +58,7 @@ export default function CaseWorkflowStepper({
               >
                 <div className="flex items-center justify-between w-full mb-2">
                   <span
-                    className={`inline-flex items-center justify-center size-6 rounded-full  font-bold ${
+                    className={`inline-flex items-center justify-center size-6 rounded-full font-bold ${
                       isCurrent
                         ? "bg-primary text-white"
                         : isCompleted
@@ -79,7 +77,7 @@ export default function CaseWorkflowStepper({
                   )}
                 </div>
                 <span
-                  className={` font-semibold leading-tight ${
+                  className={`font-semibold leading-tight ${
                     isCurrent
                       ? "text-primary"
                       : isCompleted
@@ -89,7 +87,7 @@ export default function CaseWorkflowStepper({
                 >
                   {step}
                 </span>
-                <span className="text-[10px] text-base-content/80 mt-0.5">
+                <span className="text-sm text-base-content/70 mt-0.5">
                   {isCompleted
                     ? "Completed"
                     : isCurrent

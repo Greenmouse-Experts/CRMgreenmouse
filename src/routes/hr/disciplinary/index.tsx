@@ -1,14 +1,29 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import PageHeader from "@/components/Headers/PageHeader";
+import PageLoader from "@/components/layout/PageLoader";
 import DisciplinaryStats from "./-components/DisciplinaryStats";
 import CaseWorkflowStepper from "./-components/CaseWorkflowStepper";
 import DisciplinaryCasesTable from "./-components/DisciplinaryCasesTable";
 import OpenCaseModal from "./-components/OpenCaseModal";
 import CaseDetailModal from "./-components/CaseDetailModal";
-import { INITIAL_DISCIPLINARY_CASES } from "./-components/disciplinaryData";
+import ConfigureOptionsModal from "./-components/ConfigureOptionsModal";
+import {
+  DEFAULT_CASE_CATEGORIES,
+  DEFAULT_CASE_SEVERITIES,
+} from "./-components/disciplinaryData";
 import type { DisciplinaryCase, WorkflowStep } from "./-components/types";
-import { Plus, ShieldAlert } from "lucide-react";
+import {
+  STAGE_TO_API,
+  useAdvanceDisciplinaryStage,
+  useCloseDisciplinaryCase,
+  useCreateDisciplinaryCase,
+  useDisciplinaryCases,
+  useDisciplinaryOptions,
+  type CreateDisciplinaryCasePayload,
+} from "@/api/disciplinaryApi";
+import { extract_message } from "@/helpers/errors";
+import { Plus, Settings, ShieldAlert } from "lucide-react";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/hr/disciplinary/")({
@@ -16,17 +31,40 @@ export const Route = createFileRoute("/hr/disciplinary/")({
 });
 
 function RouteComponent() {
-  const [cases, setCases] = useState<DisciplinaryCase[]>(
-    INITIAL_DISCIPLINARY_CASES,
-  );
+  const casesQuery = useDisciplinaryCases();
+  const optionsQuery = useDisciplinaryOptions();
+
+  const createCaseMutation = useCreateDisciplinaryCase();
+  const advanceStageMutation = useAdvanceDisciplinaryStage();
+  const closeCaseMutation = useCloseDisciplinaryCase();
+
   const [isOpenCaseModalOpen, setIsOpenCaseModalOpen] = useState(false);
+  const [isOptionsModalOpen, setIsOptionsModalOpen] = useState(false);
   const [selectedCase, setSelectedCase] = useState<DisciplinaryCase | null>(
     null,
   );
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
 
-  const handleOpenCase = (newCase: DisciplinaryCase) => {
-    setCases((prev) => [newCase, ...prev]);
+  const cases = casesQuery.data ?? [];
+
+  const resolvedOptions = useMemo(() => {
+    const categories = optionsQuery.data?.categories?.length
+      ? optionsQuery.data.categories
+      : DEFAULT_CASE_CATEGORIES;
+    const severities = optionsQuery.data?.severities?.length
+      ? optionsQuery.data.severities
+      : DEFAULT_CASE_SEVERITIES;
+    return { categories, severities };
+  }, [optionsQuery.data]);
+
+  const handleOpenCase = async (payload: CreateDisciplinaryCasePayload) => {
+    try {
+      await createCaseMutation.mutateAsync(payload);
+      toast.success("Disciplinary case opened");
+      setIsOpenCaseModalOpen(false);
+    } catch (error) {
+      toast.error(extract_message(error as any));
+    }
   };
 
   const handleSelectCase = (caseItem: DisciplinaryCase) => {
@@ -34,60 +72,61 @@ function RouteComponent() {
     setIsDetailModalOpen(true);
   };
 
-  const handleAdvanceStep = (id: string, nextStep: WorkflowStep) => {
-    setCases((prev) =>
-      prev.map((c) =>
-        c.id === id
-          ? {
-              ...c,
-              currentStep: nextStep,
-              status:
-                nextStep === "Decision"
-                  ? "Decision Pending"
-                  : nextStep === "Hearing"
-                    ? "Hearing Scheduled"
-                    : c.status,
-            }
-          : c,
-      ),
-    );
-    toast.success(`Case ${id} advanced to ${nextStep}`);
+  const handleAdvanceStep = async (
+    id: string,
+    nextStep: WorkflowStep,
+    notes?: string,
+  ) => {
+    try {
+      await advanceStageMutation.mutateAsync({
+        id,
+        stage: STAGE_TO_API[nextStep],
+        notes,
+      });
+      toast.success(`Case advanced to ${nextStep}`);
+    } catch (error) {
+      toast.error(extract_message(error as any));
+      throw error;
+    }
   };
 
-  const handleCloseCase = (id: string) => {
-    setCases((prev) =>
-      prev.map((c) =>
-        c.id === id
-          ? {
-              ...c,
-              status: "Closed",
-              currentStep: "Decision",
-            }
-          : c,
-      ),
-    );
-    toast.success(`Case ${id} concluded and archived`);
+  const handleCloseCase = async (id: string, outcome: string) => {
+    try {
+      await closeCaseMutation.mutateAsync({ id, outcome });
+      toast.success("Case concluded and archived");
+    } catch (error) {
+      toast.error(extract_message(error as any));
+      throw error;
+    }
   };
 
   return (
     <div className="space-y-6 pb-12">
-      {/* Page Header */}
       <PageHeader
         title="Disciplinary Cases"
         description="Compliance · Highly restricted — Cases, investigations and corrective actions."
       >
-        <button
-          type="button"
-          onClick={() => setIsOpenCaseModalOpen(true)}
-          className="btn btn-sm bg-primary text-white hover:bg-primary/90 border-0 rounded-xl px-4 font-medium gap-1.5 shadow-sm shadow-primary/20"
-        >
-          <Plus className="size-4" />
-          <span>Open case</span>
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => setIsOptionsModalOpen(true)}
+            className="btn btn-sm btn-outline border-base-300 hover:bg-base-200 text-base-content rounded-xl px-3.5 font-medium gap-1.5"
+          >
+            <Settings className="size-4" />
+            <span>Options</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => setIsOpenCaseModalOpen(true)}
+            className="btn btn-sm bg-primary text-white hover:bg-primary/90 border-0 rounded-xl px-4 font-medium gap-1.5 shadow-sm shadow-primary/20"
+          >
+            <Plus className="size-4" />
+            <span>Open case</span>
+          </button>
+        </div>
       </PageHeader>
 
-      {/* Mandatory Human Review Warning Banner */}
-      <div className="flex items-center gap-3 rounded-xl bg-amber-500/10 border border-amber-500/20 p-4  sm:text-sm font-medium text-amber-900 dark:text-amber-200 shadow-2xs">
+      <div className="flex items-center gap-3 rounded-xl bg-amber-500/10 border border-amber-500/20 p-4 sm:text-sm font-medium text-amber-900 dark:text-amber-200 shadow-2xs">
         <ShieldAlert className="size-5 shrink-0 text-amber-600 dark:text-amber-400" />
         <span>
           Outcomes are never automated. Human review and due process are
@@ -95,24 +134,40 @@ function RouteComponent() {
         </span>
       </div>
 
-      {/* Top 4 Metric KPI Cards */}
       <DisciplinaryStats cases={cases} />
 
-      {/* 6-Stage Due Process Stepper */}
       <CaseWorkflowStepper currentStep="Employee response" />
 
-      {/* Disciplinary Cases Table */}
-      <DisciplinaryCasesTable cases={cases} onSelectCase={handleSelectCase} />
+      <PageLoader
+        query={casesQuery}
+        loadingText="Loading disciplinary cases..."
+        emptyState={{
+          title: "No disciplinary cases",
+          description:
+            "Open a disciplinary case to start tracking due process.",
+        }}
+      >
+        {(loadedCases) => (
+          <DisciplinaryCasesTable
+            cases={loadedCases}
+            onSelectCase={handleSelectCase}
+          />
+        )}
+      </PageLoader>
 
-      {/* Open New Case Modal */}
       <OpenCaseModal
         isOpen={isOpenCaseModalOpen}
         onClose={() => setIsOpenCaseModalOpen(false)}
         onOpenCase={handleOpenCase}
-        nextCaseNumber={cases.length + 13}
+        options={resolvedOptions}
       />
 
-      {/* Case Details & Progression Modal */}
+      <ConfigureOptionsModal
+        isOpen={isOptionsModalOpen}
+        onClose={() => setIsOptionsModalOpen(false)}
+        options={resolvedOptions}
+      />
+
       <CaseDetailModal
         isOpen={isDetailModalOpen}
         onClose={() => {

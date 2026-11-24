@@ -17,10 +17,11 @@ const TABS: (CaseStatus | "All")[] = [
 const getInitials = (name: string) =>
   name
     .split(" ")
+    .filter(Boolean)
     .map((part) => part[0])
     .join("")
     .slice(0, 2)
-    .toUpperCase();
+    .toUpperCase() || "EM";
 
 export default function DisciplinaryCasesTable({
   cases,
@@ -35,6 +36,7 @@ export default function DisciplinaryCasesTable({
     if (searchTerm.trim()) {
       const q = searchTerm.toLowerCase();
       return (
+        c.caseCode.toLowerCase().includes(q) ||
         c.id.toLowerCase().includes(q) ||
         c.employee.toLowerCase().includes(q) ||
         c.category.toLowerCase().includes(q) ||
@@ -50,21 +52,21 @@ export default function DisciplinaryCasesTable({
       case "Under Review":
       case "Investigation":
         return (
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-50 px-2.5 py-0.5  font-semibold text-amber-700 border border-amber-200">
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-50 px-2.5 py-0.5 text-sm font-semibold text-amber-700 border border-amber-200">
             <span className="size-1.5 rounded-full bg-amber-500 animate-pulse" />
-            Under Review
+            {status}
           </span>
         );
       case "Hearing Scheduled":
         return (
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-blue-50 px-2.5 py-0.5  font-semibold text-blue-700 border border-blue-200">
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-blue-50 px-2.5 py-0.5 text-sm font-semibold text-blue-700 border border-blue-200">
             <span className="size-1.5 rounded-full bg-blue-500" />
             Hearing scheduled
           </span>
         );
       case "Closed":
         return (
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-0.5  font-semibold text-emerald-700 border border-emerald-200">
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-0.5 text-sm font-semibold text-emerald-700 border border-emerald-200">
             <span className="size-1.5 rounded-full bg-emerald-500" />
             Closed
           </span>
@@ -73,7 +75,7 @@ export default function DisciplinaryCasesTable({
       case "Appealed":
       default:
         return (
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-purple-50 px-2.5 py-0.5  font-semibold text-purple-700 border border-purple-200">
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-purple-50 px-2.5 py-0.5 text-sm font-semibold text-purple-700 border border-purple-200">
             {status}
           </span>
         );
@@ -81,68 +83,65 @@ export default function DisciplinaryCasesTable({
   };
 
   const getSeverityBadge = (severity: CaseSeverity) => {
-    switch (severity) {
-      case "Gross misconduct":
-        return (
-          <span className="inline-flex items-center gap-1 rounded-md bg-rose-50 px-2 py-0.5 text-[11px] font-semibold text-rose-700 border border-rose-200">
-            Gross misconduct
-          </span>
-        );
-      case "Major":
-        return (
-          <span className="inline-flex items-center gap-1 rounded-md bg-orange-50 px-2 py-0.5 text-[11px] font-semibold text-orange-700 border border-orange-200">
-            Major
-          </span>
-        );
-      case "Minor":
-      default:
-        return (
-          <span className="inline-flex items-center gap-1 rounded-md bg-slate-100 px-2 py-0.5 text-[11px] font-semibold text-slate-700 border border-slate-200">
-            Minor
-          </span>
-        );
+    const normalized = String(severity).toLowerCase();
+    if (normalized.includes("gross")) {
+      return (
+        <span className="inline-flex items-center gap-1 rounded-md bg-rose-50 px-2 py-0.5 text-sm font-semibold text-rose-700 border border-rose-200">
+          {severity}
+        </span>
+      );
     }
+    if (normalized.includes("major")) {
+      return (
+        <span className="inline-flex items-center gap-1 rounded-md bg-orange-50 px-2 py-0.5 text-sm font-semibold text-orange-700 border border-orange-200">
+          {severity}
+        </span>
+      );
+    }
+    return (
+      <span className="inline-flex items-center gap-1 rounded-md bg-slate-100 px-2 py-0.5 text-sm font-semibold text-slate-700 border border-slate-200">
+        {severity}
+      </span>
+    );
   };
 
   return (
     <div className="card bg-base-100 border border-base-200 shadow-sm p-4 sm:p-6 space-y-4">
-      {/* Table Header: Title + Search */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
           <div className="flex items-center gap-2">
             <h2 className="text-lg font-bold text-base-content">
               Disciplinary Records
             </h2>
-            <span className="badge badge-sm badge-ghost  font-semibold">
+            <span className="badge badge-sm badge-ghost font-semibold">
               {filteredCases.length}
             </span>
           </div>
-          <p className=" text-base-content/80 mt-0.5">
+          <p className="text-sm text-base-content/80 mt-0.5">
             Strict audit logging is enabled for all disciplinary queries and
             modifications.
           </p>
         </div>
 
         <div className="relative w-full sm:w-64">
-          <Search className="size-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-base-content/80" />
+          <Search className="size-4 absolute left-3 top-1/2 -translate-y-1/2 text-base-content/80" />
           <input
             type="text"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             placeholder="Search case, employee, category..."
-            className="input input-sm input-bordered w-full pl-9  rounded-xl bg-base-200/80"
+            className="input input-sm input-bordered w-full pl-9 rounded-xl bg-base-200/80"
           />
         </div>
       </div>
 
-      {/* Tabs Filter Bar */}
       <div className="flex flex-wrap items-center gap-1.5 border-b border-base-200 pb-2">
         {TABS.map((tab) => (
           <button
             key={tab}
             type="button"
             onClick={() => setSelectedTab(tab)}
-            className={`px-3 py-1  font-semibold rounded-lg transition-all ${
+            className={`px-3 py-1 font-semibold rounded-lg transition-all ${
               selectedTab === tab
                 ? "bg-primary text-white shadow-2xs"
                 : "text-base-content/80 hover:bg-base-200"
@@ -153,9 +152,8 @@ export default function DisciplinaryCasesTable({
         ))}
       </div>
 
-      {/* Table Content */}
       <div className="overflow-x-auto">
-        <table className="table table-sm w-full ">
+        <table className="table table-sm w-full">
           <thead>
             <tr className="border-b border-base-200 text-base-content/80 font-medium">
               <th className="py-3 font-semibold">Case</th>
@@ -179,7 +177,7 @@ export default function DisciplinaryCasesTable({
                   <p className="font-medium text-sm">
                     No disciplinary cases found
                   </p>
-                  <p className=" text-base-content/80 mt-0.5">
+                  <p className="text-sm text-base-content/80 mt-0.5">
                     Try adjusting your filters or search keywords
                   </p>
                 </td>
@@ -193,20 +191,20 @@ export default function DisciplinaryCasesTable({
                 >
                   <td className="py-3 font-bold text-base-content">
                     <span className="font-mono bg-base-200/80 px-2 py-0.5 rounded-md border border-base-300">
-                      {c.id}
+                      {c.caseCode}
                     </span>
                   </td>
 
                   <td>
                     <div className="flex items-center gap-2.5">
-                      <div className="size-7 rounded-full bg-primary/10 text-primary font-bold flex items-center justify-center text-[10px]">
+                      <div className="size-7 rounded-full bg-primary/10 text-primary font-bold flex items-center justify-center text-sm shrink-0">
                         {getInitials(c.employee)}
                       </div>
                       <div>
                         <div className="font-semibold text-base-content">
                           {c.employee}
                         </div>
-                        <div className="text-[10px] text-base-content/80">
+                        <div className="text-sm text-base-content/70">
                           {c.department}
                         </div>
                       </div>
@@ -224,7 +222,7 @@ export default function DisciplinaryCasesTable({
                   </td>
 
                   <td>
-                    <span className="font-medium text-base-content/80 text-[11px]">
+                    <span className="font-medium text-base-content/80 text-sm">
                       {c.currentStep}
                     </span>
                   </td>

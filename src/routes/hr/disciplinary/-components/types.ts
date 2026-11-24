@@ -4,9 +4,14 @@ export type CaseCategory =
   | "Misconduct"
   | "Performance"
   | "Harassment"
-  | "Fraud";
+  | "Fraud"
+  | (string & {});
 
-export type CaseSeverity = "Minor" | "Major" | "Gross misconduct";
+export type CaseSeverity =
+  | "Minor"
+  | "Major"
+  | "Gross misconduct"
+  | (string & {});
 
 export type WorkflowStep =
   | "Report"
@@ -26,11 +31,13 @@ export type CaseStatus =
 
 export interface DisciplinaryCase {
   id: string;
+  caseCode: string;
   employee: string;
   department: string;
   category: CaseCategory;
   severity: CaseSeverity;
   openedDate: string;
+  incidentDate?: string;
   status: CaseStatus;
   currentStep: WorkflowStep;
   reporter: string;
@@ -38,18 +45,6 @@ export interface DisciplinaryCase {
   description: string;
   witnesses?: string;
   interimAction?: string;
+  outcome?: string;
   dueDate?: string;
-}
-
-export interface CreateCasePayload {
-  emp: string;
-  category: CaseCategory;
-  date: string;
-  severity: CaseSeverity;
-  reporter: string;
-  investigator: string;
-  desc: string;
-  witnesses?: string;
-  interim?: string;
-  conf: boolean;
 }
