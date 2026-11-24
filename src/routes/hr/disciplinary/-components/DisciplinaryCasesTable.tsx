@@ -1,5 +1,6 @@
 import { useState } from "react";
 import type { CaseSeverity, CaseStatus, DisciplinaryCase } from "./types";
+import CustomTable, { type columnType } from "@/components/tables/CustomTable";
 import { Eye, Search, ShieldAlert } from "lucide-react";
 
 interface DisciplinaryCasesTableProps {
@@ -40,8 +41,8 @@ export default function DisciplinaryCasesTable({
         c.id.toLowerCase().includes(q) ||
         c.employee.toLowerCase().includes(q) ||
         c.category.toLowerCase().includes(q) ||
-        c.investigator.toLowerCase().includes(q) ||
-        c.department.toLowerCase().includes(q)
+        c.reporter.toLowerCase().includes(q) ||
+        c.investigator.toLowerCase().includes(q)
       );
     }
     return true;
@@ -86,24 +87,114 @@ export default function DisciplinaryCasesTable({
     const normalized = String(severity).toLowerCase();
     if (normalized.includes("gross")) {
       return (
-        <span className="inline-flex items-center gap-1 rounded-md bg-rose-50 px-2 py-0.5 text-sm font-semibold text-rose-700 border border-rose-200">
+        <span className="inline-flex items-center gap-1 rounded-md bg-rose-50 px-2 py-0.5 text-sm font-semibold text-rose-700 border border-rose-200 capitalize">
           {severity}
         </span>
       );
     }
     if (normalized.includes("major")) {
       return (
-        <span className="inline-flex items-center gap-1 rounded-md bg-orange-50 px-2 py-0.5 text-sm font-semibold text-orange-700 border border-orange-200">
+        <span className="inline-flex items-center gap-1 rounded-md bg-orange-50 px-2 py-0.5 text-sm font-semibold text-orange-700 border border-orange-200 capitalize">
           {severity}
         </span>
       );
     }
     return (
-      <span className="inline-flex items-center gap-1 rounded-md bg-slate-100 px-2 py-0.5 text-sm font-semibold text-slate-700 border border-slate-200">
+      <span className="inline-flex items-center gap-1 rounded-md bg-slate-100 px-2 py-0.5 text-sm font-semibold text-slate-700 border border-slate-200 capitalize">
         {severity}
       </span>
     );
   };
+
+  const columns: columnType<DisciplinaryCase>[] = [
+    {
+      key: "caseCode",
+      label: "Case",
+      render: (value: string) => (
+        <span className="font-mono font-bold bg-base-200/80 px-2 py-0.5 rounded-md border border-base-300">
+          {value}
+        </span>
+      ),
+    },
+    {
+      key: "employee",
+      label: "Employee",
+      render: (_value: string, c: DisciplinaryCase) => (
+        <div className="flex items-center gap-2.5">
+          <div className="size-7 rounded-full bg-primary/10 text-primary font-bold flex items-center justify-center text-sm shrink-0">
+            {getInitials(c.employee)}
+          </div>
+          <span className="font-semibold text-base-content">{c.employee}</span>
+        </div>
+      ),
+    },
+    {
+      key: "category",
+      label: "Category",
+      render: (value: string) => (
+        <span className="font-medium text-base-content/80 capitalize">
+          {value}
+        </span>
+      ),
+    },
+    {
+      key: "severity",
+      label: "Severity",
+      render: (value: CaseSeverity) => getSeverityBadge(value),
+    },
+    {
+      key: "reporter",
+      label: "Reporter",
+      render: (value: string) => (
+        <span className="text-base-content/80">{value}</span>
+      ),
+    },
+    {
+      key: "investigator",
+      label: "Investigator",
+      render: (value: string) => (
+        <span className="text-base-content/80">{value}</span>
+      ),
+    },
+    {
+      key: "openedDate",
+      label: "Opened",
+      render: (value: string) => (
+        <span className="text-base-content/80 whitespace-nowrap">{value}</span>
+      ),
+    },
+    {
+      key: "currentStep",
+      label: "Stage",
+      render: (value: string) => (
+        <span className="font-medium text-base-content/80 text-sm">
+          {value}
+        </span>
+      ),
+    },
+    {
+      key: "status",
+      label: "Status",
+      render: (value: CaseStatus) => getStatusBadge(value),
+    },
+    {
+      key: "action",
+      label: "Action",
+      render: (_value: unknown, c: DisciplinaryCase) => (
+        <button
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation();
+            onSelectCase(c);
+          }}
+          className="btn btn-xs btn-ghost rounded-lg gap-1 hover:bg-base-200 text-base-content/80"
+        >
+          <Eye className="size-3.5" />
+          <span>Review</span>
+        </button>
+      ),
+    },
+  ];
 
   return (
     <div className="card bg-base-100 border border-base-200 shadow-sm p-4 sm:p-6 space-y-4">
@@ -152,102 +243,21 @@ export default function DisciplinaryCasesTable({
         ))}
       </div>
 
-      <div className="overflow-x-auto">
-        <table className="table table-sm w-full">
-          <thead>
-            <tr className="border-b border-base-200 text-base-content/80 font-medium">
-              <th className="py-3 font-semibold">Case</th>
-              <th className="font-semibold">Employee</th>
-              <th className="font-semibold">Category</th>
-              <th className="font-semibold">Severity</th>
-              <th className="font-semibold">Opened</th>
-              <th className="font-semibold">Stage</th>
-              <th className="font-semibold">Status</th>
-              <th className="text-right font-semibold">Action</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-base-200">
-            {filteredCases.length === 0 ? (
-              <tr>
-                <td
-                  colSpan={8}
-                  className="text-center py-10 text-base-content/80"
-                >
-                  <ShieldAlert className="size-8 mx-auto mb-2 opacity-30" />
-                  <p className="font-medium text-sm">
-                    No disciplinary cases found
-                  </p>
-                  <p className="text-sm text-base-content/80 mt-0.5">
-                    Try adjusting your filters or search keywords
-                  </p>
-                </td>
-              </tr>
-            ) : (
-              filteredCases.map((c) => (
-                <tr
-                  key={c.id}
-                  onClick={() => onSelectCase(c)}
-                  className="hover:bg-base-200/80 cursor-pointer transition-colors"
-                >
-                  <td className="py-3 font-bold text-base-content">
-                    <span className="font-mono bg-base-200/80 px-2 py-0.5 rounded-md border border-base-300">
-                      {c.caseCode}
-                    </span>
-                  </td>
-
-                  <td>
-                    <div className="flex items-center gap-2.5">
-                      <div className="size-7 rounded-full bg-primary/10 text-primary font-bold flex items-center justify-center text-sm shrink-0">
-                        {getInitials(c.employee)}
-                      </div>
-                      <div>
-                        <div className="font-semibold text-base-content">
-                          {c.employee}
-                        </div>
-                        <div className="text-sm text-base-content/70">
-                          {c.department}
-                        </div>
-                      </div>
-                    </div>
-                  </td>
-
-                  <td className="font-medium text-base-content/80">
-                    {c.category}
-                  </td>
-
-                  <td>{getSeverityBadge(c.severity)}</td>
-
-                  <td className="text-base-content/80 whitespace-nowrap">
-                    {c.openedDate}
-                  </td>
-
-                  <td>
-                    <span className="font-medium text-base-content/80 text-sm">
-                      {c.currentStep}
-                    </span>
-                  </td>
-
-                  <td>{getStatusBadge(c.status)}</td>
-
-                  <td className="text-right">
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        onSelectCase(c);
-                      }}
-                      className="btn btn-xs btn-ghost rounded-lg gap-1 hover:bg-base-200 text-base-content/80"
-                    >
-                      <Eye className="size-3.5" />
-                      <span>Review</span>
-                    </button>
-                  </td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
-      </div>
+      {filteredCases.length === 0 ? (
+        <div className="text-center py-10 text-base-content/80">
+          <ShieldAlert className="size-8 mx-auto mb-2 opacity-30" />
+          <p className="font-medium text-sm">No disciplinary cases found</p>
+          <p className="text-sm text-base-content/80 mt-0.5">
+            Try adjusting your filters or search keywords
+          </p>
+        </div>
+      ) : (
+        <CustomTable
+          data={filteredCases}
+          columns={columns}
+          onRowClick={onSelectCase}
+        />
+      )}
     </div>
   );
 }

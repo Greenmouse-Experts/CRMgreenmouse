@@ -302,13 +302,13 @@ export default function OpenCaseModal({
         </div>
 
         <div className="pt-1">
-          <label className="label cursor-pointer justify-start gap-2.5 p-3 rounded-xl border border-base-200 bg-base-200/30 hover:bg-base-200/80 transition-colors">
+          <label className="flex items-start cursor-pointer gap-2.5 p-3 rounded-xl border border-base-200 bg-base-200/30 hover:bg-base-200/80 transition-colors whitespace-normal">
             <input
               type="checkbox"
               {...register("confidentialityConfirmed", { required: true })}
-              className="checkbox checkbox-sm checkbox-primary rounded"
+              className="checkbox checkbox-sm checkbox-primary rounded shrink-0 mt-0.5"
             />
-            <span className="text-sm text-base-content font-medium leading-tight">
+            <span className="text-sm text-base-content font-medium leading-snug min-w-0 flex-1">
               I confirm this case is confidential and the employee will be given
               the right to respond in accordance with HR policy.
             </span>

@@ -151,18 +151,19 @@ const API_TO_STATUS: Record<string, CaseStatus> = {
 };
 
 export const mapCaseFromApi = (raw: any): DisciplinaryCase => {
-  const stageKey = String(raw?.stage ?? raw?.currentStep ?? "report")
+  const c = raw?.case ?? raw;
+  const stageKey = String(c?.stage ?? c?.currentStep ?? raw?.stage ?? "report")
     .toLowerCase()
     .trim();
-  const statusKey = String(raw?.status ?? "")
+  const statusKey = String(c?.status ?? raw?.status ?? "")
     .toLowerCase()
     .trim();
 
   const currentStep: WorkflowStep = API_TO_STAGE[stageKey] ?? "Report";
 
   let status: CaseStatus = API_TO_STATUS[statusKey] ?? "Under Review";
-  if (!raw?.status) {
-    if (raw?.closedAt || raw?.outcome) {
+  if (!c?.status && !raw?.status) {
+    if (c?.closedAt || c?.outcome || raw?.closedAt || raw?.outcome) {
       status = "Closed";
     } else if (currentStep === "Hearing") {
       status = "Hearing Scheduled";
@@ -176,51 +177,67 @@ export const mapCaseFromApi = (raw: any): DisciplinaryCase => {
   const department =
     typeof raw?.employee?.department === "object"
       ? raw.employee.department?.name
-      : (raw?.employee?.department ?? raw?.department ?? "—");
+      : (raw?.employee?.department ?? c?.department ?? raw?.department ?? "—");
 
-  const witnesses = Array.isArray(raw?.witnesses)
-    ? raw.witnesses
+  const rawWitnesses = c?.witnesses ?? raw?.witnesses;
+  const witnesses = Array.isArray(rawWitnesses)
+    ? rawWitnesses
         .map((w: any) =>
           typeof w === "string" ? w : formatEmployeeName(w, ""),
         )
         .filter(Boolean)
         .join(", ")
-    : typeof raw?.witnesses === "string"
-      ? raw.witnesses
+    : typeof rawWitnesses === "string"
+      ? rawWitnesses
       : undefined;
 
+  const id = String(c?.id ?? raw?.id ?? "");
+
   return {
-    id: String(raw?.id ?? ""),
-    caseCode:
-      raw?.caseNumber ??
-      raw?.code ??
-      String(raw?.id ?? "")
-        .slice(0, 8)
-        .toUpperCase(),
+    id,
+    caseCode: String(
+      c?.caseNumber ??
+        c?.code ??
+        raw?.caseNumber ??
+        (id ? id.slice(0, 8).toUpperCase() : "—"),
+    ),
     employee: formatEmployeeName(
-      raw?.employee ?? raw?.employeeName,
+      raw?.employeeName ?? raw?.employee ?? c?.employeeName ?? c?.employee,
       "Unknown Employee",
     ),
     department: String(department || "—"),
-    category: String(raw?.category ?? "Policy breach"),
-    severity: String(raw?.severity ?? "Minor"),
+    category: String(c?.category ?? raw?.category ?? "—"),
+    severity: String(c?.severity ?? raw?.severity ?? "—"),
     openedDate: formatDateShort(
-      raw?.incidentDate ?? raw?.openedDate ?? raw?.createdAt,
+      c?.openedAt ?? c?.incidentDate ?? c?.createdAt ?? raw?.openedDate,
     ),
-    incidentDate: raw?.incidentDate,
+    incidentDate: c?.incidentDate ?? raw?.incidentDate,
     status,
     currentStep,
     reporter: formatEmployeeName(
-      raw?.reportedBy ?? raw?.reporter ?? raw?.reportedByEmployee,
+      raw?.reporterName ??
+        raw?.reportedBy ??
+        raw?.reporter ??
+        c?.reporterName ??
+        raw?.reportedByEmployee,
     ),
     investigator: formatEmployeeName(
-      raw?.investigator ?? raw?.investigatorEmployee,
+      raw?.investigatorName ??
+        raw?.investigator ??
+        c?.investigatorName ??
+        raw?.investigatorEmployee,
     ),
-    description: String(raw?.description ?? ""),
+    description: String(c?.description ?? raw?.description ?? ""),
     witnesses: witnesses || undefined,
-    interimAction: raw?.interimAction ? String(raw.interimAction) : undefined,
-    outcome: raw?.outcome ? String(raw.outcome) : undefined,
-    dueDate: raw?.dueDate,
+    interimAction:
+      c?.interimAction || raw?.interimAction
+        ? String(c?.interimAction ?? raw?.interimAction)
+        : undefined,
+    outcome:
+      c?.outcome || raw?.outcome
+        ? String(c?.outcome ?? raw?.outcome)
+        : undefined,
+    dueDate: c?.dueDate ?? raw?.dueDate,
   };
 };
 
