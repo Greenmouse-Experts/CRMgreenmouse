@@ -12,7 +12,7 @@ import {
   useStaffs,
   type StaffOption,
 } from "@/api/employeesApi";
-import { extract_message } from "@/helpers/auth";
+import { extract_message } from "@/helpers/errors";
 
 interface EmployeeTableViewProps {
   employees: Employee[];
@@ -49,7 +49,7 @@ export default function EmployeeTableView({
       setLinkStaffEmployeeId(null);
       toast.success("Employee linked to staff account.");
     } catch (error) {
-      toast.error(extract_message(error as never));
+      toast.error(extract_message(error));
     }
   };
 

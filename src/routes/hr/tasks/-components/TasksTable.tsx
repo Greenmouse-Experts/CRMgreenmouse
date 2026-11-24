@@ -3,7 +3,7 @@ import { toast } from "sonner";
 import CustomTable, { type columnType } from "@/components/tables/CustomTable";
 import type { Actions } from "@/components/tables/pop-up";
 import { useDeleteTask, useUpdateTaskStatus, type Task } from "@/api/tasksApi";
-import { extract_message } from "@/helpers/auth";
+import { extract_message } from "@/helpers/errors";
 
 const STATUS_STYLES: Record<string, string> = {
   open: "bg-base-200/80 text-base-content/80",
@@ -64,7 +64,7 @@ export default function TasksTable({ tasks, onEdit }: TasksTableProps) {
           {
             loading: "Updating task...",
             success: "Task marked completed",
-            error: (error) => extract_message(error as never),
+            error: (error) => extract_message(error),
           },
         );
       },
@@ -82,7 +82,7 @@ export default function TasksTable({ tasks, onEdit }: TasksTableProps) {
         toast.promise(removeTask.mutateAsync(task.id), {
           loading: "Deleting task...",
           success: "Task deleted",
-          error: (error) => extract_message(error as never),
+          error: (error) => extract_message(error),
         });
       },
     },

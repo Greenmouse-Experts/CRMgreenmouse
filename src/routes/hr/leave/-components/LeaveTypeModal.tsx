@@ -4,11 +4,9 @@ import SimpleInput from "@/components/inputs/SimpleInput";
 import LocalSelect from "@/components/inputs/LocalSelect";
 import { useUpdateLeaveType } from "@/api/leaveApi";
 import type { LeaveTypeSummary } from "./types";
-import { extract_message } from "@/helpers/auth";
+import { extract_message } from "@/helpers/errors";
 import { toast } from "sonner";
 import { Save } from "lucide-react";
-import type { AxiosError } from "axios";
-import type { ApiResponse } from "@/api/simpleApi";
 
 interface LeaveTypeModalProps {
   isOpen: boolean;
@@ -137,7 +135,7 @@ export default function LeaveTypeModal({
       );
       onClose();
     } catch (error) {
-      toast.error(extract_message(error as AxiosError<ApiResponse>));
+      toast.error(extract_message(error));
     }
   };
 

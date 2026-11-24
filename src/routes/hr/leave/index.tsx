@@ -16,11 +16,9 @@ import {
   useDecideLeaveRequest,
   useLeaveRequests,
 } from "@/api/leaveApi";
-import { extract_message } from "@/helpers/auth";
+import { extract_message } from "@/helpers/errors";
 import { Plus } from "lucide-react";
 import { toast } from "sonner";
-import type { AxiosError } from "axios";
-import type { ApiResponse } from "@/api/simpleApi";
 
 export const Route = createFileRoute("/hr/leave/")({
   component: RouteComponent,
@@ -64,7 +62,7 @@ function RouteComponent() {
       await decideLeaveRequest.mutateAsync({ id, decision: "approve" });
       toast.success(`Leave ${id} approved`);
     } catch (error) {
-      toast.error(extract_message(error as AxiosError<ApiResponse>));
+      toast.error(extract_message(error));
     }
   };
 
@@ -73,7 +71,7 @@ function RouteComponent() {
       await decideLeaveRequest.mutateAsync({ id, decision: "reject" });
       toast.error(`Leave ${id} rejected`);
     } catch (error) {
-      toast.error(extract_message(error as AxiosError<ApiResponse>));
+      toast.error(extract_message(error));
     }
   };
 

@@ -7,7 +7,7 @@ import LocalSelect from "@/components/inputs/LocalSelect";
 import SimpleSelect from "@/components/inputs/SimpleSelect";
 import { useCreateTask, useUpdateTask, type Task } from "@/api/tasksApi";
 import type { EmployeeRecord } from "@/api/employeesApi";
-import { extract_message } from "@/helpers/auth";
+import { extract_message } from "@/helpers/errors";
 import { Plus, Save } from "lucide-react";
 import { toast } from "sonner";
 
@@ -107,14 +107,14 @@ export default function CreateTaskModal({
           {
             loading: "Updating task...",
             success: "Task updated",
-            error: (error) => extract_message(error as never),
+            error: (error) => extract_message(error),
           },
         );
       } else {
         await toast.promise(createTask.mutateAsync(payload), {
           loading: "Creating task...",
           success: "Task created",
-          error: (error) => extract_message(error as never),
+          error: (error) => extract_message(error),
         });
       }
       reset(defaultValues);

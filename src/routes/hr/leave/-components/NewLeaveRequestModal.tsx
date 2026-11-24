@@ -6,11 +6,9 @@ import SimpleSelect from "@/components/inputs/SimpleSelect";
 import { useStaffs } from "@/api/employeesApi";
 import { toLeaveType, useLeaveBalances, useLeaveTypes } from "@/api/leaveApi";
 import type { LeaveRequest, LeaveType } from "./types";
-import { extract_message } from "@/helpers/auth";
+import { extract_message } from "@/helpers/errors";
 import { toast } from "sonner";
 import { Send, Upload } from "lucide-react";
-import type { AxiosError } from "axios";
-import type { ApiResponse } from "@/api/simpleApi";
 
 interface NewLeaveRequestModalProps {
   isOpen: boolean;
@@ -176,7 +174,7 @@ export default function NewLeaveRequestModal({
       setFileName("");
       onClose();
     } catch (error) {
-      toast.error(extract_message(error as AxiosError<ApiResponse>));
+      toast.error(extract_message(error));
     } finally {
       setIsSubmitting(false);
     }

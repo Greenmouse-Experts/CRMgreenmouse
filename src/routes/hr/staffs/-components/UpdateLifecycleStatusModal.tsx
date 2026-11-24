@@ -9,7 +9,7 @@ import {
   useSuspendEmployee,
   useUpdateEmployeeLifecycleStatus,
 } from "@/api/employeesApi";
-import { extract_message } from "@/helpers/auth";
+import { extract_message } from "@/helpers/errors";
 import { toast } from "sonner";
 import { ArrowRight, CheckCircle2 } from "lucide-react";
 
@@ -53,7 +53,8 @@ const CONTROLLED_TRANSITIONS: Record<string, TransitionOption[]> = {
     {
       target: "notice_period",
       label: "Notice Period",
-      description: "Place the employee into notice period following resignation.",
+      description:
+        "Place the employee into notice period following resignation.",
       endpointNote: "PATCH /v1/employees/:id",
     },
   ],
@@ -75,7 +76,8 @@ const CONTROLLED_TRANSITIONS: Record<string, TransitionOption[]> = {
     {
       target: "active",
       label: "Active (Resignation cancelled)",
-      description: "Cancel resignation and return the employee to active status.",
+      description:
+        "Cancel resignation and return the employee to active status.",
       endpointNote: "PATCH /v1/employees/:id",
     },
     {
@@ -155,7 +157,7 @@ export default function UpdateLifecycleStatusModal({
       );
       onClose();
     } catch (error) {
-      toast.error(extract_message(error as never));
+      toast.error(extract_message(error));
     }
   };
 

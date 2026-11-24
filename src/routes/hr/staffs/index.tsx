@@ -15,7 +15,7 @@ import {
   type CreateEmployeeInput,
   type EmployeeRecord,
 } from "@/api/employeesApi";
-import { extract_message } from "@/helpers/auth";
+import { extract_message } from "@/helpers/errors";
 import { Download, Plus, Search } from "lucide-react";
 import { toast } from "sonner";
 
