@@ -126,6 +126,7 @@ export const mapBackendLeaveType = (raw: any): LeaveTypeSummary => {
   const type = toLeaveType(raw?.code ?? raw?.name ?? raw?.type);
   const entitlementDays = raw?.entitlementDays ?? raw?.entitlement_days;
   return {
+    id: raw?.id ?? undefined,
     type,
     entitlementDays: entitlementDays ?? undefined,
     entitlement:

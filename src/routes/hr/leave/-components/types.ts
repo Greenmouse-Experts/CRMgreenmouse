@@ -33,9 +33,12 @@ export interface LeaveRequest {
   endDate?: string;
   /** ID of the covering colleague (the backend's `coveringEmployeeId`). */
   coverId?: string;
+  /** Backend leave type ID (or code) selected for the request. */
+  leaveTypeId?: string;
 }
 
 export interface LeaveTypeSummary {
+  id?: string;
   type: LeaveType;
   entitlement: string;
   description: string;

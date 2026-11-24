@@ -42,7 +42,7 @@ function RouteComponent() {
 
   const handleCreateRequest = async (newRequest: LeaveRequest) => {
     await createLeaveRequest.mutateAsync({
-      leaveTypeId: newRequest.type,
+      leaveTypeId: newRequest.leaveTypeId ?? newRequest.type,
       startDate: newRequest.startDate ?? newRequest.from,
       endDate: newRequest.endDate ?? newRequest.to,
       isHalfDay: newRequest.half !== "No",

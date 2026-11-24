@@ -2,8 +2,9 @@ import { useState, useRef, useEffect } from "react";
 import Modal, { type ModalHandle } from "@/components/DialogModal";
 import SimpleInput from "@/components/inputs/SimpleInput";
 import LocalSelect from "@/components/inputs/LocalSelect";
+import SimpleSelect from "@/components/inputs/SimpleSelect";
 import { useStaffs } from "@/api/employeesApi";
-import { useLeaveBalances, useLeaveTypes } from "@/api/leaveApi";
+import { toLeaveType, useLeaveBalances, useLeaveTypes } from "@/api/leaveApi";
 import type { LeaveRequest, LeaveType } from "./types";
 import { extract_message } from "@/helpers/auth";
 import { toast } from "sonner";
@@ -18,11 +19,19 @@ interface NewLeaveRequestModalProps {
   defaultType?: LeaveType;
 }
 
+interface BackendLeaveTypeOption {
+  id?: string;
+  code?: string;
+  name?: string;
+  type?: string;
+  entitlementDays?: number;
+  entitlement_days?: number;
+  entitlement?: string | number;
+}
+
 const dateRangeDefaults = () => ({
   from: new Date().toISOString().slice(0, 10),
-  to: new Date(Date.now() + 4 * 24 * 60 * 60 * 1000)
-    .toISOString()
-    .slice(0, 10),
+  to: new Date(Date.now() + 4 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10),
 });
 
 export default function NewLeaveRequestModal({
@@ -39,6 +48,7 @@ export default function NewLeaveRequestModal({
   const [form, setForm] = useState({
     emp: "",
     type: defaultType,
+    leaveTypeId: "",
     from: dateRangeDefaults().from,
     to: dateRangeDefaults().to,
     half: "No" as "No" | "First half" | "Second half",
@@ -53,10 +63,15 @@ export default function NewLeaveRequestModal({
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
-    if (defaultType) {
-      setForm((p) => ({ ...p, type: defaultType }));
-    }
-  }, [defaultType]);
+    const matched =
+      leaveTypes.find((lt) => lt.type === defaultType) ?? leaveTypes[0];
+    const resolvedId = matched?.id ?? matched?.code ?? "";
+    setForm((p) => ({
+      ...p,
+      type: defaultType,
+      leaveTypeId: resolvedId || p.leaveTypeId,
+    }));
+  }, [defaultType, leaveTypes]);
 
   useEffect(() => {
     if (staffs.length > 0 && (!form.emp || !form.cover)) {
@@ -81,6 +96,7 @@ export default function NewLeaveRequestModal({
     setForm({
       emp: "",
       type: "Annual",
+      leaveTypeId: "",
       from: dateRangeDefaults().from,
       to: dateRangeDefaults().to,
       half: "No",
@@ -140,6 +156,7 @@ export default function NewLeaveRequestModal({
         startDate: form.from,
         endDate: form.to,
         coverId: form.coverId || undefined,
+        leaveTypeId: form.leaveTypeId || undefined,
       };
 
       await onSubmitRequest(newRequest);
@@ -204,21 +221,39 @@ export default function NewLeaveRequestModal({
               <label className=" font-semibold text-base-content/80 mb-1 block">
                 Leave type <span className="text-error">*</span>
               </label>
-              <LocalSelect
-                value={form.type}
-                onChange={(e) =>
+              <SimpleSelect<BackendLeaveTypeOption>
+                route="/leave/types"
+                value={form.leaveTypeId}
+                onChange={(selectedValue) => {
+                  const matched = leaveTypes.find(
+                    (lt) => (lt.id ?? lt.code ?? lt.type) === selectedValue,
+                  );
                   setForm((p) => ({
                     ...p,
-                    type: e.target.value as LeaveType,
-                  }))
-                }
-              >
-                {leaveTypes.map((lt) => (
-                  <option key={lt.type} value={lt.type}>
-                    {lt.type} ({lt.entitlement})
-                  </option>
-                ))}
-              </LocalSelect>
+                    leaveTypeId: selectedValue,
+                    type: matched?.type ?? toLeaveType(selectedValue),
+                  }));
+                }}
+                render={(lt, index) => {
+                  const optionValue =
+                    lt.id ?? lt.code ?? lt.name ?? String(index);
+                  const days = lt.entitlementDays ?? lt.entitlement_days;
+                  const entitlementText =
+                    typeof days === "number"
+                      ? `${days} days`
+                      : lt.entitlement
+                        ? String(lt.entitlement)
+                        : "";
+                  const labelText = lt.name ?? lt.code ?? lt.type ?? "Leave";
+                  return (
+                    <option key={optionValue} value={optionValue}>
+                      {entitlementText
+                        ? `${labelText} (${entitlementText})`
+                        : labelText}
+                    </option>
+                  );
+                }}
+              />
             </div>
 
             <div>
