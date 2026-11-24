@@ -2,12 +2,19 @@ import { useState } from "react";
 import type { AttendanceRecord, AttendanceStatus } from "./types";
 import { Search } from "lucide-react";
 import CustomTable, { type columnType } from "@/components/tables/CustomTable";
+import type { Actions } from "@/components/tables/pop-up";
 
 interface TodayAttendanceLogProps {
   logs: AttendanceRecord[];
+  onClockOut?: (staffId: string) => void;
+  onEditRecord?: (record: AttendanceRecord) => void;
 }
 
-export default function TodayAttendanceLog({ logs }: TodayAttendanceLogProps) {
+export default function TodayAttendanceLog({
+  logs,
+  onClockOut,
+  onEditRecord,
+}: TodayAttendanceLogProps) {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("All");
 
@@ -109,6 +116,31 @@ export default function TodayAttendanceLog({ logs }: TodayAttendanceLogProps) {
     },
   ];
 
+  const actions: Actions<AttendanceRecord>[] = [
+    ...(onClockOut
+      ? [
+          {
+            key: "clock-out",
+            label: "Clock out",
+            disabled: (log: AttendanceRecord) =>
+              !log.staffId || Boolean(log.clockOutAt),
+            action: (log: AttendanceRecord) => {
+              if (log.staffId) onClockOut(log.staffId);
+            },
+          },
+        ]
+      : []),
+    ...(onEditRecord
+      ? [
+          {
+            key: "edit",
+            label: "Edit times",
+            action: (log: AttendanceRecord) => onEditRecord(log),
+          },
+        ]
+      : []),
+  ];
+
   return (
     <div className="card bg-base-100 border border-base-200 shadow-sm p-4 sm:p-6 space-y-4">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
@@ -148,7 +180,12 @@ export default function TodayAttendanceLog({ logs }: TodayAttendanceLogProps) {
 
       {filteredLogs.length > 0 ? (
         <div className="overflow-hidden rounded-xl border border-base-200">
-          <CustomTable ring={false} data={filteredLogs} columns={columns} />
+          <CustomTable
+            ring={false}
+            data={filteredLogs}
+            columns={columns}
+            actions={actions}
+          />
         </div>
       ) : (
         <div className="py-8 text-center text-sm text-base-content/70">

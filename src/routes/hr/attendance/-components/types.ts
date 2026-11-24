@@ -7,6 +7,9 @@ export interface AttendanceRecord {
   staffId?: string;
   name: string;
   date: string;
+  rawDate?: string;
+  clockInAt?: string | null;
+  clockOutAt?: string | null;
   timeIn: string;
   timeOut: string;
   status: AttendanceStatus;

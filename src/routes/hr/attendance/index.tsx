@@ -6,6 +6,7 @@ import AttendanceStats from "./-components/AttendanceStats";
 import TodayAttendanceLog from "./-components/TodayAttendanceLog";
 import CorrectionRequests from "./-components/CorrectionRequests";
 import RequestCorrectionModal from "./-components/RequestCorrectionModal";
+import EditAttendanceModal from "./-components/EditAttendanceModal";
 import { correctionLabel } from "./-components/attendanceData";
 import type {
   AttendanceRecord,
@@ -18,6 +19,7 @@ import {
   useAttendanceRecords,
   useClockIn,
   useClockOut,
+  useCorrectAttendanceRecord,
   useCorrectionRequests,
   useCreateCorrection,
   useDecideCorrection,
@@ -97,6 +99,9 @@ const toUiRecord = (
     staffId: raw.staffId,
     name: staffName(raw, staffLookup),
     date: formatDate(raw.date ?? raw.clockInAt),
+    rawDate: raw.date ?? raw.clockInAt ?? undefined,
+    clockInAt: raw.clockInAt ?? null,
+    clockOutAt: raw.clockOutAt ?? null,
     timeIn: formatTime(raw.clockInAt),
     timeOut: formatTime(raw.clockOutAt),
     status:
@@ -139,10 +144,14 @@ function RouteComponent() {
 
   const clockInMutation = useClockIn();
   const clockOutMutation = useClockOut();
+  const correctRecordMutation = useCorrectAttendanceRecord();
   const createCorrectionMutation = useCreateCorrection();
   const decideCorrectionMutation = useDecideCorrection();
 
   const [isCorrectionOpen, setIsCorrectionOpen] = useState(false);
+  const [editingRecord, setEditingRecord] = useState<AttendanceRecord | null>(
+    null,
+  );
 
   const staffLookup = useMemo(() => {
     const map = new Map<string, string>();
@@ -205,14 +214,28 @@ function RouteComponent() {
     }
   };
 
-  const handleClockOut = async () => {
-    if (!currentUserId) {
-      toast.error("Unable to identify the logged-in user.");
+  const handleClockOut = async (staffId = currentUserId) => {
+    if (!staffId) {
+      toast.error("Unable to identify the staff member.");
       return;
     }
     try {
-      await clockOutMutation.mutateAsync(currentUserId);
+      await clockOutMutation.mutateAsync(staffId);
       toast.success("Clocked out successfully");
+    } catch (error) {
+      toast.error(extract_message(error as never));
+    }
+  };
+
+  const handleSaveRecordEdit = async (payload: {
+    id: string;
+    clockInAt: string;
+    clockOutAt: string;
+  }) => {
+    try {
+      await correctRecordMutation.mutateAsync(payload);
+      toast.success("Attendance record updated");
+      setEditingRecord(null);
     } catch (error) {
       toast.error(extract_message(error as never));
     }
@@ -254,7 +277,7 @@ function RouteComponent() {
           {openShift ? (
             <button
               type="button"
-              onClick={handleClockOut}
+              onClick={() => handleClockOut(currentUserId)}
               disabled={clockOutMutation.isPending}
               className="btn btn-sm btn-outline border-primary text-primary hover:bg-primary hover:text-white rounded-xl px-4 font-medium gap-1.5"
             >
@@ -295,7 +318,11 @@ function RouteComponent() {
               description: "Clock in to start tracking attendance.",
             }}
           >
-            <TodayAttendanceLog logs={logs} />
+            <TodayAttendanceLog
+              logs={logs}
+              onClockOut={(staffId) => handleClockOut(staffId)}
+              onEditRecord={(record) => setEditingRecord(record)}
+            />
           </PageLoader>
         </div>
         <div className="lg:col-span-4">
@@ -319,6 +346,12 @@ function RouteComponent() {
         isOpen={isCorrectionOpen}
         onClose={() => setIsCorrectionOpen(false)}
         onSubmitCorrection={handleCreateCorrection}
+      />
+
+      <EditAttendanceModal
+        record={editingRecord}
+        onClose={() => setEditingRecord(null)}
+        onSave={handleSaveRecordEdit}
       />
     </div>
   );
