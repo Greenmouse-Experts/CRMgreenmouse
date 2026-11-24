@@ -345,6 +345,26 @@ function StaffDetailPage() {
   const departmentsList = organizationQuery.data?.departments ?? [];
 
   const positionsList = organizationQuery.data?.positions ?? [];
+  const selectedDepartmentId = watch("departmentId");
+  const selectedDepartmentName = watch("department");
+
+  const filteredPositions = selectedDepartmentId
+    ? positionsList.filter((pos) => {
+        const posDeptId = pos.departmentId ?? pos.department?.id;
+        const posDeptName =
+          (typeof pos.department === "object"
+            ? pos.department?.name
+            : pos.department) ?? pos.departmentName;
+        if (posDeptId) return posDeptId === selectedDepartmentId;
+        if (posDeptName && selectedDepartmentName) {
+          return (
+            String(posDeptName).toLowerCase() ===
+            String(selectedDepartmentName).toLowerCase()
+          );
+        }
+        return false;
+      })
+    : positionsList;
 
   const potentialManagers = (allEmployeesQuery.data ?? []).filter(
     (e) => isNew || e.id !== id,
@@ -1379,6 +1399,8 @@ function StaffDetailPage() {
                               (d) => (d.id || d.name) === value,
                             );
                             methods.setValue("department", sel?.name ?? "");
+                            methods.setValue("positionId", "");
+                            methods.setValue("jobTitle", "");
                           }}
                         >
                           <option value="">
@@ -1406,25 +1428,41 @@ function StaffDetailPage() {
                           <LocalSelect
                             label="Position / Role"
                             value={field.value ?? ""}
-                            disabled={organizationQuery.isLoading}
+                            disabled={
+                              organizationQuery.isLoading ||
+                              (Boolean(selectedDepartmentId) &&
+                                filteredPositions.length === 0)
+                            }
                             onChange={(e) => {
                               const value = e.target.value;
                               field.onChange(value);
-                              const sel = positionsList.find(
-                                (p) => (p.id || p.name) === value,
+                              const sel = filteredPositions.find(
+                                (p) => (p.id || p.name || p.title) === value,
                               );
-                              methods.setValue("jobTitle", sel?.name ?? "");
+                              methods.setValue(
+                                "jobTitle",
+                                sel?.name ?? sel?.title ?? "",
+                              );
                             }}
                           >
-                            <option value="">Select Position</option>
-                            {positionsList.map((pos) => (
-                              <option
-                                key={pos.id || pos.name}
-                                value={pos.id || pos.name}
-                              >
-                                {pos.name}
-                              </option>
-                            ))}
+                            <option value="">
+                              {selectedDepartmentId &&
+                              filteredPositions.length === 0
+                                ? "No positions in this department"
+                                : "Select Position"}
+                            </option>
+                            {filteredPositions.map((pos) => {
+                              const posLabel =
+                                pos.name ?? pos.title ?? "Untitled Position";
+                              return (
+                                <option
+                                  key={pos.id || posLabel}
+                                  value={pos.id || posLabel}
+                                >
+                                  {posLabel}
+                                </option>
+                              );
+                            })}
                           </LocalSelect>
                         )}
                       />
