@@ -7,8 +7,12 @@ import LinkToStaffModal from "./LinkToStaffModal";
 import CustomTable, { type columnType } from "@/components/tables/CustomTable";
 import type { Actions } from "@/components/tables/pop-up";
 import {
+  useActivateEmployee,
+  useFinalizeEmployee,
   useLinkStaffAccount,
+  useReactivateEmployee,
   useStaffs,
+  useSuspendEmployee,
   type StaffOption,
 } from "@/api/employeesApi";
 import { extract_message } from "@/helpers/auth";
@@ -36,6 +40,22 @@ export default function EmployeeTableView({
   }
 
   const removeEmployee = onDeleteEmployee;
+
+  const activateEmployee = useActivateEmployee();
+  const suspendEmployee = useSuspendEmployee();
+  const reactivateEmployee = useReactivateEmployee();
+  const finalizeEmployee = useFinalizeEmployee();
+
+  const statusTransitions: Record<string, {
+    label: string;
+    mutate: (id: string) => Promise<unknown>;
+  }> = {
+    draft: { label: "Activate", mutate: (id) => activateEmployee.mutateAsync(id) },
+    probation: { label: "Activate", mutate: (id) => activateEmployee.mutateAsync(id) },
+    "notice period": { label: "Finalize", mutate: (id) => finalizeEmployee.mutateAsync(id) },
+    active: { label: "Suspend", mutate: (id) => suspendEmployee.mutateAsync(id) },
+    suspended: { label: "Reactivate", mutate: (id) => reactivateEmployee.mutateAsync(id) },
+  };
 
   const handleAcceptLinkStaff = async (staff: StaffOption) => {
     const employeeId = linkStaffEmployeeId;
@@ -83,6 +103,25 @@ export default function EmployeeTableView({
         return Boolean(item.staffId);
       },
       disable_event: (emp) => Boolean(emp.staffId),
+    },
+    {
+      key: "lifecycleStatus",
+      label: "Status",
+      render: (emp) => {
+        const transition = statusTransitions[emp.status.toLowerCase()];
+        return transition ? transition.label : "Status";
+      },
+      action: async (emp) => {
+        const transition = statusTransitions[emp.status.toLowerCase()];
+        if (!transition) return;
+        try {
+          await transition.mutate(emp.id);
+          toast.success(`Employee ${transition.label}d.`);
+        } catch (error) {
+          toast.error(extract_message(error as never));
+        }
+      },
+      disabled: (emp) => !statusTransitions[emp.status.toLowerCase()],
     },
   ];
 
