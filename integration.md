@@ -269,6 +269,48 @@ Notes:
   `probation/start-review` and `probation/reviews/:reviewId/submit` hooks whose
   routes do **not** exist in the Postman collection — prefer `onboardingApi.ts`.
 
+### HR offboarding — `src/api/offboardingApi.ts` (`/hr/offboarding`)
+
+Wired to the offboarding endpoints (`/offboarding/*`):
+
+| Hook                                  | Endpoint                                                                             |
+| ------------------------------------- | ------------------------------------------------------------------------------------ |
+| `useOffboardingStages()`              | `GET /offboarding/stages`                                                            |
+| `useOffboardingCases()`               | `GET /offboarding/cases`                                                             |
+| `useOffboardingCase(id)`              | `GET /offboarding/cases/:id`                                                         |
+| `useMyOffboardingTasks()`             | `GET /offboarding/tasks/mine`                                                        |
+| `useOffboardingCaseHistory(id)`       | `GET /offboarding/cases/:id/history`                                                 |
+| `useInitiateOffboarding()`            | `POST /offboarding/cases`                                                            |
+| `useAcceptOffboardingCase()`          | `POST /offboarding/cases/:id/accept`                                                 |
+| `useAddOffboardingTask()`             | `POST /offboarding/cases/:caseId/tasks`                                              |
+| `useUpdateOffboardingTask()`          | `PATCH /offboarding/tasks/:id` (`{ status, notes? }`)                                |
+| `useWaiveOffboardingTask()`           | `PATCH /offboarding/tasks/:id/waive` (`{ reason }`)                                  |
+| `useReassignOffboardingTask()`        | `PATCH /offboarding/tasks/:id/assignment` (`{ assignedTo }`, UUID)                   |
+| `useSaveOffboardingSettlement()`      | `PUT /offboarding/cases/:caseId/settlement` (`{ earnings[], deductions[], notes? }`) |
+| `useSubmitOffboardingSettlement()`    | `POST /offboarding/cases/:caseId/settlement/submit`                                  |
+| `useApproveOffboardingSettlement()`   | `POST /offboarding/cases/:caseId/settlement/approve` (`{ notes? }`)                  |
+| `useAuthorizeOffboardingRevocation()` | `POST /offboarding/cases/:caseId/access-revocation` (`{ revokeAt, reason? }`)        |
+| `useCancelOffboardingCase()`          | `POST /offboarding/cases/:id/cancel` (`{ reason }`)                                  |
+
+Page coverage (`/hr/offboarding`):
+
+- Pipeline overview with stats cards (active cases, pending tasks, settlement ready, completed).
+- Case list with status filtering and search.
+- Selected case detail with stepper (Resignation → Acceptance → Handover → Asset return → Clearance → Final settlement → Access revoked → Exit interview).
+- Clearance section showing tasks grouped by department (IT, Finance, HR, Manager, Operations, Admin) with status badges.
+- Task management: add custom tasks, update status, waive with reason, reassign to different owner.
+- Settlement management: save earnings/deductions line items, submit for approval, approve settlement.
+- Access revocation scheduling with date picker and reason.
+- Case cancellation with required reason.
+
+Notes:
+
+- Task status enum: `pending`, `in_progress`, `completed`, `scheduled`, `waived`.
+- Case status enum: `notice_period`, `clearance_in_progress`, `settlement_ready`, `completed`, `cancelled`.
+- Settlement flow: save → submit → approve; each step updates `settlementStatus`.
+- All mutations invalidate the `["offboarding"]` query root.
+- Shared mappers in `offboardingApi.ts`: `mapBackendOffboardingCase`, `mapBackendOffboardingTask`.
+
 ## HR payroll — `src/api/payrollApi.ts` (`/hr/payroll`)
 
 Wired to the "Payroll Controller …" endpoints in the Postman collection
