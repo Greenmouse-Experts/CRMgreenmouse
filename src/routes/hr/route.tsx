@@ -16,6 +16,7 @@ import {
   UserRoundPlus,
   Users,
   WalletCards,
+  Check,
 } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { useLocation } from "@tanstack/react-router";
@@ -65,6 +66,13 @@ const nav_links = [
         path: "/hr/onboarding",
         label: "Onboarding",
         icon: <NotebookPen size={ICON_SIZE} />,
+        type: "menu",
+        children: null,
+      },
+      {
+        path: "/hr/tasks",
+        label: "Tasks",
+        icon: <Check size={ICON_SIZE} />,
         type: "menu",
         children: null,
       },
