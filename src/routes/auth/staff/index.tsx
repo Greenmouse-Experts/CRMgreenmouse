@@ -45,7 +45,7 @@ function RouteComponent() {
       toast.success("Login successful");
       const current_user = res as AuthUser;
       if (current_user.user.userType.includes("hr")) {
-        nav({ to: "/hr" });
+        return nav({ to: "/hr" });
       }
       nav({ to: "/tenant" });
     },
