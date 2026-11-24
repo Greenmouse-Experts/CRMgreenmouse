@@ -5,6 +5,7 @@ import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 import SimpleInput from "@/components/inputs/SimpleInput";
 import { new_url } from "@/client/api";
+import { extract_message } from "@/helpers/errors";
 import {
   set_user_value,
   set_profile_value,
@@ -44,15 +45,15 @@ function RouteComponent() {
       set_user_value(res);
       toast.success("Login successful");
       const current_user = res as AuthUser;
-      if (current_user.user.userType.includes("hr")) {
+      const roleName = current_user.user.role?.name?.toLowerCase() ?? "";
+      const userType = current_user.user.userType?.toLowerCase() ?? "";
+      if (roleName === "hr" || userType.includes("hr")) {
         return nav({ to: "/hr" });
       }
       nav({ to: "/tenant" });
     },
-    onError: (err: any) => {
-      const message =
-        err?.response?.data?.message ?? err?.message ?? "Login failed";
-      toast.error(message);
+    onError: (err: unknown) => {
+      toast.error(extract_message(err));
     },
   });
 

@@ -12,6 +12,11 @@ interface UserData {
   lastName?: string;
   phoneNumber?: string;
   tenantId?: string;
+  roleId?: string;
+  role?: {
+    id: string;
+    name: string;
+  };
   permissions?: string[];
 }
 
