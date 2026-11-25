@@ -1,10 +1,11 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useForm, FormProvider } from "react-hook-form";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { ArrowRight, Mail } from "lucide-react";
 import SimpleInput from "@/components/inputs/SimpleInput";
 import apiClient from "@/client/api";
-import { Mail } from "lucide-react";
+import AuthLayout from "../-components/AuthLayout";
 
 export const Route = createFileRoute("/auth/verify/")({
   component: RouteComponent,
@@ -57,27 +58,38 @@ function RouteComponent() {
   });
 
   return (
-    <FormProvider {...form}>
-      <div className="space-y-8 animate-in fade-in slide-in-from-left-4 duration-500">
-        <div className="space-y-2">
-          <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center mb-4">
-            <Mail className="text-primary" size={24} />
-          </div>
-          <h1 className="text-3xl font-semibold tracking-tight">
-            Verify your email
-          </h1>
-          <p className="text-base-content/60 text-sm">
-            We've sent a 6-digit verification code to{" "}
-            <span className="text-base-content font-semibold">{email}</span>.
-          </p>
-        </div>
-
+    <AuthLayout
+      icon={Mail}
+      title="Verify your email"
+      subtitle={
+        <>
+          We&apos;ve sent a 6-digit verification code to{" "}
+          <span className="text-base-content font-semibold">
+            {email || "your email"}
+          </span>
+          .
+        </>
+      }
+      topRight={
+        <p className="text-sm text-base-content/70">
+          Already verified?{" "}
+          <Link
+            to="/auth/login"
+            search={{ email }}
+            className="text-primary font-semibold hover:underline"
+          >
+            Sign in
+          </Link>
+        </p>
+      }
+    >
+      <FormProvider {...form}>
         <form
           onSubmit={form.handleSubmit((data) => verifyMutate(data))}
-          className="space-y-5"
+          className="space-y-4"
         >
           <SimpleInput
-            label="Verification Code"
+            label="Verification code"
             placeholder="Enter 6-digit code"
             maxLength={6}
             {...form.register("otp", {
@@ -91,20 +103,23 @@ function RouteComponent() {
 
           <button
             type="submit"
-            className="btn btn-primary btn-block mt-2"
             disabled={isVerifying}
+            className="btn btn-primary w-full h-11 rounded-xl text-white font-semibold gap-2 shadow-sm shadow-primary/20"
           >
             {isVerifying ? (
               <span className="loading loading-spinner loading-sm" />
             ) : (
-              "Verify Email"
+              <>
+                <span>Verify Email</span>
+                <ArrowRight className="size-4" />
+              </>
             )}
           </button>
         </form>
 
-        <div className="pt-2 space-y-4">
-          <p className="text-sm text-base-content/60">
-            Didn't receive the code?{" "}
+        <div className="pt-2 space-y-2 text-center text-sm text-base-content/70">
+          <p>
+            Didn&apos;t receive the code?{" "}
             <button
               type="button"
               onClick={() => resendMutate()}
@@ -115,7 +130,7 @@ function RouteComponent() {
             </button>
           </p>
 
-          <p className="text-center text-sm text-base-content/60">
+          <p>
             Wait, I want to{" "}
             <button
               type="button"
@@ -126,7 +141,7 @@ function RouteComponent() {
             </button>
           </p>
         </div>
-      </div>
-    </FormProvider>
+      </FormProvider>
+    </AuthLayout>
   );
 }

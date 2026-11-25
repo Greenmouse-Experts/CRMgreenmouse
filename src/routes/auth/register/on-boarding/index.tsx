@@ -25,7 +25,9 @@ import {
   Users,
   Sun,
   Moon,
+  Sparkles,
 } from "lucide-react";
+import AuthLayout from "../../-components/AuthLayout";
 import {
   useOnboardingStore,
   type OnboardingFormData,
@@ -312,41 +314,46 @@ function OnboardingWizard() {
   const isPending = patchMutation.isPending || completeMutation.isPending;
 
   return (
-    <div className="space-y-6 animate-in fade-in duration-300">
-      <div>
-        <h1 className="text-2xl font-semibold tracking-tight">CRM</h1>
-      </div>
-
-      {/* Progress bar */}
-      <div className="space-y-1">
-        <div className="flex gap-1.5">
-          {Array.from({ length: TOTAL_STEPS }).map((_, i) => (
-            <div
-              key={i}
-              className={`h-1.5 flex-1 rounded-full transition-all duration-300 cursor-pointer ${
-                i + 1 === step
-                  ? "bg-primary"
-                  : i + 1 < step
-                    ? "bg-primary/80"
-                    : "bg-base-300"
-              }`}
-              onClick={() => i + 1 < step && setStep(i + 1)}
-            />
-          ))}
-        </div>
-        <p className="text-xs text-primary font-medium">
+    <AuthLayout
+      icon={Sparkles}
+      title="Set up your workspace"
+      subtitle="Customize your KINOVIA environment in a few quick steps."
+      maxWidth="max-w-xl"
+      topRight={
+        <span className="inline-flex items-center rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">
           Step {step} of {TOTAL_STEPS}
-        </p>
-      </div>
+        </span>
+      }
+    >
+      <div className="space-y-6 animate-in fade-in duration-300">
+        {/* Progress bar */}
+        <div className="space-y-1.5">
+          <div className="flex gap-1.5">
+            {Array.from({ length: TOTAL_STEPS }).map((_, i) => (
+              <div
+                key={i}
+                className={`h-1.5 flex-1 rounded-full transition-all duration-300 cursor-pointer ${
+                  i + 1 === step
+                    ? "bg-primary"
+                    : i + 1 < step
+                      ? "bg-primary/70"
+                      : "bg-base-300"
+                }`}
+                onClick={() => i + 1 < step && setStep(i + 1)}
+              />
+            ))}
+          </div>
+        </div>
 
-      <StepContent
-        step={step}
-        formData={formData}
-        advance={advance}
-        prevStep={prevStep}
-        isPending={isPending}
-      />
-    </div>
+        <StepContent
+          step={step}
+          formData={formData}
+          advance={advance}
+          prevStep={prevStep}
+          isPending={isPending}
+        />
+      </div>
+    </AuthLayout>
   );
 }
 
@@ -438,7 +445,7 @@ function NextBtn({
       type={onClick ? "button" : "submit"}
       onClick={onClick}
       disabled={disabled || isPending}
-      className="btn btn-primary gap-2 px-6"
+      className="btn btn-primary h-11 rounded-xl text-white font-semibold gap-2 px-6 shadow-sm shadow-primary/20"
     >
       {isPending ? (
         <span className="loading loading-spinner loading-sm" />
@@ -457,7 +464,7 @@ function BackBtn({ onClick }: { onClick: () => void }) {
     <button
       type="button"
       onClick={onClick}
-      className="btn btn-ghost gap-1 px-3"
+      className="btn btn-ghost h-11 rounded-xl gap-1.5 px-4"
     >
       <ArrowLeft size={16} />
       Back

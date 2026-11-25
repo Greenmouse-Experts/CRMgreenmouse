@@ -2,9 +2,11 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useForm, FormProvider } from "react-hook-form";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { ArrowRight, Building2 } from "lucide-react";
 import SimpleInput from "@/components/inputs/SimpleInput";
 import SimplePhoneInput from "@/components/inputs/SimplePhoneInput";
 import apiClient from "@/client/api";
+import AuthLayout from "../-components/AuthLayout";
 
 export const Route = createFileRoute("/auth/register/")({
   component: RouteComponent,
@@ -39,21 +41,29 @@ function RouteComponent() {
   });
 
   return (
-    <FormProvider {...form}>
-      <div className="space-y-8 animate-in fade-in slide-in-from-left-4 duration-500">
-        <div className="space-y-1">
-          <h1 className="text-3xl font-semibold tracking-tight">Get started</h1>
-          <p className="text-base-content/60 text-sm">
-            Create your account to start managing your business.
-          </p>
-        </div>
-
+    <AuthLayout
+      icon={Building2}
+      title="Get started"
+      subtitle="Create your account to start managing your business."
+      topRight={
+        <p className="text-sm text-base-content/70">
+          Already have an account?{" "}
+          <Link
+            to="/auth/login"
+            className="text-primary font-semibold hover:underline"
+          >
+            Sign in
+          </Link>
+        </p>
+      }
+    >
+      <FormProvider {...form}>
         <form
           onSubmit={form.handleSubmit((data) => mutate(data))}
-          className="space-y-5"
+          className="space-y-4"
         >
           <SimpleInput
-            label="Company Name"
+            label="Company name"
             placeholder="Acme Corp"
             {...form.register("companyName", {
               required: "Company name is required",
@@ -61,7 +71,7 @@ function RouteComponent() {
           />
 
           <SimpleInput
-            label="Email Address"
+            label="Work email"
             type="email"
             placeholder="john@acmecorp.com"
             {...form.register("email", {
@@ -74,7 +84,7 @@ function RouteComponent() {
           />
 
           <SimplePhoneInput
-            label="Phone Number"
+            label="Phone number"
             placeholder="+234 801 234 5678"
             {...form.register("phoneNumber", {
               required: "Phone number is required",
@@ -84,7 +94,7 @@ function RouteComponent() {
           <SimpleInput
             label="Password"
             type="password"
-            placeholder="••••••••"
+            placeholder="Create a strong password"
             {...form.register("password", {
               required: "Password is required",
               minLength: {
@@ -96,27 +106,30 @@ function RouteComponent() {
 
           <button
             type="submit"
-            className="btn btn-primary btn-block mt-2"
             disabled={isPending}
+            className="btn btn-primary w-full h-11 rounded-xl text-white font-semibold gap-2 shadow-sm shadow-primary/20 mt-2"
           >
             {isPending ? (
               <span className="loading loading-spinner loading-sm" />
             ) : (
-              "Create Account"
+              <>
+                <span>Create Account</span>
+                <ArrowRight className="size-4" />
+              </>
             )}
           </button>
-        </form>
 
-        <p className="text-center text-sm text-base-content/60">
-          Already have an account?{" "}
-          <Link
-            to="/auth/login"
-            className="text-primary font-semibold hover:underline"
-          >
-            Sign in
-          </Link>
-        </p>
-      </div>
-    </FormProvider>
+          <p className="text-center text-sm text-base-content/70 pt-1">
+            Already have an account?{" "}
+            <Link
+              to="/auth/login"
+              className="text-primary font-semibold hover:underline"
+            >
+              Sign in
+            </Link>
+          </p>
+        </form>
+      </FormProvider>
+    </AuthLayout>
   );
 }

@@ -2,8 +2,10 @@ import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useForm } from "react-hook-form";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { ArrowRight, KeyRound } from "lucide-react";
 import SimpleInput from "@/components/inputs/SimpleInput";
 import apiClient from "@/client/api";
+import AuthLayout from "../-components/AuthLayout";
 
 export const Route = createFileRoute("/auth/forgot-password/")({
   component: RouteComponent,
@@ -51,60 +53,56 @@ function RouteComponent() {
   const onSubmit = (data: ForgotPasswordProps) => mutate(data);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-base-300 isolate">
-      <div
-        className={`fixed inset-0 z-[-2] h-screen w-screen rotate-180 transform bg-white dark:bg-base-300 bg-[radial-gradient(oklch(from_var(--color-base-100)_l_c_h_/_50%),oklch(from_var(--color-primary)_l_c_h_/_50%))] opacity-50`}
-      ></div>
-      <div className="fixed inset-0 opacity-20 bg-[linear-gradient(to_right,#4f4f4f2e_1px,transparent_1px),linear-gradient(to_bottom,#4f4f4f2e_1px,transparent_1px)] bg-[size:56px_96px] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_0%,#000_70%,transparent_110%)]"></div>
-
-      <div className="w-full flex flex-col mx-auto space-y-4 px-4 z-20">
-        <div className="mt-12 text-center">
-          <h2 className="text-3xl font-semibold leading-normal">
-            CRMgreenmouse
-          </h2>
-          <p className="font-semibold text-primary mx-auto w-fit text-sm">
-            Reset Password
-          </p>
-          <p className="text-xs text-base-content/60 max-w-xs mx-auto mt-1">
-            Enter your business email address and we'll send you an OTP to reset
-            your password.
-          </p>
-        </div>
-
-        <form
-          className="card max-w-sm w-full mx-auto bg-base-100 border border-base-content/10 shadow-lg p-6 space-y-4"
-          onSubmit={form.handleSubmit(onSubmit)}
-        >
-          <SimpleInput
-            label="Business Email"
-            type="email"
-            required
-            placeholder="johndoe@greenmouse.com"
-            {...form.register("email", { required: true })}
-          />
-
-          <button
-            type="submit"
-            disabled={isPending}
-            className="btn btn-primary w-full text-white font-semibold"
+    <AuthLayout
+      icon={KeyRound}
+      title="Reset password"
+      subtitle="Enter your business email address and we'll send you an OTP to reset your password."
+      topRight={
+        <p className="text-sm text-base-content/70">
+          Remembered it?{" "}
+          <Link
+            to="/auth/login"
+            className="text-primary font-semibold hover:underline"
           >
-            {isPending ? (
-              <span className="loading loading-spinner loading-sm" />
-            ) : (
-              "Send Reset OTP"
-            )}
-          </button>
+            Sign in
+          </Link>
+        </p>
+      }
+    >
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+        <SimpleInput
+          label="Business email"
+          type="email"
+          required
+          placeholder="you@company.com"
+          {...form.register("email", { required: true })}
+        />
 
-          <div className="text-center pt-2">
-            <Link
-              to="/auth/login"
-              className="text-xs text-primary font-semibold hover:underline"
-            >
-              Back to Sign In
-            </Link>
-          </div>
-        </form>
-      </div>
-    </div>
+        <button
+          type="submit"
+          disabled={isPending}
+          className="btn btn-primary w-full h-11 rounded-xl text-white font-semibold gap-2 shadow-sm shadow-primary/20"
+        >
+          {isPending ? (
+            <span className="loading loading-spinner loading-sm" />
+          ) : (
+            <>
+              <span>Send Reset OTP</span>
+              <ArrowRight className="size-4" />
+            </>
+          )}
+        </button>
+
+        <p className="text-center text-sm text-base-content/70 pt-1">
+          Back to{" "}
+          <Link
+            to="/auth/login"
+            className="text-primary font-semibold hover:underline"
+          >
+            Sign in
+          </Link>
+        </p>
+      </form>
+    </AuthLayout>
   );
 }

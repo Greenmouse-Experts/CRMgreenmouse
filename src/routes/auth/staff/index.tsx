@@ -1,8 +1,9 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useForm } from "react-hook-form";
-import { useNavigate } from "@tanstack/react-router";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
+import axios from "axios";
+import { ArrowRight, Briefcase } from "lucide-react";
 import SimpleInput from "@/components/inputs/SimpleInput";
 import { new_url } from "@/client/api";
 import { extract_message } from "@/helpers/errors";
@@ -11,7 +12,7 @@ import {
   set_profile_value,
   type AuthUser,
 } from "@/store/authStore";
-import axios from "axios";
+import AuthLayout from "../-components/AuthLayout";
 
 export const Route = createFileRoute("/auth/staff/")({
   component: RouteComponent,
@@ -33,6 +34,7 @@ function RouteComponent() {
   const form = useForm<LoginProps>({
     defaultValues: {
       email: email || "",
+      password: "",
     },
   });
 
@@ -60,79 +62,80 @@ function RouteComponent() {
   const onSubmit = (data: LoginProps) => mutate(data);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-base-300 isolate">
-      <div
-        className={`fixed inset-0 z-[-2] h-screen w-screen rotate-180 transform bg-white dark:bg-base-300 bg-[radial-gradient(oklch(from_var(--color-base-100)_l_c_h_/_50%),oklch(from_var(--color-primary)_l_c_h_/_50%))] opacity-50`}
-      ></div>
-      <div className="fixed inset-0 opacity-20 bg-[linear-gradient(to_right,#4f4f4f2e_1px,transparent_1px),linear-gradient(to_bottom,#4f4f4f2e_1px,transparent_1px)] bg-[size:56px_96px] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_0%,#000_70%,transparent_110%)]"></div>
-      <div className="w-full flex flex-col mx-auto space-y-4 px-4  z-20  ">
-        <div className="mt-12">
-          <h2 className="text-3xl font-semibold text-center leading-normal ">
-            CRMgreenmouse
-          </h2>
-          <p className="font-semibold text-primary mx-auto w-fit text-sm">
-            Sign In to your workspace
-          </p>
-        </div>
-        <form
-          className="card max-w-sm w-full mx-auto bg-base-100 border border-base-content/10 shadow-lg p-6 space-y-4"
-          onSubmit={form.handleSubmit(onSubmit)}
-        >
-          <SimpleInput
-            label="Email Address"
-            type="email"
-            required
-            placeholder="johndoe@greenmouse.com"
-            {...form.register("email", { required: true })}
-          />
-
-          <SimpleInput
-            label="Password"
-            type="password"
-            required
-            placeholder="••••••••"
-            {...form.register("password", { required: true })}
-          />
-
-          <div className="flex items-center justify-between text-xs">
-            <label className="flex items-center gap-2 cursor-pointer">
-              <input
-                type="checkbox"
-                className="checkbox checkbox-primary checkbox-xs"
-              />
-              <span>Remember me</span>
-            </label>
-            <Link
-              to="/auth/forgot-password"
-              className="text-primary hover:underline"
-            >
-              Forgot password?
-            </Link>
-          </div>
-
-          <button
-            type="submit"
-            disabled={isPending}
-            className="btn btn-primary w-full text-white font-semibold"
+    <AuthLayout
+      icon={Briefcase}
+      title="Staff sign in"
+      subtitle="Sign in to access your KINOVIA team workspace."
+      topRight={
+        <p className="text-sm text-base-content/70">
+          Workspace owner?{" "}
+          <Link
+            to="/auth/login"
+            className="text-primary font-semibold hover:underline"
           >
-            {isPending ? (
-              <span className="loading loading-spinner loading-sm" />
-            ) : (
-              "Sign In"
-            )}
-          </button>
+            Owner sign in
+          </Link>
+        </p>
+      }
+    >
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+        <SimpleInput
+          label="Work email"
+          type="email"
+          required
+          placeholder="you@company.com"
+          {...form.register("email", { required: true })}
+        />
 
-          <p className="text-center text-xs text-base-content/60 pt-2">
-            Don't have an account?{" "}
-            <Link
-              to="/auth/register"
-              className="text-primary font-semibold hover:underline"
-            >
-              Register your business
-            </Link>
-          </p>
-        </form>
-      </div>
-    </div>
+        <SimpleInput
+          label="Password"
+          type="password"
+          required
+          placeholder="Enter your password"
+          {...form.register("password", { required: true })}
+        />
+
+        <div className="flex items-center justify-between text-sm pt-1">
+          <label className="flex items-center gap-2 cursor-pointer text-base-content/80">
+            <input
+              type="checkbox"
+              className="checkbox checkbox-primary checkbox-sm rounded"
+            />
+            <span>Keep me signed in</span>
+          </label>
+          <Link
+            to="/auth/forgot-password"
+            className="text-primary font-medium hover:underline"
+          >
+            Forgot password?
+          </Link>
+        </div>
+
+        <button
+          type="submit"
+          disabled={isPending}
+          className="btn btn-primary w-full h-11 rounded-xl text-white font-semibold gap-2 shadow-sm shadow-primary/20"
+        >
+          {isPending ? (
+            <span className="loading loading-spinner loading-sm" />
+          ) : (
+            <>
+              <span>Sign in to Workspace</span>
+              <ArrowRight className="size-4" />
+            </>
+          )}
+        </button>
+
+        <p className="text-center text-sm text-base-content/70 pt-1">
+          Don&apos;t have an account?{" "}
+          <Link
+            to="/auth/register"
+            className="text-primary font-semibold hover:underline"
+          >
+            Register your business
+          </Link>
+        </p>
+      </form>
+    </AuthLayout>
   );
 }

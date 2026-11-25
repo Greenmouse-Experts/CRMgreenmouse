@@ -1,4 +1,14 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { useForm } from "react-hook-form";
+import { useMutation } from "@tanstack/react-query";
+import { toast } from "sonner";
+import axios from "axios";
+import { ArrowRight, ShieldCheck } from "lucide-react";
+import SimpleInput from "@/components/inputs/SimpleInput";
+import apiClient, { new_url } from "@/client/api";
+import { set_user_value } from "@/store/authStore";
+import { setProfileFavicon } from "@/utils/favicon";
+import AuthLayout from "../-components/AuthLayout";
 
 export const Route = createFileRoute("/auth/admin/")({
   component: RouteComponent,
@@ -6,16 +16,6 @@ export const Route = createFileRoute("/auth/admin/")({
     return { email: search.email ?? "" };
   },
 });
-
-import { useForm } from "react-hook-form";
-import { useNavigate } from "@tanstack/react-router";
-import { useMutation } from "@tanstack/react-query";
-import { toast } from "sonner";
-import SimpleInput from "@/components/inputs/SimpleInput";
-import apiClient, { new_url } from "@/client/api";
-import { set_user_value } from "@/store/authStore";
-import { setProfileFavicon } from "@/utils/favicon";
-import axios from "axios";
 
 interface LoginProps {
   email: string;
@@ -28,6 +28,7 @@ function RouteComponent() {
   const form = useForm<LoginProps>({
     defaultValues: {
       email: email || "",
+      password: "",
     },
   });
 
@@ -56,88 +57,81 @@ function RouteComponent() {
   const onSubmit = (data: LoginProps) => mutate(data);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-base-300 isolate">
-      <div
-        className={`fixed inset-0 z-[-2] h-screen w-screen rotate-180 transform bg-white dark:bg-base-300 bg-[radial-gradient(oklch(from_var(--color-base-100)_l_c_h_/_50%),oklch(from_var(--color-primary)_l_c_h_/_50%))] opacity-50`}
-      ></div>
-      <div className="fixed inset-0 opacity-20 bg-[linear-gradient(to_right,#4f4f4f2e_1px,transparent_1px),linear-gradient(to_bottom,#4f4f4f2e_1px,transparent_1px)] bg-[size:56px_96px] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_0%,#000_70%,transparent_110%)]"></div>
-      <div className="w-full flex flex-col mx-auto space-y-4 px-4  z-20  ">
-        <div className="mt-12">
-          <h2 className="text-3xl font-semibold text-center leading-normal ">
-            CRMgreenmouse
-          </h2>
-          <p className="font-semibold text-primary mx-auto w-fit text-sm">
-            Business Management Portal
-          </p>
-        </div>
-        <form
-          onSubmit={form.handleSubmit(onSubmit)}
-          action=""
-          className="p-6 space-y-6 py-8 mx-auto  bg-base-100/80 backdrop-blur-md rounded-box drop-shadow-xl ring ring-current/10 w-full max-w-md m-2 mb-12  "
-        >
-          <div className="space-y-1 ">
-            <h2 className="text-2xl font-semibold text-center">Login</h2>
-            <p className="text-sm text-center fieldset-label ">
-              Enter your credentials to access your account
-            </p>
-          </div>
+    <AuthLayout
+      icon={ShieldCheck}
+      title="Admin portal"
+      subtitle="Enter your administrator credentials to access the portal."
+      brandFooterText="Platform administration portal"
+      topRight={
+        <p className="text-sm text-base-content/70">
+          Business workspace?{" "}
+          <Link
+            to="/auth/login"
+            className="text-primary font-semibold hover:underline"
+          >
+            Tenant sign in
+          </Link>
+        </p>
+      }
+    >
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+        <SimpleInput
+          label="Email address"
+          type="email"
+          required
+          placeholder="admin@kinovia.com"
+          {...form.register("email", { required: true })}
+        />
 
-          <SimpleInput label="Email Address" {...form.register("email")} />
-          <SimpleInput
-            label="Password"
-            {...form.register("password")}
-            type="password"
-          />
-          <div className="flex items-center justify-between gap-2">
-            <div className="flex items-center gap-2">
-              <input type="checkbox" className="toggle" name="" id="" />{" "}
-              <span className="fieldset-label text-sm">Remember Me</span>
-            </div>
-            {/*<Link
-              to="/auth/forgot-password"
-              search={{ email: form.getValues("email") }}
-              className="link link-primary text-sm font-semibold"
-            >
-              Forgot Password?
-            </Link>*/}
-          </div>
-          <button className="btn btn-primary btn-block" disabled={isPending}>
-            {isPending ? (
-              <span className="loading loading-spinner loading-sm" />
-            ) : (
-              "Login"
-            )}
-          </button>
-          {import.meta.env.DEV && (
-            <button
-              type="button"
-              className="btn btn-soft ring btn-block"
-              onClick={() => {
-                // form.setValues({
-                //   email: "greenmousedev@gmail.com",
-                //   password: "Password@2022",
-                // });
-                const data = {
-                  email: "greenmousedev@gmail.com",
-                  password: "Password@2022",
-                };
-                mutate(data);
-              }}
-            >
-              Prefill
-            </button>
+        <SimpleInput
+          label="Password"
+          type="password"
+          required
+          placeholder="Enter your password"
+          {...form.register("password", { required: true })}
+        />
+
+        <div className="flex items-center justify-between text-sm pt-1">
+          <label className="flex items-center gap-2 cursor-pointer text-base-content/80">
+            <input
+              type="checkbox"
+              className="checkbox checkbox-primary checkbox-sm rounded"
+            />
+            <span>Keep me signed in</span>
+          </label>
+        </div>
+
+        <button
+          type="submit"
+          disabled={isPending}
+          className="btn btn-primary w-full h-11 rounded-xl text-white font-semibold gap-2 shadow-sm shadow-primary/20"
+        >
+          {isPending ? (
+            <span className="loading loading-spinner loading-sm" />
+          ) : (
+            <>
+              <span>Sign in to Admin</span>
+              <ArrowRight className="size-4" />
+            </>
           )}
-          {/*<div className="">
-            <section className="ring ring-current/10 bg-base-200 rounded-box p-4 text-xs text-base-content/80 space-y-2">
-              <p className="font-semibold ">Demo Credientials</p>
-              <div>
-                <p>Email: greenmousedev+admin@gmail.com</p>
-                <p>Password: admin124</p>
-              </div>
-            </section>
-          </div>*/}
-        </form>
-      </div>
-    </div>
+        </button>
+
+        {import.meta.env.DEV && (
+          <button
+            type="button"
+            className="btn btn-ghost border border-base-300 w-full h-11 rounded-xl font-semibold"
+            onClick={() => {
+              const data = {
+                email: "greenmousedev@gmail.com",
+                password: "Password@2022",
+              };
+              mutate(data);
+            }}
+          >
+            Prefill Dev Admin
+          </button>
+        )}
+      </form>
+    </AuthLayout>
   );
 }
