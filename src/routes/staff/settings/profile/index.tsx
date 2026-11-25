@@ -17,12 +17,12 @@ import UserInfo from "./-components/UserInfo";
 import PersonalInfo from "./-components/PersonalInfo";
 import AddressInfo from "./-components/AddressInfo";
 
-export const Route = createFileRoute("/hr/settings/profile/")({
+export const Route = createFileRoute("/staff/settings/profile/")({
   component: RouteComponent,
   loader: () => {
-    if (get_user_value()?.user.userType === "staff") {
-      return redirect({ to: "/hr/settings/notifications" });
-    }
+    // if (get_user_value()?.user.userType === "staff") {
+    //   return redirect({ to: "/staff/settings" });
+    // }
   },
 });
 

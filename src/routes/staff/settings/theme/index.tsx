@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-export const Route = createFileRoute("/hr/settings/theme/")({
+export const Route = createFileRoute("/staff/settings/theme/")({
   component: RouteComponent,
 });
 

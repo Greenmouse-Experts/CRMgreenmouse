@@ -4,7 +4,7 @@ import { KeyRound, MonitorSmartphone, ShieldCheck } from "lucide-react";
 import { useTenantLoginActivity } from "@/api/tenantApi";
 import { get_user_value } from "@/store/authStore";
 
-export const Route = createFileRoute("/hr/settings/security/")({
+export const Route = createFileRoute("/staff/settings/security/")({
   component: RouteComponent,
 });
 

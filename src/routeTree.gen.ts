@@ -23,7 +23,7 @@ import { Route as HomeIndexRouteImport } from './routes/home/index'
 import { Route as AdminIndexRouteImport } from './routes/admin/index'
 import { Route as TestHomeRouteImport } from './routes/test/home'
 import { Route as TenantSettingsRouteRouteImport } from './routes/tenant/settings/route'
-import { Route as HrSettingsRouteRouteImport } from './routes/hr/settings/route'
+import { Route as StaffSettingsRouteRouteImport } from './routes/staff/settings/route'
 import { Route as AuthVerifyRouteRouteImport } from './routes/auth/verify/route'
 import { Route as AuthRegisterRouteRouteImport } from './routes/auth/register/route'
 import { Route as AdminSettingsRouteRouteImport } from './routes/admin/settings/route'
@@ -35,11 +35,11 @@ import { Route as TenantSettingsIndexRouteImport } from './routes/tenant/setting
 import { Route as TenantProductsIndexRouteImport } from './routes/tenant/products/index'
 import { Route as TenantOrdersIndexRouteImport } from './routes/tenant/orders/index'
 import { Route as TenantNotificationsIndexRouteImport } from './routes/tenant/notifications.index'
+import { Route as StaffSettingsIndexRouteImport } from './routes/staff/settings/index'
 import { Route as StaffAttendanceIndexRouteImport } from './routes/staff/attendance/index'
 import { Route as HrTrainingIndexRouteImport } from './routes/hr/training/index'
 import { Route as HrTasksIndexRouteImport } from './routes/hr/tasks/index'
 import { Route as HrStaffsIndexRouteImport } from './routes/hr/staffs/index'
-import { Route as HrSettingsIndexRouteImport } from './routes/hr/settings/index'
 import { Route as HrSelfServiceIndexRouteImport } from './routes/hr/self-service/index'
 import { Route as HrReportsIndexRouteImport } from './routes/hr/reports/index'
 import { Route as HrRecruitmentIndexRouteImport } from './routes/hr/recruitment/index'
@@ -91,10 +91,10 @@ import { Route as TenantAccountsQuotesIndexRouteImport } from './routes/tenant/a
 import { Route as TenantAccountsIncomeExpensesIndexRouteImport } from './routes/tenant/accounts/income-expenses/index'
 import { Route as TenantAccountsAnalysisIndexRouteImport } from './routes/tenant/accounts/analysis/index'
 import { Route as TenantAccountsInvoicesIndexRouteImport } from './routes/tenant/accounts/Invoices/index'
-import { Route as HrSettingsThemeIndexRouteImport } from './routes/hr/settings/theme/index'
-import { Route as HrSettingsSecurityIndexRouteImport } from './routes/hr/settings/security/index'
-import { Route as HrSettingsProfileIndexRouteImport } from './routes/hr/settings/profile/index'
-import { Route as HrSettingsNotificationsIndexRouteImport } from './routes/hr/settings/notifications.index'
+import { Route as StaffSettingsThemeIndexRouteImport } from './routes/staff/settings/theme/index'
+import { Route as StaffSettingsSecurityIndexRouteImport } from './routes/staff/settings/security/index'
+import { Route as StaffSettingsProfileIndexRouteImport } from './routes/staff/settings/profile/index'
+import { Route as StaffSettingsNotificationsIndexRouteImport } from './routes/staff/settings/notifications.index'
 import { Route as AuthRegisterOnBoardingIndexRouteImport } from './routes/auth/register/on-boarding/index'
 import { Route as AdminUsersRolesIndexRouteImport } from './routes/admin/users/roles/index'
 import { Route as AdminUsersAddIndexRouteImport } from './routes/admin/users/add/index'
@@ -206,10 +206,10 @@ const TenantSettingsRouteRoute = TenantSettingsRouteRouteImport.update({
   path: '/settings',
   getParentRoute: () => TenantRouteRoute,
 } as any)
-const HrSettingsRouteRoute = HrSettingsRouteRouteImport.update({
+const StaffSettingsRouteRoute = StaffSettingsRouteRouteImport.update({
   id: '/settings',
   path: '/settings',
-  getParentRoute: () => HrRouteRoute,
+  getParentRoute: () => StaffRouteRoute,
 } as any)
 const AuthVerifyRouteRoute = AuthVerifyRouteRouteImport.update({
   id: '/auth/verify',
@@ -267,6 +267,11 @@ const TenantNotificationsIndexRoute =
     path: '/notifications/',
     getParentRoute: () => TenantRouteRoute,
   } as any)
+const StaffSettingsIndexRoute = StaffSettingsIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => StaffSettingsRouteRoute,
+} as any)
 const StaffAttendanceIndexRoute = StaffAttendanceIndexRouteImport.update({
   id: '/attendance/',
   path: '/attendance/',
@@ -286,11 +291,6 @@ const HrStaffsIndexRoute = HrStaffsIndexRouteImport.update({
   id: '/staffs/',
   path: '/staffs/',
   getParentRoute: () => HrRouteRoute,
-} as any)
-const HrSettingsIndexRoute = HrSettingsIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => HrSettingsRouteRoute,
 } as any)
 const HrSelfServiceIndexRoute = HrSelfServiceIndexRouteImport.update({
   id: '/self-service/',
@@ -563,26 +563,28 @@ const TenantAccountsInvoicesIndexRoute =
     path: '/accounts/Invoices/',
     getParentRoute: () => TenantRouteRoute,
   } as any)
-const HrSettingsThemeIndexRoute = HrSettingsThemeIndexRouteImport.update({
+const StaffSettingsThemeIndexRoute = StaffSettingsThemeIndexRouteImport.update({
   id: '/theme/',
   path: '/theme/',
-  getParentRoute: () => HrSettingsRouteRoute,
+  getParentRoute: () => StaffSettingsRouteRoute,
 } as any)
-const HrSettingsSecurityIndexRoute = HrSettingsSecurityIndexRouteImport.update({
-  id: '/security/',
-  path: '/security/',
-  getParentRoute: () => HrSettingsRouteRoute,
-} as any)
-const HrSettingsProfileIndexRoute = HrSettingsProfileIndexRouteImport.update({
-  id: '/profile/',
-  path: '/profile/',
-  getParentRoute: () => HrSettingsRouteRoute,
-} as any)
-const HrSettingsNotificationsIndexRoute =
-  HrSettingsNotificationsIndexRouteImport.update({
+const StaffSettingsSecurityIndexRoute =
+  StaffSettingsSecurityIndexRouteImport.update({
+    id: '/security/',
+    path: '/security/',
+    getParentRoute: () => StaffSettingsRouteRoute,
+  } as any)
+const StaffSettingsProfileIndexRoute =
+  StaffSettingsProfileIndexRouteImport.update({
+    id: '/profile/',
+    path: '/profile/',
+    getParentRoute: () => StaffSettingsRouteRoute,
+  } as any)
+const StaffSettingsNotificationsIndexRoute =
+  StaffSettingsNotificationsIndexRouteImport.update({
     id: '/notifications/',
     path: '/notifications/',
-    getParentRoute: () => HrSettingsRouteRoute,
+    getParentRoute: () => StaffSettingsRouteRoute,
   } as any)
 const AuthRegisterOnBoardingIndexRoute =
   AuthRegisterOnBoardingIndexRouteImport.update({
@@ -828,7 +830,7 @@ export interface FileRoutesByFullPath {
   '/admin/settings': typeof AdminSettingsRouteRouteWithChildren
   '/auth/register': typeof AuthRegisterRouteRouteWithChildren
   '/auth/verify': typeof AuthVerifyRouteRouteWithChildren
-  '/hr/settings': typeof HrSettingsRouteRouteWithChildren
+  '/staff/settings': typeof StaffSettingsRouteRouteWithChildren
   '/tenant/settings': typeof TenantSettingsRouteRouteWithChildren
   '/test/home': typeof TestHomeRoute
   '/admin/': typeof AdminIndexRoute
@@ -869,11 +871,11 @@ export interface FileRoutesByFullPath {
   '/hr/recruitment': typeof HrRecruitmentIndexRoute
   '/hr/reports': typeof HrReportsIndexRoute
   '/hr/self-service': typeof HrSelfServiceIndexRoute
-  '/hr/settings/': typeof HrSettingsIndexRoute
   '/hr/staffs': typeof HrStaffsIndexRoute
   '/hr/tasks': typeof HrTasksIndexRoute
   '/hr/training': typeof HrTrainingIndexRoute
   '/staff/attendance': typeof StaffAttendanceIndexRoute
+  '/staff/settings/': typeof StaffSettingsIndexRoute
   '/tenant/notifications': typeof TenantNotificationsIndexRoute
   '/tenant/orders': typeof TenantOrdersIndexRoute
   '/tenant/products': typeof TenantProductsIndexRoute
@@ -903,10 +905,10 @@ export interface FileRoutesByFullPath {
   '/admin/users/add': typeof AdminUsersAddIndexRoute
   '/admin/users/roles': typeof AdminUsersRolesIndexRoute
   '/auth/register/on-boarding': typeof AuthRegisterOnBoardingIndexRoute
-  '/hr/settings/notifications': typeof HrSettingsNotificationsIndexRoute
-  '/hr/settings/profile': typeof HrSettingsProfileIndexRoute
-  '/hr/settings/security': typeof HrSettingsSecurityIndexRoute
-  '/hr/settings/theme': typeof HrSettingsThemeIndexRoute
+  '/staff/settings/notifications': typeof StaffSettingsNotificationsIndexRoute
+  '/staff/settings/profile': typeof StaffSettingsProfileIndexRoute
+  '/staff/settings/security': typeof StaffSettingsSecurityIndexRoute
+  '/staff/settings/theme': typeof StaffSettingsThemeIndexRoute
   '/tenant/accounts/Invoices': typeof TenantAccountsInvoicesIndexRoute
   '/tenant/accounts/analysis': typeof TenantAccountsAnalysisIndexRoute
   '/tenant/accounts/income-expenses': typeof TenantAccountsIncomeExpensesIndexRoute
@@ -987,11 +989,11 @@ export interface FileRoutesByTo {
   '/hr/recruitment': typeof HrRecruitmentIndexRoute
   '/hr/reports': typeof HrReportsIndexRoute
   '/hr/self-service': typeof HrSelfServiceIndexRoute
-  '/hr/settings': typeof HrSettingsIndexRoute
   '/hr/staffs': typeof HrStaffsIndexRoute
   '/hr/tasks': typeof HrTasksIndexRoute
   '/hr/training': typeof HrTrainingIndexRoute
   '/staff/attendance': typeof StaffAttendanceIndexRoute
+  '/staff/settings': typeof StaffSettingsIndexRoute
   '/tenant/notifications': typeof TenantNotificationsIndexRoute
   '/tenant/orders': typeof TenantOrdersIndexRoute
   '/tenant/products': typeof TenantProductsIndexRoute
@@ -1021,10 +1023,10 @@ export interface FileRoutesByTo {
   '/admin/users/add': typeof AdminUsersAddIndexRoute
   '/admin/users/roles': typeof AdminUsersRolesIndexRoute
   '/auth/register/on-boarding': typeof AuthRegisterOnBoardingIndexRoute
-  '/hr/settings/notifications': typeof HrSettingsNotificationsIndexRoute
-  '/hr/settings/profile': typeof HrSettingsProfileIndexRoute
-  '/hr/settings/security': typeof HrSettingsSecurityIndexRoute
-  '/hr/settings/theme': typeof HrSettingsThemeIndexRoute
+  '/staff/settings/notifications': typeof StaffSettingsNotificationsIndexRoute
+  '/staff/settings/profile': typeof StaffSettingsProfileIndexRoute
+  '/staff/settings/security': typeof StaffSettingsSecurityIndexRoute
+  '/staff/settings/theme': typeof StaffSettingsThemeIndexRoute
   '/tenant/accounts/Invoices': typeof TenantAccountsInvoicesIndexRoute
   '/tenant/accounts/analysis': typeof TenantAccountsAnalysisIndexRoute
   '/tenant/accounts/income-expenses': typeof TenantAccountsIncomeExpensesIndexRoute
@@ -1075,7 +1077,7 @@ export interface FileRoutesById {
   '/admin/settings': typeof AdminSettingsRouteRouteWithChildren
   '/auth/register': typeof AuthRegisterRouteRouteWithChildren
   '/auth/verify': typeof AuthVerifyRouteRouteWithChildren
-  '/hr/settings': typeof HrSettingsRouteRouteWithChildren
+  '/staff/settings': typeof StaffSettingsRouteRouteWithChildren
   '/tenant/settings': typeof TenantSettingsRouteRouteWithChildren
   '/test/home': typeof TestHomeRoute
   '/admin/': typeof AdminIndexRoute
@@ -1116,11 +1118,11 @@ export interface FileRoutesById {
   '/hr/recruitment/': typeof HrRecruitmentIndexRoute
   '/hr/reports/': typeof HrReportsIndexRoute
   '/hr/self-service/': typeof HrSelfServiceIndexRoute
-  '/hr/settings/': typeof HrSettingsIndexRoute
   '/hr/staffs/': typeof HrStaffsIndexRoute
   '/hr/tasks/': typeof HrTasksIndexRoute
   '/hr/training/': typeof HrTrainingIndexRoute
   '/staff/attendance/': typeof StaffAttendanceIndexRoute
+  '/staff/settings/': typeof StaffSettingsIndexRoute
   '/tenant/notifications/': typeof TenantNotificationsIndexRoute
   '/tenant/orders/': typeof TenantOrdersIndexRoute
   '/tenant/products/': typeof TenantProductsIndexRoute
@@ -1150,10 +1152,10 @@ export interface FileRoutesById {
   '/admin/users/add/': typeof AdminUsersAddIndexRoute
   '/admin/users/roles/': typeof AdminUsersRolesIndexRoute
   '/auth/register/on-boarding/': typeof AuthRegisterOnBoardingIndexRoute
-  '/hr/settings/notifications/': typeof HrSettingsNotificationsIndexRoute
-  '/hr/settings/profile/': typeof HrSettingsProfileIndexRoute
-  '/hr/settings/security/': typeof HrSettingsSecurityIndexRoute
-  '/hr/settings/theme/': typeof HrSettingsThemeIndexRoute
+  '/staff/settings/notifications/': typeof StaffSettingsNotificationsIndexRoute
+  '/staff/settings/profile/': typeof StaffSettingsProfileIndexRoute
+  '/staff/settings/security/': typeof StaffSettingsSecurityIndexRoute
+  '/staff/settings/theme/': typeof StaffSettingsThemeIndexRoute
   '/tenant/accounts/Invoices/': typeof TenantAccountsInvoicesIndexRoute
   '/tenant/accounts/analysis/': typeof TenantAccountsAnalysisIndexRoute
   '/tenant/accounts/income-expenses/': typeof TenantAccountsIncomeExpensesIndexRoute
@@ -1205,7 +1207,7 @@ export interface FileRouteTypes {
     | '/admin/settings'
     | '/auth/register'
     | '/auth/verify'
-    | '/hr/settings'
+    | '/staff/settings'
     | '/tenant/settings'
     | '/test/home'
     | '/admin/'
@@ -1246,11 +1248,11 @@ export interface FileRouteTypes {
     | '/hr/recruitment'
     | '/hr/reports'
     | '/hr/self-service'
-    | '/hr/settings/'
     | '/hr/staffs'
     | '/hr/tasks'
     | '/hr/training'
     | '/staff/attendance'
+    | '/staff/settings/'
     | '/tenant/notifications'
     | '/tenant/orders'
     | '/tenant/products'
@@ -1280,10 +1282,10 @@ export interface FileRouteTypes {
     | '/admin/users/add'
     | '/admin/users/roles'
     | '/auth/register/on-boarding'
-    | '/hr/settings/notifications'
-    | '/hr/settings/profile'
-    | '/hr/settings/security'
-    | '/hr/settings/theme'
+    | '/staff/settings/notifications'
+    | '/staff/settings/profile'
+    | '/staff/settings/security'
+    | '/staff/settings/theme'
     | '/tenant/accounts/Invoices'
     | '/tenant/accounts/analysis'
     | '/tenant/accounts/income-expenses'
@@ -1364,11 +1366,11 @@ export interface FileRouteTypes {
     | '/hr/recruitment'
     | '/hr/reports'
     | '/hr/self-service'
-    | '/hr/settings'
     | '/hr/staffs'
     | '/hr/tasks'
     | '/hr/training'
     | '/staff/attendance'
+    | '/staff/settings'
     | '/tenant/notifications'
     | '/tenant/orders'
     | '/tenant/products'
@@ -1398,10 +1400,10 @@ export interface FileRouteTypes {
     | '/admin/users/add'
     | '/admin/users/roles'
     | '/auth/register/on-boarding'
-    | '/hr/settings/notifications'
-    | '/hr/settings/profile'
-    | '/hr/settings/security'
-    | '/hr/settings/theme'
+    | '/staff/settings/notifications'
+    | '/staff/settings/profile'
+    | '/staff/settings/security'
+    | '/staff/settings/theme'
     | '/tenant/accounts/Invoices'
     | '/tenant/accounts/analysis'
     | '/tenant/accounts/income-expenses'
@@ -1451,7 +1453,7 @@ export interface FileRouteTypes {
     | '/admin/settings'
     | '/auth/register'
     | '/auth/verify'
-    | '/hr/settings'
+    | '/staff/settings'
     | '/tenant/settings'
     | '/test/home'
     | '/admin/'
@@ -1492,11 +1494,11 @@ export interface FileRouteTypes {
     | '/hr/recruitment/'
     | '/hr/reports/'
     | '/hr/self-service/'
-    | '/hr/settings/'
     | '/hr/staffs/'
     | '/hr/tasks/'
     | '/hr/training/'
     | '/staff/attendance/'
+    | '/staff/settings/'
     | '/tenant/notifications/'
     | '/tenant/orders/'
     | '/tenant/products/'
@@ -1526,10 +1528,10 @@ export interface FileRouteTypes {
     | '/admin/users/add/'
     | '/admin/users/roles/'
     | '/auth/register/on-boarding/'
-    | '/hr/settings/notifications/'
-    | '/hr/settings/profile/'
-    | '/hr/settings/security/'
-    | '/hr/settings/theme/'
+    | '/staff/settings/notifications/'
+    | '/staff/settings/profile/'
+    | '/staff/settings/security/'
+    | '/staff/settings/theme/'
     | '/tenant/accounts/Invoices/'
     | '/tenant/accounts/analysis/'
     | '/tenant/accounts/income-expenses/'
@@ -1690,12 +1692,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TenantSettingsRouteRouteImport
       parentRoute: typeof TenantRouteRoute
     }
-    '/hr/settings': {
-      id: '/hr/settings'
+    '/staff/settings': {
+      id: '/staff/settings'
       path: '/settings'
-      fullPath: '/hr/settings'
-      preLoaderRoute: typeof HrSettingsRouteRouteImport
-      parentRoute: typeof HrRouteRoute
+      fullPath: '/staff/settings'
+      preLoaderRoute: typeof StaffSettingsRouteRouteImport
+      parentRoute: typeof StaffRouteRoute
     }
     '/auth/verify': {
       id: '/auth/verify'
@@ -1774,6 +1776,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TenantNotificationsIndexRouteImport
       parentRoute: typeof TenantRouteRoute
     }
+    '/staff/settings/': {
+      id: '/staff/settings/'
+      path: '/'
+      fullPath: '/staff/settings/'
+      preLoaderRoute: typeof StaffSettingsIndexRouteImport
+      parentRoute: typeof StaffSettingsRouteRoute
+    }
     '/staff/attendance/': {
       id: '/staff/attendance/'
       path: '/attendance'
@@ -1801,13 +1810,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/hr/staffs'
       preLoaderRoute: typeof HrStaffsIndexRouteImport
       parentRoute: typeof HrRouteRoute
-    }
-    '/hr/settings/': {
-      id: '/hr/settings/'
-      path: '/'
-      fullPath: '/hr/settings/'
-      preLoaderRoute: typeof HrSettingsIndexRouteImport
-      parentRoute: typeof HrSettingsRouteRoute
     }
     '/hr/self-service/': {
       id: '/hr/self-service/'
@@ -2166,33 +2168,33 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TenantAccountsInvoicesIndexRouteImport
       parentRoute: typeof TenantRouteRoute
     }
-    '/hr/settings/theme/': {
-      id: '/hr/settings/theme/'
+    '/staff/settings/theme/': {
+      id: '/staff/settings/theme/'
       path: '/theme'
-      fullPath: '/hr/settings/theme'
-      preLoaderRoute: typeof HrSettingsThemeIndexRouteImport
-      parentRoute: typeof HrSettingsRouteRoute
+      fullPath: '/staff/settings/theme'
+      preLoaderRoute: typeof StaffSettingsThemeIndexRouteImport
+      parentRoute: typeof StaffSettingsRouteRoute
     }
-    '/hr/settings/security/': {
-      id: '/hr/settings/security/'
+    '/staff/settings/security/': {
+      id: '/staff/settings/security/'
       path: '/security'
-      fullPath: '/hr/settings/security'
-      preLoaderRoute: typeof HrSettingsSecurityIndexRouteImport
-      parentRoute: typeof HrSettingsRouteRoute
+      fullPath: '/staff/settings/security'
+      preLoaderRoute: typeof StaffSettingsSecurityIndexRouteImport
+      parentRoute: typeof StaffSettingsRouteRoute
     }
-    '/hr/settings/profile/': {
-      id: '/hr/settings/profile/'
+    '/staff/settings/profile/': {
+      id: '/staff/settings/profile/'
       path: '/profile'
-      fullPath: '/hr/settings/profile'
-      preLoaderRoute: typeof HrSettingsProfileIndexRouteImport
-      parentRoute: typeof HrSettingsRouteRoute
+      fullPath: '/staff/settings/profile'
+      preLoaderRoute: typeof StaffSettingsProfileIndexRouteImport
+      parentRoute: typeof StaffSettingsRouteRoute
     }
-    '/hr/settings/notifications/': {
-      id: '/hr/settings/notifications/'
+    '/staff/settings/notifications/': {
+      id: '/staff/settings/notifications/'
       path: '/notifications'
-      fullPath: '/hr/settings/notifications'
-      preLoaderRoute: typeof HrSettingsNotificationsIndexRouteImport
-      parentRoute: typeof HrSettingsRouteRoute
+      fullPath: '/staff/settings/notifications'
+      preLoaderRoute: typeof StaffSettingsNotificationsIndexRouteImport
+      parentRoute: typeof StaffSettingsRouteRoute
     }
     '/auth/register/on-boarding/': {
       id: '/auth/register/on-boarding/'
@@ -2571,28 +2573,7 @@ const AdminRouteRouteWithChildren = AdminRouteRoute._addFileChildren(
   AdminRouteRouteChildren,
 )
 
-interface HrSettingsRouteRouteChildren {
-  HrSettingsIndexRoute: typeof HrSettingsIndexRoute
-  HrSettingsNotificationsIndexRoute: typeof HrSettingsNotificationsIndexRoute
-  HrSettingsProfileIndexRoute: typeof HrSettingsProfileIndexRoute
-  HrSettingsSecurityIndexRoute: typeof HrSettingsSecurityIndexRoute
-  HrSettingsThemeIndexRoute: typeof HrSettingsThemeIndexRoute
-}
-
-const HrSettingsRouteRouteChildren: HrSettingsRouteRouteChildren = {
-  HrSettingsIndexRoute: HrSettingsIndexRoute,
-  HrSettingsNotificationsIndexRoute: HrSettingsNotificationsIndexRoute,
-  HrSettingsProfileIndexRoute: HrSettingsProfileIndexRoute,
-  HrSettingsSecurityIndexRoute: HrSettingsSecurityIndexRoute,
-  HrSettingsThemeIndexRoute: HrSettingsThemeIndexRoute,
-}
-
-const HrSettingsRouteRouteWithChildren = HrSettingsRouteRoute._addFileChildren(
-  HrSettingsRouteRouteChildren,
-)
-
 interface HrRouteRouteChildren {
-  HrSettingsRouteRoute: typeof HrSettingsRouteRouteWithChildren
   HrIndexRoute: typeof HrIndexRoute
   HrOnboardingEmployeeIdRoute: typeof HrOnboardingEmployeeIdRoute
   HrReportsSlugRoute: typeof HrReportsSlugRoute
@@ -2614,7 +2595,6 @@ interface HrRouteRouteChildren {
 }
 
 const HrRouteRouteChildren: HrRouteRouteChildren = {
-  HrSettingsRouteRoute: HrSettingsRouteRouteWithChildren,
   HrIndexRoute: HrIndexRoute,
   HrOnboardingEmployeeIdRoute: HrOnboardingEmployeeIdRoute,
   HrReportsSlugRoute: HrReportsSlugRoute,
@@ -2638,12 +2618,33 @@ const HrRouteRouteChildren: HrRouteRouteChildren = {
 const HrRouteRouteWithChildren =
   HrRouteRoute._addFileChildren(HrRouteRouteChildren)
 
+interface StaffSettingsRouteRouteChildren {
+  StaffSettingsIndexRoute: typeof StaffSettingsIndexRoute
+  StaffSettingsNotificationsIndexRoute: typeof StaffSettingsNotificationsIndexRoute
+  StaffSettingsProfileIndexRoute: typeof StaffSettingsProfileIndexRoute
+  StaffSettingsSecurityIndexRoute: typeof StaffSettingsSecurityIndexRoute
+  StaffSettingsThemeIndexRoute: typeof StaffSettingsThemeIndexRoute
+}
+
+const StaffSettingsRouteRouteChildren: StaffSettingsRouteRouteChildren = {
+  StaffSettingsIndexRoute: StaffSettingsIndexRoute,
+  StaffSettingsNotificationsIndexRoute: StaffSettingsNotificationsIndexRoute,
+  StaffSettingsProfileIndexRoute: StaffSettingsProfileIndexRoute,
+  StaffSettingsSecurityIndexRoute: StaffSettingsSecurityIndexRoute,
+  StaffSettingsThemeIndexRoute: StaffSettingsThemeIndexRoute,
+}
+
+const StaffSettingsRouteRouteWithChildren =
+  StaffSettingsRouteRoute._addFileChildren(StaffSettingsRouteRouteChildren)
+
 interface StaffRouteRouteChildren {
+  StaffSettingsRouteRoute: typeof StaffSettingsRouteRouteWithChildren
   StaffIndexRoute: typeof StaffIndexRoute
   StaffAttendanceIndexRoute: typeof StaffAttendanceIndexRoute
 }
 
 const StaffRouteRouteChildren: StaffRouteRouteChildren = {
+  StaffSettingsRouteRoute: StaffSettingsRouteRouteWithChildren,
   StaffIndexRoute: StaffIndexRoute,
   StaffAttendanceIndexRoute: StaffAttendanceIndexRoute,
 }

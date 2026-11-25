@@ -2,7 +2,7 @@ import { useLocation } from "@tanstack/react-router";
 import { createFileRoute, Link, Outlet } from "@tanstack/react-router";
 import { Menu } from "lucide-react";
 
-export const Route = createFileRoute("/hr/settings")({
+export const Route = createFileRoute("/staff/settings")({
   component: RouteComponent,
 });
 
@@ -12,10 +12,10 @@ interface Links {
 }
 [];
 const links: Links[] = [
-  { path: "/hr/settings", name: "Profile" },
-  { path: "/hr/settings/theme", name: "Theme" },
-  { path: "/hr/settings/security", name: "Security" },
-  { path: "/hr/settings/notifications", name: "Notifications" },
+  { path: "/staff/settings", name: "Profile" },
+  { path: "/staff/settings/theme", name: "Theme" },
+  { path: "/staff/settings/security", name: "Security" },
+  { path: "/staff/settings/notifications", name: "Notifications" },
 ];
 
 function RouteComponent() {

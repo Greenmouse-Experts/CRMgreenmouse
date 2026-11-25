@@ -6,7 +6,7 @@ import {
   saveNotificationPreferences,
 } from "@/api/notificationPreferences";
 
-export const Route = createFileRoute("/hr/settings/notifications/")({
+export const Route = createFileRoute("/staff/settings/notifications/")({
   component: RouteComponent,
 });
 
