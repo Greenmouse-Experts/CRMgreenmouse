@@ -11,7 +11,10 @@ export const extract_message = (error: unknown): string => {
   };
 
   const responseData = err.response?.data as
-    | { message?: string | string[] }
+    | {
+        message?: string | string[];
+        missingFields?: Array<{ field: string; label: string }>;
+      }
     | string
     | undefined;
   const msg =
@@ -22,6 +25,21 @@ export const extract_message = (error: unknown): string => {
     return msg.filter(Boolean).join(", ");
   }
   if (typeof msg === "string" && msg.trim()) {
+    // Check for missingFields and append them
+    if (
+      typeof responseData === "object" &&
+      responseData !== null &&
+      Array.isArray(responseData.missingFields) &&
+      responseData.missingFields.length > 0
+    ) {
+      const fields = responseData.missingFields
+        .map((f) => f.label || f.field)
+        .filter(Boolean)
+        .join(", ");
+      if (fields) {
+        return `${msg} Missing fields: ${fields}`;
+      }
+    }
     return msg;
   }
   if (typeof responseData === "string" && responseData.trim()) {
