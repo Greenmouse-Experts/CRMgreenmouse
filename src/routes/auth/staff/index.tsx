@@ -52,6 +52,11 @@ function RouteComponent() {
       if (roleName === "hr" || userType.includes("hr")) {
         return nav({ to: "/hr" });
       }
+      if (roleName === "staff" || userType.includes("staff")) {
+        return nav({
+          to: "/staff",
+        });
+      }
       nav({ to: "/tenant" });
     },
     onError: (err: unknown) => {

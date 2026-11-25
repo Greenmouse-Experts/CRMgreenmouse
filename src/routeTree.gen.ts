@@ -11,11 +11,13 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TestRouteRouteImport } from './routes/test/route'
 import { Route as TenantRouteRouteImport } from './routes/tenant/route'
+import { Route as StaffRouteRouteImport } from './routes/staff/route'
 import { Route as HrRouteRouteImport } from './routes/hr/route'
 import { Route as AdminRouteRouteImport } from './routes/admin/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as TestIndexRouteImport } from './routes/test/index'
 import { Route as TenantIndexRouteImport } from './routes/tenant/index'
+import { Route as StaffIndexRouteImport } from './routes/staff/index'
 import { Route as HrIndexRouteImport } from './routes/hr/index'
 import { Route as HomeIndexRouteImport } from './routes/home/index'
 import { Route as AdminIndexRouteImport } from './routes/admin/index'
@@ -33,6 +35,7 @@ import { Route as TenantSettingsIndexRouteImport } from './routes/tenant/setting
 import { Route as TenantProductsIndexRouteImport } from './routes/tenant/products/index'
 import { Route as TenantOrdersIndexRouteImport } from './routes/tenant/orders/index'
 import { Route as TenantNotificationsIndexRouteImport } from './routes/tenant/notifications.index'
+import { Route as StaffAttendanceIndexRouteImport } from './routes/staff/attendance/index'
 import { Route as HrTrainingIndexRouteImport } from './routes/hr/training/index'
 import { Route as HrTasksIndexRouteImport } from './routes/hr/tasks/index'
 import { Route as HrStaffsIndexRouteImport } from './routes/hr/staffs/index'
@@ -143,6 +146,11 @@ const TenantRouteRoute = TenantRouteRouteImport.update({
   path: '/tenant',
   getParentRoute: () => rootRouteImport,
 } as any)
+const StaffRouteRoute = StaffRouteRouteImport.update({
+  id: '/staff',
+  path: '/staff',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const HrRouteRoute = HrRouteRouteImport.update({
   id: '/hr',
   path: '/hr',
@@ -167,6 +175,11 @@ const TenantIndexRoute = TenantIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => TenantRouteRoute,
+} as any)
+const StaffIndexRoute = StaffIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => StaffRouteRoute,
 } as any)
 const HrIndexRoute = HrIndexRouteImport.update({
   id: '/',
@@ -254,6 +267,11 @@ const TenantNotificationsIndexRoute =
     path: '/notifications/',
     getParentRoute: () => TenantRouteRoute,
   } as any)
+const StaffAttendanceIndexRoute = StaffAttendanceIndexRouteImport.update({
+  id: '/attendance/',
+  path: '/attendance/',
+  getParentRoute: () => StaffRouteRoute,
+} as any)
 const HrTrainingIndexRoute = HrTrainingIndexRouteImport.update({
   id: '/training/',
   path: '/training/',
@@ -804,6 +822,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteRouteWithChildren
   '/hr': typeof HrRouteRouteWithChildren
+  '/staff': typeof StaffRouteRouteWithChildren
   '/tenant': typeof TenantRouteRouteWithChildren
   '/test': typeof TestRouteRouteWithChildren
   '/admin/settings': typeof AdminSettingsRouteRouteWithChildren
@@ -815,6 +834,7 @@ export interface FileRoutesByFullPath {
   '/admin/': typeof AdminIndexRoute
   '/home': typeof HomeIndexRoute
   '/hr/': typeof HrIndexRoute
+  '/staff/': typeof StaffIndexRoute
   '/tenant/': typeof TenantIndexRoute
   '/test/': typeof TestIndexRoute
   '/auth/forgot-password/new-password': typeof AuthForgotPasswordNewPasswordRoute
@@ -853,6 +873,7 @@ export interface FileRoutesByFullPath {
   '/hr/staffs': typeof HrStaffsIndexRoute
   '/hr/tasks': typeof HrTasksIndexRoute
   '/hr/training': typeof HrTrainingIndexRoute
+  '/staff/attendance': typeof StaffAttendanceIndexRoute
   '/tenant/notifications': typeof TenantNotificationsIndexRoute
   '/tenant/orders': typeof TenantOrdersIndexRoute
   '/tenant/products': typeof TenantProductsIndexRoute
@@ -931,6 +952,7 @@ export interface FileRoutesByTo {
   '/admin': typeof AdminIndexRoute
   '/home': typeof HomeIndexRoute
   '/hr': typeof HrIndexRoute
+  '/staff': typeof StaffIndexRoute
   '/tenant': typeof TenantIndexRoute
   '/test': typeof TestIndexRoute
   '/auth/forgot-password/new-password': typeof AuthForgotPasswordNewPasswordRoute
@@ -969,6 +991,7 @@ export interface FileRoutesByTo {
   '/hr/staffs': typeof HrStaffsIndexRoute
   '/hr/tasks': typeof HrTasksIndexRoute
   '/hr/training': typeof HrTrainingIndexRoute
+  '/staff/attendance': typeof StaffAttendanceIndexRoute
   '/tenant/notifications': typeof TenantNotificationsIndexRoute
   '/tenant/orders': typeof TenantOrdersIndexRoute
   '/tenant/products': typeof TenantProductsIndexRoute
@@ -1046,6 +1069,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteRouteWithChildren
   '/hr': typeof HrRouteRouteWithChildren
+  '/staff': typeof StaffRouteRouteWithChildren
   '/tenant': typeof TenantRouteRouteWithChildren
   '/test': typeof TestRouteRouteWithChildren
   '/admin/settings': typeof AdminSettingsRouteRouteWithChildren
@@ -1057,6 +1081,7 @@ export interface FileRoutesById {
   '/admin/': typeof AdminIndexRoute
   '/home/': typeof HomeIndexRoute
   '/hr/': typeof HrIndexRoute
+  '/staff/': typeof StaffIndexRoute
   '/tenant/': typeof TenantIndexRoute
   '/test/': typeof TestIndexRoute
   '/auth/forgot-password/new-password': typeof AuthForgotPasswordNewPasswordRoute
@@ -1095,6 +1120,7 @@ export interface FileRoutesById {
   '/hr/staffs/': typeof HrStaffsIndexRoute
   '/hr/tasks/': typeof HrTasksIndexRoute
   '/hr/training/': typeof HrTrainingIndexRoute
+  '/staff/attendance/': typeof StaffAttendanceIndexRoute
   '/tenant/notifications/': typeof TenantNotificationsIndexRoute
   '/tenant/orders/': typeof TenantOrdersIndexRoute
   '/tenant/products/': typeof TenantProductsIndexRoute
@@ -1173,6 +1199,7 @@ export interface FileRouteTypes {
     | '/'
     | '/admin'
     | '/hr'
+    | '/staff'
     | '/tenant'
     | '/test'
     | '/admin/settings'
@@ -1184,6 +1211,7 @@ export interface FileRouteTypes {
     | '/admin/'
     | '/home'
     | '/hr/'
+    | '/staff/'
     | '/tenant/'
     | '/test/'
     | '/auth/forgot-password/new-password'
@@ -1222,6 +1250,7 @@ export interface FileRouteTypes {
     | '/hr/staffs'
     | '/hr/tasks'
     | '/hr/training'
+    | '/staff/attendance'
     | '/tenant/notifications'
     | '/tenant/orders'
     | '/tenant/products'
@@ -1300,6 +1329,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/home'
     | '/hr'
+    | '/staff'
     | '/tenant'
     | '/test'
     | '/auth/forgot-password/new-password'
@@ -1338,6 +1368,7 @@ export interface FileRouteTypes {
     | '/hr/staffs'
     | '/hr/tasks'
     | '/hr/training'
+    | '/staff/attendance'
     | '/tenant/notifications'
     | '/tenant/orders'
     | '/tenant/products'
@@ -1414,6 +1445,7 @@ export interface FileRouteTypes {
     | '/'
     | '/admin'
     | '/hr'
+    | '/staff'
     | '/tenant'
     | '/test'
     | '/admin/settings'
@@ -1425,6 +1457,7 @@ export interface FileRouteTypes {
     | '/admin/'
     | '/home/'
     | '/hr/'
+    | '/staff/'
     | '/tenant/'
     | '/test/'
     | '/auth/forgot-password/new-password'
@@ -1463,6 +1496,7 @@ export interface FileRouteTypes {
     | '/hr/staffs/'
     | '/hr/tasks/'
     | '/hr/training/'
+    | '/staff/attendance/'
     | '/tenant/notifications/'
     | '/tenant/orders/'
     | '/tenant/products/'
@@ -1540,6 +1574,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AdminRouteRoute: typeof AdminRouteRouteWithChildren
   HrRouteRoute: typeof HrRouteRouteWithChildren
+  StaffRouteRoute: typeof StaffRouteRouteWithChildren
   TenantRouteRoute: typeof TenantRouteRouteWithChildren
   TestRouteRoute: typeof TestRouteRouteWithChildren
   AuthRegisterRouteRoute: typeof AuthRegisterRouteRouteWithChildren
@@ -1569,6 +1604,13 @@ declare module '@tanstack/react-router' {
       path: '/tenant'
       fullPath: '/tenant'
       preLoaderRoute: typeof TenantRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/staff': {
+      id: '/staff'
+      path: '/staff'
+      fullPath: '/staff'
+      preLoaderRoute: typeof StaffRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/hr': {
@@ -1605,6 +1647,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/tenant/'
       preLoaderRoute: typeof TenantIndexRouteImport
       parentRoute: typeof TenantRouteRoute
+    }
+    '/staff/': {
+      id: '/staff/'
+      path: '/'
+      fullPath: '/staff/'
+      preLoaderRoute: typeof StaffIndexRouteImport
+      parentRoute: typeof StaffRouteRoute
     }
     '/hr/': {
       id: '/hr/'
@@ -1724,6 +1773,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/tenant/notifications'
       preLoaderRoute: typeof TenantNotificationsIndexRouteImport
       parentRoute: typeof TenantRouteRoute
+    }
+    '/staff/attendance/': {
+      id: '/staff/attendance/'
+      path: '/attendance'
+      fullPath: '/staff/attendance'
+      preLoaderRoute: typeof StaffAttendanceIndexRouteImport
+      parentRoute: typeof StaffRouteRoute
     }
     '/hr/training/': {
       id: '/hr/training/'
@@ -2582,6 +2638,20 @@ const HrRouteRouteChildren: HrRouteRouteChildren = {
 const HrRouteRouteWithChildren =
   HrRouteRoute._addFileChildren(HrRouteRouteChildren)
 
+interface StaffRouteRouteChildren {
+  StaffIndexRoute: typeof StaffIndexRoute
+  StaffAttendanceIndexRoute: typeof StaffAttendanceIndexRoute
+}
+
+const StaffRouteRouteChildren: StaffRouteRouteChildren = {
+  StaffIndexRoute: StaffIndexRoute,
+  StaffAttendanceIndexRoute: StaffAttendanceIndexRoute,
+}
+
+const StaffRouteRouteWithChildren = StaffRouteRoute._addFileChildren(
+  StaffRouteRouteChildren,
+)
+
 interface TenantSettingsRouteRouteChildren {
   TenantSettingsIndexRoute: typeof TenantSettingsIndexRoute
   TenantSettingsNotificationsIndexRoute: typeof TenantSettingsNotificationsIndexRoute
@@ -2730,6 +2800,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRouteRoute: AdminRouteRouteWithChildren,
   HrRouteRoute: HrRouteRouteWithChildren,
+  StaffRouteRoute: StaffRouteRouteWithChildren,
   TenantRouteRoute: TenantRouteRouteWithChildren,
   TestRouteRoute: TestRouteRouteWithChildren,
   AuthRegisterRouteRoute: AuthRegisterRouteRouteWithChildren,

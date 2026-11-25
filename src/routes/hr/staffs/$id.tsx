@@ -97,7 +97,7 @@ export interface EmployeeFormData {
   probationEndDate?: string;
   contractType?: string;
   contractEndDate?: string;
-  needsSystemAccount?: boolean;
+  // needsSystemAccount?: boolean;
 
   // Emergency contact
   emergencyContactName?: string;
@@ -238,7 +238,7 @@ function StaffDetailPage() {
       probationEndDate: "",
       contractType: "Permanent",
       contractEndDate: "",
-      needsSystemAccount: true,
+      // needsSystemAccount: true,
       emergencyContactName: "",
       emergencyContactRelationship: "",
       emergencyContactPhone: "",
@@ -328,7 +328,7 @@ function StaffDetailPage() {
         contractEndDate: emp.contractEndDate
           ? emp.contractEndDate.slice(0, 10)
           : "",
-        needsSystemAccount: emp.needsSystemAccount !== false,
+        // needsSystemAccount: emp.needsSystemAccount !== false,
         emergencyContactName: emp.emergencyContactName ?? "",
         emergencyContactRelationship: emp.emergencyContactRelationship ?? "",
         emergencyContactPhone: emp.emergencyContactPhone ?? "",
@@ -476,7 +476,7 @@ function StaffDetailPage() {
           : undefined,
         contractType: values.contractType || undefined,
         contractEndDate: values.contractEndDate || undefined,
-        needsSystemAccount: Boolean(values.needsSystemAccount),
+        // needsSystemAccount: Boolean(values.needsSystemAccount),
         emergencyContactName: values.emergencyContactName?.trim() || undefined,
         emergencyContactRelationship:
           values.emergencyContactRelationship?.trim() || undefined,
@@ -742,7 +742,9 @@ function StaffDetailPage() {
                       <Briefcase className="size-3.5 text-primary" />
                       {emp.jobTitle ||
                         (typeof emp.position === "object"
-                          ? (emp.position?.name ?? emp.position?.title ?? "Staff")
+                          ? (emp.position?.name ??
+                            emp.position?.title ??
+                            "Staff")
                           : (emp.positionName ?? emp.position ?? "Staff"))}
                     </span>
                     <span className="flex items-center gap-1.5 font-medium">
@@ -1608,7 +1610,7 @@ function StaffDetailPage() {
                       </div>
                     )}
 
-                    <label className="flex items-center gap-3 cursor-pointer">
+                    {/*<label className="flex items-center gap-3 cursor-pointer">
                       <input
                         type="checkbox"
                         className="checkbox checkbox-primary checkbox-sm"
@@ -1617,7 +1619,7 @@ function StaffDetailPage() {
                       <span className=" font-medium text-base-content">
                         Create CRM login account with this email address
                       </span>
-                    </label>
+                    </label>*/}
                   </div>
                 </div>
               </div>
