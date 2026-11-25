@@ -6,7 +6,7 @@ export const Route = createFileRoute("/staff/settings/")({
   loader: () => {
     return redirect({
       to:
-        get_user_value()?.user.userType === "staff"
+        get_user_value()?.user.role?.name === "staff"
           ? "/staff/settings/notifications"
           : "/staff/settings/profile",
     });
