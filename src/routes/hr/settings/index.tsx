@@ -5,10 +5,7 @@ export const Route = createFileRoute("/hr/settings/")({
   component: RouteComponent,
   loader: () => {
     return redirect({
-      to:
-        get_user_value()?.user.role?.name === "hr"
-          ? "/hr/settings/notifications"
-          : "/hr/settings/profile",
+      to: "/hr/settings/profile",
     });
   },
 });
