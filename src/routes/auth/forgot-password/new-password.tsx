@@ -9,8 +9,13 @@ import AuthLayout from "../-components/AuthLayout";
 
 export const Route = createFileRoute("/auth/forgot-password/new-password")({
   component: RouteComponent,
-  validateSearch: (search: { email?: string }): { email: string } => {
-    return { email: search.email ?? "" };
+  validateSearch: (
+    search: Record<string, unknown>,
+  ): { email: string; type?: "tenant" | "staff" } => {
+    return {
+      email: typeof search.email === "string" ? search.email : "",
+      type: search.type === "staff" ? "staff" : undefined,
+    };
   },
 });
 
@@ -21,7 +26,8 @@ interface NewPasswordProps {
 }
 
 function RouteComponent() {
-  const { email } = Route.useSearch();
+  const { email, type } = Route.useSearch();
+  const isStaff = type === "staff";
   const nav = useNavigate();
   const form = useForm<NewPasswordProps>({
     defaultValues: {
@@ -34,13 +40,18 @@ function RouteComponent() {
   const { mutate, isPending } = useMutation({
     mutationFn: (data: NewPasswordProps) =>
       apiClient
-        .post("/tenant/auth/reset-password", data)
+        .post(
+          isStaff
+            ? "/staff/auth/reset-password"
+            : "/tenant/auth/reset-password",
+          data,
+        )
         .then((res) => res.data),
     onSuccess: () => {
       toast.success(
         "Password reset successful. Please login with your new password.",
       );
-      nav({ to: "/auth/login" });
+      nav({ to: isStaff ? "/auth/staff" : "/auth/login" });
     },
     onError: (err: any) => {
       const message =
@@ -52,6 +63,7 @@ function RouteComponent() {
   });
 
   const onSubmit = (data: NewPasswordProps) => mutate(data);
+  const signInRoute = isStaff ? "/auth/staff" : "/auth/login";
 
   return (
     <AuthLayout
@@ -62,7 +74,7 @@ function RouteComponent() {
         <p className="text-sm text-base-content/70">
           Remembered it?{" "}
           <Link
-            to="/auth/login"
+            to={signInRoute}
             className="text-primary font-semibold hover:underline"
           >
             Sign in
@@ -111,7 +123,10 @@ function RouteComponent() {
           Didn&apos;t receive a code?{" "}
           <Link
             to="/auth/forgot-password"
-            search={{ email }}
+            search={{
+              email,
+              ...(isStaff ? { type: "staff" as const } : {}),
+            }}
             className="text-primary font-semibold hover:underline"
           >
             Resend OTP

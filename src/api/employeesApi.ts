@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import apiClient from "./simpleApi";
 import { extract_message } from "@/helpers/errors";
-import { get_user_value } from "@/store/authStore";
+import { get_user_value, set_user_value } from "@/store/authStore";
 
 /* -------------------------------------------------------------------------- */
 /* Types                                                                       */
@@ -17,8 +17,8 @@ export interface EmployeeRecord {
   phone?: string;
   employeeNumber?: string;
   lifecycleStatus?: string;
+  employmentStatus?: string;
   status?: string;
-  // employmentStatus?: string;
   employmentType?: string;
   employeeType?: string;
   startDate?: string;
@@ -33,6 +33,10 @@ export interface EmployeeRecord {
   emergencyContactName?: string;
   emergencyContactRelationship?: string;
   emergencyContactPhone?: string;
+  photoUrl?: string | null;
+  profilePic?: string | null;
+  avatar?: string | null;
+  photo?: string | null;
   createdAt?: string;
   departmentId?: string;
   positionId?: string;
@@ -51,6 +55,11 @@ export interface EmployeeRecord {
   needsSystemAccount?: boolean;
   isDraft?: boolean;
   staffId?: string;
+  tenant?: {
+    id?: string;
+    companyName?: string;
+    logo?: string | null;
+  };
   basicSalary?: number;
   payFrequency?: string;
   bankName?: string;
@@ -65,6 +74,14 @@ export interface EmployeeRecord {
     fileName?: string;
   }>;
   [key: string]: any;
+}
+
+export interface MyEmployeeProfileUpdate {
+  phone?: string;
+  residentialAddress?: string;
+  emergencyContactName?: string;
+  emergencyContactRelationship?: string;
+  emergencyContactPhone?: string;
 }
 
 export interface EmployeeOption {
@@ -219,6 +236,20 @@ const unwrapList = <T>(data: any, keys: string[]): T[] => {
 const unwrapOne = <T>(data: any): T =>
   (data?.data?.data ?? data?.data ?? data?.payload ?? data) as T;
 
+export const extractEmployeePhoto = (
+  record?: Partial<EmployeeRecord> | null,
+): string | undefined => {
+  const candidate =
+    record?.photoUrl ??
+    record?.profilePic ??
+    record?.avatar ??
+    record?.photo ??
+    record?.url;
+  return typeof candidate === "string" && candidate.trim()
+    ? candidate
+    : undefined;
+};
+
 const queryRoot = ["employees"] as const;
 
 const useInvalidateEmployees = () => {
@@ -229,6 +260,22 @@ const useInvalidateEmployees = () => {
 /* -------------------------------------------------------------------------- */
 /* Queries                                                                     */
 /* -------------------------------------------------------------------------- */
+
+export const useMyEmployeeProfile = (enabled = true) =>
+  useQuery<EmployeeRecord>({
+    queryKey: [...queryRoot, "me"],
+    queryFn: async () => {
+      const { data } = await apiClient.get<any>("/employees/me", authConfig());
+      const raw = unwrapOne<any>(data);
+      return (raw?.employee ?? raw) as EmployeeRecord;
+    },
+    enabled,
+    retry: (failureCount, error: any) => {
+      const status = error?.response?.status;
+      if (status === 401 || status === 403 || status === 404) return false;
+      return failureCount < 2;
+    },
+  });
 
 export const useEmployees = () =>
   useQuery<EmployeeRecord[]>({
@@ -365,6 +412,95 @@ export const useEmployeeProbationReviews = (id?: string) =>
 /* -------------------------------------------------------------------------- */
 /* Employee mutations                                                          */
 /* -------------------------------------------------------------------------- */
+
+export const useUpdateMyEmployeeProfile = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (updates: MyEmployeeProfileUpdate) => {
+      try {
+        const sanitized = Object.fromEntries(
+          Object.entries(updates).filter(([, value]) => value !== undefined),
+        ) as MyEmployeeProfileUpdate;
+        const { data } = await apiClient.patch<any>(
+          "/employees/me",
+          sanitized,
+          authConfig(),
+        );
+        const raw = unwrapOne<any>(data);
+        return (raw?.employee ?? raw) as EmployeeRecord;
+      } catch (error) {
+        throw extractError(error);
+      }
+    },
+    onSuccess: (profile, updates) => {
+      queryClient.setQueryData<EmployeeRecord>(
+        [...queryRoot, "me"],
+        (previous) =>
+          previous ? { ...previous, ...updates, ...profile } : profile,
+      );
+      const nextPhone = profile?.phone ?? updates.phone;
+      if (nextPhone !== undefined) {
+        const user = get_user_value();
+        if (user) {
+          set_user_value({
+            ...user,
+            user: {
+              ...user.user,
+              phoneNumber: nextPhone,
+            },
+          });
+        }
+      }
+      queryClient.invalidateQueries({ queryKey: [...queryRoot, "me"] });
+      queryClient.invalidateQueries({ queryKey: ["staff", "me"] });
+      queryClient.invalidateQueries({ queryKey: queryRoot });
+    },
+  });
+};
+
+export const useUploadMyEmployeePhoto = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (file: File | Blob) => {
+      try {
+        const formData = new FormData();
+        formData.append("file", file);
+        const { data } = await apiClient.post<any>(
+          "/employees/me/photo",
+          formData,
+          {
+            headers: {
+              ...authConfig().headers,
+              "Content-Type": "multipart/form-data",
+            },
+          },
+        );
+        const raw = unwrapOne<any>(data);
+        return (raw?.employee ?? raw) as EmployeeRecord;
+      } catch (error) {
+        throw extractError(error);
+      }
+    },
+    onSuccess: (result) => {
+      const photo = extractEmployeePhoto(result);
+      if (photo) {
+        queryClient.setQueryData<EmployeeRecord>(
+          [...queryRoot, "me"],
+          (previous) =>
+            previous
+              ? { ...previous, ...result, photoUrl: photo, profilePic: photo }
+              : result,
+        );
+        queryClient.setQueryData<any>(["staff", "me"], (previous: any) =>
+          previous ? { ...previous, profilePic: photo } : previous,
+        );
+      }
+      queryClient.invalidateQueries({ queryKey: [...queryRoot, "me"] });
+      queryClient.invalidateQueries({ queryKey: ["staff", "me"] });
+      queryClient.invalidateQueries({ queryKey: queryRoot });
+    },
+  });
+};
 
 export const useCreateEmployee = () => {
   const invalidate = useInvalidateEmployees();

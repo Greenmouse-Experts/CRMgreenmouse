@@ -110,6 +110,7 @@ function RouteComponent() {
           </label>
           <Link
             to="/auth/forgot-password"
+            search={{ type: "staff" }}
             className="text-primary font-medium hover:underline"
           >
             Forgot password?

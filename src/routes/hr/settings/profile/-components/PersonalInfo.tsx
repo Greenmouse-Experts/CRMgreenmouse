@@ -1,18 +1,35 @@
-import type { UseFormRegister, FieldErrors } from "react-hook-form";
-import type { StaffProfileUpdate } from "@/api/tenantApi";
+import type { FieldErrors, UseFormRegister } from "react-hook-form";
+import type { MyEmployeeProfileUpdate } from "@/api/employeesApi";
 import SimplePhoneInput from "@/components/inputs/SimplePhoneInput";
 
 interface Props {
+  firstName?: string;
+  middleName?: string;
+  lastName?: string;
   email: string;
-  roleName?: string;
-  register: UseFormRegister<StaffProfileUpdate>;
-  errors: FieldErrors<StaffProfileUpdate>;
+  dateOfBirth?: string;
+  gender?: string;
+  nationality?: string;
+  register: UseFormRegister<MyEmployeeProfileUpdate>;
+  errors: FieldErrors<MyEmployeeProfileUpdate>;
   disabled: boolean;
 }
 
+function formatDate(value?: string): string {
+  if (!value) return "";
+  const parsed = Date.parse(value);
+  if (Number.isNaN(parsed)) return value;
+  return new Date(parsed).toLocaleDateString();
+}
+
 export default function PersonalInfo({
+  firstName,
+  middleName,
+  lastName,
   email,
-  roleName,
+  dateOfBirth,
+  gender,
+  nationality,
   register,
   errors,
   disabled,
@@ -27,42 +44,36 @@ export default function PersonalInfo({
           Personal information
         </h2>
         <p className="text-sm text-base-content/80">
-          Update the details shown on your staff profile.
+          Update your contact details. Name and email are managed by HR.
         </p>
       </div>
       <div className="grid gap-4 md:grid-cols-2">
         <label className="block space-y-1.5">
           <span className="text-sm font-medium">First name</span>
           <input
-            className={`input input-bordered w-full ${errors.firstName ? "input-error" : ""}`}
-            disabled={disabled}
-            aria-invalid={!!errors.firstName}
-            {...register("firstName", {
-              required: "First name is required",
-            })}
+            className="input input-bordered w-full"
+            value={firstName ?? ""}
+            disabled
           />
-          {errors.firstName && (
-            <span className="text-sm text-error">
-              {errors.firstName.message}
-            </span>
-          )}
         </label>
         <label className="block space-y-1.5">
           <span className="text-sm font-medium">Last name</span>
           <input
-            className={`input input-bordered w-full ${errors.lastName ? "input-error" : ""}`}
-            disabled={disabled}
-            aria-invalid={!!errors.lastName}
-            {...register("lastName", {
-              required: "Last name is required",
-            })}
+            className="input input-bordered w-full"
+            value={lastName ?? ""}
+            disabled
           />
-          {errors.lastName && (
-            <span className="text-sm text-error">
-              {errors.lastName.message}
-            </span>
-          )}
         </label>
+        {middleName && (
+          <label className="block space-y-1.5">
+            <span className="text-sm font-medium">Middle name</span>
+            <input
+              className="input input-bordered w-full"
+              value={middleName}
+              disabled
+            />
+          </label>
+        )}
         <label className="block space-y-1.5">
           <span className="text-sm font-medium">Email address</span>
           <input
@@ -83,15 +94,50 @@ export default function PersonalInfo({
           label="Phone number"
           disabled={disabled}
           placeholder="+234 800 000 0000"
-          {...register("phoneNumber")}
-          error={errors.phoneNumber}
+          {...register("phone")}
+          error={errors.phone}
         />
-        {roleName && (
-          <label className="block space-y-1.5 md:col-span-2">
-            <span className="text-sm font-medium">Role</span>
+        <label className="block space-y-1.5 md:col-span-2">
+          <span className="text-sm font-medium">Residential address</span>
+          <input
+            className={`input input-bordered w-full ${errors.residentialAddress ? "input-error" : ""}`}
+            autoComplete="street-address"
+            placeholder="Enter your residential address"
+            disabled={disabled}
+            {...register("residentialAddress")}
+          />
+          {errors.residentialAddress && (
+            <span className="text-sm text-error">
+              {errors.residentialAddress.message}
+            </span>
+          )}
+        </label>
+        {dateOfBirth && (
+          <label className="block space-y-1.5">
+            <span className="text-sm font-medium">Date of birth</span>
+            <input
+              className="input input-bordered w-full"
+              value={formatDate(dateOfBirth)}
+              disabled
+            />
+          </label>
+        )}
+        {gender && (
+          <label className="block space-y-1.5">
+            <span className="text-sm font-medium">Gender</span>
             <input
               className="input input-bordered w-full capitalize"
-              value={roleName}
+              value={gender}
+              disabled
+            />
+          </label>
+        )}
+        {nationality && (
+          <label className="block space-y-1.5">
+            <span className="text-sm font-medium">Nationality</span>
+            <input
+              className="input input-bordered w-full"
+              value={nationality}
               disabled
             />
           </label>

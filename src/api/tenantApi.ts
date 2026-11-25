@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import apiClient from "./simpleApi";
+import { extract_message } from "@/helpers/errors";
 import { setProfileFavicon } from "@/utils/favicon";
 import {
   get_profile_value,
@@ -188,12 +189,16 @@ export const useTenantChangeEmail = () => {
   });
 };
 
-export const useTenantLoginActivity = (params?: {
-  page?: number;
-  limit?: number;
-}) => {
+export const useTenantLoginActivity = (
+  params?: {
+    page?: number;
+    limit?: number;
+  },
+  enabled = true,
+) => {
   return useQuery<LoginActivity[]>({
     queryKey: ["tenant", "login-activity", params],
+    enabled,
     queryFn: async () => {
       const { data } = await apiClient.get<any>("/tenant/login-activity", {
         params,
@@ -374,14 +379,42 @@ export type StaffProfileUpdate = Partial<
   Pick<StaffProfile, "firstName" | "lastName" | "phoneNumber" | "profilePic">
 >;
 
-export const useStaffMe = () => {
+export const useStaffMe = (enabled = true) => {
   return useQuery<StaffProfile>({
     queryKey: ["staff", "me"],
+    enabled,
     queryFn: async () => {
-      const { data } = await apiClient.get<StaffProfile | { data: StaffProfile }>(
-        "/staff/auth/me",
-      );
+      const { data } = await apiClient.get<
+        StaffProfile | { data: StaffProfile }
+      >("/staff/auth/me");
       return "data" in data && data.data ? data.data : (data as StaffProfile);
+    },
+    retry: (failureCount, error: any) => {
+      const status = error?.response?.status;
+      if (status === 401 || status === 403 || status === 404) return false;
+      return failureCount < 2;
+    },
+  });
+};
+
+export interface ChangeStaffPasswordPayload {
+  currentPassword: string;
+  newPassword: string;
+  confirmNewPassword: string;
+}
+
+export const useChangeStaffPassword = () => {
+  return useMutation({
+    mutationFn: async (payload: ChangeStaffPasswordPayload) => {
+      try {
+        const { data } = await apiClient.post<any>(
+          "/staff/auth/change-password",
+          payload,
+        );
+        return data?.data ?? data;
+      } catch (error) {
+        throw new Error(extract_message(error));
+      }
     },
   });
 };

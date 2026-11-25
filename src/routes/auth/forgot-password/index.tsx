@@ -9,9 +9,12 @@ import AuthLayout from "../-components/AuthLayout";
 
 export const Route = createFileRoute("/auth/forgot-password/")({
   component: RouteComponent,
-  validateSearch: (search: Record<string, unknown>): { email?: string } => {
+  validateSearch: (
+    search: Record<string, unknown>,
+  ): { email?: string; type?: "tenant" | "staff" } => {
     return {
       email: typeof search.email === "string" ? search.email : undefined,
+      type: search.type === "staff" ? "staff" : undefined,
     };
   },
 });
@@ -21,7 +24,8 @@ interface ForgotPasswordProps {
 }
 
 function RouteComponent() {
-  const { email } = Route.useSearch();
+  const { email, type } = Route.useSearch();
+  const isStaff = type === "staff";
   const nav = useNavigate();
   const form = useForm<ForgotPasswordProps>({
     defaultValues: {
@@ -32,13 +36,21 @@ function RouteComponent() {
   const { mutate, isPending } = useMutation({
     mutationFn: (data: ForgotPasswordProps) =>
       apiClient
-        .post("/tenant/auth/forgot-password", data)
+        .post(
+          isStaff
+            ? "/staff/auth/forgot-password"
+            : "/tenant/auth/forgot-password",
+          data,
+        )
         .then((res) => res.data),
     onSuccess: (res) => {
       toast.success(res.message || "Reset OTP sent to your email");
       nav({
         to: "/auth/forgot-password/new-password",
-        search: { email: form.getValues("email") },
+        search: {
+          email: form.getValues("email"),
+          ...(isStaff ? { type: "staff" as const } : {}),
+        },
       });
     },
     onError: (err: any) => {
@@ -51,17 +63,22 @@ function RouteComponent() {
   });
 
   const onSubmit = (data: ForgotPasswordProps) => mutate(data);
+  const signInRoute = isStaff ? "/auth/staff" : "/auth/login";
 
   return (
     <AuthLayout
       icon={KeyRound}
       title="Reset password"
-      subtitle="Enter your business email address and we'll send you an OTP to reset your password."
+      subtitle={
+        isStaff
+          ? "Enter your work email address and we'll send you an OTP to reset your password."
+          : "Enter your business email address and we'll send you an OTP to reset your password."
+      }
       topRight={
         <p className="text-sm text-base-content/70">
           Remembered it?{" "}
           <Link
-            to="/auth/login"
+            to={signInRoute}
             className="text-primary font-semibold hover:underline"
           >
             Sign in
@@ -71,7 +88,7 @@ function RouteComponent() {
     >
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         <SimpleInput
-          label="Business email"
+          label={isStaff ? "Work email" : "Business email"}
           type="email"
           required
           placeholder="you@company.com"
@@ -96,7 +113,7 @@ function RouteComponent() {
         <p className="text-center text-sm text-base-content/70 pt-1">
           Back to{" "}
           <Link
-            to="/auth/login"
+            to={signInRoute}
             className="text-primary font-semibold hover:underline"
           >
             Sign in
