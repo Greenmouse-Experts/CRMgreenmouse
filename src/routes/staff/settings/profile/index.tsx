@@ -1,13 +1,11 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { createFileRoute, redirect } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { useForm, FormProvider } from "react-hook-form";
 import { toast } from "sonner";
 import {
-  useTenantMe,
-  useTenantOnboarding,
-  useUpdateTenantProfile,
-  useSaveTenantOnboarding,
-  type TenantProfileUpdate,
+  useStaffMe,
+  useUpdateStaffProfile,
+  type StaffProfileUpdate,
 } from "@/api/tenantApi";
 import { uploadImage, uploadedFileUrl } from "@/api/imageApi";
 import { get_user_value } from "@/store/authStore";
@@ -15,44 +13,33 @@ import Modal, { type ModalHandle } from "@/components/DialogModal";
 import ImageUpload from "@/components/images/ImageUpload";
 import UserInfo from "./-components/UserInfo";
 import PersonalInfo from "./-components/PersonalInfo";
-import AddressInfo from "./-components/AddressInfo";
 
 export const Route = createFileRoute("/staff/settings/profile/")({
   component: RouteComponent,
-  loader: () => {
-    // if (get_user_value()?.user.userType === "staff") {
-    //   return redirect({ to: "/staff/settings" });
-    // }
-  },
 });
 
 function RouteComponent() {
-  const profileQuery = useTenantMe();
-  const onboardingQuery = useTenantOnboarding();
-  const updateProfile = useUpdateTenantProfile();
-  const saveOnboarding = useSaveTenantOnboarding();
-  const logoModalRef = useRef<ModalHandle>(null);
-  const [logoFile, setLogoFile] = useState<File>();
-  const [isUploadingLogo, setIsUploadingLogo] = useState(false);
+  const profileQuery = useStaffMe();
+  const updateProfile = useUpdateStaffProfile();
+  const avatarModalRef = useRef<ModalHandle>(null);
+  const [avatarFile, setAvatarFile] = useState<File>();
+  const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
+
   const profile = profileQuery.data;
-  const onboarding = onboardingQuery.data;
-  const defaults = useMemo<TenantProfileUpdate>(
+  const staffId = profile?.id || profile?.sub || get_user_value()?.user.id;
+  const currentAvatar = profile?.profilePic || profile?.tenant?.logo;
+
+  const defaults = useMemo<StaffProfileUpdate>(
     () => ({
-      companyName: profile?.companyName ?? "",
+      firstName: profile?.firstName ?? get_user_value()?.user.firstName ?? "",
+      lastName: profile?.lastName ?? get_user_value()?.user.lastName ?? "",
       phoneNumber:
         profile?.phoneNumber ?? get_user_value()?.user.phoneNumber ?? "",
-      companyWebsite:
-        profile?.companyWebsite ?? onboarding?.companyWebsite ?? "",
-      companyAddress:
-        profile?.companyAddress ?? onboarding?.companyAddress ?? "",
-      companyCity: profile?.companyCity ?? onboarding?.companyCity ?? "",
-      companyState: profile?.companyState ?? onboarding?.companyState ?? "",
-      companyCountry:
-        profile?.companyCountry ?? onboarding?.companyCountry ?? "",
     }),
-    [profile, onboarding],
+    [profile],
   );
-  const formMethods = useForm<TenantProfileUpdate>({ defaultValues: defaults });
+
+  const formMethods = useForm<StaffProfileUpdate>({ defaultValues: defaults });
   const {
     register,
     handleSubmit,
@@ -64,38 +51,40 @@ function RouteComponent() {
     reset(defaults, { keepDirtyValues: true });
   }, [defaults, reset]);
 
-  const saveLogo = async () => {
-    if (!logoFile) return;
+  const saveAvatar = async () => {
+    if (!avatarFile || !staffId) return;
     try {
-      setIsUploadingLogo(true);
-      const logo = uploadedFileUrl(await uploadImage(logoFile));
-      if (!logo) throw new Error("The image upload did not return a URL.");
-      await saveOnboarding.mutateAsync({ logo });
-      setLogoFile(undefined);
-      logoModalRef.current?.close();
-      toast.success("Company logo updated.");
+      setIsUploadingAvatar(true);
+      const profilePic = uploadedFileUrl(await uploadImage(avatarFile));
+      if (!profilePic)
+        throw new Error("The image upload did not return a URL.");
+      await updateProfile.mutateAsync({ id: staffId, profilePic });
+      setAvatarFile(undefined);
+      avatarModalRef.current?.close();
+      toast.success("Profile photo updated.");
     } catch (error: any) {
       toast.error(
         error?.response?.data?.message ||
           error?.message ||
-          "Could not update the company logo.",
+          "Could not update your profile photo.",
       );
     } finally {
-      setIsUploadingLogo(false);
+      setIsUploadingAvatar(false);
     }
   };
 
   const save = handleSubmit(async (values) => {
+    if (!staffId) return;
     const updates = Object.fromEntries(
       Object.keys(dirtyFields).map((key) => [
         key,
-        String(values[key as keyof TenantProfileUpdate] ?? "").trim(),
+        String(values[key as keyof StaffProfileUpdate] ?? "").trim(),
       ]),
-    ) as TenantProfileUpdate;
+    ) as StaffProfileUpdate;
     if (!Object.keys(updates).length) return;
 
     try {
-      await updateProfile.mutateAsync(updates);
+      await updateProfile.mutateAsync({ id: staffId, ...updates });
       reset({ ...values, ...updates });
       toast.success("Profile updated.");
     } catch (error: any) {
@@ -106,7 +95,7 @@ function RouteComponent() {
     }
   });
 
-  if (profileQuery.isPending || onboardingQuery.isPending) {
+  if (profileQuery.isPending) {
     return (
       <div className="flex min-h-64 items-center justify-center" role="status">
         <span className="loading loading-spinner text-primary" />
@@ -134,67 +123,58 @@ function RouteComponent() {
     <div className="mx-auto max-w-4xl space-y-4 pb-8">
       <UserInfo
         profile={{ ...profile, ...defaults }}
-        logo={onboarding?.logo}
-        onLogoClick={() => {
-          setLogoFile(undefined);
-          logoModalRef.current?.open();
-        }}
+        avatar={currentAvatar}
+        onAvatarClick={
+          staffId
+            ? () => {
+                setAvatarFile(undefined);
+                avatarModalRef.current?.open();
+              }
+            : undefined
+        }
       />
-      <Modal ref={logoModalRef} title="Company logo">
+      <Modal ref={avatarModalRef} title="Profile photo">
         <p className="mb-4 text-sm text-base-content/80">
-          Choose an image to display on your company profile.
+          Choose an image to display on your staff profile.
         </p>
         <ImageUpload
           image={
-            onboarding?.logo
-              ? { url: onboarding.logo, path: onboarding.logo }
+            currentAvatar
+              ? { url: currentAvatar, path: currentAvatar }
               : undefined
           }
-          setNew={setLogoFile}
-          disabled={isUploadingLogo}
+          setNew={setAvatarFile}
+          disabled={isUploadingAvatar}
           fit="contain"
         />
         <div className="mt-6 flex justify-end gap-2">
           <button
             type="button"
             className="btn btn-ghost"
-            disabled={isUploadingLogo}
-            onClick={() => logoModalRef.current?.close()}
+            disabled={isUploadingAvatar}
+            onClick={() => avatarModalRef.current?.close()}
           >
             Cancel
           </button>
           <button
             type="button"
             className="btn btn-primary"
-            disabled={!logoFile || isUploadingLogo}
-            onClick={saveLogo}
+            disabled={!avatarFile || isUploadingAvatar || !staffId}
+            onClick={saveAvatar}
           >
-            {isUploadingLogo ? "Saving logo..." : "Save logo"}
+            {isUploadingAvatar ? "Saving photo..." : "Save photo"}
           </button>
         </div>
       </Modal>
-      {onboardingQuery.isError && (
-        <div className="alert alert-warning text-sm" role="alert">
-          Some existing business details could not be loaded. Only fields you
-          change will be saved.
-          <button
-            type="button"
-            className="btn btn-ghost btn-sm"
-            onClick={() => onboardingQuery.refetch()}
-          >
-            Retry
-          </button>
-        </div>
-      )}
       <FormProvider {...formMethods}>
         <form onSubmit={save} className="space-y-4">
           <PersonalInfo
             email={profile.email}
+            roleName={profile.role?.name}
             register={register}
             errors={errors}
             disabled={updateProfile.isPending}
           />
-          <AddressInfo disabled={updateProfile.isPending} />
           <div className="flex justify-end gap-2">
             <button
               type="button"
@@ -207,7 +187,7 @@ function RouteComponent() {
             <button
               type="submit"
               className="btn btn-primary"
-              disabled={!isDirty || updateProfile.isPending}
+              disabled={!isDirty || updateProfile.isPending || !staffId}
             >
               {updateProfile.isPending ? "Saving..." : "Save changes"}
             </button>

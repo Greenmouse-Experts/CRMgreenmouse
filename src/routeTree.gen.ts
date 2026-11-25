@@ -24,6 +24,7 @@ import { Route as AdminIndexRouteImport } from './routes/admin/index'
 import { Route as TestHomeRouteImport } from './routes/test/home'
 import { Route as TenantSettingsRouteRouteImport } from './routes/tenant/settings/route'
 import { Route as StaffSettingsRouteRouteImport } from './routes/staff/settings/route'
+import { Route as HrSettingsRouteRouteImport } from './routes/hr/settings/route'
 import { Route as AuthVerifyRouteRouteImport } from './routes/auth/verify/route'
 import { Route as AuthRegisterRouteRouteImport } from './routes/auth/register/route'
 import { Route as AdminSettingsRouteRouteImport } from './routes/admin/settings/route'
@@ -40,6 +41,7 @@ import { Route as StaffAttendanceIndexRouteImport } from './routes/staff/attenda
 import { Route as HrTrainingIndexRouteImport } from './routes/hr/training/index'
 import { Route as HrTasksIndexRouteImport } from './routes/hr/tasks/index'
 import { Route as HrStaffsIndexRouteImport } from './routes/hr/staffs/index'
+import { Route as HrSettingsIndexRouteImport } from './routes/hr/settings/index'
 import { Route as HrSelfServiceIndexRouteImport } from './routes/hr/self-service/index'
 import { Route as HrReportsIndexRouteImport } from './routes/hr/reports/index'
 import { Route as HrRecruitmentIndexRouteImport } from './routes/hr/recruitment/index'
@@ -95,6 +97,10 @@ import { Route as StaffSettingsThemeIndexRouteImport } from './routes/staff/sett
 import { Route as StaffSettingsSecurityIndexRouteImport } from './routes/staff/settings/security/index'
 import { Route as StaffSettingsProfileIndexRouteImport } from './routes/staff/settings/profile/index'
 import { Route as StaffSettingsNotificationsIndexRouteImport } from './routes/staff/settings/notifications.index'
+import { Route as HrSettingsThemeIndexRouteImport } from './routes/hr/settings/theme/index'
+import { Route as HrSettingsSecurityIndexRouteImport } from './routes/hr/settings/security/index'
+import { Route as HrSettingsProfileIndexRouteImport } from './routes/hr/settings/profile/index'
+import { Route as HrSettingsNotificationsIndexRouteImport } from './routes/hr/settings/notifications.index'
 import { Route as AuthRegisterOnBoardingIndexRouteImport } from './routes/auth/register/on-boarding/index'
 import { Route as AdminUsersRolesIndexRouteImport } from './routes/admin/users/roles/index'
 import { Route as AdminUsersAddIndexRouteImport } from './routes/admin/users/add/index'
@@ -211,6 +217,11 @@ const StaffSettingsRouteRoute = StaffSettingsRouteRouteImport.update({
   path: '/settings',
   getParentRoute: () => StaffRouteRoute,
 } as any)
+const HrSettingsRouteRoute = HrSettingsRouteRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => HrRouteRoute,
+} as any)
 const AuthVerifyRouteRoute = AuthVerifyRouteRouteImport.update({
   id: '/auth/verify',
   path: '/auth/verify',
@@ -291,6 +302,11 @@ const HrStaffsIndexRoute = HrStaffsIndexRouteImport.update({
   id: '/staffs/',
   path: '/staffs/',
   getParentRoute: () => HrRouteRoute,
+} as any)
+const HrSettingsIndexRoute = HrSettingsIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => HrSettingsRouteRoute,
 } as any)
 const HrSelfServiceIndexRoute = HrSelfServiceIndexRouteImport.update({
   id: '/self-service/',
@@ -586,6 +602,27 @@ const StaffSettingsNotificationsIndexRoute =
     path: '/notifications/',
     getParentRoute: () => StaffSettingsRouteRoute,
   } as any)
+const HrSettingsThemeIndexRoute = HrSettingsThemeIndexRouteImport.update({
+  id: '/theme/',
+  path: '/theme/',
+  getParentRoute: () => HrSettingsRouteRoute,
+} as any)
+const HrSettingsSecurityIndexRoute = HrSettingsSecurityIndexRouteImport.update({
+  id: '/security/',
+  path: '/security/',
+  getParentRoute: () => HrSettingsRouteRoute,
+} as any)
+const HrSettingsProfileIndexRoute = HrSettingsProfileIndexRouteImport.update({
+  id: '/profile/',
+  path: '/profile/',
+  getParentRoute: () => HrSettingsRouteRoute,
+} as any)
+const HrSettingsNotificationsIndexRoute =
+  HrSettingsNotificationsIndexRouteImport.update({
+    id: '/notifications/',
+    path: '/notifications/',
+    getParentRoute: () => HrSettingsRouteRoute,
+  } as any)
 const AuthRegisterOnBoardingIndexRoute =
   AuthRegisterOnBoardingIndexRouteImport.update({
     id: '/on-boarding/',
@@ -830,6 +867,7 @@ export interface FileRoutesByFullPath {
   '/admin/settings': typeof AdminSettingsRouteRouteWithChildren
   '/auth/register': typeof AuthRegisterRouteRouteWithChildren
   '/auth/verify': typeof AuthVerifyRouteRouteWithChildren
+  '/hr/settings': typeof HrSettingsRouteRouteWithChildren
   '/staff/settings': typeof StaffSettingsRouteRouteWithChildren
   '/tenant/settings': typeof TenantSettingsRouteRouteWithChildren
   '/test/home': typeof TestHomeRoute
@@ -871,6 +909,7 @@ export interface FileRoutesByFullPath {
   '/hr/recruitment': typeof HrRecruitmentIndexRoute
   '/hr/reports': typeof HrReportsIndexRoute
   '/hr/self-service': typeof HrSelfServiceIndexRoute
+  '/hr/settings/': typeof HrSettingsIndexRoute
   '/hr/staffs': typeof HrStaffsIndexRoute
   '/hr/tasks': typeof HrTasksIndexRoute
   '/hr/training': typeof HrTrainingIndexRoute
@@ -905,6 +944,10 @@ export interface FileRoutesByFullPath {
   '/admin/users/add': typeof AdminUsersAddIndexRoute
   '/admin/users/roles': typeof AdminUsersRolesIndexRoute
   '/auth/register/on-boarding': typeof AuthRegisterOnBoardingIndexRoute
+  '/hr/settings/notifications': typeof HrSettingsNotificationsIndexRoute
+  '/hr/settings/profile': typeof HrSettingsProfileIndexRoute
+  '/hr/settings/security': typeof HrSettingsSecurityIndexRoute
+  '/hr/settings/theme': typeof HrSettingsThemeIndexRoute
   '/staff/settings/notifications': typeof StaffSettingsNotificationsIndexRoute
   '/staff/settings/profile': typeof StaffSettingsProfileIndexRoute
   '/staff/settings/security': typeof StaffSettingsSecurityIndexRoute
@@ -989,6 +1032,7 @@ export interface FileRoutesByTo {
   '/hr/recruitment': typeof HrRecruitmentIndexRoute
   '/hr/reports': typeof HrReportsIndexRoute
   '/hr/self-service': typeof HrSelfServiceIndexRoute
+  '/hr/settings': typeof HrSettingsIndexRoute
   '/hr/staffs': typeof HrStaffsIndexRoute
   '/hr/tasks': typeof HrTasksIndexRoute
   '/hr/training': typeof HrTrainingIndexRoute
@@ -1023,6 +1067,10 @@ export interface FileRoutesByTo {
   '/admin/users/add': typeof AdminUsersAddIndexRoute
   '/admin/users/roles': typeof AdminUsersRolesIndexRoute
   '/auth/register/on-boarding': typeof AuthRegisterOnBoardingIndexRoute
+  '/hr/settings/notifications': typeof HrSettingsNotificationsIndexRoute
+  '/hr/settings/profile': typeof HrSettingsProfileIndexRoute
+  '/hr/settings/security': typeof HrSettingsSecurityIndexRoute
+  '/hr/settings/theme': typeof HrSettingsThemeIndexRoute
   '/staff/settings/notifications': typeof StaffSettingsNotificationsIndexRoute
   '/staff/settings/profile': typeof StaffSettingsProfileIndexRoute
   '/staff/settings/security': typeof StaffSettingsSecurityIndexRoute
@@ -1077,6 +1125,7 @@ export interface FileRoutesById {
   '/admin/settings': typeof AdminSettingsRouteRouteWithChildren
   '/auth/register': typeof AuthRegisterRouteRouteWithChildren
   '/auth/verify': typeof AuthVerifyRouteRouteWithChildren
+  '/hr/settings': typeof HrSettingsRouteRouteWithChildren
   '/staff/settings': typeof StaffSettingsRouteRouteWithChildren
   '/tenant/settings': typeof TenantSettingsRouteRouteWithChildren
   '/test/home': typeof TestHomeRoute
@@ -1118,6 +1167,7 @@ export interface FileRoutesById {
   '/hr/recruitment/': typeof HrRecruitmentIndexRoute
   '/hr/reports/': typeof HrReportsIndexRoute
   '/hr/self-service/': typeof HrSelfServiceIndexRoute
+  '/hr/settings/': typeof HrSettingsIndexRoute
   '/hr/staffs/': typeof HrStaffsIndexRoute
   '/hr/tasks/': typeof HrTasksIndexRoute
   '/hr/training/': typeof HrTrainingIndexRoute
@@ -1152,6 +1202,10 @@ export interface FileRoutesById {
   '/admin/users/add/': typeof AdminUsersAddIndexRoute
   '/admin/users/roles/': typeof AdminUsersRolesIndexRoute
   '/auth/register/on-boarding/': typeof AuthRegisterOnBoardingIndexRoute
+  '/hr/settings/notifications/': typeof HrSettingsNotificationsIndexRoute
+  '/hr/settings/profile/': typeof HrSettingsProfileIndexRoute
+  '/hr/settings/security/': typeof HrSettingsSecurityIndexRoute
+  '/hr/settings/theme/': typeof HrSettingsThemeIndexRoute
   '/staff/settings/notifications/': typeof StaffSettingsNotificationsIndexRoute
   '/staff/settings/profile/': typeof StaffSettingsProfileIndexRoute
   '/staff/settings/security/': typeof StaffSettingsSecurityIndexRoute
@@ -1207,6 +1261,7 @@ export interface FileRouteTypes {
     | '/admin/settings'
     | '/auth/register'
     | '/auth/verify'
+    | '/hr/settings'
     | '/staff/settings'
     | '/tenant/settings'
     | '/test/home'
@@ -1248,6 +1303,7 @@ export interface FileRouteTypes {
     | '/hr/recruitment'
     | '/hr/reports'
     | '/hr/self-service'
+    | '/hr/settings/'
     | '/hr/staffs'
     | '/hr/tasks'
     | '/hr/training'
@@ -1282,6 +1338,10 @@ export interface FileRouteTypes {
     | '/admin/users/add'
     | '/admin/users/roles'
     | '/auth/register/on-boarding'
+    | '/hr/settings/notifications'
+    | '/hr/settings/profile'
+    | '/hr/settings/security'
+    | '/hr/settings/theme'
     | '/staff/settings/notifications'
     | '/staff/settings/profile'
     | '/staff/settings/security'
@@ -1366,6 +1426,7 @@ export interface FileRouteTypes {
     | '/hr/recruitment'
     | '/hr/reports'
     | '/hr/self-service'
+    | '/hr/settings'
     | '/hr/staffs'
     | '/hr/tasks'
     | '/hr/training'
@@ -1400,6 +1461,10 @@ export interface FileRouteTypes {
     | '/admin/users/add'
     | '/admin/users/roles'
     | '/auth/register/on-boarding'
+    | '/hr/settings/notifications'
+    | '/hr/settings/profile'
+    | '/hr/settings/security'
+    | '/hr/settings/theme'
     | '/staff/settings/notifications'
     | '/staff/settings/profile'
     | '/staff/settings/security'
@@ -1453,6 +1518,7 @@ export interface FileRouteTypes {
     | '/admin/settings'
     | '/auth/register'
     | '/auth/verify'
+    | '/hr/settings'
     | '/staff/settings'
     | '/tenant/settings'
     | '/test/home'
@@ -1494,6 +1560,7 @@ export interface FileRouteTypes {
     | '/hr/recruitment/'
     | '/hr/reports/'
     | '/hr/self-service/'
+    | '/hr/settings/'
     | '/hr/staffs/'
     | '/hr/tasks/'
     | '/hr/training/'
@@ -1528,6 +1595,10 @@ export interface FileRouteTypes {
     | '/admin/users/add/'
     | '/admin/users/roles/'
     | '/auth/register/on-boarding/'
+    | '/hr/settings/notifications/'
+    | '/hr/settings/profile/'
+    | '/hr/settings/security/'
+    | '/hr/settings/theme/'
     | '/staff/settings/notifications/'
     | '/staff/settings/profile/'
     | '/staff/settings/security/'
@@ -1699,6 +1770,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof StaffSettingsRouteRouteImport
       parentRoute: typeof StaffRouteRoute
     }
+    '/hr/settings': {
+      id: '/hr/settings'
+      path: '/settings'
+      fullPath: '/hr/settings'
+      preLoaderRoute: typeof HrSettingsRouteRouteImport
+      parentRoute: typeof HrRouteRoute
+    }
     '/auth/verify': {
       id: '/auth/verify'
       path: '/auth/verify'
@@ -1810,6 +1888,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/hr/staffs'
       preLoaderRoute: typeof HrStaffsIndexRouteImport
       parentRoute: typeof HrRouteRoute
+    }
+    '/hr/settings/': {
+      id: '/hr/settings/'
+      path: '/'
+      fullPath: '/hr/settings/'
+      preLoaderRoute: typeof HrSettingsIndexRouteImport
+      parentRoute: typeof HrSettingsRouteRoute
     }
     '/hr/self-service/': {
       id: '/hr/self-service/'
@@ -2196,6 +2281,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof StaffSettingsNotificationsIndexRouteImport
       parentRoute: typeof StaffSettingsRouteRoute
     }
+    '/hr/settings/theme/': {
+      id: '/hr/settings/theme/'
+      path: '/theme'
+      fullPath: '/hr/settings/theme'
+      preLoaderRoute: typeof HrSettingsThemeIndexRouteImport
+      parentRoute: typeof HrSettingsRouteRoute
+    }
+    '/hr/settings/security/': {
+      id: '/hr/settings/security/'
+      path: '/security'
+      fullPath: '/hr/settings/security'
+      preLoaderRoute: typeof HrSettingsSecurityIndexRouteImport
+      parentRoute: typeof HrSettingsRouteRoute
+    }
+    '/hr/settings/profile/': {
+      id: '/hr/settings/profile/'
+      path: '/profile'
+      fullPath: '/hr/settings/profile'
+      preLoaderRoute: typeof HrSettingsProfileIndexRouteImport
+      parentRoute: typeof HrSettingsRouteRoute
+    }
+    '/hr/settings/notifications/': {
+      id: '/hr/settings/notifications/'
+      path: '/notifications'
+      fullPath: '/hr/settings/notifications'
+      preLoaderRoute: typeof HrSettingsNotificationsIndexRouteImport
+      parentRoute: typeof HrSettingsRouteRoute
+    }
     '/auth/register/on-boarding/': {
       id: '/auth/register/on-boarding/'
       path: '/on-boarding'
@@ -2573,7 +2686,28 @@ const AdminRouteRouteWithChildren = AdminRouteRoute._addFileChildren(
   AdminRouteRouteChildren,
 )
 
+interface HrSettingsRouteRouteChildren {
+  HrSettingsIndexRoute: typeof HrSettingsIndexRoute
+  HrSettingsNotificationsIndexRoute: typeof HrSettingsNotificationsIndexRoute
+  HrSettingsProfileIndexRoute: typeof HrSettingsProfileIndexRoute
+  HrSettingsSecurityIndexRoute: typeof HrSettingsSecurityIndexRoute
+  HrSettingsThemeIndexRoute: typeof HrSettingsThemeIndexRoute
+}
+
+const HrSettingsRouteRouteChildren: HrSettingsRouteRouteChildren = {
+  HrSettingsIndexRoute: HrSettingsIndexRoute,
+  HrSettingsNotificationsIndexRoute: HrSettingsNotificationsIndexRoute,
+  HrSettingsProfileIndexRoute: HrSettingsProfileIndexRoute,
+  HrSettingsSecurityIndexRoute: HrSettingsSecurityIndexRoute,
+  HrSettingsThemeIndexRoute: HrSettingsThemeIndexRoute,
+}
+
+const HrSettingsRouteRouteWithChildren = HrSettingsRouteRoute._addFileChildren(
+  HrSettingsRouteRouteChildren,
+)
+
 interface HrRouteRouteChildren {
+  HrSettingsRouteRoute: typeof HrSettingsRouteRouteWithChildren
   HrIndexRoute: typeof HrIndexRoute
   HrOnboardingEmployeeIdRoute: typeof HrOnboardingEmployeeIdRoute
   HrReportsSlugRoute: typeof HrReportsSlugRoute
@@ -2595,6 +2729,7 @@ interface HrRouteRouteChildren {
 }
 
 const HrRouteRouteChildren: HrRouteRouteChildren = {
+  HrSettingsRouteRoute: HrSettingsRouteRouteWithChildren,
   HrIndexRoute: HrIndexRoute,
   HrOnboardingEmployeeIdRoute: HrOnboardingEmployeeIdRoute,
   HrReportsSlugRoute: HrReportsSlugRoute,

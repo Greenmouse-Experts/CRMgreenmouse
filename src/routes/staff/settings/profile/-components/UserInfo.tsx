@@ -1,52 +1,65 @@
-import { Building2, Camera, MapPin } from "lucide-react";
-import type { TenantProfile } from "@/api/tenantApi";
+import { Camera, Shield, User } from "lucide-react";
+import type { StaffProfile } from "@/api/tenantApi";
 
 export default function UserInfo({
   profile,
-  logo,
-  onLogoClick,
+  avatar,
+  onAvatarClick,
 }: {
-  profile: TenantProfile;
-  logo?: string | null;
-  onLogoClick: () => void;
+  profile: StaffProfile;
+  avatar?: string | null;
+  onAvatarClick?: () => void;
 }) {
-  const location = [
-    profile.companyCity,
-    profile.companyState,
-    profile.companyCountry,
-  ]
-    .filter(Boolean)
-    .join(", ");
+  const fullName =
+    [profile.firstName, profile.lastName].filter(Boolean).join(" ").trim() ||
+    profile.companyName ||
+    "Staff profile";
+  const roleLabel = profile.role?.name || profile.userType;
+  const companyLabel = profile.tenant?.companyName || profile.companyName;
 
   return (
     <div className="flex items-center gap-4 rounded-box bg-base-100 p-5 shadow-sm">
       <button
         type="button"
-        onClick={onLogoClick}
-        aria-label="Change company logo"
-        className="group relative flex size-14 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+        onClick={onAvatarClick}
+        disabled={!onAvatarClick}
+        aria-label="Change profile photo"
+        className="group relative flex size-14 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-default"
       >
-        {logo ? (
+        {avatar ? (
           <img
-            src={logo}
+            src={avatar}
             alt=""
-            className="size-full rounded-xl object-contain p-1"
+            className="size-full rounded-xl object-cover"
           />
         ) : (
-          <Building2 className="size-7" aria-hidden="true" />
+          <User className="size-7" aria-hidden="true" />
         )}
-        <span className="absolute -bottom-1 -right-1 flex size-6 items-center justify-center rounded-full bg-primary text-primary-content shadow-sm transition-transform group-hover:scale-110">
-          <Camera className="size-3.5" aria-hidden="true" />
-        </span>
+        {onAvatarClick && (
+          <span className="absolute -bottom-1 -right-1 flex size-6 items-center justify-center rounded-full bg-primary text-primary-content shadow-sm transition-transform group-hover:scale-110">
+            <Camera className="size-3.5" aria-hidden="true" />
+          </span>
+        )}
       </button>
       <div className="min-w-0">
-        <h1 className="truncate text-xl font-semibold">
-          {profile.companyName || "Company profile"}
-        </h1>
+        <div className="flex flex-wrap items-center gap-2">
+          <h1 className="truncate text-xl font-semibold">{fullName}</h1>
+          {profile.status && (
+            <span className="badge badge-sm bg-emerald-50 text-emerald-700 border border-emerald-200 capitalize">
+              {profile.status}
+            </span>
+          )}
+        </div>
         <p className="truncate text-sm text-base-content/80">{profile.email}</p>
-        {location && (
-          <p className="mt-1 flex items-center gap-1 text-sm text-base-content/80">
-            <MapPin className="size-4 shrink-0" aria-hidden="true" /> {location}
+        {(roleLabel || companyLabel) && (
+          <p className="mt-1 flex items-center gap-1.5 text-sm text-base-content/80">
+            <Shield
+              className="size-4 shrink-0 text-primary"
+              aria-hidden="true"
+            />
+            <span className="capitalize">
+              {[roleLabel, companyLabel].filter(Boolean).join(" · ")}
+            </span>
           </p>
         )}
       </div>

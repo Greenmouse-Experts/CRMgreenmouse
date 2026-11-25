@@ -342,6 +342,91 @@ export interface StaffMember {
   createdAt?: string;
 }
 
+export interface StaffProfile {
+  id?: string;
+  sub?: string;
+  email: string;
+  firstName?: string;
+  lastName?: string;
+  phoneNumber?: string;
+  profilePic?: string | null;
+  userType?: string;
+  status?: string;
+  tenantId?: string;
+  roleId?: string;
+  role?: {
+    id?: string;
+    name?: string;
+    description?: string;
+    permissions?: string[];
+  };
+  permissions?: string[];
+  companyName?: string;
+  tenant?: {
+    id?: string;
+    companyName?: string;
+    logo?: string | null;
+  };
+  [key: string]: any;
+}
+
+export type StaffProfileUpdate = Partial<
+  Pick<StaffProfile, "firstName" | "lastName" | "phoneNumber" | "profilePic">
+>;
+
+export const useStaffMe = () => {
+  return useQuery<StaffProfile>({
+    queryKey: ["staff", "me"],
+    queryFn: async () => {
+      const { data } = await apiClient.get<StaffProfile | { data: StaffProfile }>(
+        "/staff/auth/me",
+      );
+      return "data" in data && data.data ? data.data : (data as StaffProfile);
+    },
+  });
+};
+
+export const useUpdateStaffProfile = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({
+      id,
+      ...updates
+    }: StaffProfileUpdate & { id: string }) => {
+      const { data } = await apiClient.patch<
+        StaffProfile | { data: StaffProfile }
+      >(`/staffs/${id}`, updates);
+      return "data" in data && data.data ? data.data : (data as StaffProfile);
+    },
+    onSuccess: (profile, { id: _id, ...updates }) => {
+      queryClient.setQueryData<StaffProfile>(["staff", "me"], (previous) =>
+        previous ? { ...previous, ...updates, ...profile } : profile,
+      );
+      const user = get_user_value();
+      if (user) {
+        set_user_value({
+          ...user,
+          user: {
+            ...user.user,
+            ...(updates.firstName !== undefined
+              ? { firstName: updates.firstName }
+              : {}),
+            ...(updates.lastName !== undefined
+              ? { lastName: updates.lastName }
+              : {}),
+            ...(updates.phoneNumber !== undefined
+              ? { phoneNumber: updates.phoneNumber }
+              : {}),
+          },
+        });
+      }
+      queryClient.invalidateQueries({ queryKey: ["staff", "me"] });
+      queryClient.invalidateQueries({ queryKey: ["tenant", "staffs"] });
+      queryClient.invalidateQueries({ queryKey: ["staffs"] });
+    },
+  });
+};
+
 export const useStaff = (id: string) => {
   return useQuery<StaffMember>({
     queryKey: ["tenant", "staff", id],
