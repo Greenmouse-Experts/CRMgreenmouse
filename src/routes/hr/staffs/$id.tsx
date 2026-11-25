@@ -284,9 +284,10 @@ function StaffDetailPage() {
           : (emp.departmentId ?? "");
 
       const posTitle =
-        typeof emp.position === "object"
-          ? emp.position?.name
-          : (emp.positionName ?? emp.jobTitle ?? emp.position ?? "");
+        emp.jobTitle ||
+        (typeof emp.position === "object"
+          ? (emp.position?.name ?? "")
+          : (emp.positionName ?? emp.position ?? ""));
 
       const posId =
         typeof emp.position === "object"
@@ -431,7 +432,10 @@ function StaffDetailPage() {
         (d) => d.id === values.departmentId || d.name === values.department,
       );
       const selectedPos = positionsList.find(
-        (p) => p.id === values.positionId || p.name === values.jobTitle,
+        (p) =>
+          p.id === values.positionId ||
+          p.name === values.jobTitle ||
+          p.title === values.jobTitle,
       );
 
       const deptName =
@@ -441,7 +445,11 @@ function StaffDetailPage() {
         undefined;
 
       const jobTitle =
-        selectedPos?.name || values.jobTitle || values.positionId || undefined;
+        values.jobTitle?.trim() ||
+        selectedPos?.name ||
+        selectedPos?.title ||
+        values.positionId ||
+        undefined;
 
       const payload: CreateEmployeeInput = {
         firstName: values.firstName.trim(),
@@ -650,11 +658,16 @@ function StaffDetailPage() {
     formValues.department ||
     "—";
 
+  const selectedPosition = positionsList.find(
+    (p) =>
+      p.id === formValues.positionId ||
+      p.name === formValues.jobTitle ||
+      p.title === formValues.jobTitle,
+  );
   const currentJob =
-    positionsList.find(
-      (p) => p.id === formValues.positionId || p.name === formValues.jobTitle,
-    )?.name ||
-    formValues.jobTitle ||
+    formValues.jobTitle?.trim() ||
+    selectedPosition?.name ||
+    selectedPosition?.title ||
     "—";
 
   const currentManager =
@@ -727,12 +740,10 @@ function StaffDetailPage() {
                   <div className="flex flex-wrap items-center gap-y-1 gap-x-4  text-base-content/80">
                     <span className="flex items-center gap-1.5 font-medium">
                       <Briefcase className="size-3.5 text-primary" />
-                      {typeof emp.position === "object"
-                        ? emp.position?.name
-                        : (emp.positionName ??
-                          emp.jobTitle ??
-                          emp.position ??
-                          "Staff")}
+                      {emp.jobTitle ||
+                        (typeof emp.position === "object"
+                          ? (emp.position?.name ?? emp.position?.title ?? "Staff")
+                          : (emp.positionName ?? emp.position ?? "Staff"))}
                     </span>
                     <span className="flex items-center gap-1.5 font-medium">
                       <Building2 className="size-3.5 text-info" />
@@ -992,12 +1003,10 @@ function StaffDetailPage() {
                 <div>
                   <span className="text-base-content/80">Job Title / Role</span>
                   <p className="font-semibold text-base-content mt-0.5">
-                    {typeof emp.position === "object"
-                      ? emp.position?.name
-                      : (emp.positionName ??
-                        emp.jobTitle ??
-                        emp.position ??
-                        "—")}
+                    {emp.jobTitle ||
+                      (typeof emp.position === "object"
+                        ? (emp.position?.name ?? emp.position?.title ?? "—")
+                        : (emp.positionName ?? emp.position ?? "—"))}
                   </p>
                 </div>
                 <div>
@@ -1399,8 +1408,10 @@ function StaffDetailPage() {
                               (d) => (d.id || d.name) === value,
                             );
                             methods.setValue("department", sel?.name ?? "");
+                            if (methods.getValues("positionId")) {
+                              methods.setValue("jobTitle", "");
+                            }
                             methods.setValue("positionId", "");
-                            methods.setValue("jobTitle", "");
                           }}
                         >
                           <option value="">
@@ -1420,62 +1431,65 @@ function StaffDetailPage() {
                       )}
                     />
 
-                    {positionsList.length > 0 ? (
-                      <Controller
-                        control={methods.control}
-                        name="positionId"
-                        render={({ field }) => (
-                          <LocalSelect
-                            label="Position / Role"
-                            value={field.value ?? ""}
-                            disabled={
-                              organizationQuery.isLoading ||
-                              (Boolean(selectedDepartmentId) &&
-                                filteredPositions.length === 0)
-                            }
-                            onChange={(e) => {
-                              const value = e.target.value;
-                              field.onChange(value);
-                              const sel = filteredPositions.find(
-                                (p) => (p.id || p.name || p.title) === value,
-                              );
-                              methods.setValue(
-                                "jobTitle",
-                                sel?.name ?? sel?.title ?? "",
-                              );
-                            }}
-                          >
-                            <option value="">
-                              {selectedDepartmentId &&
-                              filteredPositions.length === 0
-                                ? "No positions in this department"
-                                : "Select Position"}
-                            </option>
-                            {filteredPositions.map((pos) => {
-                              const posLabel =
-                                pos.name ?? pos.title ?? "Untitled Position";
-                              return (
-                                <option
-                                  key={pos.id || posLabel}
-                                  value={pos.id || posLabel}
-                                >
-                                  {posLabel}
-                                </option>
-                              );
-                            })}
-                          </LocalSelect>
-                        )}
-                      />
-                    ) : (
-                      <SimpleInput
-                        label="Job Title"
-                        placeholder="e.g. Senior Frontend Engineer"
-                        {...register("jobTitle")}
-                      />
-                    )}
+                    <Controller
+                      control={methods.control}
+                      name="positionId"
+                      render={({ field }) => (
+                        <LocalSelect
+                          label="Position / Role"
+                          value={field.value ?? ""}
+                          disabled={
+                            organizationQuery.isLoading ||
+                            positionsList.length === 0 ||
+                            (Boolean(selectedDepartmentId) &&
+                              filteredPositions.length === 0)
+                          }
+                          onChange={(e) => {
+                            const value = e.target.value;
+                            field.onChange(value);
+                            const sel = filteredPositions.find(
+                              (p) => (p.id || p.name || p.title) === value,
+                            );
+                            methods.setValue(
+                              "jobTitle",
+                              sel?.name ?? sel?.title ?? "",
+                            );
+                          }}
+                        >
+                          <option value="">
+                            {organizationQuery.isLoading
+                              ? "Loading positions..."
+                              : positionsList.length === 0
+                                ? "No positions available"
+                                : selectedDepartmentId &&
+                                    filteredPositions.length === 0
+                                  ? "No positions in this department"
+                                  : "Select Position"}
+                          </option>
+                          {filteredPositions.map((pos) => {
+                            const posLabel =
+                              pos.name ?? pos.title ?? "Untitled Position";
+                            return (
+                              <option
+                                key={pos.id || posLabel}
+                                value={pos.id || posLabel}
+                              >
+                                {posLabel}
+                              </option>
+                            );
+                          })}
+                        </LocalSelect>
+                      )}
+                    />
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <SimpleInput
+                      label="Job Title"
+                      placeholder="e.g. Senior Frontend Engineer"
+                      {...register("jobTitle")}
+                    />
+
                     <LocalSelect
                       label="Employment Type"
                       {...register("employeeType")}
