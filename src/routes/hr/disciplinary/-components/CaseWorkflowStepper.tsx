@@ -18,6 +18,7 @@ export default function CaseWorkflowStepper({
       ? activeStepIndex
       : WORKFLOW_STEPS.indexOf(currentStep);
 
+  return <></>;
   return (
     <div className="card bg-base-100 border border-base-200 shadow-sm p-5 sm:p-6 space-y-4">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
