@@ -1538,6 +1538,7 @@ function StaffDetailPage() {
                               mgr.name ||
                               `${mgr.firstName ?? ""} ${mgr.lastName ?? ""}`.trim() ||
                               mgr.email;
+                            if (mgr.lifecycleStatus != "active") return;
                             return (
                               <>
                                 {index === 0 && (
