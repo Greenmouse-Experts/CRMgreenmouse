@@ -1,3 +1,4 @@
+import { useState } from "react";
 import type { Course } from "./types";
 import {
   Users,
@@ -7,12 +8,18 @@ import {
   UploadCloud,
   Archive,
   MoreVertical,
+  Pencil,
+  Eye,
+  CalendarPlus,
+  Search,
 } from "lucide-react";
 import StatCard from "@/components/StatCard";
 
 interface CourseCardsGridProps {
   courses: Course[];
   onSelectCourse?: (course: Course) => void;
+  onEditCourse?: (course: Course) => void;
+  onScheduleSession?: (courseId: string) => void;
   onPublishCourse?: (courseId: string) => void;
   onArchiveCourse?: (courseId: string) => void;
 }
@@ -20,9 +27,14 @@ interface CourseCardsGridProps {
 export default function CourseCardsGrid({
   courses,
   onSelectCourse,
+  onEditCourse,
+  onScheduleSession,
   onPublishCourse,
   onArchiveCourse,
 }: CourseCardsGridProps) {
+  const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState<string>("all");
+
   const getCategoryBadgeClass = (category: string) => {
     switch (category) {
       case "Compliance":
@@ -49,12 +61,32 @@ export default function CourseCardsGrid({
     return "progress-error";
   };
 
+  const activeCoursesCount = courses.filter(
+    (c) => String(c.status).toLowerCase() !== "archived",
+  ).length;
   const totalEnrolled = courses.reduce((sum, c) => sum + c.enrolled, 0);
   const avgCompletion = courses.length
     ? Math.round(
         courses.reduce((sum, c) => sum + c.completionRate, 0) / courses.length,
       )
     : 0;
+  const certifiedCoursesCount = courses.filter(
+    (c) => c.certificateOnCompletion,
+  ).length;
+
+  const filteredCourses = courses.filter((course) => {
+    const statusLower = String(course.status ?? "draft").toLowerCase();
+    if (statusFilter !== "all" && statusLower !== statusFilter) return false;
+    if (searchTerm.trim()) {
+      const q = searchTerm.toLowerCase();
+      return (
+        course.title.toLowerCase().includes(q) ||
+        course.category.toLowerCase().includes(q) ||
+        (course.mode && course.mode.toLowerCase().includes(q))
+      );
+    }
+    return true;
+  });
 
   return (
     <div className="space-y-6">
@@ -62,8 +94,8 @@ export default function CourseCardsGrid({
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <StatCard
           title="Active Courses"
-          value={courses.length}
-          desc="Curriculums in training catalog"
+          value={activeCoursesCount}
+          desc="Non-archived programs in catalog"
           icon={<GraduationCap className="size-5" />}
           variant="primary"
         />
@@ -90,101 +122,181 @@ export default function CourseCardsGrid({
         />
 
         <StatCard
-          title="Certifications"
-          value="—"
-          desc="Certificates issued year-to-date"
+          title="Certified Programs"
+          value={certifiedCoursesCount}
+          desc="Courses issuing certificates"
           icon={<Award className="size-5" />}
           variant="warning"
         />
       </div>
 
       {/* Course Overview Grid */}
-      <div>
-        <div className="flex items-center justify-between mb-4">
+      <div className="space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
-            <h2 className="text-lg font-bold text-base-content">Courses</h2>
-            <p className="text-base-content/80">
-              Active company learning curriculums and completion progress.
+            <div className="flex items-center gap-2">
+              <h2 className="text-lg font-bold text-base-content">Courses</h2>
+              <span className="badge badge-sm badge-ghost font-semibold">
+                {filteredCourses.length} programs
+              </span>
+            </div>
+            <p className="text-xs text-base-content/80 mt-0.5">
+              Click any course to open its full curriculum, sessions,
+              participants, and materials.
             </p>
           </div>
-          <span className="badge badge-sm badge-ghost font-semibold">
-            {courses.length} programs
-          </span>
+
+          <div className="flex flex-wrap items-center gap-2">
+            <div className="relative w-full sm:w-56">
+              <Search className="size-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-base-content/70" />
+              <input
+                type="text"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                placeholder="Search courses..."
+                className="input input-sm input-bordered w-full pl-9 rounded-xl bg-base-100"
+              />
+            </div>
+
+            <div className="join rounded-xl bg-base-100 border border-base-200 p-0.5">
+              {[
+                { key: "all", label: "All" },
+                { key: "published", label: "Published" },
+                { key: "draft", label: "Draft" },
+                { key: "archived", label: "Archived" },
+              ].map((tab) => (
+                <button
+                  key={tab.key}
+                  type="button"
+                  onClick={() => setStatusFilter(tab.key)}
+                  className={`px-2.5 py-1 text-xs font-semibold rounded-lg transition-all ${
+                    statusFilter === tab.key
+                      ? "bg-primary text-white"
+                      : "text-base-content/75 hover:bg-base-200"
+                  }`}
+                >
+                  {tab.label}
+                </button>
+              ))}
+            </div>
+          </div>
         </div>
 
-        {courses.length === 0 ? (
+        {filteredCourses.length === 0 ? (
           <div className="card bg-base-100 border border-base-200 shadow-sm p-8 text-center space-y-2">
             <GraduationCap className="size-8 mx-auto text-base-content/40" />
             <p className="font-bold text-base-content">
-              No courses created yet
+              {courses.length === 0
+                ? "No courses created yet"
+                : "No courses match the current filter"}
             </p>
             <p className="text-xs text-base-content/70 max-w-sm mx-auto">
-              Create your first training course to configure delivery modes,
-              schedule sessions, and track staff enrollments.
+              {courses.length === 0
+                ? "Create your first training course to configure delivery modes, schedule sessions, and track staff enrollments."
+                : "Try clearing the search query or switching the course status tab."}
             </p>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
-            {courses.map((course) => (
-              <div
-                key={course.id}
-                onClick={() => onSelectCourse?.(course)}
-                className="card bg-base-100 border border-base-200 shadow-sm p-5 hover:shadow-md hover:border-primary/30 transition-all cursor-pointer flex flex-col justify-between"
-              >
-                <div>
-                  <div className="flex items-center justify-between gap-2">
-                    <div className="flex items-center gap-1.5 flex-wrap">
-                      <span
-                        className={`rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider border ${getCategoryBadgeClass(
-                          course.category,
-                        )}`}
+            {filteredCourses.map((course) => {
+              const statusLower = String(
+                course.status ?? "draft",
+              ).toLowerCase();
+              return (
+                <div
+                  key={course.id}
+                  onClick={() => onSelectCourse?.(course)}
+                  className="card bg-base-100 border border-base-200 shadow-sm p-5 hover:shadow-md hover:border-primary/30 transition-all cursor-pointer flex flex-col justify-between"
+                >
+                  <div>
+                    <div className="flex items-center justify-between gap-2">
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        <span
+                          className={`rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider border ${getCategoryBadgeClass(
+                            course.category,
+                          )}`}
+                        >
+                          {course.category}
+                        </span>
+                        {course.mandatory && (
+                          <span className="badge badge-xs badge-error badge-outline font-semibold">
+                            Mandatory
+                          </span>
+                        )}
+                      </div>
+
+                      {/* Status Badge & Actions */}
+                      <div
+                        className="flex items-center gap-1"
+                        onClick={(e) => e.stopPropagation()}
                       >
-                        {course.category}
-                      </span>
-                      {course.mandatory && (
-                        <span className="badge badge-xs badge-error badge-outline font-semibold">
-                          Mandatory
-                        </span>
-                      )}
-                    </div>
+                        {statusLower === "draft" && (
+                          <span className="badge badge-xs badge-warning badge-outline font-medium">
+                            Draft
+                          </span>
+                        )}
+                        {statusLower === "published" && (
+                          <span className="badge badge-xs badge-success badge-outline font-medium">
+                            Published
+                          </span>
+                        )}
+                        {statusLower === "archived" && (
+                          <span className="badge badge-xs badge-ghost font-medium">
+                            Archived
+                          </span>
+                        )}
 
-                    {/* Status Badge & Actions */}
-                    <div
-                      className="flex items-center gap-1"
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      {course.status === "draft" && (
-                        <span className="badge badge-xs badge-warning badge-outline font-medium">
-                          Draft
-                        </span>
-                      )}
-                      {course.status === "published" && (
-                        <span className="badge badge-xs badge-success badge-outline font-medium">
-                          Published
-                        </span>
-                      )}
-                      {course.status === "archived" && (
-                        <span className="badge badge-xs badge-ghost font-medium">
-                          Archived
-                        </span>
-                      )}
-
-                      {(course.status === "draft" ||
-                        course.status === "published") && (
                         <div className="dropdown dropdown-end">
                           <button
                             type="button"
                             tabIndex={0}
-                            className="btn btn-ghost btn-xs btn-circle text-base-content/60 hover:text-base-content"
+                            className="btn btn-ghost btn-sm btn-circle text-base-content/60 hover:text-base-content"
                             title="Course Actions"
                           >
                             <MoreVertical className="size-3.5" />
                           </button>
                           <ul
                             tabIndex={0}
-                            className="dropdown-content z-20 menu p-1.5 shadow-lg bg-base-100 rounded-xl border border-base-200 text-xs w-36 space-y-0.5"
+                            className="dropdown-content z-20 menu p-1.5 shadow-lg bg-base-100 rounded-xl border border-base-200 text-xs w-44 space-y-0.5"
                           >
-                            {course.status === "draft" && onPublishCourse && (
+                            {onSelectCourse && (
+                              <li>
+                                <button
+                                  type="button"
+                                  onClick={() => onSelectCourse(course)}
+                                  className="gap-1.5 font-medium"
+                                >
+                                  <Eye className="size-3.5" />
+                                  <span>View details</span>
+                                </button>
+                              </li>
+                            )}
+                            {onEditCourse && statusLower !== "archived" && (
+                              <li>
+                                <button
+                                  type="button"
+                                  onClick={() => onEditCourse(course)}
+                                  className="gap-1.5 font-medium"
+                                >
+                                  <Pencil className="size-3.5" />
+                                  <span>Edit course</span>
+                                </button>
+                              </li>
+                            )}
+                            {onScheduleSession &&
+                              statusLower !== "archived" && (
+                                <li>
+                                  <button
+                                    type="button"
+                                    onClick={() => onScheduleSession(course.id)}
+                                    className="gap-1.5 font-medium"
+                                  >
+                                    <CalendarPlus className="size-3.5" />
+                                    <span>Schedule session</span>
+                                  </button>
+                                </li>
+                              )}
+                            {statusLower === "draft" && onPublishCourse && (
                               <li>
                                 <button
                                   type="button"
@@ -196,7 +308,7 @@ export default function CourseCardsGrid({
                                 </button>
                               </li>
                             )}
-                            {onArchiveCourse && (
+                            {statusLower !== "archived" && onArchiveCourse && (
                               <li>
                                 <button
                                   type="button"
@@ -210,39 +322,41 @@ export default function CourseCardsGrid({
                             )}
                           </ul>
                         </div>
-                      )}
+                      </div>
+                    </div>
+
+                    <p className="mt-3 font-bold text-sm sm:text-base text-base-content line-clamp-1">
+                      {course.title}
+                    </p>
+
+                    <div className="flex items-center justify-between text-xs text-base-content/80 mt-1">
+                      <span>{course.enrolled} enrolled</span>
+                      <span className="text-base-content/60">
+                        {course.mode}
+                      </span>
                     </div>
                   </div>
 
-                  <p className="mt-3 font-bold text-sm sm:text-base text-base-content line-clamp-1">
-                    {course.title}
-                  </p>
-
-                  <div className="flex items-center justify-between text-xs text-base-content/80 mt-1">
-                    <span>{course.enrolled} enrolled</span>
-                    <span className="text-base-content/60">{course.mode}</span>
+                  <div className="mt-5 space-y-1.5 pt-3 border-t border-base-200">
+                    <div className="flex items-center justify-between text-xs">
+                      <span className="text-base-content/80 font-medium">
+                        Completion rate
+                      </span>
+                      <span className="font-bold text-primary">
+                        {course.completionRate}%
+                      </span>
+                    </div>
+                    <progress
+                      className={`progress w-full h-2 ${getProgressColor(
+                        course.completionRate,
+                      )}`}
+                      value={course.completionRate}
+                      max="100"
+                    />
                   </div>
                 </div>
-
-                <div className="mt-5 space-y-1.5 pt-3 border-t border-base-200">
-                  <div className="flex items-center justify-between text-xs">
-                    <span className="text-base-content/80 font-medium">
-                      Completion rate
-                    </span>
-                    <span className="font-bold text-primary">
-                      {course.completionRate}%
-                    </span>
-                  </div>
-                  <progress
-                    className={`progress w-full h-2 ${getProgressColor(
-                      course.completionRate,
-                    )}`}
-                    value={course.completionRate}
-                    max="100"
-                  />
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
       </div>

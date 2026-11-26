@@ -76,7 +76,7 @@ export default function LeaveTypesSection({
                         e.stopPropagation();
                         onEditType(item);
                       }}
-                      className="btn btn-ghost btn-xs btn-square opacity-70 group-hover:opacity-100 hover:text-primary"
+                      className="btn btn-ghost btn-sm btn-square opacity-70 group-hover:opacity-100 hover:text-primary"
                     >
                       <Pencil className="size-3.5" />
                     </button>

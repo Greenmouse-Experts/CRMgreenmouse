@@ -26,6 +26,9 @@ export interface Course {
   status?: "draft" | "published" | "archived" | string;
   certificateOnCompletion?: boolean;
   learningObjectives?: string;
+  costPerPersonKobo?: number;
+  targetType?: "all" | "department" | "role" | "selected" | string;
+  targetIds?: string[];
 }
 
 export type SessionStatus =
@@ -42,12 +45,35 @@ export interface TrainingSession {
   rawStartsAt?: string;
   rawEndsAt?: string;
   trainer: string;
+  trainerType?: "internal" | "external" | string;
+  internalTrainerId?: string | null;
+  externalProvider?: string | null;
   status: SessionStatus;
   mode?: DeliveryMode;
   location?: string;
   meetingUrl?: string;
   capacity?: number;
   enrolled?: number;
+  cancellationReason?: string | null;
+}
+
+export interface NormalizedParticipant {
+  enrollmentId: string;
+  employeeId: string;
+  sessionId?: string | null;
+  name: string;
+  employeeNumber?: string;
+  department?: string;
+  email?: string;
+  status: string;
+  attendanceStatus: string;
+  attendanceNotes?: string | null;
+  completionNotes?: string | null;
+  certificateEligible: boolean;
+  certificateUrl?: string | null;
+  certificateIssuedAt?: string | null;
+  completedAt?: string | null;
+  enrolledAt?: string | null;
 }
 
 export interface CreateCoursePayload {

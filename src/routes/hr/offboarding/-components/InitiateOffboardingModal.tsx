@@ -299,7 +299,7 @@ export default function InitiateOffboardingModal({
               <button
                 type="button"
                 onClick={handleAddTask}
-                className="btn btn-xs btn-outline rounded-lg gap-1"
+                className="btn btn-sm btn-outline rounded-lg gap-1"
               >
                 <Plus className="size-3.5" />
                 <span>Add task</span>
@@ -325,7 +325,7 @@ export default function InitiateOffboardingModal({
                       <button
                         type="button"
                         onClick={() => remove(idx)}
-                        className="btn btn-xs btn-ghost text-error gap-1 rounded-lg"
+                        className="btn btn-sm btn-ghost text-error gap-1 rounded-lg"
                       >
                         <Trash2 className="size-3.5" />
                         <span>Remove</span>

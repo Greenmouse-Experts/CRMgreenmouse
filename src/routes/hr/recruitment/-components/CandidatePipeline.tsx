@@ -170,7 +170,7 @@ export default function CandidatePipeline({
                                 e.stopPropagation();
                                 onAdvanceStage(candidate.id, nextStage);
                               }}
-                              className="btn btn-ghost btn-xs text-base-content/80 hover:text-primary hover:bg-primary/10 rounded-lg px-1.5 py-0.5 h-6 min-h-6 flex items-center gap-0.5 text-[10px]"
+                              className="btn btn-ghost btn-sm text-base-content/80 hover:text-primary hover:bg-primary/10 rounded-lg px-1.5 py-0.5 h-6 min-h-6 flex items-center gap-0.5 text-[10px]"
                             >
                               <span>Next</span>
                               <ChevronRight className="size-3" />

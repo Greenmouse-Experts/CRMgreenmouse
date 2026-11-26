@@ -1,5 +1,8 @@
 import type {
   TrainingCourseItem,
+  TrainingCourseRecord,
+  TrainingParticipantItem,
+  TrainingSessionRecord,
   TrainingUpcomingSessionItem,
   BackendCourseCategory,
   BackendDeliveryMode,
@@ -9,6 +12,7 @@ import type {
   Course,
   CourseCategory,
   DeliveryMode,
+  NormalizedParticipant,
   SessionStatus,
   TrainingSession,
 } from "./types";
@@ -28,8 +32,32 @@ export function formatSessionDate(isoString?: string): string {
   }
 }
 
+export function formatSessionDateTime(isoString?: string): string {
+  if (!isoString) return "—";
+  try {
+    const d = new Date(isoString);
+    if (isNaN(d.getTime())) return isoString;
+    return d.toLocaleString("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+      hour: "numeric",
+      minute: "2-digit",
+    });
+  } catch {
+    return isoString;
+  }
+}
+
+export function formatCourseCost(costPerPersonKobo?: number): string {
+  if (typeof costPerPersonKobo !== "number" || costPerPersonKobo <= 0) {
+    return "Free";
+  }
+  return `₦${(costPerPersonKobo / 100).toLocaleString()}`;
+}
+
 export function mapBackendCategoryToUi(
-  backendCategory?: string
+  backendCategory?: string,
 ): CourseCategory {
   switch (backendCategory?.toLowerCase()) {
     case "compliance":
@@ -48,9 +76,7 @@ export function mapBackendCategoryToUi(
   }
 }
 
-export function mapBackendDeliveryModeToUi(
-  backendMode?: string
-): DeliveryMode {
+export function mapBackendDeliveryModeToUi(backendMode?: string): DeliveryMode {
   switch (backendMode?.toLowerCase()) {
     case "virtual":
       return "Virtual";
@@ -62,9 +88,7 @@ export function mapBackendDeliveryModeToUi(
   }
 }
 
-export function mapBackendSessionStatusToUi(
-  status?: string
-): SessionStatus {
+export function mapBackendSessionStatusToUi(status?: string): SessionStatus {
   switch (status?.toLowerCase()) {
     case "in_progress":
       return "In Progress";
@@ -78,42 +102,123 @@ export function mapBackendSessionStatusToUi(
   }
 }
 
-export function mapBackendCourseToUi(item: TrainingCourseItem): Course {
+export function mapCourseRecordToUi(
+  course: TrainingCourseRecord,
+  stats?: { enrolled?: number; completionPercent?: number },
+): Course {
   return {
-    id: item.course.id,
-    title: item.course.title || "Untitled Course",
-    category: mapBackendCategoryToUi(item.course.category),
-    enrolled: item.enrolled ?? 0,
-    completionRate: Math.round(item.completionPercent ?? 0),
-    mode: mapBackendDeliveryModeToUi(item.course.defaultDeliveryMode),
-    mandatory: Boolean(item.course.mandatory),
-    status: item.course.status,
-    certificateOnCompletion: Boolean(item.course.certificateOnCompletion),
-    learningObjectives: item.course.learningObjectives,
+    id: course.id,
+    title: course.title || "Untitled Course",
+    category: mapBackendCategoryToUi(course.category),
+    enrolled: stats?.enrolled ?? 0,
+    completionRate: Math.round(stats?.completionPercent ?? 0),
+    mode: mapBackendDeliveryModeToUi(course.defaultDeliveryMode),
+    mandatory: Boolean(course.mandatory),
+    status: course.status,
+    certificateOnCompletion: Boolean(course.certificateOnCompletion),
+    learningObjectives: course.learningObjectives,
+    costPerPersonKobo: course.costPerPersonKobo,
+    targetType: course.targetType,
+    targetIds: Array.isArray(course.targetIds) ? course.targetIds : [],
+  };
+}
+
+export function mapBackendCourseToUi(item: TrainingCourseItem): Course {
+  return mapCourseRecordToUi(item.course, {
+    enrolled: item.enrolled,
+    completionPercent: item.completionPercent,
+  });
+}
+
+export function mapBackendSessionRecordToUi(
+  session: TrainingSessionRecord,
+  courseTitle: string,
+  enrolled?: number,
+  staffNameMap?: Record<string, string>,
+): TrainingSession {
+  const internalName =
+    session.internalTrainerId && staffNameMap?.[session.internalTrainerId];
+
+  return {
+    id: session.id,
+    courseId: session.courseId,
+    course: courseTitle || "Training Session",
+    date: formatSessionDate(session.startsAt),
+    rawStartsAt: session.startsAt,
+    rawEndsAt: session.endsAt,
+    trainer:
+      session.externalProvider ||
+      internalName ||
+      (session.trainerType === "internal"
+        ? "Internal Staff Trainer"
+        : "Lead Trainer"),
+    trainerType: session.trainerType,
+    internalTrainerId: session.internalTrainerId,
+    externalProvider: session.externalProvider,
+    status: mapBackendSessionStatusToUi(session.status),
+    mode: mapBackendDeliveryModeToUi(session.deliveryMode),
+    location:
+      session.location ||
+      (session.meetingUrl
+        ? `Online: ${session.meetingUrl}`
+        : session.deliveryMode === "virtual"
+          ? "Virtual Meeting"
+          : "Main Training Hall"),
+    meetingUrl: session.meetingUrl || undefined,
+    capacity: session.capacity,
+    enrolled: enrolled ?? 0,
+    cancellationReason: session.cancellationReason,
   };
 }
 
 export function mapBackendUpcomingSessionToUi(
-  item: TrainingUpcomingSessionItem
+  item: TrainingUpcomingSessionItem,
+  staffNameMap?: Record<string, string>,
 ): TrainingSession {
+  return mapBackendSessionRecordToUi(
+    item.session,
+    item.courseTitle,
+    item.enrolled,
+    staffNameMap,
+  );
+}
+
+export function normalizeTrainingParticipant(
+  p: TrainingParticipantItem,
+): NormalizedParticipant {
+  const enrollment = p.enrollment;
+  const employee = p.employee;
+  const fullName = employee
+    ? `${employee.firstName ?? ""} ${employee.lastName ?? ""}`.trim() ||
+      employee.name ||
+      employee.email
+    : undefined;
+
+  const enrollmentId = enrollment?.id || p.enrollmentId || p.id || "";
+  const employeeId =
+    enrollment?.employeeId || employee?.id || p.employeeId || "";
+
   return {
-    id: item.session.id,
-    courseId: item.session.courseId,
-    course: item.courseTitle || "Training Session",
-    date: formatSessionDate(item.session.startsAt),
-    rawStartsAt: item.session.startsAt,
-    rawEndsAt: item.session.endsAt,
-    trainer:
-      item.session.externalProvider ||
-      (item.session.trainerType === "internal"
-        ? "Internal Staff Trainer"
-        : "Lead Trainer"),
-    status: mapBackendSessionStatusToUi(item.session.status),
-    mode: mapBackendDeliveryModeToUi(item.session.deliveryMode),
-    location: item.session.location || (item.session.meetingUrl ? `Online: ${item.session.meetingUrl}` : "Main Training Hall"),
-    meetingUrl: item.session.meetingUrl || undefined,
-    capacity: item.session.capacity,
-    enrolled: item.enrolled ?? 0,
+    enrollmentId,
+    employeeId,
+    sessionId: enrollment?.sessionId ?? p.sessionId ?? null,
+    name: p.employeeName || fullName || employeeId || "Staff",
+    employeeNumber: employee?.employeeNumber,
+    department: employee?.department,
+    email: employee?.email,
+    status: enrollment?.status || p.status || "enrolled",
+    attendanceStatus:
+      enrollment?.attendanceStatus || p.attendanceStatus || "not_recorded",
+    attendanceNotes: enrollment?.attendanceNotes ?? p.attendanceNotes ?? null,
+    completionNotes: enrollment?.completionNotes ?? p.completionNotes ?? null,
+    certificateEligible: Boolean(
+      enrollment?.certificateEligible ?? p.certificateEligible,
+    ),
+    certificateUrl: enrollment?.certificateUrl ?? p.certificateUrl ?? null,
+    certificateIssuedAt:
+      enrollment?.certificateIssuedAt ?? p.certificateIssuedAt ?? null,
+    completedAt: enrollment?.completedAt ?? p.completedAt ?? null,
+    enrolledAt: enrollment?.enrolledAt ?? null,
   };
 }
 
@@ -150,7 +255,14 @@ export function toBackendDeliveryMode(mode: DeliveryMode): BackendDeliveryMode {
 }
 
 export function toBackendTargetType(audience: string): BackendTargetType {
-  if (audience === "All staff") return "all";
-  if (audience === "Managers only" || audience === "New hires") return "role";
+  if (audience === "All staff" || audience === "all") return "all";
+  if (
+    audience === "Managers only" ||
+    audience === "New hires" ||
+    audience === "role"
+  ) {
+    return "role";
+  }
+  if (audience === "selected") return "selected";
   return "department";
 }

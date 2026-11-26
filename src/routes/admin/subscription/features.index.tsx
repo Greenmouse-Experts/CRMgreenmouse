@@ -328,7 +328,7 @@ function RouteComponent() {
                       <button
                         key={cat}
                         onClick={() => setSelectedCategory(cat)}
-                        className={`btn btn-xs rounded-full transition-all shrink-0 font-normal ${
+                        className={`btn btn-sm rounded-full transition-all shrink-0 font-normal ${
                           isSelected
                             ? "btn-primary text-primary-content font-medium shadow-xs"
                             : "btn-ghost border border-base-300/80 text-base-content/80 hover:border-base-content/30"
@@ -378,7 +378,7 @@ function RouteComponent() {
                       setSelectedCategory("All");
                       setPlanFilter("all");
                     }}
-                    className="btn btn-xs btn-outline rounded-lg mx-auto"
+                    className="btn btn-sm btn-outline rounded-lg mx-auto"
                   >
                     Reset Filters
                   </button>
@@ -489,7 +489,7 @@ function RouteComponent() {
                           <button
                             type="button"
                             onClick={() => handleOpenConfigure(feat)}
-                            className="btn btn-xs btn-outline btn-primary gap-1.5 rounded-lg"
+                            className="btn btn-sm btn-outline btn-primary gap-1.5 rounded-lg"
                           >
                             <Settings2 className="size-3.5" /> Configure Tiers
                           </button>
@@ -581,7 +581,7 @@ function RouteComponent() {
                                 <button
                                   type="button"
                                   onClick={() => handleOpenConfigure(feat)}
-                                  className="btn btn-xs btn-outline btn-primary gap-1 rounded-lg"
+                                  className="btn btn-sm btn-outline btn-primary gap-1 rounded-lg"
                                 >
                                   <Settings2 className="size-3.5" /> Configure
                                 </button>

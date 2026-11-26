@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 import Modal, { type ModalHandle } from "@/components/DialogModal";
+import { RichTextContent } from "@/components/inputs/RichTextEditor";
 import type { Course } from "./types";
 import {
   downloadTrainingMaterial,
@@ -166,9 +167,9 @@ export default function CourseDetailModal({
               <FileText className="size-4 text-primary" />
               <span>Learning Objectives</span>
             </h4>
-            <p className="text-sm text-base-content/90 p-3 rounded-xl border border-base-200 bg-base-100 leading-relaxed">
-              {objectives}
-            </p>
+            <div className="p-3 rounded-xl border border-base-200 bg-base-100 leading-relaxed">
+              <RichTextContent value={objectives} />
+            </div>
           </div>
         )}
 
@@ -189,7 +190,7 @@ export default function CourseDetailModal({
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
                 disabled={uploadMaterialMutation.isPending}
-                className="btn btn-xs btn-outline rounded-lg gap-1"
+                className="btn btn-sm btn-outline rounded-lg gap-1"
               >
                 <Upload className="size-3.5" />
                 <span>
@@ -220,7 +221,7 @@ export default function CourseDetailModal({
                   <button
                     type="button"
                     onClick={() => handleDownload(m)}
-                    className="btn btn-xs btn-ghost gap-1 text-primary shrink-0"
+                    className="btn btn-sm btn-ghost gap-1 text-primary shrink-0"
                   >
                     <Download className="size-3.5" />
                     <span>Download</span>

@@ -452,7 +452,7 @@ function AttachmentList({ urls }: { urls?: string[] }) {
             href={url}
             target="_blank"
             rel="noopener noreferrer"
-            className="btn btn-ghost btn-xs max-w-full"
+            className="btn btn-ghost btn-sm max-w-full"
           >
             <FileText className="size-3" /> Attachment {index + 1}
             <ArrowUpRight className="size-3" />

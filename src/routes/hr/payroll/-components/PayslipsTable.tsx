@@ -191,7 +191,7 @@ export default function PayslipsTable({
                           <button
                             type="button"
                             onClick={() => onViewPayslip(slip)}
-                            className="btn btn-xs btn-ghost rounded-lg px-2 gap-1"
+                            className="btn btn-sm btn-ghost rounded-lg px-2 gap-1"
                           >
                             <FileText className="size-3" />
                             <span>View</span>
@@ -199,7 +199,7 @@ export default function PayslipsTable({
                           <button
                             type="button"
                             onClick={() => onToggleHold(slip.id)}
-                            className="btn btn-xs btn-outline rounded-lg px-2 gap-1"
+                            className="btn btn-sm btn-outline rounded-lg px-2 gap-1"
                           >
                             {slip.status === "On hold" ? (
                               <>

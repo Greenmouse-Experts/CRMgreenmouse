@@ -70,9 +70,7 @@ export default function ProbationReviewsCard({
                 <div className="flex-1 min-w-0">
                   <p
                     className={`text-sm font-medium truncate ${
-                      completed
-                        ? "text-base-content/80"
-                        : "text-base-content"
+                      completed ? "text-base-content/80" : "text-base-content"
                     }`}
                   >
                     {title}
@@ -92,7 +90,7 @@ export default function ProbationReviewsCard({
                   <button
                     type="button"
                     onClick={() => onCompleteReview(review)}
-                    className="btn btn-xs bg-primary text-white hover:bg-primary/90 border-0 rounded-lg px-3 shrink-0"
+                    className="btn btn-sm bg-primary text-white hover:bg-primary/90 border-0 rounded-lg px-3 shrink-0"
                   >
                     Complete
                   </button>

@@ -154,7 +154,7 @@ export default function OpenCaseModal({
                   onClose();
                   onOpenOptions();
                 }}
-                className="btn btn-xs btn-outline rounded-lg gap-1"
+                className="btn btn-sm btn-outline rounded-lg gap-1"
               >
                 <Settings className="size-3.5" />
                 <span>Configure options</span>

@@ -278,7 +278,7 @@ function RouteComponent() {
               <button
                 type="button"
                 onClick={handleSelectAllPermissions}
-                className="btn btn-xs btn-ghost text-primary"
+                className="btn btn-sm btn-ghost text-primary"
               >
                 {permissionsQuery.data &&
                 selectedPermissions.length === permissionsQuery.data.length

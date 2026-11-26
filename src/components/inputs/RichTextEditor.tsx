@@ -229,7 +229,7 @@ const RichTextEditor = forwardRef<HTMLDivElement, RichTextProps>(
                 type="button"
                 onMouseDown={(e) => e.preventDefault()}
                 onClick={() => editor.chain().focus().toggleBold().run()}
-                className={`btn btn-ghost btn-xs size-7 p-0 rounded-md ${
+                className={`btn btn-ghost btn-sm size-7 p-0 rounded-md ${
                   editor.isActive("bold")
                     ? "bg-primary text-white hover:bg-primary/90"
                     : "text-base-content/80 hover:text-base-content hover:bg-base-300/60"
@@ -245,7 +245,7 @@ const RichTextEditor = forwardRef<HTMLDivElement, RichTextProps>(
                 type="button"
                 onMouseDown={(e) => e.preventDefault()}
                 onClick={() => editor.chain().focus().toggleItalic().run()}
-                className={`btn btn-ghost btn-xs size-7 p-0 rounded-md ${
+                className={`btn btn-ghost btn-sm size-7 p-0 rounded-md ${
                   editor.isActive("italic")
                     ? "bg-primary text-white hover:bg-primary/90"
                     : "text-base-content/80 hover:text-base-content hover:bg-base-300/60"
@@ -261,7 +261,7 @@ const RichTextEditor = forwardRef<HTMLDivElement, RichTextProps>(
                 type="button"
                 onMouseDown={(e) => e.preventDefault()}
                 onClick={() => editor.chain().focus().toggleUnderline().run()}
-                className={`btn btn-ghost btn-xs size-7 p-0 rounded-md ${
+                className={`btn btn-ghost btn-sm size-7 p-0 rounded-md ${
                   editor.isActive("underline")
                     ? "bg-primary text-white hover:bg-primary/90"
                     : "text-base-content/80 hover:text-base-content hover:bg-base-300/60"
@@ -277,7 +277,7 @@ const RichTextEditor = forwardRef<HTMLDivElement, RichTextProps>(
                 type="button"
                 onMouseDown={(e) => e.preventDefault()}
                 onClick={() => editor.chain().focus().toggleStrike().run()}
-                className={`btn btn-ghost btn-xs size-7 p-0 rounded-md ${
+                className={`btn btn-ghost btn-sm size-7 p-0 rounded-md ${
                   editor.isActive("strike")
                     ? "bg-primary text-white hover:bg-primary/90"
                     : "text-base-content/80 hover:text-base-content hover:bg-base-300/60"
@@ -297,7 +297,7 @@ const RichTextEditor = forwardRef<HTMLDivElement, RichTextProps>(
                 onClick={() =>
                   editor.chain().focus().toggleHeading({ level: 2 }).run()
                 }
-                className={`btn btn-ghost btn-xs size-7 p-0 rounded-md ${
+                className={`btn btn-ghost btn-sm size-7 p-0 rounded-md ${
                   editor.isActive("heading", { level: 2 })
                     ? "bg-primary text-white hover:bg-primary/90"
                     : "text-base-content/80 hover:text-base-content hover:bg-base-300/60"
@@ -315,7 +315,7 @@ const RichTextEditor = forwardRef<HTMLDivElement, RichTextProps>(
                 onClick={() =>
                   editor.chain().focus().toggleHeading({ level: 3 }).run()
                 }
-                className={`btn btn-ghost btn-xs size-7 p-0 rounded-md ${
+                className={`btn btn-ghost btn-sm size-7 p-0 rounded-md ${
                   editor.isActive("heading", { level: 3 })
                     ? "bg-primary text-white hover:bg-primary/90"
                     : "text-base-content/80 hover:text-base-content hover:bg-base-300/60"
@@ -333,7 +333,7 @@ const RichTextEditor = forwardRef<HTMLDivElement, RichTextProps>(
                 type="button"
                 onMouseDown={(e) => e.preventDefault()}
                 onClick={() => editor.chain().focus().toggleBulletList().run()}
-                className={`btn btn-ghost btn-xs size-7 p-0 rounded-md ${
+                className={`btn btn-ghost btn-sm size-7 p-0 rounded-md ${
                   editor.isActive("bulletList")
                     ? "bg-primary text-white hover:bg-primary/90"
                     : "text-base-content/80 hover:text-base-content hover:bg-base-300/60"
@@ -349,7 +349,7 @@ const RichTextEditor = forwardRef<HTMLDivElement, RichTextProps>(
                 type="button"
                 onMouseDown={(e) => e.preventDefault()}
                 onClick={() => editor.chain().focus().toggleOrderedList().run()}
-                className={`btn btn-ghost btn-xs size-7 p-0 rounded-md ${
+                className={`btn btn-ghost btn-sm size-7 p-0 rounded-md ${
                   editor.isActive("orderedList")
                     ? "bg-primary text-white hover:bg-primary/90"
                     : "text-base-content/80 hover:text-base-content hover:bg-base-300/60"
@@ -365,7 +365,7 @@ const RichTextEditor = forwardRef<HTMLDivElement, RichTextProps>(
                 type="button"
                 onMouseDown={(e) => e.preventDefault()}
                 onClick={() => editor.chain().focus().toggleBlockquote().run()}
-                className={`btn btn-ghost btn-xs size-7 p-0 rounded-md ${
+                className={`btn btn-ghost btn-sm size-7 p-0 rounded-md ${
                   editor.isActive("blockquote")
                     ? "bg-primary text-white hover:bg-primary/90"
                     : "text-base-content/80 hover:text-base-content hover:bg-base-300/60"
@@ -381,7 +381,7 @@ const RichTextEditor = forwardRef<HTMLDivElement, RichTextProps>(
                 type="button"
                 onMouseDown={(e) => e.preventDefault()}
                 onClick={() => editor.chain().focus().toggleCode().run()}
-                className={`btn btn-ghost btn-xs size-7 p-0 rounded-md ${
+                className={`btn btn-ghost btn-sm size-7 p-0 rounded-md ${
                   editor.isActive("code")
                     ? "bg-primary text-white hover:bg-primary/90"
                     : "text-base-content/80 hover:text-base-content hover:bg-base-300/60"
@@ -400,7 +400,7 @@ const RichTextEditor = forwardRef<HTMLDivElement, RichTextProps>(
                 onMouseDown={(e) => e.preventDefault()}
                 onClick={() => editor.chain().focus().undo().run()}
                 disabled={!editor.can().undo()}
-                className="btn btn-ghost btn-xs size-7 p-0 rounded-md text-base-content/80 hover:text-base-content disabled:opacity-30"
+                className="btn btn-ghost btn-sm size-7 p-0 rounded-md text-base-content/80 hover:text-base-content disabled:opacity-30"
                 title="Undo"
                 aria-label="Undo"
               >
@@ -413,7 +413,7 @@ const RichTextEditor = forwardRef<HTMLDivElement, RichTextProps>(
                 onMouseDown={(e) => e.preventDefault()}
                 onClick={() => editor.chain().focus().redo().run()}
                 disabled={!editor.can().redo()}
-                className="btn btn-ghost btn-xs size-7 p-0 rounded-md text-base-content/80 hover:text-base-content disabled:opacity-30"
+                className="btn btn-ghost btn-sm size-7 p-0 rounded-md text-base-content/80 hover:text-base-content disabled:opacity-30"
                 title="Redo"
                 aria-label="Redo"
               >

@@ -873,7 +873,7 @@ function StaffDetailPage() {
             <button
               type="button"
               onClick={() => setActiveTab("view")}
-              className={`btn btn-xs rounded-lg font-medium px-3 ${
+              className={`btn btn-sm rounded-lg font-medium px-3 ${
                 activeTab === "view"
                   ? "btn-primary shadow-xs"
                   : "btn-ghost text-base-content/80"
@@ -884,7 +884,7 @@ function StaffDetailPage() {
             <button
               type="button"
               onClick={() => setActiveTab("edit")}
-              className={`btn btn-xs rounded-lg font-medium px-3 ${
+              className={`btn btn-sm rounded-lg font-medium px-3 ${
                 activeTab === "edit"
                   ? "btn-primary shadow-xs"
                   : "btn-ghost text-base-content/80"
@@ -1992,58 +1992,61 @@ function StaffDetailPage() {
                     </div>
                   )}
 
-                  {activeBankValidation && (() => {
-                    const isBankValid =
-                      activeBankValidation.valid !== false &&
-                      activeBankValidation.isValid !== false &&
-                      activeBankValidation.matched !== false &&
-                      activeBankValidation.nameMatched !== false &&
-                      activeBankValidation.isMatch !== false;
-                    const resolvedAccountName =
-                      activeBankValidation.accountName ||
-                      activeBankValidation.account_name ||
-                      activeBankValidation.data?.accountName;
+                  {activeBankValidation &&
+                    (() => {
+                      const isBankValid =
+                        activeBankValidation.valid !== false &&
+                        activeBankValidation.isValid !== false &&
+                        activeBankValidation.matched !== false &&
+                        activeBankValidation.nameMatched !== false &&
+                        activeBankValidation.isMatch !== false;
+                      const resolvedAccountName =
+                        activeBankValidation.accountName ||
+                        activeBankValidation.account_name ||
+                        activeBankValidation.data?.accountName;
 
-                    return (
-                      <div
-                        className={`flex items-center justify-between gap-3 rounded-lg border px-4 py-3 text-sm ${
-                          isBankValid
-                            ? "border-emerald-600/25 bg-emerald-500/10 text-base-content"
-                            : "border-warning/40 bg-warning/10 text-base-content"
-                        }`}
-                      >
-                        <div className="flex items-start gap-2.5 min-w-0">
-                          <CheckCircle2
-                            className={`size-4 shrink-0 mt-0.5 ${
-                              isBankValid ? "text-emerald-600" : "text-warning"
-                            }`}
-                          />
-                          <div className="space-y-0.5 min-w-0">
-                            <p className="font-semibold text-base-content truncate">
-                              {resolvedAccountName ||
-                                activeBankValidation.message ||
-                                "Account verified"}
-                            </p>
-                            {activeBankValidation.message &&
-                            resolvedAccountName ? (
-                              <p className="text-xs text-base-content/75">
-                                {activeBankValidation.message}
-                              </p>
-                            ) : null}
-                          </div>
-                        </div>
-                        <span
-                          className={`badge badge-sm shrink-0 font-medium ${
+                      return (
+                        <div
+                          className={`flex items-center justify-between gap-3 rounded-lg border px-4 py-3 text-sm ${
                             isBankValid
-                              ? "badge-success badge-soft"
-                              : "badge-warning badge-soft"
+                              ? "border-emerald-600/25 bg-emerald-500/10 text-base-content"
+                              : "border-warning/40 bg-warning/10 text-base-content"
                           }`}
                         >
-                          {isBankValid ? "Verified" : "Name mismatch"}
-                        </span>
-                      </div>
-                    );
-                  })()}
+                          <div className="flex items-start gap-2.5 min-w-0">
+                            <CheckCircle2
+                              className={`size-4 shrink-0 mt-0.5 ${
+                                isBankValid
+                                  ? "text-emerald-600"
+                                  : "text-warning"
+                              }`}
+                            />
+                            <div className="space-y-0.5 min-w-0">
+                              <p className="font-semibold text-base-content truncate">
+                                {resolvedAccountName ||
+                                  activeBankValidation.message ||
+                                  "Account verified"}
+                              </p>
+                              {activeBankValidation.message &&
+                              resolvedAccountName ? (
+                                <p className="text-xs text-base-content/75">
+                                  {activeBankValidation.message}
+                                </p>
+                              ) : null}
+                            </div>
+                          </div>
+                          <span
+                            className={`badge badge-sm shrink-0 font-medium ${
+                              isBankValid
+                                ? "badge-success badge-soft"
+                                : "badge-warning badge-soft"
+                            }`}
+                          >
+                            {isBankValid ? "Verified" : "Name mismatch"}
+                          </span>
+                        </div>
+                      );
+                    })()}
                 </div>
               </div>
             )}
@@ -2151,7 +2154,7 @@ function StaffDetailPage() {
                       <button
                         type="button"
                         onClick={() => setCurrentStep(0)}
-                        className="btn btn-ghost btn-xs text-primary font-medium"
+                        className="btn btn-ghost btn-sm text-primary font-medium"
                       >
                         Edit
                       </button>
@@ -2210,7 +2213,7 @@ function StaffDetailPage() {
                       <button
                         type="button"
                         onClick={() => setCurrentStep(1)}
-                        className="btn btn-ghost btn-xs text-primary font-medium"
+                        className="btn btn-ghost btn-sm text-primary font-medium"
                       >
                         Edit
                       </button>
@@ -2252,7 +2255,7 @@ function StaffDetailPage() {
                       <button
                         type="button"
                         onClick={() => setCurrentStep(2)}
-                        className="btn btn-ghost btn-xs text-primary font-medium"
+                        className="btn btn-ghost btn-sm text-primary font-medium"
                       >
                         Edit
                       </button>
@@ -2322,7 +2325,7 @@ function StaffDetailPage() {
                       <button
                         type="button"
                         onClick={() => setCurrentStep(3)}
-                        className="btn btn-ghost btn-xs text-primary font-medium"
+                        className="btn btn-ghost btn-sm text-primary font-medium"
                       >
                         Edit
                       </button>

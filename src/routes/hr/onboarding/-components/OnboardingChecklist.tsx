@@ -138,7 +138,7 @@ export default function OnboardingChecklist({
                     onReassign(item);
                   }}
                   title="Reassign task"
-                  className="btn btn-ghost btn-xs btn-circle text-base-content/50 hover:text-primary shrink-0"
+                  className="btn btn-ghost btn-sm btn-circle text-base-content/50 hover:text-primary shrink-0"
                 >
                   <ArrowRightLeft className="size-3.5" />
                 </button>

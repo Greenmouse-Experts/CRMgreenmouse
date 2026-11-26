@@ -285,7 +285,7 @@ export default function CaseDetailModal({
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
                 disabled={uploadEvidenceMutation.isPending}
-                className="btn btn-xs btn-outline rounded-lg gap-1"
+                className="btn btn-sm btn-outline rounded-lg gap-1"
               >
                 <Upload className="size-3.5" />
                 <span>
@@ -410,7 +410,7 @@ export default function CaseDetailModal({
               <button
                 type="button"
                 onClick={() => setShowCloseInput(false)}
-                className="btn btn-xs btn-ghost rounded-lg"
+                className="btn btn-sm btn-ghost rounded-lg"
               >
                 Cancel
               </button>
@@ -418,7 +418,7 @@ export default function CaseDetailModal({
                 type="button"
                 disabled={isSubmittingAction}
                 onClick={handleClose}
-                className="btn btn-xs btn-error text-white rounded-lg"
+                className="btn btn-sm btn-error text-white rounded-lg"
               >
                 {isSubmittingAction ? "Closing..." : "Confirm Close Case"}
               </button>

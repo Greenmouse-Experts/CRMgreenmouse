@@ -87,7 +87,7 @@ export default function CorrectionRequests({
                     <button
                       type="button"
                       onClick={() => onApprove(req.id)}
-                      className="btn btn-xs bg-emerald-600 text-white hover:bg-emerald-700 border-0 rounded-lg px-3 gap-1"
+                      className="btn btn-sm bg-emerald-600 text-white hover:bg-emerald-700 border-0 rounded-lg px-3 gap-1"
                     >
                       <Check className="size-3" />
                       <span>Approve</span>
@@ -95,7 +95,7 @@ export default function CorrectionRequests({
                     <button
                       type="button"
                       onClick={() => onReject(req.id)}
-                      className="btn btn-xs btn-outline btn-error rounded-lg px-3 gap-1"
+                      className="btn btn-sm btn-outline btn-error rounded-lg px-3 gap-1"
                     >
                       <X className="size-3" />
                       <span>Reject</span>

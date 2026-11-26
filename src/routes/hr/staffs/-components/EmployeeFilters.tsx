@@ -63,7 +63,7 @@ export default function EmployeeFilters({
                 key={status}
                 type="button"
                 onClick={() => onStatusFilterChange(status)}
-                className={`btn btn-xs rounded-full transition-all shrink-0 font-normal ${
+                className={`btn btn-sm rounded-full transition-all shrink-0 font-normal ${
                   isSelected
                     ? "btn-primary text-primary-content font-medium shadow-xs"
                     : "btn-ghost border border-base-300 text-base-content/80 hover:border-base-content/30"

@@ -72,6 +72,7 @@ import { Route as AdminSubscriptionIndexRouteImport } from './routes/admin/subsc
 import { Route as AdminSettingsIndexRouteImport } from './routes/admin/settings/index'
 import { Route as AdminProductsIndexRouteImport } from './routes/admin/products/index'
 import { Route as AdminOrdersIndexRouteImport } from './routes/admin/orders/index'
+import { Route as HrTrainingIdRouteImport } from './routes/hr/training/$id'
 import { Route as HrStaffsIdRouteImport } from './routes/hr/staffs/$id'
 import { Route as HrReportsSlugRouteImport } from './routes/hr/reports/$slug'
 import { Route as HrOnboardingEmployeeIdRouteImport } from './routes/hr/onboarding/$employeeId'
@@ -459,6 +460,11 @@ const AdminOrdersIndexRoute = AdminOrdersIndexRouteImport.update({
   id: '/orders/',
   path: '/orders/',
   getParentRoute: () => AdminRouteRoute,
+} as any)
+const HrTrainingIdRoute = HrTrainingIdRouteImport.update({
+  id: '/training/$id',
+  path: '/training/$id',
+  getParentRoute: () => HrRouteRoute,
 } as any)
 const HrStaffsIdRoute = HrStaffsIdRouteImport.update({
   id: '/staffs/$id',
@@ -893,6 +899,7 @@ export interface FileRoutesByFullPath {
   '/hr/onboarding/$employeeId': typeof HrOnboardingEmployeeIdRoute
   '/hr/reports/$slug': typeof HrReportsSlugRoute
   '/hr/staffs/$id': typeof HrStaffsIdRoute
+  '/hr/training/$id': typeof HrTrainingIdRoute
   '/admin/orders': typeof AdminOrdersIndexRoute
   '/admin/products': typeof AdminProductsIndexRoute
   '/admin/settings/': typeof AdminSettingsIndexRoute
@@ -1018,6 +1025,7 @@ export interface FileRoutesByTo {
   '/hr/onboarding/$employeeId': typeof HrOnboardingEmployeeIdRoute
   '/hr/reports/$slug': typeof HrReportsSlugRoute
   '/hr/staffs/$id': typeof HrStaffsIdRoute
+  '/hr/training/$id': typeof HrTrainingIdRoute
   '/admin/orders': typeof AdminOrdersIndexRoute
   '/admin/products': typeof AdminProductsIndexRoute
   '/admin/settings': typeof AdminSettingsIndexRoute
@@ -1155,6 +1163,7 @@ export interface FileRoutesById {
   '/hr/onboarding/$employeeId': typeof HrOnboardingEmployeeIdRoute
   '/hr/reports/$slug': typeof HrReportsSlugRoute
   '/hr/staffs/$id': typeof HrStaffsIdRoute
+  '/hr/training/$id': typeof HrTrainingIdRoute
   '/admin/orders/': typeof AdminOrdersIndexRoute
   '/admin/products/': typeof AdminProductsIndexRoute
   '/admin/settings/': typeof AdminSettingsIndexRoute
@@ -1293,6 +1302,7 @@ export interface FileRouteTypes {
     | '/hr/onboarding/$employeeId'
     | '/hr/reports/$slug'
     | '/hr/staffs/$id'
+    | '/hr/training/$id'
     | '/admin/orders'
     | '/admin/products'
     | '/admin/settings/'
@@ -1418,6 +1428,7 @@ export interface FileRouteTypes {
     | '/hr/onboarding/$employeeId'
     | '/hr/reports/$slug'
     | '/hr/staffs/$id'
+    | '/hr/training/$id'
     | '/admin/orders'
     | '/admin/products'
     | '/admin/settings'
@@ -1554,6 +1565,7 @@ export interface FileRouteTypes {
     | '/hr/onboarding/$employeeId'
     | '/hr/reports/$slug'
     | '/hr/staffs/$id'
+    | '/hr/training/$id'
     | '/admin/orders/'
     | '/admin/products/'
     | '/admin/settings/'
@@ -2129,6 +2141,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin/orders'
       preLoaderRoute: typeof AdminOrdersIndexRouteImport
       parentRoute: typeof AdminRouteRoute
+    }
+    '/hr/training/$id': {
+      id: '/hr/training/$id'
+      path: '/training/$id'
+      fullPath: '/hr/training/$id'
+      preLoaderRoute: typeof HrTrainingIdRouteImport
+      parentRoute: typeof HrRouteRoute
     }
     '/hr/staffs/$id': {
       id: '/hr/staffs/$id'
@@ -2750,6 +2769,7 @@ interface HrRouteRouteChildren {
   HrOnboardingEmployeeIdRoute: typeof HrOnboardingEmployeeIdRoute
   HrReportsSlugRoute: typeof HrReportsSlugRoute
   HrStaffsIdRoute: typeof HrStaffsIdRoute
+  HrTrainingIdRoute: typeof HrTrainingIdRoute
   HrAttendanceIndexRoute: typeof HrAttendanceIndexRoute
   HrDisciplinaryIndexRoute: typeof HrDisciplinaryIndexRoute
   HrLeaveIndexRoute: typeof HrLeaveIndexRoute
@@ -2772,6 +2792,7 @@ const HrRouteRouteChildren: HrRouteRouteChildren = {
   HrOnboardingEmployeeIdRoute: HrOnboardingEmployeeIdRoute,
   HrReportsSlugRoute: HrReportsSlugRoute,
   HrStaffsIdRoute: HrStaffsIdRoute,
+  HrTrainingIdRoute: HrTrainingIdRoute,
   HrAttendanceIndexRoute: HrAttendanceIndexRoute,
   HrDisciplinaryIndexRoute: HrDisciplinaryIndexRoute,
   HrLeaveIndexRoute: HrLeaveIndexRoute,

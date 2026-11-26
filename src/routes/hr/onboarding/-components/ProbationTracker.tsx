@@ -125,7 +125,7 @@ export default function ProbationTracker({
             <button
               type="button"
               onClick={() => onAdvance(hire.id)}
-              className="btn btn-xs bg-primary text-white hover:bg-primary/90 border-0 rounded-lg px-3 gap-1"
+              className="btn btn-sm bg-primary text-white hover:bg-primary/90 border-0 rounded-lg px-3 gap-1"
             >
               <span>Advance Milestone</span>
               <ArrowRight className="size-3" />
@@ -136,7 +136,7 @@ export default function ProbationTracker({
                 <button
                   type="button"
                   onClick={() => onExtend(hire.id)}
-                  className="btn btn-xs btn-outline border-warning text-warning hover:bg-warning hover:text-white rounded-lg px-3 gap-1"
+                  className="btn btn-sm btn-outline border-warning text-warning hover:bg-warning hover:text-white rounded-lg px-3 gap-1"
                 >
                   <CalendarClock className="size-3" />
                   <span>Extend</span>
@@ -145,7 +145,7 @@ export default function ProbationTracker({
               <button
                 type="button"
                 onClick={() => onConfirm(hire.id)}
-                className="btn btn-xs bg-emerald-600 text-white hover:bg-emerald-700 border-0 rounded-lg px-3 gap-1"
+                className="btn btn-sm bg-emerald-600 text-white hover:bg-emerald-700 border-0 rounded-lg px-3 gap-1"
               >
                 <Award className="size-3" />
                 <span>Confirm Permanent</span>

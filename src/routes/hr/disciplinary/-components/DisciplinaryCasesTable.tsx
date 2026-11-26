@@ -189,7 +189,7 @@ export default function DisciplinaryCasesTable({
             e.stopPropagation();
             onSelectCase(c);
           }}
-          className="btn btn-xs btn-ghost rounded-lg gap-1 hover:bg-base-200 text-base-content/80"
+          className="btn btn-sm btn-ghost rounded-lg gap-1 hover:bg-base-200 text-base-content/80"
         >
           <Eye className="size-3.5" />
           <span>Review</span>

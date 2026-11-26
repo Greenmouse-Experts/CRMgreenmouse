@@ -309,7 +309,7 @@ function RouteComponent() {
                                 <button
                                   type="button"
                                   onClick={() => handleRemoveItem(idx)}
-                                  className="btn btn-ghost btn-xs text-error"
+                                  className="btn btn-ghost btn-sm text-error"
                                 >
                                   <Trash2 className="size-4" />
                                 </button>

@@ -214,7 +214,7 @@ export default function BulkImport({
               </div>
               <button
                 type="button"
-                className="btn btn-ghost btn-xs btn-square"
+                className="btn btn-ghost btn-sm btn-square"
                 aria-label={`Remove ${file.name}`}
                 onClick={() => {
                   setFile(null);
@@ -294,7 +294,7 @@ export default function BulkImport({
               </p>
               <button
                 type="button"
-                className="btn btn-ghost btn-xs mt-2 gap-1"
+                className="btn btn-ghost btn-sm mt-2 gap-1"
                 onClick={() => void importer.contractQuery.refetch()}
               >
                 <RefreshCw className="size-3.5" aria-hidden="true" />

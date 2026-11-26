@@ -185,7 +185,7 @@ export default function PayrollRunsTable({
                         <button
                           type="button"
                           onClick={() => onSubmitRun(run.id)}
-                          className="btn btn-xs bg-primary text-white hover:bg-primary/90 border-0 rounded-lg px-2.5 gap-1 shadow-2xs"
+                          className="btn btn-sm bg-primary text-white hover:bg-primary/90 border-0 rounded-lg px-2.5 gap-1 shadow-2xs"
                         >
                           <Send className="size-3" />
                           <span>Submit</span>
@@ -196,7 +196,7 @@ export default function PayrollRunsTable({
                           <button
                             type="button"
                             onClick={() => onApproveRun(run.id)}
-                            className="btn btn-xs bg-emerald-600 text-white hover:bg-emerald-700 border-0 rounded-lg px-2.5 gap-1 shadow-2xs"
+                            className="btn btn-sm bg-emerald-600 text-white hover:bg-emerald-700 border-0 rounded-lg px-2.5 gap-1 shadow-2xs"
                           >
                             <Check className="size-3" />
                             <span>Approve</span>
@@ -204,7 +204,7 @@ export default function PayrollRunsTable({
                           <button
                             type="button"
                             onClick={() => onCancelRun(run.id)}
-                            className="btn btn-xs btn-outline btn-error rounded-lg px-2.5 gap-1"
+                            className="btn btn-sm btn-outline btn-error rounded-lg px-2.5 gap-1"
                           >
                             <X className="size-3" />
                             <span>Cancel</span>
@@ -215,7 +215,7 @@ export default function PayrollRunsTable({
                         <button
                           type="button"
                           onClick={() => onMarkPaid(run.id)}
-                          className="btn btn-xs bg-emerald-600 text-white hover:bg-emerald-700 border-0 rounded-lg px-2.5 gap-1 shadow-2xs"
+                          className="btn btn-sm bg-emerald-600 text-white hover:bg-emerald-700 border-0 rounded-lg px-2.5 gap-1 shadow-2xs"
                         >
                           <Wallet className="size-3" />
                           <span>Mark paid</span>
@@ -225,7 +225,7 @@ export default function PayrollRunsTable({
                         <button
                           type="button"
                           onClick={() => onViewPayslips(run.id)}
-                          className="btn btn-xs btn-ghost rounded-lg px-2.5 gap-1"
+                          className="btn btn-sm btn-ghost rounded-lg px-2.5 gap-1"
                         >
                           <FileText className="size-3" />
                           <span>Payslips</span>

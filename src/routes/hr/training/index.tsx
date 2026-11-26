@@ -1,12 +1,12 @@
-import { useState } from "react";
-import { createFileRoute } from "@tanstack/react-router";
+import { useMemo, useState } from "react";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import PageHeader from "@/components/Headers/PageHeader";
 import PageLoader from "@/components/layout/PageLoader";
 import CourseCardsGrid from "./-components/CourseCardsGrid";
 import UpcomingSessionsTable from "./-components/UpcomingSessionsTable";
 import CreateCourseModal from "./-components/CreateCourseModal";
+import EditCourseModal from "./-components/EditCourseModal";
 import ScheduleSessionModal from "./-components/ScheduleSessionModal";
-import CourseDetailModal from "./-components/CourseDetailModal";
 import SessionDetailModal from "./-components/SessionDetailModal";
 import MyLearningSection from "./-components/MyLearningSection";
 import type { Course, TrainingSession } from "./-components/types";
@@ -16,7 +16,9 @@ import {
 } from "./-components/mappers";
 import {
   useTrainingDashboard,
+  useTrainingCourses,
   useCreateTrainingCourse,
+  useUpdateTrainingCourse,
   useCreateTrainingSession,
   usePublishTrainingCourse,
   useArchiveTrainingCourse,
@@ -25,7 +27,9 @@ import {
   type CreateTrainingCoursePayload,
   type CreateTrainingSessionPayload,
   type TrainingDashboardData,
+  type UpdateTrainingCoursePayload,
 } from "@/api/trainingApi";
+import { useStaffs } from "@/api/tenantApi";
 import { extract_message } from "@/helpers/errors";
 import { CalendarPlus, Plus } from "lucide-react";
 import { toast } from "sonner";
@@ -35,23 +39,37 @@ export const Route = createFileRoute("/hr/training/")({
 });
 
 function RouteComponent() {
+  const navigate = useNavigate();
   const [isCreateCourseOpen, setIsCreateCourseOpen] = useState(false);
+  const [editingCourse, setEditingCourse] = useState<Course | null>(null);
   const [isScheduleSessionOpen, setIsScheduleSessionOpen] = useState(false);
   const [scheduleDefaultCourseId, setScheduleDefaultCourseId] = useState<
     string | undefined
   >(undefined);
-  const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
   const [selectedSession, setSelectedSession] =
     useState<TrainingSession | null>(null);
 
   const dashboardQuery = useTrainingDashboard();
+  const catalogQuery = useTrainingCourses();
+  const staffsQuery = useStaffs();
 
   const createCourseMutation = useCreateTrainingCourse();
+  const updateCourseMutation = useUpdateTrainingCourse();
   const createSessionMutation = useCreateTrainingSession();
   const publishCourseMutation = usePublishTrainingCourse();
   const archiveCourseMutation = useArchiveTrainingCourse();
   const advanceSessionMutation = useAdvanceTrainingSessionStatus();
   const cancelSessionMutation = useCancelTrainingSession();
+
+  const staffNameMap = useMemo(() => {
+    const map: Record<string, string> = {};
+    for (const staff of staffsQuery.data ?? []) {
+      const fullName =
+        `${staff.firstName ?? ""} ${staff.lastName ?? ""}`.trim();
+      map[staff.id] = fullName || staff.email || staff.id;
+    }
+    return map;
+  }, [staffsQuery.data]);
 
   const handleCreateCourse = async (
     coursePayload: CreateTrainingCoursePayload,
@@ -80,6 +98,26 @@ function RouteComponent() {
       });
     } catch (err) {
       toast.error("Failed to create course", {
+        description: extract_message(err),
+      });
+      throw err;
+    }
+  };
+
+  const handleUpdateCourse = async (
+    courseId: string,
+    payload: UpdateTrainingCoursePayload,
+  ) => {
+    try {
+      const updated = await updateCourseMutation.mutateAsync({
+        id: courseId,
+        ...payload,
+      });
+      toast.success("Course updated successfully", {
+        description: `"${updated.title}" changes saved.`,
+      });
+    } catch (err) {
+      toast.error("Failed to update course", {
         description: extract_message(err),
       });
       throw err;
@@ -124,7 +162,7 @@ function RouteComponent() {
       await advanceSessionMutation.mutateAsync({ sessionId, status });
       toast.success(
         status === "in_progress"
-          ? "Session marked as In Progress."
+          ? "Session started (marked In Progress)."
           : "Session marked as Completed.",
       );
     } catch (err) {
@@ -141,8 +179,13 @@ function RouteComponent() {
     }
   };
 
-  const courses = (dashboardQuery.data?.courses ?? []).map(
-    mapBackendCourseToUi,
+  const rawCourses =
+    (catalogQuery.data && catalogQuery.data.length > 0
+      ? catalogQuery.data
+      : dashboardQuery.data?.courses) ?? [];
+  const courses = rawCourses.map(mapBackendCourseToUi);
+  const nonArchivedCourses = courses.filter(
+    (c) => String(c.status).toLowerCase() !== "archived",
   );
 
   return (
@@ -155,10 +198,12 @@ function RouteComponent() {
           <button
             type="button"
             onClick={() => {
-              setScheduleDefaultCourseId(courses[0]?.id);
+              setScheduleDefaultCourseId(
+                nonArchivedCourses[0]?.id ?? courses[0]?.id,
+              );
               setIsScheduleSessionOpen(true);
             }}
-            disabled={courses.length === 0}
+            disabled={nonArchivedCourses.length === 0}
             className="btn btn-sm btn-outline border-base-300 hover:bg-base-200 text-base-content rounded-xl px-4 font-medium gap-1.5"
           >
             <CalendarPlus className="size-4" />
@@ -188,16 +233,29 @@ function RouteComponent() {
         }}
       >
         {(data) => {
-          const loadedCourses = data.courses.map(mapBackendCourseToUi);
-          const sessions = data.upcomingSessions.map(
-            mapBackendUpcomingSessionToUi,
+          const loadedCourses =
+            catalogQuery.data && catalogQuery.data.length > 0
+              ? catalogQuery.data.map(mapBackendCourseToUi)
+              : data.courses.map(mapBackendCourseToUi);
+          const sessions = data.upcomingSessions.map((item) =>
+            mapBackendUpcomingSessionToUi(item, staffNameMap),
           );
 
           return (
             <div className="space-y-6">
               <CourseCardsGrid
                 courses={loadedCourses}
-                onSelectCourse={(course) => setSelectedCourse(course)}
+                onSelectCourse={(course) =>
+                  navigate({
+                    to: "/hr/training/$id",
+                    params: { id: course.id },
+                  })
+                }
+                onEditCourse={(course) => setEditingCourse(course)}
+                onScheduleSession={(courseId) => {
+                  setScheduleDefaultCourseId(courseId);
+                  setIsScheduleSessionOpen(true);
+                }}
                 onPublishCourse={handlePublishCourse}
                 onArchiveCourse={handleArchiveCourse}
               />
@@ -219,24 +277,19 @@ function RouteComponent() {
         onSubmitCourse={handleCreateCourse}
       />
 
+      <EditCourseModal
+        isOpen={Boolean(editingCourse)}
+        onClose={() => setEditingCourse(null)}
+        course={editingCourse}
+        onUpdateCourse={handleUpdateCourse}
+      />
+
       <ScheduleSessionModal
         isOpen={isScheduleSessionOpen}
         onClose={() => setIsScheduleSessionOpen(false)}
-        courses={courses}
+        courses={nonArchivedCourses}
         defaultCourseId={scheduleDefaultCourseId}
         onScheduleSession={handleScheduleSession}
-      />
-
-      <CourseDetailModal
-        isOpen={Boolean(selectedCourse)}
-        onClose={() => setSelectedCourse(null)}
-        course={selectedCourse}
-        onPublish={handlePublishCourse}
-        onArchive={handleArchiveCourse}
-        onScheduleSession={(courseId) => {
-          setScheduleDefaultCourseId(courseId);
-          setIsScheduleSessionOpen(true);
-        }}
       />
 
       <SessionDetailModal

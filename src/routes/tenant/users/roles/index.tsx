@@ -382,7 +382,7 @@ function RouteComponent() {
                       type="button"
                       aria-label="Clear permission search"
                       onClick={() => setPermissionFilter("")}
-                      className="btn btn-ghost btn-xs btn-square absolute right-1 top-1/2 -translate-y-1/2"
+                      className="btn btn-ghost btn-sm btn-square absolute right-1 top-1/2 -translate-y-1/2"
                     >
                       <X aria-hidden="true" className="size-3.5" />
                     </button>

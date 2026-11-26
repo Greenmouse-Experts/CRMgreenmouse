@@ -111,7 +111,7 @@ function RouteComponent() {
                           ? "Hide current password"
                           : "Show current password"
                       }
-                      className="btn btn-ghost btn-xs btn-square absolute right-2 top-1/2 -translate-y-1/2 text-base-content/60"
+                      className="btn btn-ghost btn-sm btn-square absolute right-2 top-1/2 -translate-y-1/2 text-base-content/60"
                     >
                       {showCurrent ? (
                         <EyeOff className="size-4" aria-hidden="true" />
@@ -152,7 +152,7 @@ function RouteComponent() {
                         aria-label={
                           showNew ? "Hide new password" : "Show new password"
                         }
-                        className="btn btn-ghost btn-xs btn-square absolute right-2 top-1/2 -translate-y-1/2 text-base-content/60"
+                        className="btn btn-ghost btn-sm btn-square absolute right-2 top-1/2 -translate-y-1/2 text-base-content/60"
                       >
                         {showNew ? (
                           <EyeOff className="size-4" aria-hidden="true" />
@@ -195,7 +195,7 @@ function RouteComponent() {
                             ? "Hide password confirmation"
                             : "Show password confirmation"
                         }
-                        className="btn btn-ghost btn-xs btn-square absolute right-2 top-1/2 -translate-y-1/2 text-base-content/60"
+                        className="btn btn-ghost btn-sm btn-square absolute right-2 top-1/2 -translate-y-1/2 text-base-content/60"
                       >
                         {showConfirm ? (
                           <EyeOff className="size-4" aria-hidden="true" />

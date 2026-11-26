@@ -59,7 +59,7 @@ export default function DashStats() {
               </p>
               <Link
                 to="/tenant/accounts/income-expenses"
-                className="btn btn-xs btn-outline btn-primary"
+                className="btn btn-sm btn-outline btn-primary"
               >
                 Record Income
               </Link>
@@ -157,7 +157,7 @@ export default function DashStats() {
               </p>
               <Link
                 to="/tenant/accounts/income-expenses"
-                className="btn btn-xs btn-outline btn-error"
+                className="btn btn-sm btn-outline btn-error"
               >
                 Record Expense
               </Link>

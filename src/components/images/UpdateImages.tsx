@@ -107,7 +107,7 @@ export default function UpdateImages({
             )}
             <button
               type="button"
-              className="btn btn-circle btn-error btn-xs absolute right-1.5 top-1.5 shadow z-10 opacity-90 hover:opacity-100 transition-opacity"
+              className="btn btn-circle btn-error btn-sm absolute right-1.5 top-1.5 shadow z-10 opacity-90 hover:opacity-100 transition-opacity"
               onClick={() => removePrevImage(image.path)}
               aria-label="Remove existing image"
             >
@@ -138,7 +138,7 @@ export default function UpdateImages({
             )}
             <button
               type="button"
-              className="btn btn-circle btn-error btn-xs absolute right-1.5 top-1.5 shadow z-10 opacity-90 hover:opacity-100 transition-opacity"
+              className="btn btn-circle btn-error btn-sm absolute right-1.5 top-1.5 shadow z-10 opacity-90 hover:opacity-100 transition-opacity"
               onClick={() => removeNewImage(index)}
               aria-label="Remove new image"
             >

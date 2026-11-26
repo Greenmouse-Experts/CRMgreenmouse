@@ -21,6 +21,12 @@ export type BackendSessionStatus =
   | "completed"
   | "cancelled";
 
+export type BackendAttendanceStatus =
+  | "not_recorded"
+  | "attended"
+  | "absent"
+  | "excused";
+
 export interface TrainingCourseRecord {
   id: string;
   tenantId: string;
@@ -159,22 +165,58 @@ export interface TrainingMaterialItem {
   createdAt?: string;
 }
 
+export interface TrainingEnrollmentRecord {
+  id: string;
+  tenantId?: string;
+  courseId?: string;
+  sessionId?: string | null;
+  employeeId?: string;
+  staffId?: string | null;
+  status?: string;
+  attendanceStatus?: BackendAttendanceStatus | string;
+  attendanceNotes?: string | null;
+  attendanceRecordedBy?: string | null;
+  attendanceRecordedAt?: string | null;
+  completionNotes?: string | null;
+  completedBy?: string | null;
+  completedAt?: string | null;
+  certificateEligible?: boolean;
+  certificateUrl?: string | null;
+  certificateIssuedAt?: string | null;
+  enrolledAt?: string;
+  updatedAt?: string;
+}
+
 export interface TrainingParticipantItem {
+  enrollment?: TrainingEnrollmentRecord;
   enrollmentId?: string;
   id?: string;
   employeeId?: string;
   employeeName?: string;
   employee?: {
     id?: string;
+    employeeNumber?: string;
+    department?: string;
     firstName?: string;
     lastName?: string;
     name?: string;
     email?: string;
   };
+  sessionId?: string | null;
   status?: string;
   attendanceStatus?: string;
+  attendanceNotes?: string | null;
+  completionNotes?: string | null;
+  certificateEligible?: boolean;
   certificateUrl?: string | null;
+  certificateIssuedAt?: string | null;
   completedAt?: string | null;
+}
+
+export interface TrainingCourseDetailRecord extends TrainingCourseRecord {
+  sessions?: TrainingSessionRecord[];
+  participants?: TrainingParticipantItem[];
+  materials?: TrainingMaterialItem[];
 }
 
 /* =========================================================================
@@ -200,14 +242,12 @@ export function useTrainingDashboard() {
   return useQuery({
     queryKey: TRAINING_QUERY_KEYS.dashboard(),
     queryFn: async (): Promise<TrainingDashboardData> => {
-      const response = await apiClient.get<TrainingDashboardData>(
-        "/training/dashboard",
-      );
-      const data = response.data;
+      const response = await apiClient.get<any>("/training/dashboard");
+      const raw = response.data?.data ?? response.data;
       return {
-        courses: Array.isArray(data?.courses) ? data.courses : [],
-        upcomingSessions: Array.isArray(data?.upcomingSessions)
-          ? data.upcomingSessions
+        courses: Array.isArray(raw?.courses) ? raw.courses : [],
+        upcomingSessions: Array.isArray(raw?.upcomingSessions)
+          ? raw.upcomingSessions
           : [],
       };
     },
@@ -221,28 +261,24 @@ export function useTrainingCourses() {
   return useQuery({
     queryKey: TRAINING_QUERY_KEYS.courses(),
     queryFn: async (): Promise<TrainingCourseItem[]> => {
-      const response =
-        await apiClient.get<TrainingCourseItem[]>("/training/courses");
-      if (Array.isArray(response.data)) {
-        return response.data;
-      }
-      return [];
+      const response = await apiClient.get<any>("/training/courses");
+      const raw = response.data?.data ?? response.data;
+      return Array.isArray(raw) ? raw : [];
     },
   });
 }
 
 /**
- * Fetch Single Course Detail
+ * Fetch Single Course Detail (includes sessions, participants, materials)
  */
 export function useTrainingCourse(id?: string) {
   return useQuery({
     queryKey: TRAINING_QUERY_KEYS.course(id || ""),
-    queryFn: async (): Promise<TrainingCourseRecord> => {
+    queryFn: async (): Promise<TrainingCourseDetailRecord> => {
       if (!id) throw new Error("Course ID is required");
-      const response = await apiClient.get<TrainingCourseRecord>(
-        `/training/courses/${id}`,
-      );
-      return response.data;
+      const response = await apiClient.get<any>(`/training/courses/${id}`);
+      const raw = response.data?.data ?? response.data;
+      return raw;
     },
     enabled: Boolean(id),
   });
@@ -254,12 +290,15 @@ export function useTrainingCourse(id?: string) {
 export function useTrainingSessionParticipants(sessionId?: string) {
   return useQuery({
     queryKey: TRAINING_QUERY_KEYS.sessionParticipants(sessionId || ""),
-    queryFn: async (): Promise<any[]> => {
+    queryFn: async (): Promise<TrainingParticipantItem[]> => {
       if (!sessionId) throw new Error("Session ID is required");
-      const response = await apiClient.get<any[]>(
+      const response = await apiClient.get<any>(
         `/training/sessions/${sessionId}/participants`,
       );
-      return Array.isArray(response.data) ? response.data : [];
+      const raw = response.data?.data ?? response.data;
+      if (Array.isArray(raw)) return raw;
+      if (Array.isArray(raw?.participants)) return raw.participants;
+      return [];
     },
     enabled: Boolean(sessionId),
   });
@@ -482,6 +521,9 @@ export function useUploadTrainingMaterial() {
     onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({
         queryKey: TRAINING_QUERY_KEYS.courseMaterials(variables.courseId),
+      });
+      queryClient.invalidateQueries({
+        queryKey: TRAINING_QUERY_KEYS.course(variables.courseId),
       });
     },
   });

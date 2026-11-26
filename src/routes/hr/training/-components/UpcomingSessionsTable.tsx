@@ -1,4 +1,5 @@
 import { useState } from "react";
+import CancelSessionModal from "./CancelSessionModal";
 import type { SessionStatus, TrainingSession } from "./types";
 import {
   Calendar,
@@ -18,7 +19,7 @@ interface UpcomingSessionsTableProps {
     sessionId: string,
     status: "in_progress" | "completed",
   ) => void;
-  onCancelSession?: (sessionId: string, reason: string) => void;
+  onCancelSession?: (sessionId: string, reason: string) => Promise<void> | void;
 }
 
 export default function UpcomingSessionsTable({
@@ -29,6 +30,10 @@ export default function UpcomingSessionsTable({
 }: UpcomingSessionsTableProps) {
   const [searchTerm, setSearchTerm] = useState("");
   const [filterStatus, setFilterStatus] = useState<string>("All");
+  const [cancelTarget, setCancelTarget] = useState<TrainingSession | null>(
+    null,
+  );
+  const [isCancelling, setIsCancelling] = useState(false);
 
   const filteredSessions = sessions.filter((s) => {
     if (filterStatus !== "All" && s.status !== filterStatus) return false;
@@ -90,179 +95,195 @@ export default function UpcomingSessionsTable({
     }
   };
 
-  const handleCancelClick = (e: React.MouseEvent, sessionId: string) => {
-    e.stopPropagation();
-    const reason = window.prompt(
-      "Reason for cancelling session:",
-      "Rescheduling",
-    );
-    if (reason && reason.trim()) {
-      onCancelSession?.(sessionId, reason.trim());
-    }
-  };
-
   return (
-    <div className="card bg-base-100 border border-base-200 shadow-sm p-4 sm:p-6 space-y-4">
-      {/* Table Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <div>
-          <div className="flex items-center gap-2">
-            <h2 className="text-lg font-bold text-base-content">
-              Training sessions
-            </h2>
-            <span className="badge badge-sm badge-ghost font-semibold">
-              {filteredSessions.length}
-            </span>
+    <>
+      <div className="card bg-base-100 border border-base-200 shadow-sm p-4 sm:p-6 space-y-4">
+        {/* Table Header */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div>
+            <div className="flex items-center gap-2">
+              <h2 className="text-lg font-bold text-base-content">
+                Training sessions
+              </h2>
+              <span className="badge badge-sm badge-ghost font-semibold">
+                {filteredSessions.length}
+              </span>
+            </div>
+            <p className="text-xs text-base-content/80 mt-0.5">
+              Classroom, live virtual training, and cohort schedules.
+            </p>
           </div>
-          <p className="text-xs text-base-content/80 mt-0.5">
-            Classroom, live virtual training, and cohort schedules.
-          </p>
+
+          {/* Search */}
+          <div className="relative w-full sm:w-64">
+            <Search className="size-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-base-content/80" />
+            <input
+              type="text"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              placeholder="Search session, trainer..."
+              className="input input-sm input-bordered w-full pl-9 rounded-xl bg-base-200/80"
+            />
+          </div>
         </div>
 
-        {/* Search */}
-        <div className="relative w-full sm:w-64">
-          <Search className="size-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-base-content/80" />
-          <input
-            type="text"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            placeholder="Search session, trainer..."
-            className="input input-sm input-bordered w-full pl-9 rounded-xl bg-base-200/80"
-          />
+        {/* Filter Tabs */}
+        <div className="flex flex-wrap gap-1.5 border-b border-base-200 pb-2">
+          {["All", "Scheduled", "In Progress", "Completed", "Cancelled"].map(
+            (tab) => (
+              <button
+                key={tab}
+                type="button"
+                onClick={() => setFilterStatus(tab)}
+                className={`px-3 py-1 text-xs font-semibold rounded-lg transition-all ${
+                  filterStatus === tab
+                    ? "bg-primary text-white shadow-2xs"
+                    : "text-base-content/80 hover:bg-base-200"
+                }`}
+              >
+                {tab}
+              </button>
+            ),
+          )}
         </div>
-      </div>
 
-      {/* Filter Tabs */}
-      <div className="flex flex-wrap gap-1.5 border-b border-base-200 pb-2">
-        {["All", "Scheduled", "In Progress", "Completed", "Cancelled"].map(
-          (tab) => (
-            <button
-              key={tab}
-              type="button"
-              onClick={() => setFilterStatus(tab)}
-              className={`px-3 py-1 text-xs font-semibold rounded-lg transition-all ${
-                filterStatus === tab
-                  ? "bg-primary text-white shadow-2xs"
-                  : "text-base-content/80 hover:bg-base-200"
-              }`}
-            >
-              {tab}
-            </button>
-          ),
-        )}
-      </div>
-
-      {/* Table */}
-      <div className="overflow-x-auto">
-        <table className="table table-sm w-full">
-          <thead>
-            <tr className="border-b border-base-200 font-semibold text-base-content/80 text-xs">
-              <th>Course</th>
-              <th>Date</th>
-              <th>Delivery & Location</th>
-              <th>Trainer</th>
-              <th>Status</th>
-              <th className="text-right">Actions</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-base-200 text-xs">
-            {filteredSessions.length === 0 ? (
-              <tr>
-                <td
-                  colSpan={6}
-                  className="py-8 text-center text-base-content/80 italic"
-                >
-                  No training sessions found.
-                </td>
+        {/* Table */}
+        <div className="overflow-x-auto">
+          <table className="table table-sm w-full">
+            <thead>
+              <tr className="border-b border-base-200 font-semibold text-base-content/80 text-xs">
+                <th>Course</th>
+                <th>Date</th>
+                <th>Delivery & Location</th>
+                <th>Trainer</th>
+                <th>Status</th>
+                <th className="text-right">Actions</th>
               </tr>
-            ) : (
-              filteredSessions.map((session) => (
-                <tr
-                  key={session.id}
-                  onClick={() => onSelectSession?.(session)}
-                  className="hover:bg-base-200/80 cursor-pointer transition-colors"
-                >
-                  <td className="font-bold text-base-content">
-                    {session.course}
-                  </td>
-
-                  <td>
-                    <div className="flex items-center gap-1.5 text-base-content/80">
-                      <Calendar className="size-3.5 text-primary" />
-                      <span>{session.date}</span>
-                    </div>
-                  </td>
-
-                  <td>
-                    <div className="flex items-center gap-1.5 text-base-content/80">
-                      {getModeIcon(session.mode)}
-                      <span className="truncate max-w-xs">
-                        {session.location || session.mode || "HQ"}
-                      </span>
-                    </div>
-                  </td>
-
-                  <td className="font-medium text-base-content/80">
-                    {session.trainer}
-                  </td>
-
-                  <td>{getStatusBadge(session.status)}</td>
-
+            </thead>
+            <tbody className="divide-y divide-base-200 text-xs">
+              {filteredSessions.length === 0 ? (
+                <tr>
                   <td
-                    className="text-right"
-                    onClick={(e) => e.stopPropagation()}
+                    colSpan={6}
+                    className="py-8 text-center text-base-content/80 italic"
                   >
-                    <div className="flex items-center justify-end gap-1">
-                      {session.status === "Scheduled" && (
-                        <>
-                          {onAdvanceStatus && (
+                    No training sessions found.
+                  </td>
+                </tr>
+              ) : (
+                filteredSessions.map((session) => (
+                  <tr
+                    key={session.id}
+                    onClick={() => onSelectSession?.(session)}
+                    className="hover:bg-base-200/80 cursor-pointer transition-colors"
+                  >
+                    <td className="font-bold text-base-content">
+                      {session.course}
+                    </td>
+
+                    <td>
+                      <div className="flex items-center gap-1.5 text-base-content/80">
+                        <Calendar className="size-3.5 text-primary" />
+                        <span>{session.date}</span>
+                      </div>
+                    </td>
+
+                    <td>
+                      <div className="flex items-center gap-1.5 text-base-content/80">
+                        {getModeIcon(session.mode)}
+                        <span className="truncate max-w-xs">
+                          {session.location || session.mode || "HQ"}
+                        </span>
+                      </div>
+                    </td>
+
+                    <td className="font-medium text-base-content/80">
+                      {session.trainer}
+                    </td>
+
+                    <td>{getStatusBadge(session.status)}</td>
+
+                    <td
+                      className="text-right"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <div className="flex items-center justify-end gap-1">
+                        {session.status === "Scheduled" && (
+                          <>
+                            {onAdvanceStatus && (
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  onAdvanceStatus(session.id, "in_progress")
+                                }
+                                className="btn btn-ghost btn-sm text-primary hover:bg-primary/10 gap-1 rounded-lg"
+                                title="Start Session (Mark In Progress)"
+                              >
+                                <Play className="size-3" />
+                                <span>Start</span>
+                              </button>
+                            )}
+                            {onCancelSession && (
+                              <button
+                                type="button"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setCancelTarget(session);
+                                }}
+                                className="btn btn-ghost btn-sm text-error hover:bg-error/10 gap-1 rounded-lg"
+                                title="Cancel Session"
+                              >
+                                <XCircle className="size-3" />
+                                <span>Cancel</span>
+                              </button>
+                            )}
+                          </>
+                        )}
+
+                        {session.status === "In Progress" &&
+                          onAdvanceStatus && (
                             <button
                               type="button"
                               onClick={() =>
-                                onAdvanceStatus(session.id, "in_progress")
+                                onAdvanceStatus(session.id, "completed")
                               }
-                              className="btn btn-ghost btn-xs text-primary hover:bg-primary/10 gap-1 rounded-lg"
-                              title="Start Session (Mark In Progress)"
+                              className="btn btn-ghost btn-sm text-success hover:bg-success/10 gap-1 rounded-lg"
+                              title="Complete Session"
                             >
-                              <Play className="size-3" />
-                              <span>Start</span>
+                              <CheckCircle2 className="size-3" />
+                              <span>Complete</span>
                             </button>
                           )}
-                          {onCancelSession && (
-                            <button
-                              type="button"
-                              onClick={(e) => handleCancelClick(e, session.id)}
-                              className="btn btn-ghost btn-xs text-error hover:bg-error/10 gap-1 rounded-lg"
-                              title="Cancel Session"
-                            >
-                              <XCircle className="size-3" />
-                              <span>Cancel</span>
-                            </button>
-                          )}
-                        </>
-                      )}
-
-                      {session.status === "In Progress" && onAdvanceStatus && (
-                        <button
-                          type="button"
-                          onClick={() =>
-                            onAdvanceStatus(session.id, "completed")
-                          }
-                          className="btn btn-ghost btn-xs text-success hover:bg-success/10 gap-1 rounded-lg"
-                          title="Complete Session"
-                        >
-                          <CheckCircle2 className="size-3" />
-                          <span>Complete</span>
-                        </button>
-                      )}
-                    </div>
-                  </td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
-    </div>
+
+      <CancelSessionModal
+        isOpen={Boolean(cancelTarget)}
+        onClose={() => setCancelTarget(null)}
+        sessionLabel={
+          cancelTarget
+            ? `${cancelTarget.course} (${cancelTarget.date})`
+            : undefined
+        }
+        isPending={isCancelling}
+        onConfirm={async (reason) => {
+          if (!cancelTarget || !onCancelSession) return;
+          setIsCancelling(true);
+          try {
+            await onCancelSession(cancelTarget.id, reason);
+            setCancelTarget(null);
+          } finally {
+            setIsCancelling(false);
+          }
+        }}
+      />
+    </>
   );
 }

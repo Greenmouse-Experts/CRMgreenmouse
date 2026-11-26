@@ -110,7 +110,7 @@ export default function PositionsTable({
         ) : (
           <Link
             to="/hr/recruitment"
-            className="btn btn-ghost btn-xs text-primary hover:bg-primary/10 rounded-lg px-2 gap-1 text-[11px]"
+            className="btn btn-ghost btn-sm text-primary hover:bg-primary/10 rounded-lg px-2 gap-1 text-[11px]"
           >
             <span>Hire</span>
             <ArrowRight className="size-3" />

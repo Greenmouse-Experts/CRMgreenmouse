@@ -48,7 +48,7 @@ export default function MyLearningSection() {
                   href={certUrl}
                   target="_blank"
                   rel="noreferrer"
-                  className="btn btn-xs btn-outline btn-success rounded-lg gap-1 shrink-0"
+                  className="btn btn-sm btn-outline btn-success rounded-lg gap-1 shrink-0"
                 >
                   <Award className="size-3.5" />
                   <span>Certificate</span>

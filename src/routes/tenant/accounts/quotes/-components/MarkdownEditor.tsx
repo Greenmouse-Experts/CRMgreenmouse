@@ -86,7 +86,7 @@ export default function MarkdownEditor() {
         <div className="join" aria-label="Description editor mode">
           <button
             type="button"
-            className={`btn btn-xs join-item ${mode === "write" ? "btn-primary" : "btn-ghost"}`}
+            className={`btn btn-sm join-item ${mode === "write" ? "btn-primary" : "btn-ghost"}`}
             aria-pressed={mode === "write"}
             onClick={() => setMode("write")}
           >
@@ -94,7 +94,7 @@ export default function MarkdownEditor() {
           </button>
           <button
             type="button"
-            className={`btn btn-xs join-item ${mode === "preview" ? "btn-primary" : "btn-ghost"}`}
+            className={`btn btn-sm join-item ${mode === "preview" ? "btn-primary" : "btn-ghost"}`}
             aria-pressed={mode === "preview"}
             onClick={() => setMode("preview")}
           >
@@ -116,7 +116,7 @@ export default function MarkdownEditor() {
                 <button
                   key={label}
                   type="button"
-                  className="btn btn-ghost btn-xs"
+                  className="btn btn-ghost btn-sm"
                   aria-label={label}
                   title={label}
                   onClick={() => insert(before, after, sample)}

@@ -628,7 +628,7 @@ function AttachmentList({ urls }: { urls?: string[] }) {
       {links.map((url, index) => (
         <li key={`${url}-${index}`}>
           <a
-            className="btn btn-ghost btn-xs max-w-full"
+            className="btn btn-ghost btn-sm max-w-full"
             href={url}
             target="_blank"
             rel="noopener noreferrer"

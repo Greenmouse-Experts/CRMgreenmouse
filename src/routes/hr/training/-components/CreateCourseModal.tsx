@@ -2,18 +2,15 @@ import { useState, useRef, useEffect } from "react";
 import Modal, { type ModalHandle } from "@/components/DialogModal";
 import SimpleInput from "@/components/inputs/SimpleInput";
 import LocalSelect from "@/components/inputs/LocalSelect";
-import {
-  COURSE_CATEGORIES,
-  DELIVERY_MODES,
-  TARGET_AUDIENCE_OPTIONS,
-} from "./trainingData";
+import RichTextEditor, {
+  sanitizeRichText,
+} from "@/components/inputs/RichTextEditor";
+import TargetAudiencePicker from "./TargetAudiencePicker";
+import { COURSE_CATEGORIES, DELIVERY_MODES } from "./trainingData";
 import type { CourseCategory, DeliveryMode } from "./types";
-import {
-  toBackendCategory,
-  toBackendDeliveryMode,
-  toBackendTargetType,
-} from "./mappers";
+import { toBackendCategory, toBackendDeliveryMode } from "./mappers";
 import type {
+  BackendTargetType,
   CreateTrainingCoursePayload,
   CreateTrainingSessionPayload,
 } from "@/api/trainingApi";
@@ -29,6 +26,25 @@ interface CreateCourseModalProps {
   ) => Promise<void>;
 }
 
+const initialForm = {
+  title: "",
+  category: "Compliance" as CourseCategory,
+  mode: "Virtual" as DeliveryMode,
+  trainer: "",
+  duration: 4,
+  capacity: 25,
+  cost: "",
+  mandatory: false,
+  desc: "",
+  start: new Date().toISOString().slice(0, 10),
+  end: "",
+  targetType: "all" as BackendTargetType,
+  targetIds: [] as string[],
+  cert: true,
+  location: "Main Training Hall, Lagos HQ",
+  meetingUrl: "",
+};
+
 export default function CreateCourseModal({
   isOpen,
   onClose,
@@ -36,24 +52,7 @@ export default function CreateCourseModal({
 }: CreateCourseModalProps) {
   const modalRef = useRef<ModalHandle>(null);
 
-  const [form, setForm] = useState({
-    title: "",
-    category: "Compliance" as CourseCategory,
-    mode: "Virtual" as DeliveryMode,
-    trainer: "",
-    duration: 4,
-    capacity: 25,
-    cost: "",
-    mandatory: false,
-    desc: "",
-    start: new Date().toISOString().slice(0, 10),
-    end: "",
-    audience: "All staff",
-    cert: true,
-    location: "Main Training Hall, Lagos HQ",
-    meetingUrl: "",
-  });
-
+  const [form, setForm] = useState(initialForm);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
@@ -64,7 +63,10 @@ export default function CreateCourseModal({
     }
   }, [isOpen]);
 
-  const handleChange = (field: string, value: any) => {
+  const handleChange = <K extends keyof typeof initialForm>(
+    field: K,
+    value: (typeof initialForm)[K],
+  ) => {
     setForm((prev) => ({ ...prev, [field]: value }));
   };
 
@@ -81,23 +83,35 @@ export default function CreateCourseModal({
       return;
     }
 
+    if (form.targetType !== "all" && form.targetIds.length === 0) {
+      toast.error("Please select at least one target recipient");
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
+      const sanitizedCost = form.cost
+        ? String(form.cost).replace(/[^0-9.]/g, "")
+        : "0";
+      const normalizedCost = /^(0|[1-9]\d*)(\.\d{1,6})?$/.test(sanitizedCost)
+        ? sanitizedCost
+        : String(Number(sanitizedCost) || 0);
+
+      const sanitizedObjectives = sanitizeRichText(form.desc);
+
       const coursePayload: CreateTrainingCoursePayload = {
         title: form.title.trim(),
         category: toBackendCategory(form.category),
         defaultDeliveryMode: toBackendDeliveryMode(form.mode),
         learningObjectives:
-          form.desc.trim() ||
+          sanitizedObjectives ||
           `Core syllabus and learning objectives for ${form.title.trim()}`,
         mandatory: Boolean(form.mandatory),
         certificateOnCompletion: Boolean(form.cert),
-        targetType: toBackendTargetType(form.audience),
-        targetIds: [],
-        costPerPerson: form.cost
-          ? String(Number(String(form.cost).replace(/[^0-9.]/g, "")) || 0)
-          : "0",
+        targetType: form.targetType,
+        targetIds: form.targetType === "all" ? [] : form.targetIds,
+        costPerPerson: normalizedCost,
       };
 
       let sessionPayload:
@@ -132,23 +146,9 @@ export default function CreateCourseModal({
 
       await onSubmitCourse(coursePayload, sessionPayload);
 
-      // Reset form
       setForm({
-        title: "",
-        category: "Compliance",
-        mode: "Virtual",
-        trainer: "",
-        duration: 4,
-        capacity: 25,
-        cost: "",
-        mandatory: false,
-        desc: "",
+        ...initialForm,
         start: new Date().toISOString().slice(0, 10),
-        end: "",
-        audience: "All staff",
-        cert: true,
-        location: "Main Training Hall, Lagos HQ",
-        meetingUrl: "",
       });
 
       onClose();
@@ -251,7 +251,9 @@ export default function CreateCourseModal({
                 min="0.5"
                 step="0.5"
                 value={form.duration}
-                onChange={(e) => handleChange("duration", e.target.value)}
+                onChange={(e) =>
+                  handleChange("duration", Number(e.target.value) || 1)
+                }
                 className="input input-sm input-bordered w-full rounded-xl bg-base-200/80 text-xs"
                 placeholder="e.g. 4"
               />
@@ -265,7 +267,9 @@ export default function CreateCourseModal({
                 type="number"
                 min="1"
                 value={form.capacity}
-                onChange={(e) => handleChange("capacity", e.target.value)}
+                onChange={(e) =>
+                  handleChange("capacity", Number(e.target.value) || 1)
+                }
                 className="input input-sm input-bordered w-full rounded-xl bg-base-200/80 text-xs"
                 placeholder="e.g. 30"
               />
@@ -278,7 +282,7 @@ export default function CreateCourseModal({
               <SimpleInput
                 value={form.cost}
                 onChange={(e) => handleChange("cost", e.target.value)}
-                placeholder="e.g. 25,000 (Free if 0)"
+                placeholder="e.g. 25000 (Free if 0)"
               />
             </div>
 
@@ -286,12 +290,11 @@ export default function CreateCourseModal({
               <label className="font-semibold text-base-content/80 mb-1 block">
                 Learning objectives & description
               </label>
-              <textarea
+              <RichTextEditor
                 value={form.desc}
-                onChange={(e) => handleChange("desc", e.target.value)}
-                rows={2}
+                onChange={(val) => handleChange("desc", val)}
                 placeholder="Key outcomes, syllabus outline, or prerequisites..."
-                className="textarea textarea-bordered w-full rounded-xl bg-base-200/80 text-xs"
+                compact
               />
             </div>
           </div>
@@ -356,23 +359,20 @@ export default function CreateCourseModal({
               </div>
             )}
 
-            <div>
-              <label className="font-semibold text-base-content/80 mb-1 block">
-                Target audience
-              </label>
-              <LocalSelect
-                value={form.audience}
-                onChange={(e) => handleChange("audience", e.target.value)}
-              >
-                {TARGET_AUDIENCE_OPTIONS.map((aud) => (
-                  <option key={aud} value={aud}>
-                    {aud}
-                  </option>
-                ))}
-              </LocalSelect>
+            <div className="sm:col-span-2">
+              <TargetAudiencePicker
+                targetType={form.targetType}
+                targetIds={form.targetIds}
+                onChangeTargetType={(nextType) =>
+                  handleChange("targetType", nextType)
+                }
+                onChangeTargetIds={(nextIds) =>
+                  handleChange("targetIds", nextIds)
+                }
+              />
             </div>
 
-            <div className="flex items-center gap-4 pt-4 sm:pt-6">
+            <div className="sm:col-span-2 flex items-center gap-6 pt-1">
               <label className="label cursor-pointer justify-start gap-2 p-0">
                 <input
                   type="checkbox"

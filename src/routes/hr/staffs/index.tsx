@@ -258,7 +258,7 @@ function StaffsDirectoryContent({
               setStatusFilter("All");
               setDepartmentFilter("All");
             }}
-            className="btn btn-xs btn-outline rounded-lg mx-auto"
+            className="btn btn-sm btn-outline rounded-lg mx-auto"
           >
             Reset Filters
           </button>
