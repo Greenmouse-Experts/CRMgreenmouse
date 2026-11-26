@@ -38,7 +38,7 @@ export default function HrHeader() {
         >
           <Bell className="size-5" />
           {unreadCount > 0 && (
-            <span className="badge badge-error badge-xs absolute -right-1 -top-1 min-w-5 px-1 text-error-content">
+            <span className="badge badge-error badge-sm absolute -right-1 -top-1 min-w-5 px-1 text-error-content">
               {unreadCount > 99 ? "99+" : unreadCount}
             </span>
           )}

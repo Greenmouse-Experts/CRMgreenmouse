@@ -82,7 +82,7 @@ export default function AdminRecents() {
           badge = "badge-error badge-soft";
         }
         return (
-          <span className={`badge badge-xs uppercase font-semibold  ${badge}`}>
+          <span className={`badge badge-sm uppercase font-semibold  ${badge}`}>
             {status || "Completed"}
           </span>
         );

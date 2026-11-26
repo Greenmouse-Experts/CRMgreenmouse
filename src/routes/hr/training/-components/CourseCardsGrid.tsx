@@ -219,7 +219,7 @@ export default function CourseCardsGrid({
                           {course.category}
                         </span>
                         {course.mandatory && (
-                          <span className="badge badge-xs badge-error badge-outline font-semibold">
+                          <span className="badge badge-sm badge-error badge-outline font-semibold">
                             Mandatory
                           </span>
                         )}
@@ -231,17 +231,17 @@ export default function CourseCardsGrid({
                         onClick={(e) => e.stopPropagation()}
                       >
                         {statusLower === "draft" && (
-                          <span className="badge badge-xs badge-warning badge-outline font-medium">
+                          <span className="badge badge-sm badge-warning badge-outline font-medium">
                             Draft
                           </span>
                         )}
                         {statusLower === "published" && (
-                          <span className="badge badge-xs badge-success badge-outline font-medium">
+                          <span className="badge badge-sm badge-success badge-outline font-medium">
                             Published
                           </span>
                         )}
                         {statusLower === "archived" && (
-                          <span className="badge badge-xs badge-ghost font-medium">
+                          <span className="badge badge-sm badge-ghost font-medium">
                             Archived
                           </span>
                         )}

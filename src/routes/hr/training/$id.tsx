@@ -564,19 +564,19 @@ function TrainingCourseDetailPage() {
                     </div>
 
                     <div className="flex flex-wrap items-center gap-1.5">
-                      <span className="badge badge-sm badge-outline font-semibold">
+                      <span className="badge  badge-outline font-semibold">
                         {mapBackendCategoryToUi(detail.category)}
                       </span>
-                      <span className="badge badge-sm badge-ghost">
+                      <span className="badge badge-ghost">
                         {mapBackendDeliveryModeToUi(detail.defaultDeliveryMode)}
                       </span>
                       {detail.mandatory && (
-                        <span className="badge badge-sm badge-error badge-outline">
+                        <span className="badge badge-error badge-outline">
                           Mandatory
                         </span>
                       )}
                       {detail.certificateOnCompletion && (
-                        <span className="badge badge-sm badge-success badge-outline gap-1">
+                        <span className="badge  badge-success badge-outline gap-1">
                           <Award className="size-3" />
                           Certificate
                         </span>
@@ -932,17 +932,17 @@ function TrainingCourseDetailPage() {
                                   {p.name}
                                 </span>
                                 {p.employeeNumber && (
-                                  <span className="badge badge-xs badge-ghost font-mono">
+                                  <span className="badge badge-sm badge-ghost font-mono">
                                     {p.employeeNumber}
                                   </span>
                                 )}
                                 {p.department && (
-                                  <span className="badge badge-xs badge-outline">
+                                  <span className="badge badge-sm badge-outline">
                                     {p.department}
                                   </span>
                                 )}
                                 <span
-                                  className={`badge badge-xs font-semibold capitalize ${
+                                  className={`badge badge-sm font-semibold capitalize ${
                                     isCompleted
                                       ? "badge-success badge-outline"
                                       : "badge-info badge-outline"
@@ -950,7 +950,7 @@ function TrainingCourseDetailPage() {
                                 >
                                   {p.status.replace(/_/g, " ")}
                                 </span>
-                                <span className="badge badge-xs badge-ghost capitalize">
+                                <span className="badge badge-sm badge-ghost capitalize">
                                   Attendance:{" "}
                                   {p.attendanceStatus.replace(/_/g, " ")}
                                 </span>

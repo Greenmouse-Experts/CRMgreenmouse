@@ -193,7 +193,7 @@ function RouteComponent() {
         <div className="flex flex-wrap gap-1 max-w-md">
           {permissions && permissions.length > 0 ? (
             permissions.slice(0, 4).map((perm, i) => (
-              <span key={i} className="badge badge-xs badge-ghost font-mono">
+              <span key={i} className="badge badge-sm badge-ghost font-mono">
                 {perm}
               </span>
             ))
@@ -201,7 +201,7 @@ function RouteComponent() {
             <span className=" text-base-content/80">No permissions</span>
           )}
           {permissions && permissions.length > 4 && (
-            <span className="badge badge-xs badge-primary badge-soft">
+            <span className="badge badge-sm badge-primary badge-soft">
               +{permissions.length - 4} more
             </span>
           )}

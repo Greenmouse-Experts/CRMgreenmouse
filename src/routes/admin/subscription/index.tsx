@@ -347,7 +347,7 @@ function RouteComponent() {
         <div className="flex flex-wrap gap-1 max-w-xs">
           {features && features.length > 0 ? (
             features.map((feat, i) => (
-              <span key={i} className="badge badge-xs badge-ghost">
+              <span key={i} className="badge badge-sm badge-ghost">
                 {featureLabels[feat] || feat}
               </span>
             ))

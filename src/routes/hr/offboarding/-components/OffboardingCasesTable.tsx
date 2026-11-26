@@ -116,7 +116,7 @@ export default function OffboardingCasesTable({
                   {row.employee}
                 </span>
                 {isActive && (
-                  <span className="badge badge-xs badge-primary text-sm font-bold">
+                  <span className="badge badge-sm badge-primary text-sm font-bold">
                     Active view
                   </span>
                 )}

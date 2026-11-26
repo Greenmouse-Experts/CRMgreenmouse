@@ -125,7 +125,7 @@ export default function EmployeeTableView({
                 {emp.name}
               </p>
               {emp.isDraft && (
-                <span className="badge badge-xs badge-warning font-semibold text-[10px]">
+                <span className="badge badge-sm badge-warning font-semibold text-[10px]">
                   Draft
                 </span>
               )}

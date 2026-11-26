@@ -510,7 +510,7 @@ function RouteComponent() {
               }`}
             >
               Yearly Billing
-              <span className="badge badge-accent badge-xs  uppercase font-semibold">
+              <span className="badge badge-accent badge-sm  uppercase font-semibold">
                 Save
               </span>
             </button>

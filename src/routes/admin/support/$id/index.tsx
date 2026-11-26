@@ -201,7 +201,7 @@ function RouteComponent() {
                                   "Support"}
                               </span>
                               {message.visibility === "private" && (
-                                <span className="badge badge-warning badge-soft badge-xs">
+                                <span className="badge badge-warning badge-soft badge-sm">
                                   <LockKeyhole className="size-3" /> Private
                                   note
                                 </span>

@@ -228,7 +228,7 @@ export default function SessionDetailModal({
                               {p.name}
                             </p>
                             {p.employeeNumber && (
-                              <span className="badge badge-xs badge-ghost font-mono">
+                              <span className="badge badge-sm badge-ghost font-mono">
                                 {p.employeeNumber}
                               </span>
                             )}

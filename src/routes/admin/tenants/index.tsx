@@ -183,7 +183,7 @@ function RouteComponent() {
       label: "Verified",
       render: (value: boolean) => (
         <span
-          className={`badge badge-xs gap-1 font-medium ${
+          className={`badge badge-sm gap-1 font-medium ${
             value ? "badge-success badge-soft" : "badge-neutral badge-soft"
           }`}
         >

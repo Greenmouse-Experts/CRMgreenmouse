@@ -116,7 +116,7 @@ export default function TasksTable({ tasks, onEdit }: TasksTableProps) {
       label: "Status",
       render: (value) => (
         <span
-          className={`badge badge-xs rounded-lg capitalize ${
+          className={`badge badge-sm rounded-lg capitalize ${
             STATUS_STYLES[value] ?? "bg-base-200/80"
           }`}
         >

@@ -65,7 +65,7 @@ export default function TeamGoalsSection({ goals }: TeamGoalsSectionProps) {
                   </span>
                 </div>
                 {goal.category && (
-                  <span className="badge badge-xs badge-ghost font-medium">
+                  <span className="badge badge-sm badge-ghost font-medium">
                     {goal.category}
                   </span>
                 )}

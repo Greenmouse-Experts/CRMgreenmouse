@@ -71,7 +71,7 @@ export default function EmployeeFilters({
               >
                 {status}
                 <span
-                  className={`badge badge-xs ml-1 ${
+                  className={`badge badge-sm ml-1 ${
                     isSelected
                       ? "bg-primary-content/25 text-primary-content"
                       : "badge-ghost opacity-70"

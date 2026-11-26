@@ -114,7 +114,7 @@ export default function OfferConversionSection({
                 <span className="text-sm font-bold text-base-content">
                   {candidateName}
                 </span>
-                <span className="badge badge-xs bg-emerald-100 text-emerald-800 border-emerald-200 font-semibold">
+                <span className="badge badge-sm bg-emerald-100 text-emerald-800 border-emerald-200 font-semibold">
                   Accepted
                 </span>
               </div>
