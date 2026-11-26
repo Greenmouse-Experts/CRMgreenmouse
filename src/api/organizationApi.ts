@@ -25,6 +25,7 @@ export interface UpdateDepartmentPayload {
   status?: "active" | "inactive";
   code?: string;
   name?: string;
+  headEmployeeId?: string;
 }
 
 /**
@@ -84,6 +85,7 @@ export function toUiDepartment(raw: any): Department {
     staffCount: staffCountNum,
     count: staffCountNum,
     status: statusStr === "active" ? "Active" : "Inactive",
+    headEmployeeId: raw?.headEmployeeId ?? raw?.headEmployee?.id ?? undefined,
     head: headName || "Unassigned",
     headName: headName ?? null,
     parent: raw?.parentDepartmentName ?? raw?.parent ?? undefined,

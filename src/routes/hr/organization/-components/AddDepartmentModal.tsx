@@ -97,8 +97,8 @@ export default function AddDepartmentModal({
       <FormProvider {...methods}>
         <form onSubmit={methods.handleSubmit(onSubmit)} className="space-y-4">
           <p className=" text-base-content/80 -mt-1 mb-3">
-            Create a department and assign its reporting head and operational
-            details.
+            Create a department and configure its optional reporting head and
+            operational details.
           </p>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -135,18 +135,19 @@ export default function AddDepartmentModal({
               <Controller
                 control={methods.control}
                 name="head"
-                rules={{ required: "Please select a department head" }}
                 render={({ field }) => (
                   <SimpleSelect<EmployeeRecord>
                     route="/employees"
                     value={field.value}
                     onChange={field.onChange}
-                    label="Department Head *"
+                    label="Department Head"
                     render={(employee, index) => {
                       const name =
                         [employee.firstName, employee.lastName]
                           .filter(Boolean)
-                          .join(" ") || employee.email || "Unnamed";
+                          .join(" ") ||
+                        employee.email ||
+                        "Unnamed";
                       return (
                         <>
                           {index === 0 && (

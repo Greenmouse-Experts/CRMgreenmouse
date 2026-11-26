@@ -1,8 +1,15 @@
 import { useEffect, useRef } from "react";
-import { FormProvider, useForm, type SubmitHandler } from "react-hook-form";
+import {
+  Controller,
+  FormProvider,
+  useForm,
+  type SubmitHandler,
+} from "react-hook-form";
 import Modal, { type ModalHandle } from "@/components/DialogModal";
 import SimpleInput from "@/components/inputs/SimpleInput";
 import LocalSelect from "@/components/inputs/LocalSelect";
+import SimpleSelect from "@/components/inputs/SimpleSelect";
+import type { EmployeeRecord } from "@/api/employeesApi";
 import type { Department } from "./types";
 import { toast } from "sonner";
 import { Save } from "lucide-react";
@@ -10,12 +17,14 @@ import { Save } from "lucide-react";
 interface EditDepartmentFormValues {
   name: string;
   code: string;
+  head: string;
   status: string;
 }
 
 const EDIT_DEFAULTS: EditDepartmentFormValues = {
   name: "",
   code: "",
+  head: "",
   status: "Active",
 };
 
@@ -27,6 +36,7 @@ interface EditDepartmentModalProps {
     id: string;
     name: string;
     code: string;
+    headEmployeeId?: string;
     status: string;
   }) => void;
 }
@@ -49,6 +59,7 @@ export default function EditDepartmentModal({
       methods.reset({
         name: department.name ?? "",
         code: department.code ?? "",
+        head: department.headEmployeeId ?? "",
         status: department.status ?? "Active",
       });
     } else if (!isOpen) {
@@ -64,6 +75,7 @@ export default function EditDepartmentModal({
       id,
       name: values.name.trim(),
       code: values.code.trim().toUpperCase(),
+      headEmployeeId: values.head || undefined,
       status: values.status,
     };
 
@@ -86,7 +98,7 @@ export default function EditDepartmentModal({
       <FormProvider {...methods}>
         <form onSubmit={methods.handleSubmit(onSubmit)} className="space-y-4">
           <p className=" text-base-content/80 -mt-1 mb-3">
-            Update the department name, code and status.
+            Update the department name, code, head and status.
           </p>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -117,6 +129,40 @@ export default function EditDepartmentModal({
               <span className="text-[10px] text-base-content/80 mt-1 block">
                 Must be unique (2-4 uppercase characters)
               </span>
+            </div>
+
+            <div>
+              <Controller
+                control={methods.control}
+                name="head"
+                render={({ field }) => (
+                  <SimpleSelect<EmployeeRecord>
+                    route="/employees"
+                    value={field.value}
+                    onChange={field.onChange}
+                    label="Department Head"
+                    render={(employee, index) => {
+                      const name =
+                        [employee.firstName, employee.lastName]
+                          .filter(Boolean)
+                          .join(" ") ||
+                        employee.email ||
+                        "Unnamed";
+                      return (
+                        <>
+                          {index === 0 && (
+                            <option value="">Select a department head</option>
+                          )}
+                          <option key={employee.id} value={employee.id}>
+                            {name}
+                            {employee.email ? ` — ${employee.email}` : ""}
+                          </option>
+                        </>
+                      );
+                    }}
+                  />
+                )}
+              />
             </div>
 
             <div>

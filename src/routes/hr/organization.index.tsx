@@ -76,6 +76,7 @@ function RouteComponent() {
     id: string;
     name: string;
     code: string;
+    headEmployeeId?: string;
     status: string;
   }) => {
     updateDepartment.mutate(
@@ -83,6 +84,7 @@ function RouteComponent() {
         id: updated.id,
         name: updated.name,
         code: updated.code,
+        headEmployeeId: updated.headEmployeeId,
         status: updated.status.toLowerCase() as "active" | "inactive",
       },
       { onError: () => toast.error("Failed to update department") },

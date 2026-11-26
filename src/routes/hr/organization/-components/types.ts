@@ -7,6 +7,7 @@ export interface Department {
   status: DepartmentStatus | string;
   staffCount?: number;
   count?: number;
+  headEmployeeId?: string | null;
   head?: string;
   headName?: string | null;
   parentDepartmentName?: string | null;
