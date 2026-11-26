@@ -1,8 +1,8 @@
 import type { Department, OrgLeader } from "./types";
-import { ShieldCheck, Users } from "lucide-react";
+import { Building2, ShieldCheck, Users } from "lucide-react";
 
 interface OrgHierarchyProps {
-  leader: OrgLeader;
+  leader?: OrgLeader | null;
   departments: Department[];
   selectedDeptId?: string | null;
   onSelectDept?: (deptId: string) => void;
@@ -31,10 +31,7 @@ export default function OrgHierarchy({
     "bg-teal-100 text-teal-700 border-teal-200",
   ];
 
-  const safeLeader = leader || {
-    name: "Ifeoma Chukwu",
-    title: "Chief Executive Officer",
-  };
+  const hasLeader = Boolean(leader?.name?.trim());
 
   const totalHeadcount = departments.reduce(
     (acc, d) => acc + (Number(d.count) || 0),
@@ -59,23 +56,31 @@ export default function OrgHierarchy({
 
       {/* Visual Org Tree */}
       <div className="flex flex-col items-center pt-2 overflow-x-auto pb-4">
-        {/* CEO Root Node */}
+        {/* Organization / Leader Root Node */}
         <div className="group relative rounded-2xl border-2 border-primary bg-primary/10 px-6 py-4 text-center shadow-xs transition-all hover:shadow-md hover:scale-[1.02] min-w-[220px]">
           <div className="flex justify-center mb-2">
             <div className="relative">
               <div className="size-12 rounded-full bg-primary text-white font-bold text-sm flex items-center justify-center shadow-sm">
-                {getInitials(safeLeader.name)}
+                {hasLeader ? (
+                  getInitials(leader?.name)
+                ) : (
+                  <Building2 className="size-5" />
+                )}
               </div>
-              <span className="absolute -bottom-1 -right-1 size-5 rounded-full bg-emerald-500 text-white flex items-center justify-center border-2 border-base-100 shadow-xs">
-                <ShieldCheck className="size-3" />
-              </span>
+              {hasLeader && (
+                <span className="absolute -bottom-1 -right-1 size-5 rounded-full bg-emerald-500 text-white flex items-center justify-center border-2 border-base-100 shadow-xs">
+                  <ShieldCheck className="size-3" />
+                </span>
+              )}
             </div>
           </div>
           <p className="font-bold text-sm sm:text-base text-base-content">
-            {safeLeader.name}
+            {hasLeader ? leader?.name : "Organization"}
           </p>
           <p className=" text-primary font-semibold tracking-wide">
-            {safeLeader.title}
+            {hasLeader
+              ? leader?.title || "Organization"
+              : `${departments.length} ${departments.length === 1 ? "Department" : "Departments"}`}
           </p>
         </div>
 

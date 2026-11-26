@@ -17,10 +17,11 @@ import PositionsTable from "./organization/-components/PositionsTable";
 import AddDepartmentModal from "./organization/-components/AddDepartmentModal";
 import AddPositionModal from "./organization/-components/AddPositionModal";
 import EditDepartmentModal from "./organization/-components/EditDepartmentModal";
-import { INITIAL_LEADER } from "./organization/-components/organizationData";
+import { useAuth, useProfile } from "@/store/authStore";
 import type {
   Department,
   DepartmentStatus,
+  OrgLeader,
 } from "./organization/-components/types";
 import { extract_message } from "@/helpers/auth";
 import { Plus } from "lucide-react";
@@ -32,6 +33,19 @@ export const Route = createFileRoute("/hr/organization/")({
 
 function RouteComponent() {
   const { data } = useOrganization();
+  const [authUser] = useAuth();
+  const [profile] = useProfile();
+  const companyName =
+    authUser?.user?.companyName ||
+    authUser?.profile?.companyName ||
+    profile?.companyName;
+  const orgLeader: OrgLeader | undefined = companyName
+    ? {
+        name: companyName,
+        title: "Organization",
+        email: authUser?.user?.email,
+      }
+    : undefined;
   const departments = data?.departments ?? [];
   const positions = data?.positions ?? [];
   const [selectedDeptId, setSelectedDeptId] = useState<string | null>(null);
@@ -132,7 +146,7 @@ function RouteComponent() {
 
       {/* Visual Hierarchy Flow */}
       <OrgHierarchy
-        leader={INITIAL_LEADER}
+        leader={orgLeader}
         departments={departments}
         selectedDeptId={selectedDeptId}
         onSelectDept={(deptId) => {
