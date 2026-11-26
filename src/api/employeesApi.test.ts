@@ -1,5 +1,17 @@
 import { describe, expect, it } from "vitest";
-import { sanitizeEmployeePayload } from "./employeesApi";
+import {
+  findMatchingBank,
+  sanitizeEmployeePayload,
+  validateEmployeeBankingGroup,
+  type BankOption,
+} from "./employeesApi";
+
+const SAMPLE_BANKS: BankOption[] = [
+  { name: "Access Bank", code: "044" },
+  { name: "Access Bank (Diamond)", code: "063" },
+  { name: "PalmPay", code: "999991" },
+  { name: "Zenith Bank", code: "057" },
+];
 
 describe("sanitizeEmployeePayload", () => {
   it("preserves roleId and bankCode when provided and strips empty optional fields", () => {
@@ -40,5 +52,75 @@ describe("sanitizeEmployeePayload", () => {
       lastName: "Lovelace",
       email: "ada@example.com",
     });
+  });
+});
+
+describe("findMatchingBank", () => {
+  it("matches by code or exact/legacy bank name", () => {
+    expect(findMatchingBank(SAMPLE_BANKS, "999991")).toEqual({
+      name: "PalmPay",
+      code: "999991",
+    });
+    expect(findMatchingBank(SAMPLE_BANKS, undefined, "access bank")).toEqual({
+      name: "Access Bank",
+      code: "044",
+    });
+    expect(findMatchingBank(SAMPLE_BANKS, undefined, "Access")).toEqual({
+      name: "Access Bank",
+      code: "044",
+    });
+    expect(findMatchingBank(SAMPLE_BANKS, undefined, "Zenith")).toEqual({
+      name: "Zenith Bank",
+      code: "057",
+    });
+  });
+});
+
+describe("validateEmployeeBankingGroup", () => {
+  it("allows omitting all banking fields", () => {
+    expect(
+      validateEmployeeBankingGroup({
+        firstName: "Ada",
+        lastName: "Lovelace",
+      }),
+    ).toBeNull();
+  });
+
+  it("rejects partial banking details that would trigger backend 400", () => {
+    expect(
+      validateEmployeeBankingGroup({
+        firstName: "Ada",
+        lastName: "Lovelace",
+        bankCode: "044",
+      }),
+    ).toBeTruthy();
+    expect(
+      validateEmployeeBankingGroup({
+        firstName: "Ada",
+        lastName: "Lovelace",
+        bankName: "Access",
+        bankAccountNumber: "0123456789",
+      }),
+    ).toBeTruthy();
+    expect(
+      validateEmployeeBankingGroup({
+        firstName: "",
+        lastName: "Lovelace",
+        bankCode: "044",
+        bankAccountNumber: "0123456789",
+      }),
+    ).toBeTruthy();
+  });
+
+  it("passes when all four required fields are present", () => {
+    expect(
+      validateEmployeeBankingGroup({
+        firstName: "Ada",
+        lastName: "Lovelace",
+        bankName: "Access Bank",
+        bankCode: "044",
+        bankAccountNumber: "0123456789",
+      }),
+    ).toBeNull();
   });
 });

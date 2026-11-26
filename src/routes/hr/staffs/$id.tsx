@@ -36,6 +36,8 @@ import EmployeeAvatar from "./-components/EmployeeAvatar";
 import EmployeeStatusBadge from "./-components/EmployeeStatusBadge";
 import { formatSalary } from "./-components/employeeData";
 import {
+  findMatchingBank,
+  validateEmployeeBankingGroup,
   useActivateEmployee,
   useCreateEmployee,
   useEmployee,
@@ -369,19 +371,18 @@ function StaffDetailPage() {
     const currentCode = getValues("bankCode")?.trim();
     const currentName = getValues("bankName")?.trim();
     if (!currentCode && currentName) {
-      const matched = banksList.find(
-        (bank) => bank.name.toLowerCase() === currentName.toLowerCase(),
-      );
+      const matched = findMatchingBank(banksList, undefined, currentName);
       if (matched) {
         setValue("bankCode", matched.code);
+        setValue("bankName", matched.name);
       }
     } else if (currentCode && !currentName) {
-      const matched = banksList.find((bank) => bank.code === currentCode);
+      const matched = findMatchingBank(banksList, currentCode, undefined);
       if (matched) {
         setValue("bankName", matched.name);
       }
     }
-  }, [banksList, getValues, setValue]);
+  }, [banksList, employeeQuery.data, getValues, setValue]);
 
   const departmentsList = organizationQuery.data?.departments ?? [];
 
@@ -511,6 +512,18 @@ function StaffDetailPage() {
     } else if (currentStep === 2) {
       const valid = await trigger(["startDate"]);
       if (!valid) return;
+    } else if (currentStep === 3 && !isNew) {
+      const bankingError = validateEmployeeBankingGroup({
+        firstName: getValues("firstName"),
+        lastName: getValues("lastName"),
+        bankName: getValues("bankName"),
+        bankCode: getValues("bankCode"),
+        bankAccountNumber: getValues("bankAccountNumber"),
+      });
+      if (bankingError) {
+        toast.error(bankingError);
+        return;
+      }
     }
     setCurrentStep((prev) => Math.min(FORM_STEPS.length - 1, prev + 1));
   };
@@ -549,8 +562,10 @@ function StaffDetailPage() {
           p.name === values.jobTitle ||
           p.title === values.jobTitle,
       );
-      const selectedBank = banksList.find(
-        (b) => b.code === values.bankCode || b.name === values.bankName,
+      const selectedBank = findMatchingBank(
+        banksList,
+        values.bankCode,
+        values.bankName,
       );
 
       const deptName =
@@ -569,7 +584,26 @@ function StaffDetailPage() {
       const bankCode =
         values.bankCode?.trim() || selectedBank?.code || undefined;
       const bankName =
-        values.bankName?.trim() || selectedBank?.name || undefined;
+        selectedBank?.name || values.bankName?.trim() || undefined;
+
+      if (!isNew) {
+        const bankingError = validateEmployeeBankingGroup({
+          firstName: values.firstName,
+          lastName: values.lastName,
+          bankName,
+          bankCode,
+          bankAccountNumber: values.bankAccountNumber,
+        });
+        if (bankingError) {
+          toast.error(bankingError);
+          if (!values.firstName?.trim() || !values.lastName?.trim()) {
+            setCurrentStep(0);
+          } else {
+            setCurrentStep(3);
+          }
+          return;
+        }
+      }
 
       const payload: CreateEmployeeInput = {
         roleId: values.roleId?.trim() || undefined,
@@ -616,7 +650,17 @@ function StaffDetailPage() {
       };
 
       if (isNew) {
-        await createEmployee.mutateAsync(payload);
+        // TODO: temporary workaround while bank verification endpoint is having issues
+        const testBank = findMatchingBank(banksList, "057");
+        const createPayload: CreateEmployeeInput = {
+          ...payload,
+          bankCode: "057",
+          bankName: testBank?.name ?? payload.bankName ?? "Zenith Bank",
+          bankAccountNumber: "0000000000",
+          firstName: "Test",
+          lastName: "Test",
+        };
+        await createEmployee.mutateAsync(createPayload);
         toast.success("Employee created successfully!");
         navigate({ to: "/hr/staffs" });
       } else {

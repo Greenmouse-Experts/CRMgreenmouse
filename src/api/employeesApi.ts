@@ -270,6 +270,69 @@ const unwrapList = <T>(data: any, keys: string[]): T[] => {
 const unwrapOne = <T>(data: any): T =>
   (data?.data?.data ?? data?.data ?? data?.payload ?? data) as T;
 
+export const findMatchingBank = (
+  banks: BankOption[],
+  bankCode?: string,
+  bankName?: string,
+): BankOption | undefined => {
+  const code = bankCode?.trim();
+  if (code) {
+    const byCode = banks.find((b) => b.code === code);
+    if (byCode) return byCode;
+  }
+
+  const normalized = bankName?.trim().toLowerCase().replace(/\s+/g, " ");
+  if (!normalized) return undefined;
+
+  const exact = banks.find(
+    (b) => b.name.toLowerCase().replace(/\s+/g, " ") === normalized,
+  );
+  if (exact) return exact;
+
+  const withBankSuffix = banks.find(
+    (b) => b.name.toLowerCase().replace(/\s+/g, " ") === `${normalized} bank`,
+  );
+  if (withBankSuffix) return withBankSuffix;
+
+  const strippedInput = normalized.replace(/\s+bank$/, "");
+  const strippedMatches = banks.filter(
+    (b) =>
+      b.name
+        .toLowerCase()
+        .replace(/\s+/g, " ")
+        .replace(/\s+bank$/, "") === strippedInput,
+  );
+  if (strippedMatches.length === 1) return strippedMatches[0];
+
+  return undefined;
+};
+
+export const validateEmployeeBankingGroup = (input: {
+  firstName?: string;
+  lastName?: string;
+  bankName?: string;
+  bankCode?: string;
+  bankAccountNumber?: string;
+}): string | null => {
+  const hasAnyBanking = Boolean(
+    input.bankName?.trim() ||
+      input.bankCode?.trim() ||
+      input.bankAccountNumber?.trim(),
+  );
+  if (!hasAnyBanking) return null;
+
+  if (!input.firstName?.trim() || !input.lastName?.trim()) {
+    return "Employee first name and last name are required when saving bank details.";
+  }
+  if (!input.bankCode?.trim()) {
+    return "Please select a bank (bank code) along with the bank account number.";
+  }
+  if (!input.bankAccountNumber?.trim()) {
+    return "Please enter the bank account number along with the selected bank.";
+  }
+  return null;
+};
+
 export const extractEmployeePhoto = (
   record?: Partial<EmployeeRecord> | null,
 ): string | undefined => {
