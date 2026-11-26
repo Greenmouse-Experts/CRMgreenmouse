@@ -11,6 +11,7 @@ import {
   CreditCard,
   Building2,
   AlertCircle,
+  CheckCircle2,
   Loader2,
   Pencil,
   MapPin,
@@ -38,6 +39,7 @@ import {
   useActivateEmployee,
   useCreateEmployee,
   useEmployee,
+  useEmployeeBanks,
   useEmployees,
   useEmployeeOrganization,
   useFinalizeEmployee,
@@ -45,9 +47,12 @@ import {
   useRemoveEmployee,
   useSuspendEmployee,
   useUpdateEmployee,
+  useValidateBankAccount,
   type CreateEmployeeInput,
   type EmployeeRecord,
+  type ValidateBankAccountResult,
 } from "@/api/employeesApi";
+import { useRoles } from "@/api/tenantApi";
 import { extract_message } from "@/helpers/auth";
 
 export interface StaffDetailSearchParams {
@@ -80,6 +85,7 @@ export interface EmployeeFormData {
   residentialAddress?: string;
 
   // Employment
+  roleId?: string;
   employeeNumber?: string;
   department?: string;
   departmentId?: string;
@@ -97,7 +103,6 @@ export interface EmployeeFormData {
   probationEndDate?: string;
   contractType?: string;
   contractEndDate?: string;
-  // needsSystemAccount?: boolean;
 
   // Emergency contact
   emergencyContactName?: string;
@@ -108,6 +113,7 @@ export interface EmployeeFormData {
   basicSalary?: string | number;
   payFrequency?: string;
   bankName?: string;
+  bankCode?: string;
   bankAccountNumber?: string;
 }
 
@@ -198,10 +204,16 @@ function StaffDetailPage() {
   const docUploads = useDocumentUploads();
   const seededDocsFor = useRef<string | null>(null);
   const [onLeaveLocal, setOnLeaveLocal] = useState<boolean | null>(null);
+  const [bankValidation, setBankValidation] = useState<{
+    key: string;
+    result: ValidateBankAccountResult;
+  } | null>(null);
 
   const employeeQuery = useEmployee(isNew ? undefined : id);
   const organizationQuery = useEmployeeOrganization();
   const allEmployeesQuery = useEmployees();
+  const rolesQuery = useRoles();
+  const banksQuery = useEmployeeBanks();
 
   const createEmployee = useCreateEmployee();
   const updateEmployee = useUpdateEmployee();
@@ -210,6 +222,7 @@ function StaffDetailPage() {
   const suspendEmployee = useSuspendEmployee();
   const reactivateEmployee = useReactivateEmployee();
   const finalizeEmployee = useFinalizeEmployee();
+  const validateBankAccount = useValidateBankAccount();
 
   const methods = useForm<EmployeeFormData>({
     mode: "onSubmit",
@@ -223,6 +236,7 @@ function StaffDetailPage() {
       gender: "",
       nationality: "",
       residentialAddress: "",
+      roleId: "",
       employeeNumber: "",
       department: "",
       departmentId: "",
@@ -238,13 +252,13 @@ function StaffDetailPage() {
       probationEndDate: "",
       contractType: "Permanent",
       contractEndDate: "",
-      // needsSystemAccount: true,
       emergencyContactName: "",
       emergencyContactRelationship: "",
       emergencyContactPhone: "",
       basicSalary: "",
       payFrequency: "Monthly",
       bankName: "",
+      bankCode: "",
       bankAccountNumber: "",
     },
   });
@@ -256,11 +270,16 @@ function StaffDetailPage() {
     reset,
     watch,
     trigger,
+    setValue,
+    getValues,
     formState: { isSubmitting },
   } = methods;
 
   const isOnProbation = watch("isOnProbation");
   const formValues = watch();
+
+  const banksList = banksQuery.data ?? [];
+  const rolesList = rolesQuery.data ?? [];
 
   // Populate data when editing or viewing
   useEffect(() => {
@@ -309,6 +328,7 @@ function StaffDetailPage() {
         gender: emp.gender ?? "",
         nationality: emp.nationality ?? "",
         residentialAddress: emp.residentialAddress ?? "",
+        roleId: emp.roleId ?? emp.role?.id ?? "",
         employeeNumber: emp.employeeNumber ?? "",
         department: deptName,
         departmentId: deptId,
@@ -328,7 +348,6 @@ function StaffDetailPage() {
         contractEndDate: emp.contractEndDate
           ? emp.contractEndDate.slice(0, 10)
           : "",
-        // needsSystemAccount: emp.needsSystemAccount !== false,
         emergencyContactName: emp.emergencyContactName ?? "",
         emergencyContactRelationship: emp.emergencyContactRelationship ?? "",
         emergencyContactPhone: emp.emergencyContactPhone ?? "",
@@ -338,10 +357,31 @@ function StaffDetailPage() {
             : "",
         payFrequency: emp.payFrequency ?? "Monthly",
         bankName: emp.bankName ?? "",
+        bankCode: emp.bankCode ?? "",
         bankAccountNumber: emp.bankAccountNumber ?? "",
       });
     }
   }, [employeeQuery.data, isNew, reset, id, docUploads.seed]);
+
+  // Backfill bankCode from loaded banks list when editing a record that only stored bankName
+  useEffect(() => {
+    if (!banksList.length) return;
+    const currentCode = getValues("bankCode")?.trim();
+    const currentName = getValues("bankName")?.trim();
+    if (!currentCode && currentName) {
+      const matched = banksList.find(
+        (bank) => bank.name.toLowerCase() === currentName.toLowerCase(),
+      );
+      if (matched) {
+        setValue("bankCode", matched.code);
+      }
+    } else if (currentCode && !currentName) {
+      const matched = banksList.find((bank) => bank.code === currentCode);
+      if (matched) {
+        setValue("bankName", matched.name);
+      }
+    }
+  }, [banksList, getValues, setValue]);
 
   const departmentsList = organizationQuery.data?.departments ?? [];
 
@@ -370,6 +410,78 @@ function StaffDetailPage() {
   const potentialManagers = (allEmployeesQuery.data ?? []).filter(
     (e) => isNew || e.id !== id,
   );
+
+  const validationContextKey = [
+    formValues.bankCode?.trim() || "",
+    formValues.bankAccountNumber?.trim() || "",
+    formValues.firstName?.trim() || "",
+    formValues.middleName?.trim() || "",
+    formValues.lastName?.trim() || "",
+  ].join("|");
+
+  const activeBankValidation =
+    bankValidation?.key === validationContextKey ? bankValidation.result : null;
+
+  const handleValidateBankAccount = async () => {
+    const firstName = getValues("firstName")?.trim() ?? "";
+    const middleName = getValues("middleName")?.trim() ?? "";
+    const lastName = getValues("lastName")?.trim() ?? "";
+    const bankCode = getValues("bankCode")?.trim() ?? "";
+    const accountNumber = getValues("bankAccountNumber")?.trim() ?? "";
+
+    if (!firstName || !lastName) {
+      toast.error(
+        "Please enter first and last name in Personal details before verifying bank account.",
+      );
+      return;
+    }
+    if (!bankCode) {
+      toast.error("Please select a bank or enter a valid bank code.");
+      return;
+    }
+    if (!accountNumber) {
+      toast.error("Please enter a bank account number to verify.");
+      return;
+    }
+
+    try {
+      const result = await validateBankAccount.mutateAsync({
+        bankCode,
+        accountNumber,
+        firstName,
+        middleName: middleName || undefined,
+        lastName,
+      });
+      setBankValidation({ key: validationContextKey, result });
+
+      const resolvedName =
+        result?.accountName ??
+        result?.account_name ??
+        result?.data?.accountName;
+      const isValid =
+        result?.valid !== false &&
+        result?.isValid !== false &&
+        result?.matched !== false &&
+        result?.nameMatched !== false &&
+        result?.isMatch !== false;
+
+      if (isValid) {
+        toast.success(
+          resolvedName
+            ? `Bank account verified: ${resolvedName}`
+            : result?.message || "Bank account verified successfully.",
+        );
+      } else {
+        toast.warning(
+          result?.message ||
+            "Bank account resolved, but details did not fully match employee name.",
+        );
+      }
+    } catch (error) {
+      setBankValidation(null);
+      toast.error(extract_message(error as never));
+    }
+  };
 
   const handleStepClick = async (targetIndex: number) => {
     if (targetIndex > currentStep) {
@@ -437,6 +549,9 @@ function StaffDetailPage() {
           p.name === values.jobTitle ||
           p.title === values.jobTitle,
       );
+      const selectedBank = banksList.find(
+        (b) => b.code === values.bankCode || b.name === values.bankName,
+      );
 
       const deptName =
         selectedDept?.name ||
@@ -451,7 +566,13 @@ function StaffDetailPage() {
         values.positionId ||
         undefined;
 
+      const bankCode =
+        values.bankCode?.trim() || selectedBank?.code || undefined;
+      const bankName =
+        values.bankName?.trim() || selectedBank?.name || undefined;
+
       const payload: CreateEmployeeInput = {
+        roleId: values.roleId?.trim() || undefined,
         firstName: values.firstName.trim(),
         middleName: values.middleName?.trim() || undefined,
         lastName: values.lastName.trim(),
@@ -476,7 +597,6 @@ function StaffDetailPage() {
           : undefined,
         contractType: values.contractType || undefined,
         contractEndDate: values.contractEndDate || undefined,
-        // needsSystemAccount: Boolean(values.needsSystemAccount),
         emergencyContactName: values.emergencyContactName?.trim() || undefined,
         emergencyContactRelationship:
           values.emergencyContactRelationship?.trim() || undefined,
@@ -487,7 +607,8 @@ function StaffDetailPage() {
             ? Number(values.basicSalary)
             : undefined,
         payFrequency: values.payFrequency || undefined,
-        bankName: values.bankName?.trim() || undefined,
+        bankName,
+        bankCode,
         bankAccountNumber: values.bankAccountNumber?.trim() || undefined,
         documents: docUploads.documents.length
           ? docUploads.documents
@@ -674,6 +795,22 @@ function StaffDetailPage() {
     potentialManagers.find((m) => m.id === formValues.managerId)?.name ||
     formValues.managerId ||
     "—";
+
+  const currentRole =
+    rolesList.find((r) => r.id === formValues.roleId)?.name ||
+    (emp.role?.id === formValues.roleId ? emp.role?.name : undefined) ||
+    "—";
+
+  const empRoleName =
+    emp.role?.name || rolesList.find((r) => r.id === emp.roleId)?.name || "—";
+
+  const hasCustomBankOnly =
+    Boolean(formValues.bankName?.trim()) &&
+    !banksList.some(
+      (b) =>
+        b.code === formValues.bankCode ||
+        b.name.toLowerCase() === formValues.bankName?.trim().toLowerCase(),
+    );
 
   return (
     <div className="space-y-6 pb-20 max-w-6xl mx-auto">
@@ -1012,6 +1149,12 @@ function StaffDetailPage() {
                   </p>
                 </div>
                 <div>
+                  <span className="text-base-content/80">System Role</span>
+                  <p className="font-semibold text-base-content mt-0.5">
+                    {empRoleName}
+                  </p>
+                </div>
+                <div>
                   <span className="text-base-content/80">Reporting Line</span>
                   <p className="font-semibold text-base-content mt-0.5">
                     {typeof emp.manager === "object"
@@ -1031,7 +1174,7 @@ function StaffDetailPage() {
                     {emp.startDate ? emp.startDate.slice(0, 10) : "—"}
                   </p>
                 </div>
-                <div>
+                <div className="col-span-2">
                   <span className="text-base-content/80">Work Location</span>
                   <p className="font-semibold text-base-content mt-0.5">
                     {emp.workLocation || emp.location || "Remote"}
@@ -1157,6 +1300,11 @@ function StaffDetailPage() {
                   <span className="text-base-content/80">Bank Institution</span>
                   <p className="font-semibold text-base-content mt-0.5">
                     {emp.bankName || "—"}
+                    {emp.bankCode ? (
+                      <span className="ml-1.5 text-xs font-mono text-base-content/70">
+                        ({emp.bankCode})
+                      </span>
+                    ) : null}
                   </p>
                 </div>
                 <div>
@@ -1438,7 +1586,7 @@ function StaffDetailPage() {
                       name="positionId"
                       render={({ field }) => (
                         <LocalSelect
-                          label="Position / Role"
+                          label="Position"
                           value={field.value ?? ""}
                           disabled={
                             organizationQuery.isLoading ||
@@ -1588,39 +1736,53 @@ function StaffDetailPage() {
                     />
                   </div>
 
-                  {/* Toggles */}
-                  <div className="pt-2 border-t border-base-200/80 space-y-3">
-                    <label className="flex items-center gap-3 cursor-pointer">
-                      <input
-                        type="checkbox"
-                        className="checkbox checkbox-primary checkbox-sm"
-                        {...register("isOnProbation")}
-                      />
-                      <span className=" font-medium text-base-content">
-                        Staff member is on probation
-                      </span>
-                    </label>
+                  {/* System Access Role & Probation */}
+                  <div className="pt-3 border-t border-base-200/80 grid grid-cols-1 sm:grid-cols-2 gap-4 items-start">
+                    <div>
+                      <LocalSelect
+                        label="System Role"
+                        disabled={rolesQuery.isLoading}
+                        {...register("roleId")}
+                      >
+                        <option value="">
+                          {rolesQuery.isLoading
+                            ? "Loading roles..."
+                            : "No system role assigned"}
+                        </option>
+                        {rolesList.map((role) => (
+                          <option key={role.id} value={role.id}>
+                            {role.name}
+                          </option>
+                        ))}
+                      </LocalSelect>
+                      <p className="text-xs text-base-content/70 mt-1">
+                        Assign an RBAC role if this employee needs CRM login
+                        access.
+                      </p>
+                    </div>
 
-                    {isOnProbation && (
-                      <div className="max-w-xs pl-7">
-                        <SimpleInput
-                          label="Probation End Date"
-                          type="date"
-                          {...register("probationEndDate")}
+                    <div className="space-y-3 sm:pt-7">
+                      <label className="flex items-center gap-3 cursor-pointer">
+                        <input
+                          type="checkbox"
+                          className="checkbox checkbox-primary checkbox-sm"
+                          {...register("isOnProbation")}
                         />
-                      </div>
-                    )}
+                        <span className=" font-medium text-base-content">
+                          Staff member is on probation
+                        </span>
+                      </label>
 
-                    {/*<label className="flex items-center gap-3 cursor-pointer">
-                      <input
-                        type="checkbox"
-                        className="checkbox checkbox-primary checkbox-sm"
-                        {...register("needsSystemAccount")}
-                      />
-                      <span className=" font-medium text-base-content">
-                        Create CRM login account with this email address
-                      </span>
-                    </label>*/}
+                      {isOnProbation && (
+                        <div className="max-w-xs pl-7">
+                          <SimpleInput
+                            label="Probation End Date"
+                            type="date"
+                            {...register("probationEndDate")}
+                          />
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -1670,20 +1832,154 @@ function StaffDetailPage() {
                     </LocalSelect>
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <SimpleInput
-                      label="Bank Name"
-                      placeholder="e.g. Access Bank / Zenith Bank"
-                      {...register("bankName")}
-                    />
+                  {banksList.length > 0 ? (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-end">
+                      <Controller
+                        control={control}
+                        name="bankCode"
+                        render={({ field }) => (
+                          <div>
+                            <LocalSelect
+                              label="Bank Name"
+                              value={field.value ?? ""}
+                              onChange={(e) => {
+                                const code = e.target.value;
+                                field.onChange(code);
+                                const selected = banksList.find(
+                                  (bank) => bank.code === code,
+                                );
+                                setValue("bankName", selected?.name ?? "");
+                              }}
+                            >
+                              <option value="">Select Bank</option>
+                              {hasCustomBankOnly && formValues.bankName && (
+                                <option value="">
+                                  {formValues.bankName} (unlinked)
+                                </option>
+                              )}
+                              {banksList.map((bank) => (
+                                <option key={bank.code} value={bank.code}>
+                                  {bank.name}
+                                </option>
+                              ))}
+                            </LocalSelect>
+                            {formValues.bankCode ? (
+                              <p className="text-xs text-base-content/70 mt-1 font-mono">
+                                Bank Code: {formValues.bankCode}
+                              </p>
+                            ) : null}
+                          </div>
+                        )}
+                      />
 
-                    <SimpleInput
-                      label="Bank Account Number"
-                      placeholder="10-digit NUBAN account number"
-                      maxLength={10}
-                      {...register("bankAccountNumber")}
-                    />
-                  </div>
+                      <div className="flex items-end gap-2">
+                        <div className="flex-1">
+                          <SimpleInput
+                            label="Bank Account Number"
+                            placeholder="10-digit NUBAN account number"
+                            maxLength={10}
+                            {...register("bankAccountNumber")}
+                          />
+                        </div>
+                        <button
+                          type="button"
+                          onClick={handleValidateBankAccount}
+                          disabled={
+                            validateBankAccount.isPending ||
+                            !formValues.bankCode?.trim() ||
+                            !formValues.bankAccountNumber?.trim()
+                          }
+                          className="btn btn-outline btn-primary rounded-xl shrink-0"
+                        >
+                          {validateBankAccount.isPending ? (
+                            <Loader2 className="size-4 animate-spin" />
+                          ) : (
+                            <ShieldCheck className="size-4" />
+                          )}
+                          <span>Verify Account</span>
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 items-end">
+                      <SimpleInput
+                        label="Bank Name"
+                        placeholder={
+                          banksQuery.isLoading
+                            ? "Loading banks..."
+                            : "e.g. Access Bank / Zenith Bank"
+                        }
+                        {...register("bankName")}
+                      />
+
+                      <SimpleInput
+                        label="Bank Code"
+                        placeholder="e.g. 044"
+                        {...register("bankCode")}
+                      />
+
+                      <div className="flex items-end gap-2">
+                        <div className="flex-1">
+                          <SimpleInput
+                            label="Bank Account Number"
+                            placeholder="10-digit NUBAN account number"
+                            maxLength={10}
+                            {...register("bankAccountNumber")}
+                          />
+                        </div>
+                        <button
+                          type="button"
+                          onClick={handleValidateBankAccount}
+                          disabled={
+                            validateBankAccount.isPending ||
+                            !formValues.bankCode?.trim() ||
+                            !formValues.bankAccountNumber?.trim()
+                          }
+                          className="btn btn-outline btn-primary rounded-xl shrink-0"
+                        >
+                          {validateBankAccount.isPending ? (
+                            <Loader2 className="size-4 animate-spin" />
+                          ) : (
+                            <ShieldCheck className="size-4" />
+                          )}
+                          <span>Verify</span>
+                        </button>
+                      </div>
+                    </div>
+                  )}
+
+                  {activeBankValidation && (
+                    <div
+                      className={`flex items-start gap-2.5 rounded-xl border p-3.5 text-sm ${
+                        activeBankValidation.valid !== false &&
+                        activeBankValidation.isValid !== false &&
+                        activeBankValidation.matched !== false &&
+                        activeBankValidation.nameMatched !== false &&
+                        activeBankValidation.isMatch !== false
+                          ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-800 dark:text-emerald-300"
+                          : "border-warning/30 bg-warning/10 text-warning-content"
+                      }`}
+                    >
+                      <CheckCircle2 className="size-4 shrink-0 mt-0.5" />
+                      <div className="space-y-0.5">
+                        <p className="font-semibold">
+                          {activeBankValidation.accountName ||
+                            activeBankValidation.account_name ||
+                            activeBankValidation.data?.accountName ||
+                            activeBankValidation.message ||
+                            "Account verified"}
+                        </p>
+                        {activeBankValidation.message &&
+                        (activeBankValidation.accountName ||
+                          activeBankValidation.account_name ||
+                          activeBankValidation.data?.accountName) ? (
+                          <p className="text-xs opacity-80">
+                            {activeBankValidation.message}
+                          </p>
+                        ) : null}
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
             )}
@@ -1918,6 +2214,12 @@ function StaffDetailPage() {
                       </p>
                       <p>
                         <span className="text-base-content/80">
+                          System Role:
+                        </span>{" "}
+                        <span className="font-semibold">{currentRole}</span>
+                      </p>
+                      <p>
+                        <span className="text-base-content/80">
                           Type / Status:
                         </span>{" "}
                         <span className="font-semibold">
@@ -1986,6 +2288,9 @@ function StaffDetailPage() {
                         <span className="text-base-content/80">Bank:</span>{" "}
                         <span className="font-semibold">
                           {formValues.bankName || "—"}
+                          {formValues.bankCode
+                            ? ` (${formValues.bankCode})`
+                            : ""}
                         </span>
                       </p>
                       <p>

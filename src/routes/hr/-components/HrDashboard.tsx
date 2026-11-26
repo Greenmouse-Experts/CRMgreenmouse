@@ -399,7 +399,7 @@ export default function HrDashboard() {
             Loading workforce data…
           </span>
         </div>
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-5">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-5 2xl:grid-cols-5">
           {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((i) => (
             <StatCard
               key={i}

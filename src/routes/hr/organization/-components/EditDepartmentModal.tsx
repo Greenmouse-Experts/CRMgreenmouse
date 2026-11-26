@@ -9,6 +9,7 @@ import Modal, { type ModalHandle } from "@/components/DialogModal";
 import SimpleInput from "@/components/inputs/SimpleInput";
 import LocalSelect from "@/components/inputs/LocalSelect";
 import SimpleSelect from "@/components/inputs/SimpleSelect";
+import { LOCATION_OPTIONS } from "./organizationData";
 import type { EmployeeRecord } from "@/api/employeesApi";
 import type { Department } from "./types";
 import { toast } from "sonner";
@@ -18,14 +19,24 @@ interface EditDepartmentFormValues {
   name: string;
   code: string;
   head: string;
+  parent: string;
+  costCentre: string;
+  location: string;
+  headcount: string;
   status: string;
+  description: string;
 }
 
 const EDIT_DEFAULTS: EditDepartmentFormValues = {
   name: "",
   code: "",
   head: "",
+  parent: "",
+  costCentre: "",
+  location: "Lagos",
+  headcount: "10",
   status: "Active",
+  description: "",
 };
 
 interface EditDepartmentModalProps {
@@ -37,8 +48,14 @@ interface EditDepartmentModalProps {
     name: string;
     code: string;
     headEmployeeId?: string;
+    parentDepartmentId?: string;
+    costCentre?: string;
+    primaryLocation?: string;
+    approvedHeadcount?: number;
+    description?: string;
     status: string;
   }) => void;
+  existingDepartments?: Department[];
 }
 
 export default function EditDepartmentModal({
@@ -46,6 +63,7 @@ export default function EditDepartmentModal({
   department,
   onClose,
   onEditDepartment,
+  existingDepartments,
 }: EditDepartmentModalProps) {
   const modalRef = useRef<ModalHandle>(null);
   const methods = useForm<EditDepartmentFormValues>({
@@ -60,7 +78,12 @@ export default function EditDepartmentModal({
         name: department.name ?? "",
         code: department.code ?? "",
         head: department.headEmployeeId ?? "",
+        parent: department.parentDepartmentId ?? "",
+        costCentre: department.costCentre ?? "",
+        location: department.primaryLocation ?? "Lagos",
+        headcount: String(department.approvedHeadcount ?? 10),
         status: department.status ?? "Active",
+        description: department.description ?? "",
       });
     } else if (!isOpen) {
       modalRef.current?.close();
@@ -76,6 +99,11 @@ export default function EditDepartmentModal({
       name: values.name.trim(),
       code: values.code.trim().toUpperCase(),
       headEmployeeId: values.head || undefined,
+      parentDepartmentId: values.parent || undefined,
+      costCentre: values.costCentre.trim() || undefined,
+      primaryLocation: values.location,
+      approvedHeadcount: Number(values.headcount) || 0,
+      description: values.description.trim() || undefined,
       status: values.status,
     };
 
@@ -98,7 +126,8 @@ export default function EditDepartmentModal({
       <FormProvider {...methods}>
         <form onSubmit={methods.handleSubmit(onSubmit)} className="space-y-4">
           <p className=" text-base-content/80 -mt-1 mb-3">
-            Update the department name, code, head and status.
+            Update the department name, code, head, parent, location, headcount
+            and status.
           </p>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -167,6 +196,57 @@ export default function EditDepartmentModal({
 
             <div>
               <label className=" font-semibold text-base-content/80 mb-1 block">
+                Parent department
+              </label>
+              <LocalSelect {...methods.register("parent")}>
+                <option value="">None (top level)</option>
+                {existingDepartments?.map((d) => (
+                  <option key={d.id} value={d.id}>
+                    {d.name} ({d.code})
+                  </option>
+                ))}
+              </LocalSelect>
+            </div>
+
+            <div>
+              <label className=" font-semibold text-base-content/80 mb-1 block">
+                Cost Centre code
+              </label>
+              <SimpleInput
+                placeholder="e.g. CC-401"
+                {...methods.register("costCentre")}
+              />
+            </div>
+
+            <div>
+              <label className=" font-semibold text-base-content/80 mb-1 block">
+                Location
+              </label>
+              <LocalSelect {...methods.register("location")}>
+                {LOCATION_OPTIONS.map((loc) => (
+                  <option key={loc} value={loc}>
+                    {loc}
+                  </option>
+                ))}
+              </LocalSelect>
+            </div>
+
+            <div>
+              <label className=" font-semibold text-base-content/80 mb-1 block">
+                Headcount
+              </label>
+              <input
+                type="number"
+                min="0"
+                {...methods.register("headcount", {
+                  valueAsNumber: true,
+                })}
+                className="input input-bordered w-full  rounded-xl bg-base-200/80"
+              />
+            </div>
+
+            <div>
+              <label className=" font-semibold text-base-content/80 mb-1 block">
                 Status
               </label>
               <LocalSelect {...methods.register("status")}>
@@ -174,6 +254,18 @@ export default function EditDepartmentModal({
                 <option value="Inactive">Inactive</option>
               </LocalSelect>
             </div>
+          </div>
+
+          <div>
+            <label className=" font-semibold text-base-content/80 mb-1 block">
+              Description
+            </label>
+            <textarea
+              {...methods.register("description")}
+              placeholder="Responsibilities, scope, and objectives of this department..."
+              rows={3}
+              className="textarea textarea-bordered w-full  rounded-xl bg-base-200/80"
+            />
           </div>
 
           <div className="flex items-center justify-end gap-2 pt-4 border-t border-base-200">

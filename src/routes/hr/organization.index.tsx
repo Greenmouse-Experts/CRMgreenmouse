@@ -77,6 +77,11 @@ function RouteComponent() {
     name: string;
     code: string;
     headEmployeeId?: string;
+    parentDepartmentId?: string;
+    costCentre?: string;
+    primaryLocation?: string;
+    approvedHeadcount?: number;
+    description?: string;
     status: string;
   }) => {
     updateDepartment.mutate(
@@ -85,6 +90,11 @@ function RouteComponent() {
         name: updated.name,
         code: updated.code,
         headEmployeeId: updated.headEmployeeId,
+        parentDepartmentId: updated.parentDepartmentId,
+        costCentre: updated.costCentre,
+        primaryLocation: updated.primaryLocation,
+        approvedHeadcount: updated.approvedHeadcount,
+        description: updated.description,
         status: updated.status.toLowerCase() as "active" | "inactive",
       },
       { onError: () => toast.error("Failed to update department") },
@@ -182,6 +192,7 @@ function RouteComponent() {
         department={editDept}
         onClose={() => setIsEditDeptModalOpen(false)}
         onEditDepartment={handleEditDepartment}
+        existingDepartments={departments}
       />
     </div>
   );

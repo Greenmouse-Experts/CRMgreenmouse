@@ -45,6 +45,7 @@ export interface EmployeeRecord {
   department?: { id?: string; name?: string } | string;
   position?: { id?: string; name?: string } | string;
   jobTitle?: string;
+  roleId?: string;
   role?: { id?: string; name?: string };
   manager?: { id?: string; name?: string } | string;
   managerId?: string;
@@ -64,6 +65,7 @@ export interface EmployeeRecord {
   payFrequency?: string;
   bankName?: string;
   bankAccountNumber?: string;
+  bankCode?: string;
   allowances?: Array<{ name: string; amount: number }>;
   bonuses?: Array<{ name: string; amount: number }>;
   deductions?: Array<{ name: string; amount: number }>;
@@ -96,7 +98,38 @@ export interface EmployeeOrganization {
   [key: string]: any;
 }
 
+export interface BankOption {
+  name: string;
+  code: string;
+  slug?: string;
+  [key: string]: any;
+}
+
+export interface ValidateBankAccountInput {
+  bankCode: string;
+  accountNumber: string;
+  firstName: string;
+  middleName?: string;
+  lastName: string;
+}
+
+export interface ValidateBankAccountResult {
+  valid?: boolean;
+  isValid?: boolean;
+  matched?: boolean;
+  nameMatched?: boolean;
+  isMatch?: boolean;
+  accountName?: string;
+  account_name?: string;
+  accountNumber?: string;
+  bankCode?: string;
+  bankName?: string;
+  message?: string;
+  [key: string]: any;
+}
+
 export interface CreateEmployeeInput {
+  roleId?: string;
   firstName: string;
   lastName: string;
   email: string;
@@ -136,6 +169,7 @@ export interface CreateEmployeeInput {
   payFrequency?: string;
   bankName?: string;
   bankAccountNumber?: string;
+  bankCode?: string;
   allowances?: Array<{ name: string; amount: number }>;
   bonuses?: Array<{ name: string; amount: number }>;
   deductions?: Array<{ name: string; amount: number }>;
@@ -346,6 +380,31 @@ export const useEmployeeOrganization = () =>
     },
   });
 
+export const useEmployeeBanks = (enabled = true) =>
+  useQuery<BankOption[]>({
+    queryKey: [...queryRoot, "banks"],
+    enabled,
+    staleTime: 1000 * 60 * 30,
+    queryFn: async () => {
+      const { data } = await apiClient.get<any>(
+        "/employees/banks",
+        authConfig(),
+      );
+      const list = unwrapList<any>(data, ["banks", "items"]);
+      return list
+        .map((bank) => ({
+          ...bank,
+          name: String(
+            bank?.name ?? bank?.bankName ?? bank?.label ?? "",
+          ).trim(),
+          code: String(
+            bank?.code ?? bank?.bankCode ?? bank?.cbnCode ?? bank?.value ?? "",
+          ).trim(),
+        }))
+        .filter((bank) => bank.name && bank.code);
+    },
+  });
+
 export const useEmployeeRecentActivity = () =>
   useQuery<any[]>({
     queryKey: [...queryRoot, "recent-activity"],
@@ -501,6 +560,31 @@ export const useUploadMyEmployeePhoto = () => {
     },
   });
 };
+
+export const useValidateBankAccount = () =>
+  useMutation({
+    mutationFn: async (input: ValidateBankAccountInput) => {
+      try {
+        const payload: ValidateBankAccountInput = {
+          bankCode: input.bankCode.trim(),
+          accountNumber: input.accountNumber.trim(),
+          firstName: input.firstName.trim(),
+          lastName: input.lastName.trim(),
+          ...(input.middleName?.trim()
+            ? { middleName: input.middleName.trim() }
+            : {}),
+        };
+        const { data } = await apiClient.post<any>(
+          "/employees/bank-account/validate",
+          payload,
+          authConfig(),
+        );
+        return unwrapOne<ValidateBankAccountResult>(data);
+      } catch (error) {
+        throw extractError(error);
+      }
+    },
+  });
 
 export const useCreateEmployee = () => {
   const invalidate = useInvalidateEmployees();

@@ -8,7 +8,7 @@
 > - **Lifecycle & Availability Updates:** Whenever pending or missing endpoints become available or reported issues are fixed, re-probe against the live API, and update this document immediately—moving verified endpoints to the "Verified response shapes / Available" section (with date and verified shape) or removing them from active blocker lists.
 
 Verified against the current `Greenmouse CRM API.postman_collection.json`
-(479 requests). Originally probed **2026-11-19**; **re-probed 2026-11-23** and **2026-11-24** with
+(481 requests). Originally probed **2026-11-19**; **re-probed 2026-11-23** and **2026-11-24** with
 an access token renewed via `tenant/auth/refresh` (the `auth_cred.ts` refresh
 token is valid until **2026-11-26**).
 
@@ -58,11 +58,13 @@ The Postman collection still has no examples for them.
 
 ## 2. Collection documentation gaps
 
-- **413 of 479** requests have no response example (`"body": null`).
+- **415 of 481** requests have no response example (`"body": null`).
 - **376 of 479** request bodies are empty or literally `{}`.
-- For the **`/v1/employees`** family every write endpoint has a `{}` body and
-  no response example. `/v1/staffs` POST/PATCH are the better-documented
-  exception (`<string>` placeholders).
+- For the **`/v1/employees`** family, `POST /v1/employees`, `PATCH /v1/employees/:id`,
+  `PATCH /v1/employees/:id/compensation`, and `POST /v1/employees/bank-account/validate`
+  now include request body samples (including `roleId` and `bankCode`), though
+  response bodies remain `null` in the collection (including `GET /v1/employees/banks`
+  and `POST /v1/employees/bank-account/validate`).
 
 Empty `{}` examples hide requirements the live API enforces (verified via
 400s):
@@ -98,7 +100,10 @@ collection.
    generic `POST /v1/tasks` with `{"title": "...", "assignedTo": "<uuid>"}` as a
    fallback; a dedicated endpoint such as `POST /v1/employees/:id/onboarding/tasks`
    is requested).
-6. Bank details / documents — nothing exposed for payroll or compliance.
+6. Bank lookup & account validation endpoints (`GET /v1/employees/banks`,
+   `POST /v1/employees/bank-account/validate`) and `bankCode` on
+   create/update/compensation were added in the collection; response body
+   examples still need documentation/verification.
 7. `POST /v1/employees/import` — imports exist for companies, contacts,
    products, services and leads, but not employees.
 8. `DELETE` department / position — create and update exist without delete routes.
@@ -130,8 +135,10 @@ collection.
     in the Postman collection.
 - Contract renewal has no documented fields and no contract read endpoint.
 - Compensation PATCH cannot express an effective date or revision history.
-- Relationship between `/v1/employees` and `/v1/staffs` is undocumented
-  (employee records carry `staffId: null`; the staffs list is empty).
+- Relationship between `/v1/employees` and `/v1/staffs` is partially clarified
+  (`POST /v1/employees` and `PATCH /v1/employees/:id` now accept `roleId`
+  instead of `staffId`/`needsSystemAccount`), though employee records still carry
+  `staffId: null` and `/v1/staffs` list remains separate.
 
 ## 6. Auth and error handling
 
@@ -144,23 +151,25 @@ collection.
 
 ## 7. Required endpoints in active use
 
-| Method | Path                                         | Expected Contract / Scope                                                         |
-| ------ | -------------------------------------------- | --------------------------------------------------------------------------------- |
-| GET    | `/v1/employees`                              | List employees                                                                    |
-| GET    | `/v1/staffs`                                 | List staffs                                                                       |
-| GET    | `/v1/employees/:id`                          | Retrieve single employee record                                                   |
-| GET    | `/v1/employees/organization`                 | Organization hierarchy (`{ departments, positions }`)                             |
-| GET    | `/v1/employees/recent-activity`              | Activity audit log                                                                |
-| GET    | `/v1/employees/upcoming-milestones`          | Upcoming employee milestones (birthdays, work anniversaries)                      |
-| GET    | `/v1/employees/:id/compensation`             | Employee salary/compensation data                                                 |
-| POST   | `/v1/employees`                              | Create employee draft                                                             |
-| PATCH  | `/v1/employees/:id`                          | Update employee record (status must be in verified enum)                          |
-| PATCH  | `/v1/employees/:id/compensation`             | Update employee compensation                                                      |
-| PATCH  | `/v1/employees/:id/contract-renewal`         | Renew employee contract                                                           |
-| POST   | `/v1/employees/organization/departments`     | Create department (`name`, `code`, `status`)                                      |
-| PATCH  | `/v1/employees/organization/departments/:id` | Update department status (`active`/`inactive`)                                    |
-| POST   | `/v1/employees/organization/positions`       | Create position (`title`, `departmentId`, optional `approvedHeadcount`, `status`) |
-| PATCH  | `/v1/employees/organization/positions/:id`   | Update position details                                                           |
+| Method | Path                                         | Expected Contract / Scope                                                                         |
+| ------ | -------------------------------------------- | ------------------------------------------------------------------------------------------------- |
+| GET    | `/v1/employees`                              | List employees                                                                                    |
+| GET    | `/v1/employees/banks`                        | List supported banks (`name`, `code`) for employee compensation                                   |
+| POST   | `/v1/employees/bank-account/validate`        | Validate bank account (`bankCode`, `accountNumber`, `firstName`, `middleName?`, `lastName`)       |
+| GET    | `/v1/staffs`                                 | List staffs                                                                                       |
+| GET    | `/v1/employees/:id`                          | Retrieve single employee record                                                                   |
+| GET    | `/v1/employees/organization`                 | Organization hierarchy (`{ departments, positions }`)                                             |
+| GET    | `/v1/employees/recent-activity`              | Activity audit log                                                                                |
+| GET    | `/v1/employees/upcoming-milestones`          | Upcoming employee milestones (birthdays, work anniversaries)                                      |
+| GET    | `/v1/employees/:id/compensation`             | Employee salary/compensation data                                                                 |
+| POST   | `/v1/employees`                              | Create employee record (accepts `roleId`, `bankCode`, personal/employment/compensation/documents) |
+| PATCH  | `/v1/employees/:id`                          | Update employee record (status must be in verified enum; accepts `roleId`, `bankCode`)            |
+| PATCH  | `/v1/employees/:id/compensation`             | Update employee compensation (accepts `bankCode`)                                                 |
+| PATCH  | `/v1/employees/:id/contract-renewal`         | Renew employee contract                                                                           |
+| POST   | `/v1/employees/organization/departments`     | Create department (`name`, `code`, `status`)                                                      |
+| PATCH  | `/v1/employees/organization/departments/:id` | Update department status (`active`/`inactive`)                                                    |
+| POST   | `/v1/employees/organization/positions`       | Create position (`title`, `departmentId`, optional `approvedHeadcount`, `status`)                 |
+| PATCH  | `/v1/employees/organization/positions/:id`   | Update position details                                                                           |
 
 Onboarding & Probation:
 
@@ -211,7 +220,8 @@ Also in active use:
 ## 9. Re-verification checklist (remaining)
 
 1. Fill in real request/response examples for the `/v1/employees` family in
-   the Postman collection (shapes in section 1 are a starting point).
+   the Postman collection (shapes in section 1 are a starting point, plus
+   `GET /v1/employees/banks` and `POST /v1/employees/bank-account/validate`).
 2. Add the missing endpoints from section 3 or document intended replacements.
 3. Align `employmentStatus` enum across documentation and validator (section 5).
 4. Confirm the `/v1/employees` ↔ `/v1/staffs` relationship.
