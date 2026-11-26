@@ -5,18 +5,14 @@ import {
   BriefcaseBusiness,
   Building2,
   CalendarCheck2,
+  Check,
   CircleUserRound,
-  Gavel,
   GraduationCap,
   LayoutDashboard,
-  LogOut,
-  NotebookPen,
   Settings,
   Sparkles,
-  UserRoundPlus,
   Users,
   WalletCards,
-  Check,
 } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { useLocation } from "@tanstack/react-router";
@@ -37,7 +33,7 @@ const ICON_SIZE = 14;
 const nav_links = [
   {
     path: "/staff",
-    label: "HR Dashboard",
+    label: "Dashboard",
     icon: <LayoutDashboard size={ICON_SIZE} />,
     type: "menu",
     children: null,
@@ -48,27 +44,13 @@ const nav_links = [
     icon: <Users size={ICON_SIZE} />,
     type: "submenu",
     children: [
-      // {
-      //   path: "/staff/staffs",
-      //   label: "Employees",
-      //   icon: <Users size={ICON_SIZE} />,
-      //   type: "menu",
-      //   children: null,
-      // },
-      // {
-      //   path: "/staff/recruitment",
-      //   label: "Recruitment",
-      //   icon: <UserRoundPlus size={ICON_SIZE} />,
-      //   type: "menu",
-      //   children: null,
-      // },
-      // {
-      //   path: "/staff/onboarding",
-      //   label: "Onboarding",
-      //   icon: <NotebookPen size={ICON_SIZE} />,
-      //   type: "menu",
-      //   children: null,
-      // },
+      {
+        path: "/staff/staffs",
+        label: "Colleagues",
+        icon: <Users size={ICON_SIZE} />,
+        type: "menu",
+        children: null,
+      },
       {
         path: "/staff/tasks",
         label: "Tasks",
@@ -134,20 +116,6 @@ const nav_links = [
         type: "menu",
         children: null,
       },
-      // {
-      //   path: "/staff/disciplinary",
-      //   label: "Disciplinary",
-      //   icon: <Gavel size={ICON_SIZE} />,
-      //   type: "menu",
-      //   children: null,
-      // },
-      // {
-      //   path: "/staff/offboarding",
-      //   label: "Offboarding",
-      //   icon: <LogOut size={ICON_SIZE} />,
-      //   type: "menu",
-      //   children: null,
-      // },
     ],
   },
   {
@@ -221,7 +189,7 @@ function RouteComponent() {
     .filter(
       (path) =>
         pathname === path ||
-        (path !== "/hr" && pathname.startsWith(`${path}/`)),
+        (path !== "/staff" && pathname.startsWith(`${path}/`)),
     )
     .sort((first, second) => second.length - first.length)[0];
 
@@ -250,7 +218,7 @@ function RouteComponent() {
                 Kinovia CRM
               </div>
               <div className="text-[10px] uppercase tracking-[0.2em] text-base-content/80">
-                Human Resources
+                Employee Portal
               </div>
             </div>
           </div>

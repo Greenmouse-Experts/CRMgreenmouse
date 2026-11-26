@@ -36,7 +36,9 @@ import { Route as TenantSettingsIndexRouteImport } from './routes/tenant/setting
 import { Route as TenantProductsIndexRouteImport } from './routes/tenant/products/index'
 import { Route as TenantOrdersIndexRouteImport } from './routes/tenant/orders/index'
 import { Route as TenantNotificationsIndexRouteImport } from './routes/tenant/notifications.index'
+import { Route as StaffStaffsIndexRouteImport } from './routes/staff/staffs/index'
 import { Route as StaffSettingsIndexRouteImport } from './routes/staff/settings/index'
+import { Route as StaffOrganizationIndexRouteImport } from './routes/staff/organization.index'
 import { Route as StaffAttendanceIndexRouteImport } from './routes/staff/attendance/index'
 import { Route as HrTrainingIndexRouteImport } from './routes/hr/training/index'
 import { Route as HrTasksIndexRouteImport } from './routes/hr/tasks/index'
@@ -278,10 +280,20 @@ const TenantNotificationsIndexRoute =
     path: '/notifications/',
     getParentRoute: () => TenantRouteRoute,
   } as any)
+const StaffStaffsIndexRoute = StaffStaffsIndexRouteImport.update({
+  id: '/staffs/',
+  path: '/staffs/',
+  getParentRoute: () => StaffRouteRoute,
+} as any)
 const StaffSettingsIndexRoute = StaffSettingsIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => StaffSettingsRouteRoute,
+} as any)
+const StaffOrganizationIndexRoute = StaffOrganizationIndexRouteImport.update({
+  id: '/organization/',
+  path: '/organization/',
+  getParentRoute: () => StaffRouteRoute,
 } as any)
 const StaffAttendanceIndexRoute = StaffAttendanceIndexRouteImport.update({
   id: '/attendance/',
@@ -914,7 +926,9 @@ export interface FileRoutesByFullPath {
   '/hr/tasks': typeof HrTasksIndexRoute
   '/hr/training': typeof HrTrainingIndexRoute
   '/staff/attendance': typeof StaffAttendanceIndexRoute
+  '/staff/organization': typeof StaffOrganizationIndexRoute
   '/staff/settings/': typeof StaffSettingsIndexRoute
+  '/staff/staffs': typeof StaffStaffsIndexRoute
   '/tenant/notifications': typeof TenantNotificationsIndexRoute
   '/tenant/orders': typeof TenantOrdersIndexRoute
   '/tenant/products': typeof TenantProductsIndexRoute
@@ -1037,7 +1051,9 @@ export interface FileRoutesByTo {
   '/hr/tasks': typeof HrTasksIndexRoute
   '/hr/training': typeof HrTrainingIndexRoute
   '/staff/attendance': typeof StaffAttendanceIndexRoute
+  '/staff/organization': typeof StaffOrganizationIndexRoute
   '/staff/settings': typeof StaffSettingsIndexRoute
+  '/staff/staffs': typeof StaffStaffsIndexRoute
   '/tenant/notifications': typeof TenantNotificationsIndexRoute
   '/tenant/orders': typeof TenantOrdersIndexRoute
   '/tenant/products': typeof TenantProductsIndexRoute
@@ -1172,7 +1188,9 @@ export interface FileRoutesById {
   '/hr/tasks/': typeof HrTasksIndexRoute
   '/hr/training/': typeof HrTrainingIndexRoute
   '/staff/attendance/': typeof StaffAttendanceIndexRoute
+  '/staff/organization/': typeof StaffOrganizationIndexRoute
   '/staff/settings/': typeof StaffSettingsIndexRoute
+  '/staff/staffs/': typeof StaffStaffsIndexRoute
   '/tenant/notifications/': typeof TenantNotificationsIndexRoute
   '/tenant/orders/': typeof TenantOrdersIndexRoute
   '/tenant/products/': typeof TenantProductsIndexRoute
@@ -1308,7 +1326,9 @@ export interface FileRouteTypes {
     | '/hr/tasks'
     | '/hr/training'
     | '/staff/attendance'
+    | '/staff/organization'
     | '/staff/settings/'
+    | '/staff/staffs'
     | '/tenant/notifications'
     | '/tenant/orders'
     | '/tenant/products'
@@ -1431,7 +1451,9 @@ export interface FileRouteTypes {
     | '/hr/tasks'
     | '/hr/training'
     | '/staff/attendance'
+    | '/staff/organization'
     | '/staff/settings'
+    | '/staff/staffs'
     | '/tenant/notifications'
     | '/tenant/orders'
     | '/tenant/products'
@@ -1565,7 +1587,9 @@ export interface FileRouteTypes {
     | '/hr/tasks/'
     | '/hr/training/'
     | '/staff/attendance/'
+    | '/staff/organization/'
     | '/staff/settings/'
+    | '/staff/staffs/'
     | '/tenant/notifications/'
     | '/tenant/orders/'
     | '/tenant/products/'
@@ -1854,12 +1878,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TenantNotificationsIndexRouteImport
       parentRoute: typeof TenantRouteRoute
     }
+    '/staff/staffs/': {
+      id: '/staff/staffs/'
+      path: '/staffs'
+      fullPath: '/staff/staffs'
+      preLoaderRoute: typeof StaffStaffsIndexRouteImport
+      parentRoute: typeof StaffRouteRoute
+    }
     '/staff/settings/': {
       id: '/staff/settings/'
       path: '/'
       fullPath: '/staff/settings/'
       preLoaderRoute: typeof StaffSettingsIndexRouteImport
       parentRoute: typeof StaffSettingsRouteRoute
+    }
+    '/staff/organization/': {
+      id: '/staff/organization/'
+      path: '/organization'
+      fullPath: '/staff/organization'
+      preLoaderRoute: typeof StaffOrganizationIndexRouteImport
+      parentRoute: typeof StaffRouteRoute
     }
     '/staff/attendance/': {
       id: '/staff/attendance/'
@@ -2776,12 +2814,16 @@ interface StaffRouteRouteChildren {
   StaffSettingsRouteRoute: typeof StaffSettingsRouteRouteWithChildren
   StaffIndexRoute: typeof StaffIndexRoute
   StaffAttendanceIndexRoute: typeof StaffAttendanceIndexRoute
+  StaffOrganizationIndexRoute: typeof StaffOrganizationIndexRoute
+  StaffStaffsIndexRoute: typeof StaffStaffsIndexRoute
 }
 
 const StaffRouteRouteChildren: StaffRouteRouteChildren = {
   StaffSettingsRouteRoute: StaffSettingsRouteRouteWithChildren,
   StaffIndexRoute: StaffIndexRoute,
   StaffAttendanceIndexRoute: StaffAttendanceIndexRoute,
+  StaffOrganizationIndexRoute: StaffOrganizationIndexRoute,
+  StaffStaffsIndexRoute: StaffStaffsIndexRoute,
 }
 
 const StaffRouteRouteWithChildren = StaffRouteRoute._addFileChildren(

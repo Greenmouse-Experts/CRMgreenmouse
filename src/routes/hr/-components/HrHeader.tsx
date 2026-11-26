@@ -24,7 +24,7 @@ export default function HrHeader() {
         <Menu />
       </label>
       <h2 className="text-current/80 font-semibold text-md md:text-xl">
-        {auth?.user.userType === "staff" ? "HR Dashboard" : "HR Dashboard"}
+        {auth?.user.userType === "staff" ? "Employee Portal" : "HR Dashboard"}
       </h2>
       <div className="ml-auto flex items-center gap-2">
         <Link

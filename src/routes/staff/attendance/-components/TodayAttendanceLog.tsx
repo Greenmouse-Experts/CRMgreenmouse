@@ -17,8 +17,8 @@ export default function TodayAttendanceLog({ logs }: TodayAttendanceLogProps) {
       const q = searchTerm.toLowerCase();
       return (
         log.name.toLowerCase().includes(q) ||
-        log.staffId.toLowerCase().includes(q) ||
-        log.date.toLowerCase().includes(q)
+        log.date.toLowerCase().includes(q) ||
+        log.status.toLowerCase().includes(q)
       );
     }
     return true;
@@ -31,7 +31,7 @@ export default function TodayAttendanceLog({ logs }: TodayAttendanceLogProps) {
       .map((part) => part[0])
       .join("")
       .slice(0, 2)
-      .toUpperCase() || "ST";
+      .toUpperCase() || "ME";
 
   const getStatusBadge = (status: AttendanceStatus) => {
     switch (status) {
@@ -114,11 +114,9 @@ export default function TodayAttendanceLog({ logs }: TodayAttendanceLogProps) {
     <div className="card bg-base-100 border border-base-200 shadow-sm p-4 sm:p-6 space-y-4">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h2 className="text-lg font-bold text-base-content">
-            Attendance Log
-          </h2>
+          <h2 className="text-lg font-bold text-base-content">My Time Logs</h2>
           <p className="text-sm text-base-content/80">
-            Clock-in and clock-out records for staff members
+            Your personal clock-in and clock-out attendance records
           </p>
         </div>
 
@@ -127,7 +125,7 @@ export default function TodayAttendanceLog({ logs }: TodayAttendanceLogProps) {
             <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 size-4 text-base-content/70" />
             <input
               type="text"
-              placeholder="Search staff or date..."
+              placeholder="Search date or status..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="input input-sm w-full pl-8 bg-base-200/80 border-base-300 rounded-lg"

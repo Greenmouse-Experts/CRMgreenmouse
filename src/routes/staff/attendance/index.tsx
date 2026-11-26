@@ -14,18 +14,15 @@ import type {
   CorrectionStatus,
 } from "./-components/types";
 import {
-  useAttendanceDashboard,
   useAttendanceRecords,
   useClockIn,
   useClockOut,
-  useCorrectionRequests,
   useCreateCorrection,
-  useDecideCorrection,
+  useMyCorrectionRequests,
   type AttendanceRecordApi,
   type CorrectionApi,
   type CreateCorrectionPayload,
 } from "@/api/attendanceApi";
-import { useStaffs } from "@/api/tenantApi";
 import { useAuth } from "@/store/authStore";
 import { extract_message } from "@/helpers/errors";
 import { Clock, LogIn, LogOut } from "lucide-react";
@@ -83,20 +80,19 @@ const staffName = (raw: {
 
 const toUiCorrection = (
   raw: CorrectionApi,
-  staffNameMap?: Map<string, string>,
+  fallbackSelfName: string,
 ): CorrectionRequest => {
   const item =
     raw?.correction ?? raw?.request ?? raw?.attendanceCorrection ?? raw;
   const date = formatDate(item?.date ?? raw?.date);
   const label = correctionLabel(item?.correctionType ?? raw?.correctionType);
   const statusKey = (item?.status ?? raw?.status)?.toLowerCase();
-  const resolvedStaffId = item?.staffId ?? raw?.staffId ?? "";
   const resolvedName =
     staffName(raw) !== UNKNOWN
       ? staffName(raw)
       : staffName(item) !== UNKNOWN
         ? staffName(item)
-        : staffNameMap?.get(resolvedStaffId) || UNKNOWN;
+        : fallbackSelfName;
 
   return {
     id: String(item?.id ?? raw?.id ?? raw?.correctionId ?? ""),
@@ -116,47 +112,38 @@ const toUiCorrection = (
 function RouteComponent() {
   const [auth] = useAuth();
   const currentUserId = auth?.user?.id;
+  const selfName = useMemo(() => {
+    const full =
+      `${auth?.user?.firstName ?? ""} ${auth?.user?.lastName ?? ""}`.trim();
+    return full || auth?.user?.email || "Me";
+  }, [auth?.user]);
 
-  const dashboardQuery = useAttendanceDashboard();
-  const recordsQuery = useAttendanceRecords();
-  const correctionsQuery = useCorrectionRequests();
-  const staffQuery = useStaffs();
+  const recordsQuery = useAttendanceRecords(
+    currentUserId ? { staffId: currentUserId } : undefined,
+    { enabled: Boolean(currentUserId) },
+  );
+  const correctionsQuery = useMyCorrectionRequests({
+    enabled: Boolean(currentUserId),
+  });
 
   const clockInMutation = useClockIn();
   const clockOutMutation = useClockOut();
   const createCorrectionMutation = useCreateCorrection();
-  const decideCorrectionMutation = useDecideCorrection();
 
   const [isCorrectionOpen, setIsCorrectionOpen] = useState(false);
 
-  const staffNameMap = useMemo(() => {
-    const map = new Map<string, string>();
-    for (const member of staffQuery.data ?? []) {
-      const fullName =
-        `${member.firstName ?? ""} ${member.lastName ?? ""}`.trim() ||
-        member.email;
-      if (member.id && fullName) {
-        map.set(member.id, fullName);
-      }
-    }
-    if (auth?.user?.id) {
-      const selfName =
-        `${auth.user.firstName ?? ""} ${auth.user.lastName ?? ""}`.trim() ||
-        auth.user.email;
-      if (selfName && !map.has(auth.user.id)) {
-        map.set(auth.user.id, selfName);
-      }
-    }
-    return map;
-  }, [staffQuery.data, auth?.user]);
+  const personalRecords = useMemo<AttendanceRecordApi[]>(() => {
+    if (!currentUserId) return [];
+    return (recordsQuery.data ?? []).filter(
+      (r) => !r.staffId || r.staffId === currentUserId,
+    );
+  }, [recordsQuery.data, currentUserId]);
 
   const logs = useMemo<AttendanceRecord[]>(() => {
-    return (recordsQuery.data ?? []).map((raw: AttendanceRecordApi) => {
+    return personalRecords.map((raw: AttendanceRecordApi) => {
       const statusKey = raw.status?.toLowerCase();
       const resolvedName =
-        staffNameMap.get(raw.staffId ?? "") ||
-        (staffName(raw) !== UNKNOWN ? staffName(raw) : undefined) ||
-        (raw.staffId ? `Staff (${raw.staffId.slice(0, 8)})` : UNKNOWN);
+        (staffName(raw) !== UNKNOWN ? staffName(raw) : undefined) || selfName;
 
       const derivedStatus: AttendanceStatus =
         (statusKey && STATUS_MAP[statusKey]) ||
@@ -168,7 +155,7 @@ function RouteComponent() {
 
       return {
         id: raw.id,
-        staffId: raw.staffId ?? "",
+        staffId: raw.staffId ?? currentUserId ?? "",
         name: resolvedName,
         date: formatDate(raw.date),
         rawDate: raw.date,
@@ -177,30 +164,33 @@ function RouteComponent() {
         status: derivedStatus,
       };
     });
-  }, [recordsQuery.data, staffNameMap]);
+  }, [personalRecords, selfName, currentUserId]);
 
-  const todayIso = new Date().toISOString().slice(0, 10);
+  const todayDates = useMemo(() => {
+    const now = new Date();
+    const utcToday = now.toISOString().slice(0, 10);
+    const localToday = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
+    return new Set([utcToday, localToday]);
+  }, []);
+
   const hasOpenShiftToday = useMemo(
     () =>
       Boolean(
         currentUserId &&
-        (recordsQuery.data ?? []).some(
+        personalRecords.some(
           (r) =>
-            r.staffId === currentUserId &&
-            r.date === todayIso &&
+            (!r.date || todayDates.has(String(r.date).slice(0, 10))) &&
             Boolean(r.clockInAt) &&
             !r.clockOutAt,
         ),
       ),
-    [recordsQuery.data, currentUserId, todayIso],
+    [personalRecords, currentUserId, todayDates],
   );
 
   const corrections = useMemo(
     () =>
-      (correctionsQuery.data ?? []).map((raw) =>
-        toUiCorrection(raw, staffNameMap),
-      ),
-    [correctionsQuery.data, staffNameMap],
+      (correctionsQuery.data ?? []).map((raw) => toUiCorrection(raw, selfName)),
+    [correctionsQuery.data, selfName],
   );
 
   const todayFormatted = `Today · ${new Intl.DateTimeFormat("en-GB", {
@@ -241,21 +231,6 @@ function RouteComponent() {
       await createCorrectionMutation.mutateAsync(payload);
       setIsCorrectionOpen(false);
       toast.success("Correction request submitted");
-    } catch (error) {
-      toast.error(extract_message(error as any));
-    }
-  };
-
-  const handleDecide = async (id: string, decision: "approve" | "reject") => {
-    if (!id) {
-      toast.error("Unable to determine correction request ID.");
-      return;
-    }
-    try {
-      await decideCorrectionMutation.mutateAsync({ id, decision });
-      toast.success(
-        decision === "approve" ? "Correction approved" : "Correction rejected",
-      );
     } catch (error) {
       toast.error(extract_message(error as any));
     }
@@ -302,10 +277,10 @@ function RouteComponent() {
       </PageHeader>
 
       <PageLoader
-        query={dashboardQuery}
-        loadingText="Loading attendance overview..."
+        query={recordsQuery}
+        loadingText="Loading your attendance overview..."
       >
-        {(dashboard) => <AttendanceStats stats={dashboard} />}
+        <AttendanceStats records={personalRecords} />
       </PageLoader>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
@@ -314,7 +289,7 @@ function RouteComponent() {
             query={recordsQuery}
             emptyState={{
               title: "No attendance records",
-              description: "Clock in to start tracking attendance.",
+              description: "Clock in to start tracking your attendance.",
             }}
           >
             <TodayAttendanceLog logs={logs} />
@@ -325,14 +300,10 @@ function RouteComponent() {
             query={correctionsQuery}
             emptyState={{
               title: "No correction requests",
-              description: "Correction requests will appear here.",
+              description: "Your correction requests will appear here.",
             }}
           >
-            <CorrectionRequests
-              requests={corrections}
-              onApprove={(id) => handleDecide(id, "approve")}
-              onReject={(id) => handleDecide(id, "reject")}
-            />
+            <CorrectionRequests requests={corrections} />
           </PageLoader>
         </div>
       </div>

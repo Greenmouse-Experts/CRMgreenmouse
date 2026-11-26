@@ -54,7 +54,7 @@ export interface CreateCorrectionPayload {
   evidenceUrl?: string;
 }
 
-const unwrapList = <T,>(data: any, keys: string[]): T[] => {
+const unwrapList = <T>(data: any, keys: string[]): T[] => {
   if (Array.isArray(data)) return data as T[];
   if (Array.isArray(data?.data)) return data.data as T[];
   for (const key of keys) {
@@ -78,11 +78,14 @@ export const useAttendanceDashboard = () =>
     },
   });
 
-export const useAttendanceRecords = (params?: {
-  staffId?: string;
-  from?: string;
-  to?: string;
-}) =>
+export const useAttendanceRecords = (
+  params?: {
+    staffId?: string;
+    from?: string;
+    to?: string;
+  },
+  options?: { enabled?: boolean },
+) =>
   useQuery<AttendanceRecordApi[]>({
     queryKey: [...queryRoot, "records", params],
     queryFn: async () => {
@@ -93,6 +96,7 @@ export const useAttendanceRecords = (params?: {
         "items",
       ]);
     },
+    enabled: options?.enabled ?? true,
   });
 
 export const useCorrectionRequests = () =>
@@ -100,17 +104,26 @@ export const useCorrectionRequests = () =>
     queryKey: [...queryRoot, "corrections"],
     queryFn: async () => {
       const { data } = await apiClient.get<any>("/attendance/corrections");
-      return unwrapList<CorrectionApi>(data, ["corrections", "requests", "items"]);
+      return unwrapList<CorrectionApi>(data, [
+        "corrections",
+        "requests",
+        "items",
+      ]);
     },
   });
 
-export const useMyCorrectionRequests = () =>
+export const useMyCorrectionRequests = (options?: { enabled?: boolean }) =>
   useQuery<CorrectionApi[]>({
     queryKey: [...queryRoot, "corrections", "mine"],
     queryFn: async () => {
       const { data } = await apiClient.get<any>("/attendance/corrections/mine");
-      return unwrapList<CorrectionApi>(data, ["corrections", "requests", "items"]);
+      return unwrapList<CorrectionApi>(data, [
+        "corrections",
+        "requests",
+        "items",
+      ]);
     },
+    enabled: options?.enabled ?? true,
   });
 
 export const useShifts = () =>
@@ -127,7 +140,7 @@ export const useTimezone = () =>
     queryKey: [...queryRoot, "timezone"],
     queryFn: async () => {
       const { data } = await apiClient.get<any>("/attendance/timezone");
-      return (data?.data ?? data) ?? {};
+      return data?.data ?? data ?? {};
     },
   });
 

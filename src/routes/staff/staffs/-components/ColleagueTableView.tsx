@@ -1,0 +1,91 @@
+import CustomTable, { type columnType } from "@/components/tables/CustomTable";
+import ColleagueAvatar from "./ColleagueAvatar";
+import ColleagueStatusBadge from "./ColleagueStatusBadge";
+import type { Colleague } from "./types";
+
+interface ColleagueTableViewProps {
+  colleagues: Colleague[];
+}
+
+export default function ColleagueTableView({
+  colleagues,
+}: ColleagueTableViewProps) {
+  if (colleagues.length === 0) {
+    return null;
+  }
+
+  const columns: columnType<Colleague>[] = [
+    {
+      key: "name",
+      label: "Colleague",
+      render: (_value: string, emp: Colleague) => (
+        <div className="flex items-center gap-3">
+          <ColleagueAvatar name={emp.name} size="sm" />
+          <div className="min-w-0">
+            <p className="font-semibold text-base-content truncate">
+              {emp.name}
+            </p>
+            <div className="flex items-center gap-1.5 text-base-content/80 truncate">
+              {emp.title !== "—" && <span>{emp.title}</span>}
+              {emp.title !== "—" && emp.email !== "—" && <span>·</span>}
+              {emp.email !== "—" && (
+                <span className="truncate">{emp.email}</span>
+              )}
+            </div>
+          </div>
+        </div>
+      ),
+    },
+    {
+      key: "employeeNumber",
+      label: "Employee ID",
+      render: (_value: string, emp: Colleague) => (
+        <span className="bg-base-200/80 px-2 py-0.5 rounded-md font-mono text-base-content/80 font-medium">
+          {emp.employeeNumber ||
+            (emp.id && emp.id.length > 8 ? emp.id.slice(0, 8) : emp.id)}
+        </span>
+      ),
+    },
+    {
+      key: "dept",
+      label: "Department",
+      render: (value: string) => (
+        <span className="font-medium text-base-content/80">{value}</span>
+      ),
+    },
+    {
+      key: "type",
+      label: "Type",
+      render: (value: string) => (
+        <span className="text-base-content/80">{value}</span>
+      ),
+    },
+    {
+      key: "location",
+      label: "Location",
+      render: (value: string) => (
+        <span className="text-base-content/80">{value}</span>
+      ),
+    },
+    {
+      key: "phone",
+      label: "Phone",
+      render: (value: string) => (
+        <span className="font-mono text-base-content/80">{value || "—"}</span>
+      ),
+    },
+    {
+      key: "status",
+      label: "Status",
+      render: (_value: string, emp: Colleague) => (
+        <ColleagueStatusBadge status={emp.status} onLeave={emp.onLeave} />
+      ),
+    },
+  ];
+
+  return (
+    <div className="card bg-base-100 border border-base-200/80 shadow-xs overflow-hidden rounded-2xl">
+      <CustomTable data={colleagues} columns={columns} />
+    </div>
+  );
+}

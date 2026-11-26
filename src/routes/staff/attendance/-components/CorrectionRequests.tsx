@@ -3,8 +3,8 @@ import { Check, X } from "lucide-react";
 
 interface CorrectionRequestsProps {
   requests: CorrectionRequest[];
-  onApprove: (id: string) => void;
-  onReject: (id: string) => void;
+  onApprove?: (id: string) => void;
+  onReject?: (id: string) => void;
 }
 
 export default function CorrectionRequests({
@@ -12,6 +12,8 @@ export default function CorrectionRequests({
   onApprove,
   onReject,
 }: CorrectionRequestsProps) {
+  const canDecide = Boolean(onApprove && onReject);
+
   const getStatusBadge = (status: CorrectionStatus) => {
     switch (status) {
       case "Approved":
@@ -41,15 +43,16 @@ export default function CorrectionRequests({
       <div>
         <div className="flex items-center gap-2">
           <h2 className="text-lg font-bold text-base-content">
-            Correction requests
+            My correction requests
           </h2>
           <span className="badge badge-sm badge-ghost  font-semibold">
             {requests.filter((r) => r.status === "Pending").length} pending
           </span>
         </div>
         <p className=" text-base-content/80 mt-0.5">
-          Pending adjustments, missed punches, and overtime claims requiring
-          manager sign-off
+          {canDecide
+            ? "Pending adjustments, missed punches, and overtime claims requiring manager sign-off"
+            : "Your submitted time adjustments, missed punches, and overtime claims"}
         </p>
       </div>
 
@@ -82,11 +85,11 @@ export default function CorrectionRequests({
                   </p>
                 )}
 
-                {isPending && (
+                {isPending && canDecide && (
                   <div className="mt-3 flex items-center gap-2 pt-2 border-t border-base-200">
                     <button
                       type="button"
-                      onClick={() => onApprove(req.id)}
+                      onClick={() => onApprove?.(req.id)}
                       className="btn btn-xs bg-emerald-600 text-white hover:bg-emerald-700 border-0 rounded-lg px-3 gap-1"
                     >
                       <Check className="size-3" />
@@ -94,7 +97,7 @@ export default function CorrectionRequests({
                     </button>
                     <button
                       type="button"
-                      onClick={() => onReject(req.id)}
+                      onClick={() => onReject?.(req.id)}
                       className="btn btn-xs btn-outline btn-error rounded-lg px-3 gap-1"
                     >
                       <X className="size-3" />
