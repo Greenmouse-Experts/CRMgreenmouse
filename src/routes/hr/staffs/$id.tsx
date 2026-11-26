@@ -1833,12 +1833,12 @@ function StaffDetailPage() {
                   </div>
 
                   {banksList.length > 0 ? (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-end">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-start">
                       <Controller
                         control={control}
                         name="bankCode"
                         render={({ field }) => (
-                          <div>
+                          <div className="space-y-1.5">
                             <LocalSelect
                               label="Bank Name"
                               value={field.value ?? ""}
@@ -1864,7 +1864,7 @@ function StaffDetailPage() {
                               ))}
                             </LocalSelect>
                             {formValues.bankCode ? (
-                              <p className="text-xs text-base-content/70 mt-1 font-mono">
+                              <p className="text-xs text-base-content/70 font-mono">
                                 Bank Code: {formValues.bankCode}
                               </p>
                             ) : null}
@@ -1873,7 +1873,7 @@ function StaffDetailPage() {
                       />
 
                       <div className="flex items-end gap-2">
-                        <div className="flex-1">
+                        <div className="flex-1 min-w-0">
                           <SimpleInput
                             label="Bank Account Number"
                             placeholder="10-digit NUBAN account number"
@@ -1889,7 +1889,7 @@ function StaffDetailPage() {
                             !formValues.bankCode?.trim() ||
                             !formValues.bankAccountNumber?.trim()
                           }
-                          className="btn btn-outline btn-primary rounded-xl shrink-0"
+                          className="btn btn-md btn-outline btn-primary shrink-0"
                         >
                           {validateBankAccount.isPending ? (
                             <Loader2 className="size-4 animate-spin" />
@@ -1901,7 +1901,7 @@ function StaffDetailPage() {
                       </div>
                     </div>
                   ) : (
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 items-end">
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 items-start">
                       <SimpleInput
                         label="Bank Name"
                         placeholder={
@@ -1919,7 +1919,7 @@ function StaffDetailPage() {
                       />
 
                       <div className="flex items-end gap-2">
-                        <div className="flex-1">
+                        <div className="flex-1 min-w-0">
                           <SimpleInput
                             label="Bank Account Number"
                             placeholder="10-digit NUBAN account number"
@@ -1935,7 +1935,7 @@ function StaffDetailPage() {
                             !formValues.bankCode?.trim() ||
                             !formValues.bankAccountNumber?.trim()
                           }
-                          className="btn btn-outline btn-primary rounded-xl shrink-0"
+                          className="btn btn-md btn-outline btn-primary shrink-0"
                         >
                           {validateBankAccount.isPending ? (
                             <Loader2 className="size-4 animate-spin" />
@@ -1948,38 +1948,58 @@ function StaffDetailPage() {
                     </div>
                   )}
 
-                  {activeBankValidation && (
-                    <div
-                      className={`flex items-start gap-2.5 rounded-xl border p-3.5 text-sm ${
-                        activeBankValidation.valid !== false &&
-                        activeBankValidation.isValid !== false &&
-                        activeBankValidation.matched !== false &&
-                        activeBankValidation.nameMatched !== false &&
-                        activeBankValidation.isMatch !== false
-                          ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-800 dark:text-emerald-300"
-                          : "border-warning/30 bg-warning/10 text-warning-content"
-                      }`}
-                    >
-                      <CheckCircle2 className="size-4 shrink-0 mt-0.5" />
-                      <div className="space-y-0.5">
-                        <p className="font-semibold">
-                          {activeBankValidation.accountName ||
-                            activeBankValidation.account_name ||
-                            activeBankValidation.data?.accountName ||
-                            activeBankValidation.message ||
-                            "Account verified"}
-                        </p>
-                        {activeBankValidation.message &&
-                        (activeBankValidation.accountName ||
-                          activeBankValidation.account_name ||
-                          activeBankValidation.data?.accountName) ? (
-                          <p className="text-xs opacity-80">
-                            {activeBankValidation.message}
-                          </p>
-                        ) : null}
+                  {activeBankValidation && (() => {
+                    const isBankValid =
+                      activeBankValidation.valid !== false &&
+                      activeBankValidation.isValid !== false &&
+                      activeBankValidation.matched !== false &&
+                      activeBankValidation.nameMatched !== false &&
+                      activeBankValidation.isMatch !== false;
+                    const resolvedAccountName =
+                      activeBankValidation.accountName ||
+                      activeBankValidation.account_name ||
+                      activeBankValidation.data?.accountName;
+
+                    return (
+                      <div
+                        className={`flex items-center justify-between gap-3 rounded-lg border px-4 py-3 text-sm ${
+                          isBankValid
+                            ? "border-emerald-600/25 bg-emerald-500/10 text-base-content"
+                            : "border-warning/40 bg-warning/10 text-base-content"
+                        }`}
+                      >
+                        <div className="flex items-start gap-2.5 min-w-0">
+                          <CheckCircle2
+                            className={`size-4 shrink-0 mt-0.5 ${
+                              isBankValid ? "text-emerald-600" : "text-warning"
+                            }`}
+                          />
+                          <div className="space-y-0.5 min-w-0">
+                            <p className="font-semibold text-base-content truncate">
+                              {resolvedAccountName ||
+                                activeBankValidation.message ||
+                                "Account verified"}
+                            </p>
+                            {activeBankValidation.message &&
+                            resolvedAccountName ? (
+                              <p className="text-xs text-base-content/75">
+                                {activeBankValidation.message}
+                              </p>
+                            ) : null}
+                          </div>
+                        </div>
+                        <span
+                          className={`badge badge-sm shrink-0 font-medium ${
+                            isBankValid
+                              ? "badge-success badge-soft"
+                              : "badge-warning badge-soft"
+                          }`}
+                        >
+                          {isBankValid ? "Verified" : "Name mismatch"}
+                        </span>
                       </div>
-                    </div>
-                  )}
+                    );
+                  })()}
                 </div>
               </div>
             )}
