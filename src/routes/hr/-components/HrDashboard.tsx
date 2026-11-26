@@ -31,21 +31,15 @@ import {
 } from "recharts";
 import PageHeader from "@/components/Headers/PageHeader";
 import StatCard from "@/components/StatCard";
-import {
-  useAttendanceDashboard,
-} from "@/api/attendanceApi";
+import { useAttendanceDashboard } from "@/api/attendanceApi";
 import {
   useEmployeeOrganization,
   useEmployeeRecentActivity,
   useEmployees,
   useUpcomingMilestones,
 } from "@/api/employeesApi";
-import {
-  useLeaveRequests,
-} from "@/api/leaveApi";
-import {
-  useRecruitmentDashboard,
-} from "@/api/recruitmentApi";
+import { useLeaveRequests } from "@/api/leaveApi";
+import { useRecruitmentDashboard } from "@/api/recruitmentApi";
 
 const hrPaths: Record<
   "employees" | "reports" | "attendance" | "recruitment" | "leave" | "payroll",
@@ -161,16 +155,22 @@ export default function HrDashboard() {
     return d.getMonth() === currentMonth && d.getFullYear() === currentYear;
   }).length;
 
-  const attendanceRaw: Record<string, any> =
-    (attendanceDashboardQuery.data ?? {}) as Record<string, any>;
-  const recruitmentRaw: Record<string, any> =
-    (recruitmentDashboardQuery.data ?? {}) as Record<string, any>;
+  const attendanceRaw: Record<string, any> = (attendanceDashboardQuery.data ??
+    {}) as Record<string, any>;
+  const recruitmentRaw: Record<string, any> = (recruitmentDashboardQuery.data ??
+    {}) as Record<string, any>;
 
   const presentToday = Number(
-    attendanceRaw.presentToday ?? attendanceRaw.present ?? attendanceRaw.presentCount ?? 0,
+    attendanceRaw.presentToday ??
+      attendanceRaw.present ??
+      attendanceRaw.presentCount ??
+      0,
   );
   const absentToday = Number(
-    attendanceRaw.absentToday ?? attendanceRaw.absent ?? attendanceRaw.absentCount ?? 0,
+    attendanceRaw.absentToday ??
+      attendanceRaw.absent ??
+      attendanceRaw.absentCount ??
+      0,
   );
   const onLeaveCount = Number(
     attendanceRaw.onLeave ?? attendanceRaw.onLeaveCount ?? 0,
@@ -211,7 +211,7 @@ export default function HrDashboard() {
     const count = employees.filter((e) => {
       const deptVal = e.department;
       const deptStr =
-        typeof deptVal === "string" ? deptVal : deptVal?.name ?? "";
+        typeof deptVal === "string" ? deptVal : (deptVal?.name ?? "");
       return deptStr === deptName;
     }).length;
     return { name: deptName, employees: count };
@@ -234,7 +234,20 @@ export default function HrDashboard() {
     }));
 
   const headcountData: Array<{ month: string; employees: number }> = [];
-  const monthLabels = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  const monthLabels = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+  ];
   for (let i = 5; i >= 0; i--) {
     const d = new Date(today);
     d.setMonth(d.getMonth() - i);
@@ -330,7 +343,9 @@ export default function HrDashboard() {
             String(m.detail ?? "")
               .toLowerCase()
               .includes("review") ||
-            String(m.detail ?? "").toLowerCase().includes("probation"),
+            String(m.detail ?? "")
+              .toLowerCase()
+              .includes("probation"),
         ).length,
       ),
       desc: "This cycle",
@@ -362,7 +377,10 @@ export default function HrDashboard() {
           title={`${greeting}, Grace`}
           description="Here's what's happening across your workforce today."
         >
-          <Link to={hrPaths.reports} className="btn btn-outline btn-sm sm:btn-md">
+          <Link
+            to={hrPaths.reports}
+            className="btn btn-outline btn-sm sm:btn-md"
+          >
             <FileText className="size-4" />
             Generate report
           </Link>
@@ -383,7 +401,14 @@ export default function HrDashboard() {
         </div>
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-5">
           {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((i) => (
-            <StatCard key={i} title={`Stat ${i}`} value="—" desc="Loading" icon={<Users className="size-5" />} variant="default" />
+            <StatCard
+              key={i}
+              title={`Stat ${i}`}
+              value="—"
+              desc="Loading"
+              icon={<Users className="size-5" />}
+              variant="default"
+            />
           ))}
         </div>
       </div>
@@ -419,7 +444,7 @@ export default function HrDashboard() {
 
       <section
         aria-label="Workforce summary"
-        className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-5"
+        className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4"
       >
         {metrics.map((metric) => (
           <StatCard key={metric.title} {...metric} />
@@ -454,8 +479,15 @@ export default function HrDashboard() {
                   tick={{ fontSize: 11, fill: "var(--color-base-content)" }}
                 />
                 <YAxis
-                  domain={[0, Math.max(...headcountData.map((d) => d.employees), 10) + 10]}
-                  ticks={headcountData.length > 0 ? [0, Math.max(...headcountData.map((d) => d.employees))] : [0, 10]}
+                  domain={[
+                    0,
+                    Math.max(...headcountData.map((d) => d.employees), 10) + 10,
+                  ]}
+                  ticks={
+                    headcountData.length > 0
+                      ? [0, Math.max(...headcountData.map((d) => d.employees))]
+                      : [0, 10]
+                  }
                   axisLine={false}
                   tickLine={false}
                   width={42}
@@ -642,8 +674,10 @@ export default function HrDashboard() {
             <div className="mt-4 space-y-3">
               {recruitmentStages.length > 0 ? (
                 recruitmentStages.map((stage) => {
-                  const maxCount =
-                    Math.max(...recruitmentStages.map((s) => s.count), 1);
+                  const maxCount = Math.max(
+                    ...recruitmentStages.map((s) => s.count),
+                    1,
+                  );
                   return (
                     <div
                       key={stage.name}
@@ -697,7 +731,9 @@ export default function HrDashboard() {
                   className="flex items-center gap-3 py-3"
                 >
                   <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-primary/10  font-semibold text-primary">
-                    {String(milestone.initials ?? milestone.name?.charAt(0) ?? "?")}
+                    {String(
+                      milestone.initials ?? milestone.name?.charAt(0) ?? "?",
+                    )}
                   </span>
                   <span className="min-w-0 flex-1">
                     <span className="block truncate text-sm font-medium">
@@ -730,7 +766,10 @@ export default function HrDashboard() {
           <ol className="mt-3 divide-y divide-base-200">
             {recentActivity.length > 0 ? (
               recentActivity.map((item, index) => (
-                <li key={String(item.text ?? item.id ?? index)} className="flex items-start gap-3 py-3">
+                <li
+                  key={String(item.text ?? item.id ?? index)}
+                  className="flex items-start gap-3 py-3"
+                >
                   <span
                     className={`mt-1 flex size-6 shrink-0 items-center justify-center rounded-full ${
                       index === 0
