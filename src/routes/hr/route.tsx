@@ -67,7 +67,7 @@ const nav_links = [
         children: null,
       },
       {
-        path: "/staff/checklist",
+        path: "/hr/checklist",
         label: "Checklist",
         icon: <ListChecks size={ICON_SIZE} />,
         type: "menu",
