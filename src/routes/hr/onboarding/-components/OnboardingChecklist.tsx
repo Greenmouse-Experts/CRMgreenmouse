@@ -1,6 +1,12 @@
 import { useState } from "react";
 import type { ChecklistItem, DepartmentTag, OnboardingHire } from "./types";
-import { ArrowRightLeft, Check, Plus } from "lucide-react";
+import {
+  ArrowRightLeft,
+  CalendarCheck,
+  CalendarPlus,
+  Check,
+  Plus,
+} from "lucide-react";
 
 interface OnboardingChecklistProps {
   hire: OnboardingHire;
@@ -12,6 +18,18 @@ interface OnboardingChecklistProps {
 }
 
 const DEPARTMENTS: DepartmentTag[] = ["HR", "IT", "Manager", "Payroll"];
+
+/** "2026-11-27T20:45:48.658Z" -> "Nov 27, 2026" (empty string if unusable). */
+const formatDate = (value?: string | null) => {
+  if (!value) return "";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "";
+  return date.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
+};
 
 export default function OnboardingChecklist({
   hire,
@@ -112,14 +130,34 @@ export default function OnboardingChecklist({
                 {item.completed && <Check className="size-3 stroke-[3]" />}
               </button>
 
-              <span
-                className={`flex-1  sm:text-sm transition-colors ${
-                  item.completed
-                    ? "text-base-content/80 line-through"
-                    : "text-base-content font-medium"
-                }`}
-              >
-                {item.text}
+              <span className="flex-1 min-w-0">
+                <span
+                  className={`block sm:text-sm transition-colors ${
+                    item.completed
+                      ? "text-base-content/80 line-through"
+                      : "text-base-content font-medium"
+                  }`}
+                >
+                  {item.text}
+                </span>
+
+                {(formatDate(item.createdAt) ||
+                  (item.completed && formatDate(item.completedAt))) && (
+                  <span className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-0.5 text-[11px] text-base-content/50">
+                    {formatDate(item.createdAt) && (
+                      <span className="inline-flex items-center gap-1">
+                        <CalendarPlus className="size-3 shrink-0" />
+                        Created {formatDate(item.createdAt)}
+                      </span>
+                    )}
+                    {item.completed && formatDate(item.completedAt) && (
+                      <span className="inline-flex items-center gap-1 text-emerald-600">
+                        <CalendarCheck className="size-3 shrink-0" />
+                        Completed {formatDate(item.completedAt)}
+                      </span>
+                    )}
+                  </span>
+                )}
               </span>
 
               <span

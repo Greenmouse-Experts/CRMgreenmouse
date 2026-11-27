@@ -64,7 +64,10 @@ export function toUiHire(employee: EmployeeRecord): OnboardingHire {
 }
 
 export function toChecklistItem(raw: OnboardingTask): ChecklistItem {
-  const deptKey = String(raw.department ?? raw.dept ?? "hr").toLowerCase();
+  // `owner` is what the onboarding task endpoint returns (e.g. "hr").
+  const deptKey = String(
+    raw.department ?? raw.dept ?? raw.owner ?? "hr",
+  ).toLowerCase();
   const status = String(raw.status ?? "").toLowerCase();
 
   return {
@@ -77,6 +80,8 @@ export function toChecklistItem(raw: OnboardingTask): ChecklistItem {
       raw.isCompleted ??
       (status === "completed" || status === "done"),
     ),
+    createdAt: raw.createdAt ?? raw.created_at ?? null,
+    completedAt: raw.completedAt ?? raw.completed_at ?? null,
   };
 }
 
