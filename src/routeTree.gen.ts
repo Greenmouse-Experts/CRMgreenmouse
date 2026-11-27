@@ -61,6 +61,7 @@ import { Route as HrOnboardingIndexRouteImport } from './routes/hr/onboarding/in
 import { Route as HrOffboardingIndexRouteImport } from './routes/hr/offboarding/index'
 import { Route as HrLeaveIndexRouteImport } from './routes/hr/leave/index'
 import { Route as HrDisciplinaryIndexRouteImport } from './routes/hr/disciplinary/index'
+import { Route as HrChecklistIndexRouteImport } from './routes/hr/checklist/index'
 import { Route as HrAttendanceIndexRouteImport } from './routes/hr/attendance/index'
 import { Route as HomeProductsIndexRouteImport } from './routes/home/products.index'
 import { Route as HomeFaqIndexRouteImport } from './routes/home/faq.index'
@@ -414,6 +415,11 @@ const HrLeaveIndexRoute = HrLeaveIndexRouteImport.update({
 const HrDisciplinaryIndexRoute = HrDisciplinaryIndexRouteImport.update({
   id: '/disciplinary/',
   path: '/disciplinary/',
+  getParentRoute: () => HrRouteRoute,
+} as any)
+const HrChecklistIndexRoute = HrChecklistIndexRouteImport.update({
+  id: '/checklist/',
+  path: '/checklist/',
   getParentRoute: () => HrRouteRoute,
 } as any)
 const HrAttendanceIndexRoute = HrAttendanceIndexRouteImport.update({
@@ -981,6 +987,7 @@ export interface FileRoutesByFullPath {
   '/home/faq': typeof HomeFaqIndexRoute
   '/home/products': typeof HomeProductsIndexRoute
   '/hr/attendance': typeof HrAttendanceIndexRoute
+  '/hr/checklist': typeof HrChecklistIndexRoute
   '/hr/disciplinary': typeof HrDisciplinaryIndexRoute
   '/hr/leave': typeof HrLeaveIndexRoute
   '/hr/offboarding': typeof HrOffboardingIndexRoute
@@ -1117,6 +1124,7 @@ export interface FileRoutesByTo {
   '/home/faq': typeof HomeFaqIndexRoute
   '/home/products': typeof HomeProductsIndexRoute
   '/hr/attendance': typeof HrAttendanceIndexRoute
+  '/hr/checklist': typeof HrChecklistIndexRoute
   '/hr/disciplinary': typeof HrDisciplinaryIndexRoute
   '/hr/leave': typeof HrLeaveIndexRoute
   '/hr/offboarding': typeof HrOffboardingIndexRoute
@@ -1265,6 +1273,7 @@ export interface FileRoutesById {
   '/home/faq/': typeof HomeFaqIndexRoute
   '/home/products/': typeof HomeProductsIndexRoute
   '/hr/attendance/': typeof HrAttendanceIndexRoute
+  '/hr/checklist/': typeof HrChecklistIndexRoute
   '/hr/disciplinary/': typeof HrDisciplinaryIndexRoute
   '/hr/leave/': typeof HrLeaveIndexRoute
   '/hr/offboarding/': typeof HrOffboardingIndexRoute
@@ -1414,6 +1423,7 @@ export interface FileRouteTypes {
     | '/home/faq'
     | '/home/products'
     | '/hr/attendance'
+    | '/hr/checklist'
     | '/hr/disciplinary'
     | '/hr/leave'
     | '/hr/offboarding'
@@ -1550,6 +1560,7 @@ export interface FileRouteTypes {
     | '/home/faq'
     | '/home/products'
     | '/hr/attendance'
+    | '/hr/checklist'
     | '/hr/disciplinary'
     | '/hr/leave'
     | '/hr/offboarding'
@@ -1697,6 +1708,7 @@ export interface FileRouteTypes {
     | '/home/faq/'
     | '/home/products/'
     | '/hr/attendance/'
+    | '/hr/checklist/'
     | '/hr/disciplinary/'
     | '/hr/leave/'
     | '/hr/offboarding/'
@@ -2183,6 +2195,13 @@ declare module '@tanstack/react-router' {
       path: '/disciplinary'
       fullPath: '/hr/disciplinary'
       preLoaderRoute: typeof HrDisciplinaryIndexRouteImport
+      parentRoute: typeof HrRouteRoute
+    }
+    '/hr/checklist/': {
+      id: '/hr/checklist/'
+      path: '/checklist'
+      fullPath: '/hr/checklist'
+      preLoaderRoute: typeof HrChecklistIndexRouteImport
       parentRoute: typeof HrRouteRoute
     }
     '/hr/attendance/': {
@@ -2962,6 +2981,7 @@ interface HrRouteRouteChildren {
   HrStaffsIdRoute: typeof HrStaffsIdRoute
   HrTrainingIdRoute: typeof HrTrainingIdRoute
   HrAttendanceIndexRoute: typeof HrAttendanceIndexRoute
+  HrChecklistIndexRoute: typeof HrChecklistIndexRoute
   HrDisciplinaryIndexRoute: typeof HrDisciplinaryIndexRoute
   HrLeaveIndexRoute: typeof HrLeaveIndexRoute
   HrOffboardingIndexRoute: typeof HrOffboardingIndexRoute
@@ -2987,6 +3007,7 @@ const HrRouteRouteChildren: HrRouteRouteChildren = {
   HrStaffsIdRoute: HrStaffsIdRoute,
   HrTrainingIdRoute: HrTrainingIdRoute,
   HrAttendanceIndexRoute: HrAttendanceIndexRoute,
+  HrChecklistIndexRoute: HrChecklistIndexRoute,
   HrDisciplinaryIndexRoute: HrDisciplinaryIndexRoute,
   HrLeaveIndexRoute: HrLeaveIndexRoute,
   HrOffboardingIndexRoute: HrOffboardingIndexRoute,

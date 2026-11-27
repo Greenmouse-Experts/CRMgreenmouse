@@ -8,6 +8,7 @@ import {
   CircleUserRound,
   Gavel,
   GraduationCap,
+  Kanban,
   LayoutDashboard,
   LogOut,
   NotebookPen,
@@ -17,6 +18,7 @@ import {
   Users,
   WalletCards,
   Check,
+  ListChecks,
 } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { useLocation } from "@tanstack/react-router";
@@ -61,6 +63,13 @@ const nav_links = [
         path: "/hr/recruitment",
         label: "Recruitment",
         icon: <UserRoundPlus size={ICON_SIZE} />,
+        type: "menu",
+        children: null,
+      },
+      {
+        path: "/staff/checklist",
+        label: "Checklist",
+        icon: <ListChecks size={ICON_SIZE} />,
         type: "menu",
         children: null,
       },
@@ -162,6 +171,13 @@ const nav_links = [
         path: "/hr/self-service",
         label: "Self-Service",
         icon: <CircleUserRound size={ICON_SIZE} />,
+        type: "menu",
+        children: null,
+      },
+      {
+        path: "/hr/pipeline",
+        label: "Pipelines",
+        icon: <Kanban size={ICON_SIZE} />,
         type: "menu",
         children: null,
       },

@@ -1,5 +1,6 @@
 export * from "./simpleApi";
 export * from "./adminApi";
+export * from "./checklistApi";
 export * from "./disciplinaryApi";
 export * from "./catalogApi";
 export * from "./crmApi";

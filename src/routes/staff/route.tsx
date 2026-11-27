@@ -9,11 +9,10 @@ import {
   CircleUserRound,
   GraduationCap,
   LayoutDashboard,
+  ListChecks,
   Scale,
   Settings,
-  Sparkles,
   Users,
-  WalletCards,
 } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { useLocation } from "@tanstack/react-router";
@@ -61,6 +60,7 @@ const nav_links = [
         type: "menu",
         children: null,
       },
+
       {
         path: "/staff/organization",
         label: "Organization",
