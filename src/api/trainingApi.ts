@@ -238,9 +238,16 @@ export const TRAINING_QUERY_KEYS = {
 /**
  * Fetch Training Dashboard (active courses + upcoming scheduled sessions)
  */
+const noAuthRetry = (failureCount: number, error: any) => {
+  const status = error?.response?.status;
+  if (status === 401 || status === 403 || status === 404) return false;
+  return failureCount < 2;
+};
+
 export function useTrainingDashboard() {
   return useQuery({
     queryKey: TRAINING_QUERY_KEYS.dashboard(),
+    retry: noAuthRetry,
     queryFn: async (): Promise<TrainingDashboardData> => {
       const response = await apiClient.get<any>("/training/dashboard");
       const raw = response.data?.data ?? response.data;
@@ -260,6 +267,7 @@ export function useTrainingDashboard() {
 export function useTrainingCourses() {
   return useQuery({
     queryKey: TRAINING_QUERY_KEYS.courses(),
+    retry: noAuthRetry,
     queryFn: async (): Promise<TrainingCourseItem[]> => {
       const response = await apiClient.get<any>("/training/courses");
       const raw = response.data?.data ?? response.data;

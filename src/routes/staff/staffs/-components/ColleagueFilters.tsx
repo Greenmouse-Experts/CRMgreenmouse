@@ -1,6 +1,11 @@
 import { Search, X } from "lucide-react";
 import type { Colleague, StatusFilterOption } from "./types";
 
+export interface DepartmentFilterOption {
+  value: string;
+  label: string;
+}
+
 interface ColleagueFiltersProps {
   searchTerm: string;
   onSearchChange: (value: string) => void;
@@ -9,7 +14,7 @@ interface ColleagueFiltersProps {
   departmentFilter: string;
   onDepartmentFilterChange: (dept: string) => void;
   allColleagues: Colleague[];
-  departments: string[];
+  departments: Array<string | DepartmentFilterOption>;
 }
 
 const statusOptions: StatusFilterOption[] = [
@@ -29,12 +34,18 @@ export default function ColleagueFilters({
   allColleagues,
   departments,
 }: ColleagueFiltersProps) {
+  const showStatusChips = allColleagues.some((e) => e.hasStatus);
+
   const getStatusCount = (status: StatusFilterOption) => {
     if (status === "All") return allColleagues.length;
     return allColleagues.filter(
       (e) => e.status.toLowerCase() === status.toLowerCase(),
     ).length;
   };
+
+  const normalizedDepartments: DepartmentFilterOption[] = departments.map(
+    (dept) => (typeof dept === "string" ? { value: dept, label: dept } : dept),
+  );
 
   const hasActiveFilters =
     searchTerm.trim() !== "" ||
@@ -50,49 +61,55 @@ export default function ColleagueFilters({
   return (
     <div className="card bg-base-100 border border-base-200/80 shadow-xs p-4 sm:p-5 space-y-4 rounded-2xl">
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
-        {/* Status Chips */}
-        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-thin">
-          {statusOptions.map((status) => {
-            const isSelected = statusFilter === status;
-            const count = getStatusCount(status);
+        {showStatusChips ? (
+          <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-thin">
+            {statusOptions.map((status) => {
+              const isSelected = statusFilter === status;
+              const count = getStatusCount(status);
 
-            return (
-              <button
-                key={status}
-                type="button"
-                onClick={() => onStatusFilterChange(status)}
-                className={`btn btn-sm rounded-full transition-all shrink-0 font-normal ${
-                  isSelected
-                    ? "btn-primary text-primary-content font-medium shadow-xs"
-                    : "btn-ghost border border-base-300 text-base-content/80 hover:border-base-content/30"
-                }`}
-              >
-                {status}
-                <span
-                  className={`badge badge-sm ml-1 ${
+              return (
+                <button
+                  key={status}
+                  type="button"
+                  onClick={() => onStatusFilterChange(status)}
+                  className={`btn btn-sm rounded-full transition-all shrink-0 font-normal ${
                     isSelected
-                      ? "bg-primary-content/25 text-primary-content"
-                      : "badge-ghost opacity-70"
+                      ? "btn-primary text-primary-content font-medium shadow-xs"
+                      : "btn-ghost border border-base-300 text-base-content/80 hover:border-base-content/30"
                   }`}
                 >
-                  {count}
-                </span>
-              </button>
-            );
-          })}
-        </div>
+                  {status}
+                  <span
+                    className={`badge badge-sm ml-1 ${
+                      isSelected
+                        ? "bg-primary-content/25 text-primary-content"
+                        : "badge-ghost opacity-70"
+                    }`}
+                  >
+                    {count}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        ) : (
+          <div className="text-sm text-base-content/75 font-medium">
+            Filter colleagues by department or search by name, role, or email
+          </div>
+        )}
 
         {/* Search & Department Filter */}
         <div className="flex flex-wrap items-center gap-2.5 sm:flex-1 justify-end">
           <select
+            aria-label="Filter by department"
             value={departmentFilter}
             onChange={(e) => onDepartmentFilterChange(e.target.value)}
             className="select select-sm select-bordered rounded-lg "
           >
             <option value="All">All Departments</option>
-            {departments.map((dept) => (
-              <option key={dept} value={dept}>
-                {dept}
+            {normalizedDepartments.map((dept) => (
+              <option key={dept.value} value={dept.value}>
+                {dept.label}
               </option>
             ))}
           </select>

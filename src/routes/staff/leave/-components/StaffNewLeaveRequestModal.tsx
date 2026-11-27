@@ -2,7 +2,7 @@ import { useState, useRef, useEffect, useMemo } from "react";
 import Modal, { type ModalHandle } from "@/components/DialogModal";
 import SimpleInput from "@/components/inputs/SimpleInput";
 import LocalSelect from "@/components/inputs/LocalSelect";
-import { useEmployees } from "@/api/employeesApi";
+import { useEmployeeColleagues } from "@/api/employeesApi";
 import {
   toLeaveType,
   useLeaveBalances,
@@ -36,7 +36,10 @@ export default function StaffNewLeaveRequestModal({
   defaultType = "Annual",
 }: StaffNewLeaveRequestModalProps) {
   const modalRef = useRef<ModalHandle>(null);
-  const { data: employees = [] } = useEmployees();
+  const { data: colleaguesResponse } = useEmployeeColleagues(
+    { limit: 100 },
+    { enabled: isOpen },
+  );
   const { data: leaveTypesData = [] } = useLeaveTypes();
   const { data: balances = [] } = useLeaveBalances();
 
@@ -47,7 +50,7 @@ export default function StaffNewLeaveRequestModal({
 
   const coveringOptions = useMemo(
     () =>
-      employees
+      (colleaguesResponse?.data ?? [])
         .filter(
           (e) =>
             !e.isDraft &&
@@ -62,7 +65,7 @@ export default function StaffNewLeaveRequestModal({
             e.employeeNumber ||
             e.id,
         })),
-    [employees, currentEmployeeId],
+    [colleaguesResponse?.data, currentEmployeeId],
   );
 
   const [form, setForm] = useState({

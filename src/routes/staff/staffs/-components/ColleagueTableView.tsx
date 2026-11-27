@@ -14,13 +14,20 @@ export default function ColleagueTableView({
     return null;
   }
 
+  const hasType = colleagues.some((c) => c.type && c.type !== "—");
+  const hasPhone = colleagues.some((c) => c.phone && c.phone !== "—");
+
   const columns: columnType<Colleague>[] = [
     {
       key: "name",
       label: "Colleague",
       render: (_value: string, emp: Colleague) => (
         <div className="flex items-center gap-3">
-          <ColleagueAvatar name={emp.name} size="sm" />
+          <ColleagueAvatar
+            name={emp.name}
+            src={emp.profilePhotoUrl}
+            size="sm"
+          />
           <div className="min-w-0">
             <p className="font-semibold text-base-content truncate">
               {emp.name}
@@ -53,13 +60,17 @@ export default function ColleagueTableView({
         <span className="font-medium text-base-content/80">{value}</span>
       ),
     },
-    {
-      key: "type",
-      label: "Type",
-      render: (value: string) => (
-        <span className="text-base-content/80">{value}</span>
-      ),
-    },
+    ...(hasType
+      ? [
+          {
+            key: "type",
+            label: "Type",
+            render: (value: string) => (
+              <span className="text-base-content/80">{value}</span>
+            ),
+          } satisfies columnType<Colleague>,
+        ]
+      : []),
     {
       key: "location",
       label: "Location",
@@ -67,13 +78,19 @@ export default function ColleagueTableView({
         <span className="text-base-content/80">{value}</span>
       ),
     },
-    {
-      key: "phone",
-      label: "Phone",
-      render: (value: string) => (
-        <span className="font-mono text-base-content/80">{value || "—"}</span>
-      ),
-    },
+    ...(hasPhone
+      ? [
+          {
+            key: "phone",
+            label: "Phone",
+            render: (value: string) => (
+              <span className="font-mono text-base-content/80">
+                {value || "—"}
+              </span>
+            ),
+          } satisfies columnType<Colleague>,
+        ]
+      : []),
     {
       key: "status",
       label: "Status",

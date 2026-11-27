@@ -1,13 +1,15 @@
 import { useEffect, useRef } from "react";
 import Modal, { type ModalHandle } from "@/components/DialogModal";
-import type { Task } from "@/api/tasksApi";
+import type { MyTaskStatus, Task } from "@/api/tasksApi";
 import {
   CalendarClock,
   CheckCircle2,
   FileText,
   PlayCircle,
+  RotateCcw,
   Tag,
   UserCheck,
+  XCircle,
 } from "lucide-react";
 import {
   formatTaskDate,
@@ -24,8 +26,9 @@ interface StaffTaskDetailModalProps {
   task: Task | null;
   assigneeName: string;
   canUpdateStatus?: boolean;
-  onUpdateStatus?: (task: Task, status: "in_progress" | "completed") => void;
+  onUpdateStatus?: (task: Task, status: MyTaskStatus) => void;
   isUpdatingStatus?: boolean;
+  isLoadingDetail?: boolean;
 }
 
 export default function StaffTaskDetailModal({
@@ -33,9 +36,10 @@ export default function StaffTaskDetailModal({
   onClose,
   task,
   assigneeName,
-  canUpdateStatus = false,
+  canUpdateStatus = true,
   onUpdateStatus,
   isUpdatingStatus = false,
+  isLoadingDetail = false,
 }: StaffTaskDetailModalProps) {
   const modalRef = useRef<ModalHandle>(null);
 
@@ -74,6 +78,9 @@ export default function StaffTaskDetailModal({
           >
             {formatTaskStatusLabel(task.status)}
           </span>
+          {isLoadingDetail && (
+            <span className="loading loading-spinner loading-xs text-primary" />
+          )}
         </div>
       }
       maxWidth="max-w-xl"
@@ -182,19 +189,17 @@ export default function StaffTaskDetailModal({
 
         <div className="flex flex-wrap items-center justify-between gap-2 pt-3 border-t border-base-200">
           <div className="flex flex-wrap items-center gap-2">
-            {canUpdateStatus &&
-              onUpdateStatus &&
-              statusKey === "open" && (
-                <button
-                  type="button"
-                  disabled={isUpdatingStatus}
-                  onClick={() => onUpdateStatus(task, "in_progress")}
-                  className="btn btn-sm btn-outline border-primary/40 text-primary hover:bg-primary/10 rounded-xl gap-1.5"
-                >
-                  <PlayCircle className="size-4" />
-                  <span>Start task</span>
-                </button>
-              )}
+            {canUpdateStatus && onUpdateStatus && statusKey === "open" && (
+              <button
+                type="button"
+                disabled={isUpdatingStatus}
+                onClick={() => onUpdateStatus(task, "in_progress")}
+                className="btn btn-sm btn-outline border-primary/40 text-primary hover:bg-primary/10 rounded-xl gap-1.5"
+              >
+                <PlayCircle className="size-4" />
+                <span>Start task</span>
+              </button>
+            )}
             {canUpdateStatus &&
               onUpdateStatus &&
               (statusKey === "open" || statusKey === "in_progress") && (
@@ -206,6 +211,32 @@ export default function StaffTaskDetailModal({
                 >
                   <CheckCircle2 className="size-4" />
                   <span>Mark completed</span>
+                </button>
+              )}
+            {canUpdateStatus &&
+              onUpdateStatus &&
+              (statusKey === "completed" || statusKey === "cancelled") && (
+                <button
+                  type="button"
+                  disabled={isUpdatingStatus}
+                  onClick={() => onUpdateStatus(task, "open")}
+                  className="btn btn-sm btn-outline border-base-300 text-base-content hover:bg-base-200 rounded-xl gap-1.5"
+                >
+                  <RotateCcw className="size-4" />
+                  <span>Reopen task</span>
+                </button>
+              )}
+            {canUpdateStatus &&
+              onUpdateStatus &&
+              (statusKey === "open" || statusKey === "in_progress") && (
+                <button
+                  type="button"
+                  disabled={isUpdatingStatus}
+                  onClick={() => onUpdateStatus(task, "cancelled")}
+                  className="btn btn-sm btn-ghost text-error hover:bg-error/10 rounded-xl gap-1.5"
+                >
+                  <XCircle className="size-4" />
+                  <span>Cancel task</span>
                 </button>
               )}
           </div>

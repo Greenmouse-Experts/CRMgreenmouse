@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  extractEmployeePhoto,
   findMatchingBank,
   sanitizeEmployeePayload,
   validateEmployeeBankingGroup,
@@ -122,5 +123,29 @@ describe("validateEmployeeBankingGroup", () => {
         bankAccountNumber: "0123456789",
       }),
     ).toBeNull();
+  });
+});
+
+describe("extractEmployeePhoto", () => {
+  it("prefers profilePhotoUrl before legacy photo fields", () => {
+    expect(
+      extractEmployeePhoto({
+        profilePhotoUrl: "https://cdn.example.com/profile.png",
+        photoUrl: "https://cdn.example.com/legacy.png",
+      }),
+    ).toBe("https://cdn.example.com/profile.png");
+  });
+
+  it("falls back through legacy photo fields and ignores blank strings", () => {
+    expect(
+      extractEmployeePhoto({
+        profilePhotoUrl: "   ",
+        photoUrl: null,
+        profilePic: "https://cdn.example.com/pic.jpg",
+      }),
+    ).toBe("https://cdn.example.com/pic.jpg");
+
+    expect(extractEmployeePhoto(null)).toBeUndefined();
+    expect(extractEmployeePhoto({ profilePhotoUrl: "" })).toBeUndefined();
   });
 });

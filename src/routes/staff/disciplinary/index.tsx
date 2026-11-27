@@ -8,7 +8,8 @@ import { useCurrentStaffIdentity } from "../-components/useCurrentStaffIdentity"
 import { filterPersonalDisciplinaryCases } from "../-components/staffScoping";
 import type { DisciplinaryCase } from "@/routes/hr/disciplinary/-components/types";
 import { useDisciplinaryCases } from "@/api/disciplinaryApi";
-import { ShieldAlert } from "lucide-react";
+import { extract_message } from "@/helpers/errors";
+import { AlertCircle, ShieldAlert } from "lucide-react";
 
 export const Route = createFileRoute("/staff/disciplinary/")({
   component: RouteComponent,
@@ -28,6 +29,7 @@ function RouteComponent() {
   );
 
   const isLoading = identityLoading || casesQuery.isLoading;
+  const errorStatus = (casesQuery.error as any)?.response?.status;
 
   return (
     <div className="space-y-6 pb-12">
@@ -50,6 +52,20 @@ function RouteComponent() {
           <span className="loading loading-spinner loading-lg mx-auto mb-4" />
           <p className="text-base-content/80">
             Loading your disciplinary records...
+          </p>
+        </div>
+      ) : casesQuery.isError ? (
+        <div className="card bg-base-100 border border-base-200 p-8 text-center max-w-xl mx-auto space-y-3">
+          <AlertCircle className="size-8 mx-auto text-warning" />
+          <p className="font-semibold text-base-content">
+            {errorStatus === 403
+              ? "Disciplinary self-service endpoint is not enabled for your role"
+              : "Unable to load disciplinary cases"}
+          </p>
+          <p className="text-sm text-base-content/75">
+            {errorStatus === 403
+              ? "Your account does not have permission to read the HR disciplinary cases directory. Please contact HR if you need details on an open case."
+              : extract_message(casesQuery.error as any)}
           </p>
         </div>
       ) : (

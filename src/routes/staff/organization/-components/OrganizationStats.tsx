@@ -1,23 +1,26 @@
 import StatCard from "@/components/StatCard";
+import type { PortalOrganizationSummary } from "@/api/organizationApi";
 import type { Department, Position } from "./types";
 import { Briefcase, Building2, UserCheck, Users } from "lucide-react";
 
 interface OrganizationStatsProps {
   departments: Department[];
   positions: Position[];
+  summary?: PortalOrganizationSummary;
 }
 
 export default function OrganizationStats({
   departments,
   positions,
+  summary,
 }: OrganizationStatsProps) {
-  const totalHeadcount = departments.reduce(
+  const fallbackHeadcount = departments.reduce(
     (acc, d) => acc + (Number(d.count) || 0),
     0,
   );
-  const totalDepartments = departments.length;
+  const fallbackDepartments = departments.length;
 
-  const totalApproved = positions.reduce(
+  const fallbackApproved = positions.reduce(
     (acc, p) => acc + (Number(p.approved) || 0),
     0,
   );
@@ -25,7 +28,12 @@ export default function OrganizationStats({
     (acc, p) => acc + (Number(p.filled) || 0),
     0,
   );
-  const openPositions = Math.max(0, totalApproved - totalFilled);
+  const fallbackOpen = Math.max(0, fallbackApproved - totalFilled);
+
+  const totalHeadcount = summary?.totalWorkforce ?? fallbackHeadcount;
+  const totalDepartments = summary?.departments ?? fallbackDepartments;
+  const totalApproved = summary?.approvedHeadcount ?? fallbackApproved;
+  const openPositions = summary?.openRequisitions ?? fallbackOpen;
 
   return (
     <div className="grid grid-cols-2 gap-4 md:grid-cols-4">

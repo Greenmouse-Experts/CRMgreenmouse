@@ -336,15 +336,20 @@ export const validateEmployeeBankingGroup = (input: {
 export const extractEmployeePhoto = (
   record?: Partial<EmployeeRecord> | null,
 ): string | undefined => {
-  const candidate =
-    record?.photoUrl ??
-    record?.profilePic ??
-    record?.avatar ??
-    record?.photo ??
-    record?.url;
-  return typeof candidate === "string" && candidate.trim()
-    ? candidate
-    : undefined;
+  const candidates = [
+    record?.profilePhotoUrl,
+    record?.photoUrl,
+    record?.profilePic,
+    record?.avatar,
+    record?.photo,
+    record?.url,
+  ];
+  for (const candidate of candidates) {
+    if (typeof candidate === "string" && candidate.trim()) {
+      return candidate;
+    }
+  }
+  return undefined;
 };
 
 const queryRoot = ["employees"] as const;
@@ -380,6 +385,84 @@ export const useEmployees = () =>
     queryFn: async () => {
       const { data } = await apiClient.get<any>("/employees", authConfig());
       return unwrapList<EmployeeRecord>(data, ["employees"]);
+    },
+  });
+
+export interface ColleagueRecord {
+  id: string;
+  staffId?: string | null;
+  employeeNumber?: string | null;
+  firstName?: string | null;
+  middleName?: string | null;
+  lastName?: string | null;
+  email?: string | null;
+  profilePhotoUrl?: string | null;
+  department?: string | { id?: string; name?: string } | null;
+  departmentName?: string | null;
+  jobTitle?: string | null;
+  position?: string | { id?: string; name?: string; title?: string } | null;
+  workLocation?: string | null;
+  location?: string | null;
+  employeeType?: string | null;
+  employmentType?: string | null;
+  lifecycleStatus?: string | null;
+  employmentStatus?: string | null;
+  status?: string | null;
+  onLeave?: boolean;
+  isOnLeave?: boolean;
+  [key: string]: any;
+}
+
+export interface ColleaguesQueryParams {
+  search?: string;
+  department?: string;
+  page?: number;
+  limit?: number;
+}
+
+export interface PaginatedColleaguesResponse {
+  data: ColleagueRecord[];
+  total: number;
+  page: number;
+  limit: number;
+}
+
+export const useEmployeeColleagues = (
+  params?: ColleaguesQueryParams,
+  options?: { enabled?: boolean },
+) =>
+  useQuery<PaginatedColleaguesResponse>({
+    queryKey: [...queryRoot, "colleagues", params ?? {}],
+    enabled: options?.enabled ?? true,
+    queryFn: async () => {
+      const cleanParams: Record<string, string | number> = {};
+      if (params?.search?.trim()) cleanParams.search = params.search.trim();
+      if (params?.department && params.department !== "All") {
+        cleanParams.department = params.department;
+      }
+      if (typeof params?.page === "number" && params.page > 0) {
+        cleanParams.page = params.page;
+      }
+      if (typeof params?.limit === "number" && params.limit > 0) {
+        cleanParams.limit = params.limit;
+      }
+      const { data } = await apiClient.get<any>("/employees/colleagues", {
+        ...authConfig(),
+        params: cleanParams,
+      });
+      const list = unwrapList<ColleagueRecord>(data, ["colleagues", "items"]);
+      const payload =
+        data?.data && !Array.isArray(data.data) ? data.data : data;
+      const page = Number(payload?.page ?? params?.page ?? 1) || 1;
+      const limit = Number(payload?.limit ?? params?.limit ?? 20) || 20;
+      const total =
+        payload?.total != null ? Number(payload.total) : list.length;
+      return {
+        data: list,
+        total,
+        page,
+        limit,
+      };
     },
   });
 

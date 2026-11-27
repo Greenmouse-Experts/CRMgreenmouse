@@ -1,42 +1,122 @@
+import type { PortalHierarchyNode } from "@/api/organizationApi";
 import type { Department, OrgLeader } from "./types";
 import { Building2, ShieldCheck, Users } from "lucide-react";
 
 interface OrgHierarchyProps {
   leader?: OrgLeader | null;
   departments: Department[];
+  hierarchy?: PortalHierarchyNode[];
+  totalWorkforce?: number;
   selectedDeptId?: string | null;
   onSelectDept?: (deptId: string) => void;
+}
+
+const AVATAR_COLORS = [
+  "bg-indigo-100 text-indigo-700 border-indigo-200",
+  "bg-emerald-100 text-emerald-700 border-emerald-200",
+  "bg-amber-100 text-amber-700 border-amber-200",
+  "bg-rose-100 text-rose-700 border-rose-200",
+  "bg-cyan-100 text-cyan-700 border-cyan-200",
+  "bg-purple-100 text-purple-700 border-purple-200",
+  "bg-teal-100 text-teal-700 border-teal-200",
+];
+
+function getInitials(name?: string | null) {
+  if (!name || !name.trim()) return "—";
+  const parts = name.trim().split(/\s+/);
+  if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+  return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+}
+
+function HierarchyDepartmentCard({
+  node,
+  index,
+  selectedDeptId,
+  onSelectDept,
+  depth = 0,
+}: {
+  node: PortalHierarchyNode;
+  index: number;
+  selectedDeptId?: string | null;
+  onSelectDept?: (deptId: string) => void;
+  depth?: number;
+}) {
+  const isSelected = selectedDeptId === node.id;
+  const colorClass = AVATAR_COLORS[index % AVATAR_COLORS.length];
+  const headText = node.head || "Unassigned";
+
+  return (
+    <div className="flex flex-col items-center">
+      <button
+        type="button"
+        onClick={() => node.id && onSelectDept?.(node.id)}
+        className={`group relative w-full rounded-xl border p-3.5 text-center transition-all duration-200 cursor-pointer ${
+          isSelected
+            ? "border-primary bg-primary/5 ring-2 ring-primary/20 shadow-sm scale-[1.02]"
+            : "border-base-200 bg-base-100 hover:border-primary/80 hover:shadow-md"
+        } ${depth > 0 ? "max-w-[200px]" : ""}`}
+      >
+        <div className="flex justify-center mb-2">
+          <div
+            className={`size-9 rounded-full flex items-center justify-center font-bold border ${colorClass}`}
+          >
+            {getInitials(headText !== "Unassigned" ? headText : node.name)}
+          </div>
+        </div>
+
+        <p className="text-sm font-bold text-base-content group-hover:text-primary transition-colors truncate">
+          {node.name || "Department"}
+        </p>
+        <p className="text-xs text-base-content/80 truncate mt-0.5">
+          {headText}
+        </p>
+
+        <div className="mt-2.5">
+          <span className="inline-block rounded-full bg-primary/10 border border-primary/15 px-2.5 py-0.5 text-[11px] font-bold text-primary">
+            {node.staffCount ?? node.count ?? 0} staff
+          </span>
+        </div>
+      </button>
+
+      {node.children.length > 0 && (
+        <div className="flex flex-col items-center w-full mt-1">
+          <div className="h-5 w-0.5 bg-primary/40" />
+          <div className="flex flex-wrap justify-center gap-2.5 w-full pt-1 border-t border-primary/20">
+            {node.children.map((child, childIdx) => (
+              <HierarchyDepartmentCard
+                key={child.id || `${node.id}-child-${childIdx}`}
+                node={child}
+                index={index + childIdx + 1}
+                selectedDeptId={selectedDeptId}
+                onSelectDept={onSelectDept}
+                depth={depth + 1}
+              />
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
 }
 
 export default function OrgHierarchy({
   leader,
   departments,
+  hierarchy,
+  totalWorkforce,
   selectedDeptId,
   onSelectDept,
 }: OrgHierarchyProps) {
-  const getInitials = (name?: string | null) => {
-    if (!name || !name.trim()) return "—";
-    const parts = name.trim().split(/\s+/);
-    if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
-    return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
-  };
-
-  const avatarColors = [
-    "bg-indigo-100 text-indigo-700 border-indigo-200",
-    "bg-emerald-100 text-emerald-700 border-emerald-200",
-    "bg-amber-100 text-amber-700 border-amber-200",
-    "bg-rose-100 text-rose-700 border-rose-200",
-    "bg-cyan-100 text-cyan-700 border-cyan-200",
-    "bg-purple-100 text-purple-700 border-purple-200",
-    "bg-teal-100 text-teal-700 border-teal-200",
-  ];
-
   const hasLeader = Boolean(leader?.name?.trim());
 
-  const totalHeadcount = departments.reduce(
-    (acc, d) => acc + (Number(d.count) || 0),
-    0,
-  );
+  const nodes: PortalHierarchyNode[] =
+    hierarchy && hierarchy.length > 0
+      ? hierarchy
+      : departments.map((d) => ({ ...d, children: [] }));
+
+  const totalHeadcount =
+    totalWorkforce ??
+    departments.reduce((acc, d) => acc + (Number(d.count) || 0), 0);
 
   return (
     <div className="card bg-base-100 border border-base-200 shadow-sm p-4 sm:p-6 space-y-6">
@@ -84,7 +164,7 @@ export default function OrgHierarchy({
           </p>
         </div>
 
-        {departments.length === 0 ? (
+        {nodes.length === 0 ? (
           <div className="pt-6 text-center text-base-content/80">
             No departments have been configured yet.
           </div>
@@ -102,49 +182,15 @@ export default function OrgHierarchy({
 
             {/* Department Heads Level */}
             <div className="grid w-full grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-7 pt-1">
-              {departments.map((dept, idx) => {
-                const isSelected = selectedDeptId === dept.id;
-                const colorClass = avatarColors[idx % avatarColors.length];
-                const headText = dept.head || "Unassigned";
-
-                return (
-                  <div
-                    key={dept.id || idx}
-                    onClick={() => dept.id && onSelectDept?.(dept.id)}
-                    className={`group relative rounded-xl border p-3.5 text-center transition-all duration-200 cursor-pointer ${
-                      isSelected
-                        ? "border-primary bg-primary/5 ring-2 ring-primary/20 shadow-sm scale-[1.02]"
-                        : "border-base-200 bg-base-100 hover:border-primary/80 hover:shadow-md"
-                    }`}
-                  >
-                    {/* Department Head Initials Avatar */}
-                    <div className="flex justify-center mb-2">
-                      <div
-                        className={`size-9 rounded-full flex items-center justify-center font-bold  border ${colorClass}`}
-                      >
-                        {getInitials(
-                          headText !== "Unassigned" ? headText : dept.name,
-                        )}
-                      </div>
-                    </div>
-
-                    {/* Department Info */}
-                    <p className="text-sm font-bold text-base-content group-hover:text-primary transition-colors truncate">
-                      {dept.name || "Department"}
-                    </p>
-                    <p className=" text-base-content/80 truncate mt-0.5">
-                      {headText}
-                    </p>
-
-                    {/* Staff Count Pill */}
-                    <div className="mt-2.5">
-                      <span className="inline-block rounded-full bg-primary/10 border border-primary/15 px-2.5 py-0.5 text-[11px] font-bold text-primary">
-                        {dept.count ?? 0} staff
-                      </span>
-                    </div>
-                  </div>
-                );
-              })}
+              {nodes.map((node, idx) => (
+                <HierarchyDepartmentCard
+                  key={node.id || idx}
+                  node={node}
+                  index={idx}
+                  selectedDeptId={selectedDeptId}
+                  onSelectDept={onSelectDept}
+                />
+              ))}
             </div>
           </>
         )}

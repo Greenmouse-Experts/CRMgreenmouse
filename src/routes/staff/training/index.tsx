@@ -19,7 +19,7 @@ import {
   useTrainingCourses,
   useTrainingDashboard,
 } from "@/api/trainingApi";
-import { useStaffs } from "@/api/tenantApi";
+import { useEmployeeColleagues } from "@/api/employeesApi";
 
 export const Route = createFileRoute("/staff/training/")({
   component: RouteComponent,
@@ -34,17 +34,19 @@ function RouteComponent() {
   const dashboardQuery = useTrainingDashboard();
   const catalogQuery = useTrainingCourses();
   const myLearningQuery = useMyTrainingLearning();
-  const staffsQuery = useStaffs();
+  const colleaguesQuery = useEmployeeColleagues({ limit: 100 });
 
   const staffNameMap = useMemo(() => {
     const map: Record<string, string> = {};
-    for (const staff of staffsQuery.data ?? []) {
+    for (const colleague of colleaguesQuery.data?.data ?? []) {
       const fullName =
-        `${staff.firstName ?? ""} ${staff.lastName ?? ""}`.trim();
-      map[staff.id] = fullName || staff.email || staff.id;
+        `${colleague.firstName ?? ""} ${colleague.lastName ?? ""}`.trim();
+      const label = fullName || colleague.email || colleague.id;
+      if (colleague.id) map[colleague.id] = label;
+      if (colleague.staffId) map[colleague.staffId] = label;
     }
     return map;
-  }, [staffsQuery.data]);
+  }, [colleaguesQuery.data?.data]);
 
   const enrolledCourseIds = useMemo(() => {
     const ids = new Set<string>();

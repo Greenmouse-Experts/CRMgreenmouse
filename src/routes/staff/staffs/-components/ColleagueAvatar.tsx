@@ -2,12 +2,14 @@ import { getAvatarColor, getInitials } from "./colleagueUtils";
 
 interface ColleagueAvatarProps {
   name: string;
+  src?: string | null;
   size?: "sm" | "md" | "lg";
   className?: string;
 }
 
 export default function ColleagueAvatar({
   name,
+  src,
   size = "sm",
   className = "",
 }: ColleagueAvatarProps) {
@@ -19,6 +21,16 @@ export default function ColleagueAvatar({
 
   const colorClass = getAvatarColor(name);
   const initials = getInitials(name);
+
+  if (src) {
+    return (
+      <img
+        src={src}
+        alt={name}
+        className={`rounded-full object-cover border border-base-200 shrink-0 ${sizeClasses} ${className}`}
+      />
+    );
+  }
 
   return (
     <span

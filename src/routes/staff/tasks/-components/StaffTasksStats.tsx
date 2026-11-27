@@ -1,5 +1,5 @@
 import StatCard from "@/components/StatCard";
-import type { Task } from "@/api/tasksApi";
+import type { Task, TasksSummary } from "@/api/tasksApi";
 import {
   AlertTriangle,
   CheckCircle2,
@@ -9,19 +9,27 @@ import {
 import { isTaskOverdue } from "./taskHelpers";
 
 interface StaffTasksStatsProps {
-  tasks: Task[];
+  tasks?: Task[];
+  summary?: TasksSummary;
 }
 
-export default function StaffTasksStats({ tasks }: StaffTasksStatsProps) {
-  const totalCount = tasks.length;
-  const activeCount = tasks.filter((t) => {
-    const status = String(t.status ?? "").toLowerCase();
-    return status === "open" || status === "in_progress";
-  }).length;
-  const overdueCount = tasks.filter((t) => isTaskOverdue(t)).length;
-  const completedCount = tasks.filter(
-    (t) => String(t.status ?? "").toLowerCase() === "completed",
-  ).length;
+export default function StaffTasksStats({
+  tasks = [],
+  summary,
+}: StaffTasksStatsProps) {
+  const totalCount = summary?.total ?? tasks.length;
+  const activeCount =
+    summary?.active ??
+    tasks.filter((t) => {
+      const status = String(t.status ?? "").toLowerCase();
+      return status === "open" || status === "in_progress";
+    }).length;
+  const overdueCount =
+    summary?.overdue ?? tasks.filter((t) => isTaskOverdue(t)).length;
+  const completedCount =
+    summary?.completed ??
+    tasks.filter((t) => String(t.status ?? "").toLowerCase() === "completed")
+      .length;
 
   return (
     <div className="grid grid-cols-2 gap-4 md:grid-cols-4">

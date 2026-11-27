@@ -80,6 +80,12 @@ export interface DisciplinaryHistoryItem {
 
 const queryRoot = ["disciplinary-cases"] as const;
 
+const noAuthRetry = (failureCount: number, error: any) => {
+  const status = error?.response?.status;
+  if (status === 401 || status === 403 || status === 404) return false;
+  return failureCount < 2;
+};
+
 const unwrapList = <T>(data: any, keys: string[]): T[] => {
   if (Array.isArray(data)) return data as T[];
   if (Array.isArray(data?.data)) return data.data as T[];
@@ -259,6 +265,7 @@ export const mapCaseFromApi = (raw: any): DisciplinaryCase => {
 export const useDisciplinaryCases = () =>
   useQuery<DisciplinaryCase[]>({
     queryKey: [...queryRoot, "list"],
+    retry: noAuthRetry,
     queryFn: async () => {
       const { data } = await apiClient.get<any>("/disciplinary-cases");
       return unwrapList<any>(data, ["cases", "items"]).map(mapCaseFromApi);
@@ -268,6 +275,7 @@ export const useDisciplinaryCases = () =>
 export const useDisciplinaryOptions = () =>
   useQuery<DisciplinaryOptions>({
     queryKey: [...queryRoot, "options"],
+    retry: noAuthRetry,
     queryFn: async () => {
       const { data } = await apiClient.get<any>("/disciplinary-cases/options");
       const obj = unwrapObject<any>(data);
@@ -291,6 +299,7 @@ export const useDisciplinaryOptions = () =>
 export const useDisciplinaryEmployees = () =>
   useQuery<DisciplinaryEmployee[]>({
     queryKey: [...queryRoot, "employees"],
+    retry: noAuthRetry,
     queryFn: async () => {
       const { data } = await apiClient.get<any>(
         "/disciplinary-cases/employees",
@@ -307,6 +316,7 @@ export const useDisciplinaryCaseEvidence = (caseId?: string, enabled = true) =>
   useQuery<DisciplinaryEvidenceItem[]>({
     queryKey: [...queryRoot, "evidence", caseId],
     enabled: Boolean(caseId) && enabled,
+    retry: noAuthRetry,
     queryFn: async () => {
       const { data } = await apiClient.get<any>(
         `/disciplinary-cases/${caseId}/evidence`,
@@ -323,6 +333,7 @@ export const useDisciplinaryCaseHistory = (caseId?: string, enabled = true) =>
   useQuery<DisciplinaryHistoryItem[]>({
     queryKey: [...queryRoot, "history", caseId],
     enabled: Boolean(caseId) && enabled,
+    retry: noAuthRetry,
     queryFn: async () => {
       const { data } = await apiClient.get<any>(
         `/disciplinary-cases/${caseId}/history`,

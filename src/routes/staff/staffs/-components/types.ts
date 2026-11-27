@@ -25,11 +25,13 @@ export interface Colleague {
   lastName?: string;
   email: string;
   phone?: string;
+  profilePhotoUrl?: string | null;
   title: string;
   dept: string;
   location: string;
   type: EmploymentType;
   status: EmploymentStatus;
+  hasStatus?: boolean;
   isDraft?: boolean;
   onLeave: boolean;
 }

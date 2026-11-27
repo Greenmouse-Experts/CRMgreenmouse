@@ -40,6 +40,7 @@ import { Route as StaffTrainingIndexRouteImport } from './routes/staff/training/
 import { Route as StaffTasksIndexRouteImport } from './routes/staff/tasks/index'
 import { Route as StaffStaffsIndexRouteImport } from './routes/staff/staffs/index'
 import { Route as StaffSettingsIndexRouteImport } from './routes/staff/settings/index'
+import { Route as StaffSelfServiceIndexRouteImport } from './routes/staff/self-service/index'
 import { Route as StaffPerformanceIndexRouteImport } from './routes/staff/performance/index'
 import { Route as StaffOrganizationIndexRouteImport } from './routes/staff/organization.index'
 import { Route as StaffLeaveIndexRouteImport } from './routes/staff/leave/index'
@@ -307,6 +308,11 @@ const StaffSettingsIndexRoute = StaffSettingsIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => StaffSettingsRouteRoute,
+} as any)
+const StaffSelfServiceIndexRoute = StaffSelfServiceIndexRouteImport.update({
+  id: '/self-service/',
+  path: '/self-service/',
+  getParentRoute: () => StaffRouteRoute,
 } as any)
 const StaffPerformanceIndexRoute = StaffPerformanceIndexRouteImport.update({
   id: '/performance/',
@@ -981,6 +987,7 @@ export interface FileRoutesByFullPath {
   '/staff/leave': typeof StaffLeaveIndexRoute
   '/staff/organization': typeof StaffOrganizationIndexRoute
   '/staff/performance': typeof StaffPerformanceIndexRoute
+  '/staff/self-service': typeof StaffSelfServiceIndexRoute
   '/staff/settings/': typeof StaffSettingsIndexRoute
   '/staff/staffs': typeof StaffStaffsIndexRoute
   '/staff/tasks': typeof StaffTasksIndexRoute
@@ -1114,6 +1121,7 @@ export interface FileRoutesByTo {
   '/staff/leave': typeof StaffLeaveIndexRoute
   '/staff/organization': typeof StaffOrganizationIndexRoute
   '/staff/performance': typeof StaffPerformanceIndexRoute
+  '/staff/self-service': typeof StaffSelfServiceIndexRoute
   '/staff/settings': typeof StaffSettingsIndexRoute
   '/staff/staffs': typeof StaffStaffsIndexRoute
   '/staff/tasks': typeof StaffTasksIndexRoute
@@ -1259,6 +1267,7 @@ export interface FileRoutesById {
   '/staff/leave/': typeof StaffLeaveIndexRoute
   '/staff/organization/': typeof StaffOrganizationIndexRoute
   '/staff/performance/': typeof StaffPerformanceIndexRoute
+  '/staff/self-service/': typeof StaffSelfServiceIndexRoute
   '/staff/settings/': typeof StaffSettingsIndexRoute
   '/staff/staffs/': typeof StaffStaffsIndexRoute
   '/staff/tasks/': typeof StaffTasksIndexRoute
@@ -1405,6 +1414,7 @@ export interface FileRouteTypes {
     | '/staff/leave'
     | '/staff/organization'
     | '/staff/performance'
+    | '/staff/self-service'
     | '/staff/settings/'
     | '/staff/staffs'
     | '/staff/tasks'
@@ -1538,6 +1548,7 @@ export interface FileRouteTypes {
     | '/staff/leave'
     | '/staff/organization'
     | '/staff/performance'
+    | '/staff/self-service'
     | '/staff/settings'
     | '/staff/staffs'
     | '/staff/tasks'
@@ -1682,6 +1693,7 @@ export interface FileRouteTypes {
     | '/staff/leave/'
     | '/staff/organization/'
     | '/staff/performance/'
+    | '/staff/self-service/'
     | '/staff/settings/'
     | '/staff/staffs/'
     | '/staff/tasks/'
@@ -2001,6 +2013,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/staff/settings/'
       preLoaderRoute: typeof StaffSettingsIndexRouteImport
       parentRoute: typeof StaffSettingsRouteRoute
+    }
+    '/staff/self-service/': {
+      id: '/staff/self-service/'
+      path: '/self-service'
+      fullPath: '/staff/self-service'
+      preLoaderRoute: typeof StaffSelfServiceIndexRouteImport
+      parentRoute: typeof StaffRouteRoute
     }
     '/staff/performance/': {
       id: '/staff/performance/'
@@ -2975,6 +2994,7 @@ interface StaffRouteRouteChildren {
   StaffLeaveIndexRoute: typeof StaffLeaveIndexRoute
   StaffOrganizationIndexRoute: typeof StaffOrganizationIndexRoute
   StaffPerformanceIndexRoute: typeof StaffPerformanceIndexRoute
+  StaffSelfServiceIndexRoute: typeof StaffSelfServiceIndexRoute
   StaffStaffsIndexRoute: typeof StaffStaffsIndexRoute
   StaffTasksIndexRoute: typeof StaffTasksIndexRoute
   StaffTrainingIndexRoute: typeof StaffTrainingIndexRoute
@@ -2989,6 +3009,7 @@ const StaffRouteRouteChildren: StaffRouteRouteChildren = {
   StaffLeaveIndexRoute: StaffLeaveIndexRoute,
   StaffOrganizationIndexRoute: StaffOrganizationIndexRoute,
   StaffPerformanceIndexRoute: StaffPerformanceIndexRoute,
+  StaffSelfServiceIndexRoute: StaffSelfServiceIndexRoute,
   StaffStaffsIndexRoute: StaffStaffsIndexRoute,
   StaffTasksIndexRoute: StaffTasksIndexRoute,
   StaffTrainingIndexRoute: StaffTrainingIndexRoute,

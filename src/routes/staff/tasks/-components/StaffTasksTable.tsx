@@ -1,7 +1,14 @@
-import { useMemo, useState } from "react";
-import type { Task } from "@/api/tasksApi";
+import type { MyTaskStatus, Task } from "@/api/tasksApi";
 import CustomTable, { type columnType } from "@/components/tables/CustomTable";
-import { CheckCircle2, ClipboardCheck, Eye, Search } from "lucide-react";
+import {
+  AlertTriangle,
+  CheckCircle2,
+  ChevronLeft,
+  ChevronRight,
+  ClipboardCheck,
+  Eye,
+  Search,
+} from "lucide-react";
 import {
   formatTaskDate,
   formatTaskStatusLabel,
@@ -15,44 +22,48 @@ import {
 
 interface StaffTasksTableProps {
   tasks: Task[];
+  totalCount: number;
+  searchTerm: string;
+  onSearchChange: (value: string) => void;
+  selectedStatus: string;
+  onStatusChange: (value: string) => void;
+  selectedPriority: string;
+  onPriorityChange: (value: string) => void;
+  overdueOnly: boolean;
+  onOverdueChange: (value: boolean) => void;
+  page: number;
+  limit: number;
+  onPageChange: (page: number) => void;
   onSelectTask: (task: Task) => void;
   canUpdateStatus?: boolean;
-  onUpdateStatus?: (task: Task, status: "in_progress" | "completed") => void;
+  onUpdateStatus?: (task: Task, status: MyTaskStatus) => void;
   updatingTaskId?: string | null;
+  hasActiveFilters?: boolean;
+  onResetFilters?: () => void;
 }
 
 export default function StaffTasksTable({
   tasks,
+  totalCount,
+  searchTerm,
+  onSearchChange,
+  selectedStatus,
+  onStatusChange,
+  selectedPriority,
+  onPriorityChange,
+  overdueOnly,
+  onOverdueChange,
+  page,
+  limit,
+  onPageChange,
   onSelectTask,
-  canUpdateStatus = false,
+  canUpdateStatus = true,
   onUpdateStatus,
   updatingTaskId = null,
+  hasActiveFilters = false,
+  onResetFilters,
 }: StaffTasksTableProps) {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [selectedStatus, setSelectedStatus] = useState<string>("all");
-  const [selectedPriority, setSelectedPriority] = useState<string>("all");
-
-  const filteredTasks = useMemo(() => {
-    const q = searchTerm.trim().toLowerCase();
-    return tasks.filter((task) => {
-      const status = String(task.status ?? "open").toLowerCase();
-      const priority = String(task.priority ?? "medium").toLowerCase();
-      if (selectedStatus !== "all" && status !== selectedStatus) return false;
-      if (selectedPriority !== "all" && priority !== selectedPriority)
-        return false;
-
-      if (q) {
-        return (
-          task.title.toLowerCase().includes(q) ||
-          (task.description ?? "").toLowerCase().includes(q) ||
-          formatTaskTypeLabel(task.type).toLowerCase().includes(q) ||
-          priority.includes(q) ||
-          formatTaskStatusLabel(task.status).toLowerCase().includes(q)
-        );
-      }
-      return true;
-    });
-  }, [tasks, searchTerm, selectedStatus, selectedPriority]);
+  const totalPages = Math.max(1, Math.ceil(totalCount / (limit || 20)));
 
   const columns: columnType<Task>[] = [
     {
@@ -194,19 +205,32 @@ export default function StaffTasksTable({
           <div className="flex items-center gap-2">
             <h2 className="text-lg font-bold text-base-content">My Tasks</h2>
             <span className="badge badge-sm badge-ghost font-semibold">
-              {filteredTasks.length}
+              {totalCount}
             </span>
           </div>
           <p className="text-sm text-base-content/80 mt-0.5">
-            View only the tasks assigned directly to your employee profile.
+            View and update tasks assigned directly to your employee profile.
           </p>
         </div>
 
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+          <button
+            type="button"
+            onClick={() => onOverdueChange(!overdueOnly)}
+            className={`btn btn-sm rounded-xl gap-1.5 ${
+              overdueOnly
+                ? "bg-error/15 text-error border border-error/30"
+                : "btn-outline border-base-300 text-base-content/80"
+            }`}
+          >
+            <AlertTriangle className="size-3.5" />
+            <span>Overdue only</span>
+          </button>
+
           <select
             aria-label="Filter by priority"
             value={selectedPriority}
-            onChange={(e) => setSelectedPriority(e.target.value)}
+            onChange={(e) => onPriorityChange(e.target.value)}
             className="select select-sm select-bordered rounded-xl bg-base-200/80"
           >
             {TASK_PRIORITY_OPTIONS.map((option) => (
@@ -221,7 +245,7 @@ export default function StaffTasksTable({
             <input
               type="text"
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              onChange={(e) => onSearchChange(e.target.value)}
               placeholder="Search my tasks..."
               className="input input-sm input-bordered w-full pl-9 rounded-xl bg-base-200/80"
             />
@@ -229,43 +253,87 @@ export default function StaffTasksTable({
         </div>
       </div>
 
-      <div className="flex flex-wrap items-center gap-1.5 border-b border-base-200 pb-2">
-        {TASK_STATUS_TABS.map((tab) => (
+      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-base-200 pb-2">
+        <div className="flex flex-wrap items-center gap-1.5">
+          {TASK_STATUS_TABS.map((tab) => (
+            <button
+              key={tab.key}
+              type="button"
+              onClick={() => onStatusChange(tab.key)}
+              className={`px-3 py-1 text-sm font-semibold rounded-lg transition-all ${
+                selectedStatus === tab.key
+                  ? "bg-primary text-white shadow-2xs"
+                  : "text-base-content/80 hover:bg-base-200"
+              }`}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+
+        {hasActiveFilters && onResetFilters && (
           <button
-            key={tab.key}
             type="button"
-            onClick={() => setSelectedStatus(tab.key)}
-            className={`px-3 py-1 text-sm font-semibold rounded-lg transition-all ${
-              selectedStatus === tab.key
-                ? "bg-primary text-white shadow-2xs"
-                : "text-base-content/80 hover:bg-base-200"
-            }`}
+            onClick={onResetFilters}
+            className="btn btn-xs btn-ghost text-base-content/70"
           >
-            {tab.label}
+            Reset filters
           </button>
-        ))}
+        )}
       </div>
 
-      {filteredTasks.length === 0 ? (
+      {tasks.length === 0 ? (
         <div className="text-center py-10 text-base-content/80">
           <ClipboardCheck className="size-8 mx-auto mb-2 opacity-30" />
           <p className="font-medium text-sm">
-            {tasks.length === 0
+            {!hasActiveFilters
               ? "No tasks assigned to you yet"
               : "No tasks match your current filter"}
           </p>
           <p className="text-sm text-base-content/70 mt-0.5">
-            {tasks.length === 0
+            {!hasActiveFilters
               ? "Tasks assigned to your employee profile will appear here."
-              : "Try adjusting your status, priority filter, or search query."}
+              : "Try adjusting your status, priority, overdue filter, or search query."}
           </p>
         </div>
       ) : (
-        <CustomTable
-          data={filteredTasks}
-          columns={columns}
-          onRowClick={onSelectTask}
-        />
+        <>
+          <CustomTable
+            data={tasks}
+            columns={columns}
+            onRowClick={onSelectTask}
+          />
+
+          {totalPages > 1 && (
+            <div className="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-base-200 text-sm">
+              <span className="text-base-content/75">
+                Page <strong className="text-base-content">{page}</strong> of{" "}
+                <strong className="text-base-content">{totalPages}</strong> ·{" "}
+                {totalCount} matching tasks
+              </span>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  disabled={page <= 1}
+                  onClick={() => onPageChange(Math.max(1, page - 1))}
+                  className="btn btn-sm btn-outline rounded-lg gap-1"
+                >
+                  <ChevronLeft className="size-4" />
+                  <span>Previous</span>
+                </button>
+                <button
+                  type="button"
+                  disabled={page >= totalPages}
+                  onClick={() => onPageChange(Math.min(totalPages, page + 1))}
+                  className="btn btn-sm btn-outline rounded-lg gap-1"
+                >
+                  <span>Next</span>
+                  <ChevronRight className="size-4" />
+                </button>
+              </div>
+            </div>
+          )}
+        </>
       )}
     </div>
   );

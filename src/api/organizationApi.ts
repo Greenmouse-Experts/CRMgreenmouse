@@ -50,6 +50,22 @@ export interface OrganizationData {
   positions: Position[];
 }
 
+export interface PortalOrganizationSummary {
+  totalWorkforce: number;
+  departments: number;
+  approvedHeadcount: number;
+  openRequisitions: number;
+}
+
+export interface PortalHierarchyNode extends Department {
+  children: PortalHierarchyNode[];
+}
+
+export interface PortalOrganizationData extends OrganizationData {
+  summary: PortalOrganizationSummary;
+  hierarchy: PortalHierarchyNode[];
+}
+
 const unwrapArray = <T>(data: any): T[] => {
   if (Array.isArray(data)) return data as T[];
   if (Array.isArray(data?.data)) return data.data as T[];
@@ -112,11 +128,74 @@ export function toUiPosition(raw: any): Position {
     title: raw?.title ?? raw?.jobTitle ?? raw?.name ?? "Untitled Position",
     departmentId: raw?.departmentId ?? raw?.department?.id ?? undefined,
     dept: deptName,
-    grade: raw?.grade ?? raw?.jobGrade ?? "—",
+    grade: raw?.grade ?? raw?.gradeName ?? raw?.jobGrade ?? "—",
     approved: Number(
       raw?.approved ?? raw?.approvedHeadcount ?? raw?.openings ?? 1,
     ),
-    filled: Number(raw?.filled ?? raw?.filledCount ?? raw?.staffCount ?? 0),
+    filled: Number(
+      raw?.filled ??
+        raw?.filledHeadcount ??
+        raw?.filledCount ??
+        raw?.staffCount ??
+        0,
+    ),
+  };
+}
+
+export function toUiHierarchyNode(raw: any): PortalHierarchyNode {
+  const base = toUiDepartment(raw);
+  const children = Array.isArray(raw?.children)
+    ? raw.children.map(toUiHierarchyNode)
+    : [];
+  return {
+    ...base,
+    children,
+  };
+}
+
+export function mapPortalOrganizationPayload(raw: any): PortalOrganizationData {
+  const payload = raw?.data && !raw?.departments ? raw.data : (raw ?? {});
+  const departments = unwrapArray<any>(payload?.departments).map(
+    toUiDepartment,
+  );
+  const positions = unwrapArray<any>(payload?.positions).map(toUiPosition);
+  const hierarchy = unwrapArray<any>(payload?.hierarchy).map(toUiHierarchyNode);
+
+  const fallbackWorkforce = departments.reduce(
+    (acc, d) => acc + (Number(d.count) || 0),
+    0,
+  );
+  const fallbackApproved = positions.reduce(
+    (acc, p) => acc + (Number(p.approved) || 0),
+    0,
+  );
+  const fallbackFilled = positions.reduce(
+    (acc, p) => acc + (Number(p.filled) || 0),
+    0,
+  );
+
+  const rawSummary = payload?.summary ?? {};
+  const approvedHeadcount = Number(
+    rawSummary?.approvedHeadcount ?? fallbackApproved,
+  );
+
+  return {
+    summary: {
+      totalWorkforce: Number(
+        rawSummary?.totalWorkforce ??
+          rawSummary?.workforce ??
+          fallbackWorkforce,
+      ),
+      departments: Number(rawSummary?.departments ?? departments.length),
+      approvedHeadcount,
+      openRequisitions: Number(
+        rawSummary?.openRequisitions ??
+          Math.max(0, approvedHeadcount - fallbackFilled),
+      ),
+    },
+    departments,
+    positions,
+    hierarchy,
   };
 }
 
@@ -135,6 +214,18 @@ export const useOrganization = () =>
         departments: rawDepartments.map(toUiDepartment),
         positions: rawPositions.map(toUiPosition),
       };
+    },
+  });
+
+export const usePortalOrganization = (enabled = true) =>
+  useQuery<PortalOrganizationData>({
+    queryKey: ["organization", "portal"],
+    enabled,
+    queryFn: async () => {
+      const { data } = await apiClient.get<any>(
+        "/employees/portal/organization",
+      );
+      return mapPortalOrganizationPayload(data);
     },
   });
 
