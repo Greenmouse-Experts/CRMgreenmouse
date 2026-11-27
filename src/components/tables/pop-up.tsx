@@ -1,5 +1,5 @@
 import { Menu } from "lucide-react";
-import { useEffect, useState, useRef, type ReactNode } from "react";
+import { Fragment, useEffect, useState, useRef, type ReactNode } from "react";
 import { usePopper } from "react-popper";
 import Portal from "./Portal";
 import { useNavigate } from "@tanstack/react-router"; // Import useNavigate
@@ -71,8 +71,9 @@ export default function PopUp<T>(props: {
       },
     ],
   });
-  const openPopup = () => {
-    props.setIndex(props.itemIndex);
+  const openPopup = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    props.setIndex(isOpen ? null : props.itemIndex);
   };
   return (
     <>
@@ -95,7 +96,7 @@ export default function PopUp<T>(props: {
             className="shadow-lg border border-current/20 rounded-xl bg-base-100 z-50 "
             style={{
               ...styles.popper,
-              width: "150px",
+              minWidth: "176px",
             }}
             {...attributes.popper}
           >
@@ -105,9 +106,8 @@ export default function PopUp<T>(props: {
                   return null;
                 }
                 return (
-                  <>
-                    {" "}
-                    <li key={action.key}>
+                  <Fragment key={action.key}>
+                    <li>
                       <a
                         onClick={() => {
                           if (
@@ -115,16 +115,17 @@ export default function PopUp<T>(props: {
                             action.disable_event(props.item)
                           )
                             return;
+                          props.setIndex(null);
                           action.action(props.item, nav);
                         }}
-                        className={`text-xs ${action.disable_event && action.disable_event(props.item) ? "cursor-not-allowed" : ""}`}
+                        className={`text-xs whitespace-nowrap ${action.disable_event && action.disable_event(props.item) ? "cursor-not-allowed" : ""}`}
                       >
                         {action.render
                           ? action.render(props.item)
                           : action.label}
                       </a>
                     </li>
-                  </>
+                  </Fragment>
                 );
               })}
             </div>

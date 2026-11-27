@@ -17,8 +17,11 @@ import {
   REASON_OPTIONS,
   CHANNEL_OPTIONS,
 } from "./recruitmentData";
-import type { CreateVacancyPayload } from "@/api/recruitmentApi";
-import { Send } from "lucide-react";
+import type {
+  CreateVacancyPayload,
+  RecruitmentVacancy,
+} from "@/api/recruitmentApi";
+import { Save, Send } from "lucide-react";
 
 interface Option {
   id: string;
@@ -29,6 +32,11 @@ interface CreateVacancyModalProps {
   isOpen: boolean;
   onClose: () => void;
   onCreateVacancy: (payload: CreateVacancyPayload) => Promise<any> | void;
+  onUpdateVacancy?: (
+    id: string,
+    payload: Partial<CreateVacancyPayload>,
+  ) => Promise<any> | void;
+  initialVacancy?: RecruitmentVacancy | null;
   departments?: Option[];
   approvers?: Option[];
   managers?: Option[];
@@ -59,37 +67,93 @@ const emptyForm = (
   departments: Option[],
   approvers: Option[],
   managers: Option[],
-): VacancyFormValues => ({
-  jobTitle: "",
-  departmentId: departments[0]?.id ?? "",
-  openings: 1,
-  employmentType: HR_EMPLOYMENT_TYPES[0] ?? "Full-time",
-  workLocation: HR_LOCATIONS[0] ?? "Lagos",
-  reasonForHire: REASON_OPTIONS[0] ?? "New position",
-  salaryMinimum: "",
-  salaryMaximum: "",
-  salaryCurrency: "NGN",
-  salaryPeriod: "monthly",
-  jobDescription: "",
-  closingDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
-    .toISOString()
-    .slice(0, 10),
-  hiringManagerId: managers[0]?.id ?? "",
-  approverId: approvers[0]?.id ?? "",
-  publishingChannel: CHANNEL_OPTIONS[0] ?? "Careers page",
-  saveAsDraft: false,
-});
+  initialVacancy?: RecruitmentVacancy | null,
+): VacancyFormValues => {
+  if (initialVacancy) {
+    const rawPeriod = String(
+      initialVacancy.salaryPeriod ?? "monthly",
+    ).toLowerCase();
+    const salaryPeriod = (SALARY_PERIODS as readonly string[]).includes(
+      rawPeriod,
+    )
+      ? (rawPeriod as VacancyFormValues["salaryPeriod"])
+      : "monthly";
+
+    return {
+      jobTitle: initialVacancy.jobTitle ?? initialVacancy.title ?? "",
+      departmentId: initialVacancy.departmentId ?? departments[0]?.id ?? "",
+      openings: initialVacancy.openings ?? 1,
+      employmentType:
+        initialVacancy.employmentType ?? HR_EMPLOYMENT_TYPES[0] ?? "Full-time",
+      workLocation:
+        initialVacancy.workLocation ??
+        initialVacancy.location ??
+        HR_LOCATIONS[0] ??
+        "Lagos",
+      reasonForHire:
+        initialVacancy.reasonForHire ?? REASON_OPTIONS[0] ?? "New position",
+      salaryMinimum:
+        initialVacancy.salaryMinimum != null
+          ? String(initialVacancy.salaryMinimum)
+          : "",
+      salaryMaximum:
+        initialVacancy.salaryMaximum != null
+          ? String(initialVacancy.salaryMaximum)
+          : "",
+      salaryCurrency: initialVacancy.salaryCurrency || "NGN",
+      salaryPeriod,
+      jobDescription: initialVacancy.jobDescription ?? "",
+      closingDate: initialVacancy.closingDate
+        ? String(initialVacancy.closingDate).slice(0, 10)
+        : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
+            .toISOString()
+            .slice(0, 10),
+      hiringManagerId: initialVacancy.hiringManagerId ?? managers[0]?.id ?? "",
+      approverId: initialVacancy.approverId ?? approvers[0]?.id ?? "",
+      publishingChannel:
+        initialVacancy.publishingChannel ??
+        CHANNEL_OPTIONS[0] ??
+        "Careers page",
+      saveAsDraft:
+        String(initialVacancy.status ?? "").toLowerCase() === "draft",
+    };
+  }
+
+  return {
+    jobTitle: "",
+    departmentId: departments[0]?.id ?? "",
+    openings: 1,
+    employmentType: HR_EMPLOYMENT_TYPES[0] ?? "Full-time",
+    workLocation: HR_LOCATIONS[0] ?? "Lagos",
+    reasonForHire: REASON_OPTIONS[0] ?? "New position",
+    salaryMinimum: "",
+    salaryMaximum: "",
+    salaryCurrency: "NGN",
+    salaryPeriod: "monthly",
+    jobDescription: "",
+    closingDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
+      .toISOString()
+      .slice(0, 10),
+    hiringManagerId: managers[0]?.id ?? "",
+    approverId: approvers[0]?.id ?? "",
+    publishingChannel: CHANNEL_OPTIONS[0] ?? "Careers page",
+    saveAsDraft: false,
+  };
+};
 
 export default function CreateVacancyModal({
   isOpen,
   onClose,
   onCreateVacancy,
+  onUpdateVacancy,
+  initialVacancy = null,
   departments = [],
   approvers = [],
   managers,
 }: CreateVacancyModalProps) {
   const modalRef = useRef<ModalHandle>(null);
   const managerChoices = managers && managers.length > 0 ? managers : approvers;
+  const isEditing = Boolean(initialVacancy?.id);
 
   const [activeTab, setActiveTab] = useState<"requisition" | "advert">(
     "requisition",
@@ -97,7 +161,12 @@ export default function CreateVacancyModal({
 
   const methods = useForm<VacancyFormValues>({
     mode: "onSubmit",
-    defaultValues: emptyForm(departments, approvers, managerChoices),
+    defaultValues: emptyForm(
+      departments,
+      approvers,
+      managerChoices,
+      initialVacancy,
+    ),
   });
   const {
     register,
@@ -111,13 +180,13 @@ export default function CreateVacancyModal({
   useEffect(() => {
     if (isOpen) {
       modalRef.current?.open();
-      reset(emptyForm(departments, approvers, managerChoices));
+      reset(emptyForm(departments, approvers, managerChoices, initialVacancy));
       setActiveTab("requisition");
     } else {
       modalRef.current?.close();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isOpen]);
+  }, [isOpen, initialVacancy?.id]);
 
   const setupIncomplete =
     departments.length === 0 ||
@@ -147,7 +216,7 @@ export default function CreateVacancyModal({
       hiringManagerId: values.hiringManagerId,
       approverId: values.approverId,
       salaryPeriod: values.salaryPeriod,
-      saveAsDraft: values.saveAsDraft,
+      ...(isEditing ? {} : { saveAsDraft: values.saveAsDraft }),
       ...(values.workLocation ? { workLocation: values.workLocation } : {}),
       ...(values.salaryMinimum !== ""
         ? { salaryMinimum: Number(values.salaryMinimum) }
@@ -164,8 +233,12 @@ export default function CreateVacancyModal({
     };
 
     try {
-      await onCreateVacancy(payload);
-      reset(emptyForm(departments, approvers, managerChoices));
+      if (isEditing && initialVacancy && onUpdateVacancy) {
+        await onUpdateVacancy(initialVacancy.id, payload);
+      } else {
+        await onCreateVacancy(payload);
+      }
+      reset(emptyForm(departments, approvers, managerChoices, null));
       setActiveTab("requisition");
       onClose();
     } catch {
@@ -176,7 +249,7 @@ export default function CreateVacancyModal({
   return (
     <Modal
       ref={modalRef}
-      title="Create Vacancy"
+      title={isEditing ? "Edit Vacancy" : "Create Vacancy"}
       maxWidth="max-w-2xl"
       onClose={onClose}
     >
@@ -185,8 +258,9 @@ export default function CreateVacancyModal({
           {/* Stepper Tabs & description */}
           <div className="flex flex-col gap-3 -mt-1 pb-3 border-b border-base-200">
             <p className="text-base-content/80">
-              Raise a requisition. It goes to the approver before it can be
-              published.
+              {isEditing
+                ? "Update requisition details, compensation range, or hiring owners."
+                : "Raise a requisition. It goes to the approver before it can be published."}
             </p>
 
             <div className="flex gap-2">
@@ -218,7 +292,7 @@ export default function CreateVacancyModal({
           {setupIncomplete && (
             <p className="rounded-xl bg-warning/10 border border-warning/30 px-4 py-3 text-sm text-base-content/80">
               Recruitment setup is incomplete — departments, approvers and
-              hiring managers must exist before a vacancy can be created.
+              hiring managers must exist before a vacancy can be saved.
             </p>
           )}
 
@@ -372,7 +446,10 @@ export default function CreateVacancyModal({
                     <label className="font-semibold text-base-content/80 mb-1 block">
                       Currency
                     </label>
-                    <SimpleInput placeholder="NGN" {...register("salaryCurrency")} />
+                    <SimpleInput
+                      placeholder="NGN"
+                      {...register("salaryCurrency")}
+                    />
                   </div>
 
                   <div>
@@ -468,7 +545,9 @@ export default function CreateVacancyModal({
                             const name =
                               [employee.firstName, employee.lastName]
                                 .filter(Boolean)
-                                .join(" ") || employee.email || "Unnamed";
+                                .join(" ") ||
+                              employee.email ||
+                              "Unnamed";
                             return (
                               <>
                                 {index === 0 && (
@@ -489,7 +568,8 @@ export default function CreateVacancyModal({
 
                   <div>
                     <label className="font-semibold text-base-content/80 mb-1 block">
-                      Approver (HR Lead / VP) <span className="text-error">*</span>
+                      Approver (HR Lead / VP){" "}
+                      <span className="text-error">*</span>
                     </label>
                     <LocalSelect
                       {...register("approverId", {
@@ -518,18 +598,20 @@ export default function CreateVacancyModal({
                     </LocalSelect>
                   </div>
 
-                  <div className="sm:col-span-2">
-                    <label className="flex items-center gap-2 cursor-pointer">
-                      <input
-                        type="checkbox"
-                        {...register("saveAsDraft")}
-                        className="checkbox checkbox-sm checkbox-primary"
-                      />
-                      <span className="text-sm font-medium text-base-content/80">
-                        Save as draft (skip submission for approval)
-                      </span>
-                    </label>
-                  </div>
+                  {!isEditing && (
+                    <div className="sm:col-span-2">
+                      <label className="flex items-center gap-2 cursor-pointer">
+                        <input
+                          type="checkbox"
+                          {...register("saveAsDraft")}
+                          className="checkbox checkbox-sm checkbox-primary"
+                        />
+                        <span className="text-sm font-medium text-base-content/80">
+                          Save as draft (skip submission for approval)
+                        </span>
+                      </label>
+                    </div>
+                  )}
                 </div>
 
                 {/* Action Buttons */}
@@ -557,11 +639,19 @@ export default function CreateVacancyModal({
                     >
                       {isSubmitting ? (
                         <span className="loading loading-spinner loading-xs" />
+                      ) : isEditing ? (
+                        <Save className="size-3.5" />
                       ) : (
                         <Send className="size-3.5" />
                       )}
                       <span>
-                        {isSubmitting ? "Submitting..." : "Submit requisition"}
+                        {isSubmitting
+                          ? isEditing
+                            ? "Saving..."
+                            : "Submitting..."
+                          : isEditing
+                            ? "Save changes"
+                            : "Submit requisition"}
                       </span>
                     </button>
                   </div>

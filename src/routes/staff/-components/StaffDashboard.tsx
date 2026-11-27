@@ -51,6 +51,7 @@ import { useAuth } from "@/store/authStore";
 
 const staffPaths = {
   colleagues: "/staff/staffs",
+  tasks: "/staff/tasks",
   organization: "/staff/organization",
   attendance: "/staff/attendance",
   leave: "/staff/leave",
@@ -71,6 +72,11 @@ const quickActions = [
     label: "Request leave",
     path: staffPaths.leave,
     icon: <BriefcaseBusiness className="size-4" />,
+  },
+  {
+    label: "My tasks",
+    path: staffPaths.tasks,
+    icon: <ClipboardCheck className="size-4" />,
   },
   {
     label: "My performance",

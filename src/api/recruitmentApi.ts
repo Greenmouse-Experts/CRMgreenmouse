@@ -14,19 +14,46 @@ export interface RecruitmentDashboard {
 
 export interface RecruitmentVacancy {
   id: string;
+  tenantId?: string;
+  vacancyNumber?: string;
   jobTitle?: string;
   title?: string;
   departmentId?: string;
   department?: string;
   departmentName?: string;
+  gradeId?: string | null;
+  gradeName?: string | null;
   openings?: number;
+  applicantCount?: number;
   applicationCount?: number;
   applicants?: number;
   status?: string;
   closingDate?: string;
   employmentType?: string;
+  workLocation?: string | null;
+  workplaceType?: string | null;
+  locationCity?: string | null;
+  locationState?: string | null;
+  locationCountryCode?: string | null;
   jobDescription?: string;
   reasonForHire?: string;
+  salaryMinimum?: number | null;
+  salaryMaximum?: number | null;
+  salaryCurrency?: string | null;
+  salaryPeriod?: "hourly" | "weekly" | "monthly" | "annual" | string | null;
+  hiringManagerId?: string | null;
+  approverId?: string | null;
+  publishingChannel?: string | null;
+  rejectionReason?: string | null;
+  decidedBy?: string | null;
+  decidedAt?: string | null;
+  archivedAt?: string | null;
+  archivedBy?: string | null;
+  archiveReason?: string | null;
+  createdBy?: string | null;
+  createdAt?: string;
+  updatedAt?: string;
+  managedByOwner?: boolean;
   [key: string]: any;
 }
 
@@ -39,6 +66,9 @@ export interface RecruitmentApplication {
   name?: string;
   email?: string;
   phone?: string;
+  source?: string;
+  resumeUrl?: string;
+  notes?: string;
   score?: number;
   vacancyId?: string;
   vacancyTitle?: string;
@@ -51,6 +81,8 @@ export interface RecruitmentApplication {
 export interface RecruitmentOption {
   id: string;
   name: string;
+  email?: string;
+  isOwner?: boolean;
   [key: string]: any;
 }
 
@@ -84,11 +116,18 @@ export interface CreateVacancyPayload {
   saveAsDraft?: boolean;
 }
 
+export interface VacancyQueryParams {
+  sort?: string;
+  order?: "asc" | "desc";
+}
+
 export interface CreateApplicationPayload {
   firstName: string;
   lastName: string;
   email: string;
   phone?: string;
+  source?: string;
+  resumeUrl?: string;
   [key: string]: any;
 }
 
@@ -107,7 +146,7 @@ export interface CreateOfferPayload {
   [key: string]: any;
 }
 
-const unwrapList = <T,>(data: any, keys: string[]): T[] => {
+const unwrapList = <T>(data: any, keys: string[]): T[] => {
   if (Array.isArray(data)) return data as T[];
   if (Array.isArray(data?.data)) return data.data as T[];
   for (const key of keys) {
@@ -131,13 +170,26 @@ export const useRecruitmentDashboard = () =>
     },
   });
 
-export const useRecruitmentVacancies = () =>
+export const useRecruitmentVacancies = (params?: VacancyQueryParams) =>
   useQuery<RecruitmentVacancy[]>({
-    queryKey: [...queryRoot, "vacancies"],
+    queryKey: [...queryRoot, "vacancies", params],
     queryFn: async () => {
-      const { data } = await apiClient.get<any>("/recruitment/vacancies");
+      const { data } = await apiClient.get<any>("/recruitment/vacancies", {
+        params,
+      });
       return unwrapList<RecruitmentVacancy>(data, ["vacancies"]);
     },
+  });
+
+export const useRecruitmentVacancy = (id?: string) =>
+  useQuery<RecruitmentVacancy>({
+    queryKey: [...queryRoot, "vacancies", "detail", id],
+    queryFn: async () => {
+      if (!id) throw new Error("Vacancy ID required");
+      const { data } = await apiClient.get<any>(`/recruitment/vacancies/${id}`);
+      return (data?.data ?? data) as RecruitmentVacancy;
+    },
+    enabled: Boolean(id),
   });
 
 export const useRecruitmentApplications = (params?: {
@@ -204,7 +256,10 @@ export const useCreateVacancy = () => {
   const invalidate = useInvalidateRecruitment();
   return useMutation({
     mutationFn: async (payload: CreateVacancyPayload) => {
-      const { data } = await apiClient.post<any>("/recruitment/vacancies", payload);
+      const { data } = await apiClient.post<any>(
+        "/recruitment/vacancies",
+        payload,
+      );
       return data?.data ?? data;
     },
     onSuccess: invalidate,
@@ -247,13 +302,18 @@ export const useDecideVacancy = () => {
     mutationFn: async ({
       id,
       decision,
+      reason,
     }: {
       id: string;
       decision: "approve" | "reject";
+      reason?: string;
     }) => {
       const { data } = await apiClient.patch<any>(
         `/recruitment/vacancies/${id}/decision`,
-        { decision },
+        {
+          decision,
+          ...(reason?.trim() ? { reason: reason.trim() } : {}),
+        },
       );
       return data?.data ?? data;
     },
@@ -267,6 +327,48 @@ export const usePublishVacancy = () => {
     mutationFn: async (id: string) => {
       const { data } = await apiClient.patch<any>(
         `/recruitment/vacancies/${id}/publish`,
+      );
+      return data?.data ?? data;
+    },
+    onSuccess: invalidate,
+  });
+};
+
+export const useUnpublishVacancy = () => {
+  const invalidate = useInvalidateRecruitment();
+  return useMutation({
+    mutationFn: async ({ id, reason }: { id: string; reason?: string }) => {
+      const { data } = await apiClient.patch<any>(
+        `/recruitment/vacancies/${id}/unpublish`,
+        reason?.trim() ? { reason: reason.trim() } : {},
+      );
+      return data?.data ?? data;
+    },
+    onSuccess: invalidate,
+  });
+};
+
+export const useCloseVacancy = () => {
+  const invalidate = useInvalidateRecruitment();
+  return useMutation({
+    mutationFn: async ({ id, reason }: { id: string; reason?: string }) => {
+      const { data } = await apiClient.patch<any>(
+        `/recruitment/vacancies/${id}/close`,
+        reason?.trim() ? { reason: reason.trim() } : {},
+      );
+      return data?.data ?? data;
+    },
+    onSuccess: invalidate,
+  });
+};
+
+export const useArchiveVacancy = () => {
+  const invalidate = useInvalidateRecruitment();
+  return useMutation({
+    mutationFn: async ({ id, reason }: { id: string; reason?: string }) => {
+      const { data } = await apiClient.patch<any>(
+        `/recruitment/vacancies/${id}/archive`,
+        reason?.trim() ? { reason: reason.trim() } : {},
       );
       return data?.data ?? data;
     },
@@ -297,6 +399,8 @@ export const useUpdateApplicationStage = () => {
     mutationFn: async ({
       id,
       stage,
+      score,
+      notes,
     }: {
       id: string;
       stage:
@@ -309,10 +413,16 @@ export const useUpdateApplicationStage = () => {
         | "hired"
         | "rejected"
         | "withdrawn";
+      score?: number;
+      notes?: string;
     }) => {
       const { data } = await apiClient.patch<any>(
         `/recruitment/applications/${id}/stage`,
-        { stage },
+        {
+          stage,
+          ...(score !== undefined ? { score } : {}),
+          ...(notes?.trim() ? { notes: notes.trim() } : {}),
+        },
       );
       return data?.data ?? data;
     },
@@ -337,7 +447,10 @@ export const useCreateInterview = () => {
 export const useUpdateInterview = () => {
   const invalidate = useInvalidateRecruitment();
   return useMutation({
-    mutationFn: async ({ id, ...payload }: { id: string } & Record<string, any>) => {
+    mutationFn: async ({
+      id,
+      ...payload
+    }: { id: string } & Record<string, any>) => {
       const { data } = await apiClient.patch<any>(
         `/recruitment/interviews/${id}`,
         payload,
@@ -365,7 +478,10 @@ export const useCreateOffer = () => {
   const invalidate = useInvalidateRecruitment();
   return useMutation({
     mutationFn: async (payload: CreateOfferPayload) => {
-      const { data } = await apiClient.post<any>("/recruitment/offers", payload);
+      const { data } = await apiClient.post<any>(
+        "/recruitment/offers",
+        payload,
+      );
       return data?.data ?? data;
     },
     onSuccess: invalidate,

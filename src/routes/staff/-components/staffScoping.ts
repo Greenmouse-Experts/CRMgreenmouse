@@ -3,6 +3,7 @@ import type {
   PerformanceAppraisal,
   PerformanceGoal,
 } from "@/api/performanceApi";
+import type { Task } from "@/api/tasksApi";
 import type { DisciplinaryCase } from "@/routes/hr/disciplinary/-components/types";
 import type { Department } from "@/routes/hr/organization/-components/types";
 import type { Course } from "@/routes/hr/training/-components/types";
@@ -285,10 +286,7 @@ export function filterPersonalGoals<
   goals: T[],
   identity: Pick<StaffIdentity, "idCandidates" | "nameCandidates">,
 ): T[] {
-  if (
-    identity.idCandidates.size === 0 &&
-    identity.nameCandidates.size === 0
-  ) {
+  if (identity.idCandidates.size === 0 && identity.nameCandidates.size === 0) {
     return [];
   }
   return goals.filter((goal) => {
@@ -308,10 +306,7 @@ export function filterPersonalAppraisals<
   appraisals: T[],
   identity: Pick<StaffIdentity, "idCandidates" | "nameCandidates">,
 ): T[] {
-  if (
-    identity.idCandidates.size === 0 &&
-    identity.nameCandidates.size === 0
-  ) {
+  if (identity.idCandidates.size === 0 && identity.nameCandidates.size === 0) {
     return [];
   }
   return appraisals.filter((appraisal) => {
@@ -332,20 +327,71 @@ export function filterPersonalDisciplinaryCases<
   cases: T[],
   identity: Pick<StaffIdentity, "idCandidates" | "nameCandidates">,
 ): T[] {
-  if (
-    identity.idCandidates.size === 0 &&
-    identity.nameCandidates.size === 0
-  ) {
+  if (identity.idCandidates.size === 0 && identity.nameCandidates.size === 0) {
     return [];
   }
   return cases.filter((item) => {
-    if (
-      item.employeeId &&
-      identity.idCandidates.has(String(item.employeeId))
-    ) {
+    if (item.employeeId && identity.idCandidates.has(String(item.employeeId))) {
       return true;
     }
     const candidateName = normalizeIdentityText(item.employee);
     return Boolean(candidateName && identity.nameCandidates.has(candidateName));
+  });
+}
+
+export function filterPersonalTasks<
+  T extends Pick<Task, "assignedTo" | "assignee">,
+>(
+  tasks: T[],
+  identity: Pick<StaffIdentity, "idCandidates" | "nameCandidates" | "email">,
+): T[] {
+  const normalizedIdentityEmail = normalizeIdentityText(identity.email);
+  if (
+    identity.idCandidates.size === 0 &&
+    identity.nameCandidates.size === 0 &&
+    !normalizedIdentityEmail
+  ) {
+    return [];
+  }
+
+  return tasks.filter((task) => {
+    const rawAssignedTo = task.assignedTo as
+      | string
+      | { id?: string }
+      | null
+      | undefined;
+    const assignedToId =
+      typeof rawAssignedTo === "string"
+        ? rawAssignedTo.trim()
+        : rawAssignedTo?.id?.trim();
+
+    if (assignedToId && identity.idCandidates.has(assignedToId)) {
+      return true;
+    }
+
+    if (
+      task.assignee?.id &&
+      identity.idCandidates.has(String(task.assignee.id).trim())
+    ) {
+      return true;
+    }
+
+    const assigneeEmail = normalizeIdentityText(task.assignee?.email);
+    if (
+      normalizedIdentityEmail &&
+      assigneeEmail &&
+      assigneeEmail === normalizedIdentityEmail
+    ) {
+      return true;
+    }
+
+    const assigneeName = normalizeIdentityText(
+      task.assignee?.name ??
+        ([task.assignee?.firstName, task.assignee?.lastName]
+          .filter(Boolean)
+          .join(" ") ||
+          undefined),
+    );
+    return Boolean(assigneeName && identity.nameCandidates.has(assigneeName));
   });
 }

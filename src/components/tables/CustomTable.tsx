@@ -43,7 +43,7 @@ export default function CustomTable(props: CustomTableProps) {
         (ring ? " rounded-box " : "rounded-b-box")
       }
     >
-      <div className="relative overflow-x-scroll">
+      <div className="relative overflow-x-auto">
         <table className="table w-full text-md">
           <thead>
             <tr className="rounded-2xl bg-base-200/80">
@@ -87,7 +87,7 @@ export default function CustomTable(props: CustomTableProps) {
                     {!props.columns?.find((item) => item.key === "action") &&
                       props.actions &&
                       props.actions.length > 0 && (
-                        <td>
+                        <td onClick={(e) => e.stopPropagation()}>
                           <PopUp
                             itemIndex={rowIdx}
                             setIndex={setSelectedItem}

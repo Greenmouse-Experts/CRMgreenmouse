@@ -37,6 +37,7 @@ import { Route as TenantProductsIndexRouteImport } from './routes/tenant/product
 import { Route as TenantOrdersIndexRouteImport } from './routes/tenant/orders/index'
 import { Route as TenantNotificationsIndexRouteImport } from './routes/tenant/notifications.index'
 import { Route as StaffTrainingIndexRouteImport } from './routes/staff/training/index'
+import { Route as StaffTasksIndexRouteImport } from './routes/staff/tasks/index'
 import { Route as StaffStaffsIndexRouteImport } from './routes/staff/staffs/index'
 import { Route as StaffSettingsIndexRouteImport } from './routes/staff/settings/index'
 import { Route as StaffPerformanceIndexRouteImport } from './routes/staff/performance/index'
@@ -80,6 +81,7 @@ import { Route as StaffTrainingIdRouteImport } from './routes/staff/training/$id
 import { Route as HrTrainingIdRouteImport } from './routes/hr/training/$id'
 import { Route as HrStaffsIdRouteImport } from './routes/hr/staffs/$id'
 import { Route as HrReportsSlugRouteImport } from './routes/hr/reports/$slug'
+import { Route as HrRecruitmentIdRouteImport } from './routes/hr/recruitment/$id'
 import { Route as HrOnboardingEmployeeIdRouteImport } from './routes/hr/onboarding/$employeeId'
 import { Route as AuthForgotPasswordNewPasswordRouteImport } from './routes/auth/forgot-password/new-password'
 import { Route as TenantUsersRolesIndexRouteImport } from './routes/tenant/users/roles/index'
@@ -289,6 +291,11 @@ const TenantNotificationsIndexRoute =
 const StaffTrainingIndexRoute = StaffTrainingIndexRouteImport.update({
   id: '/training/',
   path: '/training/',
+  getParentRoute: () => StaffRouteRoute,
+} as any)
+const StaffTasksIndexRoute = StaffTasksIndexRouteImport.update({
+  id: '/tasks/',
+  path: '/tasks/',
   getParentRoute: () => StaffRouteRoute,
 } as any)
 const StaffStaffsIndexRoute = StaffStaffsIndexRouteImport.update({
@@ -504,6 +511,11 @@ const HrStaffsIdRoute = HrStaffsIdRouteImport.update({
 const HrReportsSlugRoute = HrReportsSlugRouteImport.update({
   id: '/reports/$slug',
   path: '/reports/$slug',
+  getParentRoute: () => HrRouteRoute,
+} as any)
+const HrRecruitmentIdRoute = HrRecruitmentIdRouteImport.update({
+  id: '/recruitment/$id',
+  path: '/recruitment/$id',
   getParentRoute: () => HrRouteRoute,
 } as any)
 const HrOnboardingEmployeeIdRoute = HrOnboardingEmployeeIdRouteImport.update({
@@ -927,6 +939,7 @@ export interface FileRoutesByFullPath {
   '/test/': typeof TestIndexRoute
   '/auth/forgot-password/new-password': typeof AuthForgotPasswordNewPasswordRoute
   '/hr/onboarding/$employeeId': typeof HrOnboardingEmployeeIdRoute
+  '/hr/recruitment/$id': typeof HrRecruitmentIdRoute
   '/hr/reports/$slug': typeof HrReportsSlugRoute
   '/hr/staffs/$id': typeof HrStaffsIdRoute
   '/hr/training/$id': typeof HrTrainingIdRoute
@@ -970,6 +983,7 @@ export interface FileRoutesByFullPath {
   '/staff/performance': typeof StaffPerformanceIndexRoute
   '/staff/settings/': typeof StaffSettingsIndexRoute
   '/staff/staffs': typeof StaffStaffsIndexRoute
+  '/staff/tasks': typeof StaffTasksIndexRoute
   '/staff/training': typeof StaffTrainingIndexRoute
   '/tenant/notifications': typeof TenantNotificationsIndexRoute
   '/tenant/orders': typeof TenantOrdersIndexRoute
@@ -1058,6 +1072,7 @@ export interface FileRoutesByTo {
   '/test': typeof TestIndexRoute
   '/auth/forgot-password/new-password': typeof AuthForgotPasswordNewPasswordRoute
   '/hr/onboarding/$employeeId': typeof HrOnboardingEmployeeIdRoute
+  '/hr/recruitment/$id': typeof HrRecruitmentIdRoute
   '/hr/reports/$slug': typeof HrReportsSlugRoute
   '/hr/staffs/$id': typeof HrStaffsIdRoute
   '/hr/training/$id': typeof HrTrainingIdRoute
@@ -1101,6 +1116,7 @@ export interface FileRoutesByTo {
   '/staff/performance': typeof StaffPerformanceIndexRoute
   '/staff/settings': typeof StaffSettingsIndexRoute
   '/staff/staffs': typeof StaffStaffsIndexRoute
+  '/staff/tasks': typeof StaffTasksIndexRoute
   '/staff/training': typeof StaffTrainingIndexRoute
   '/tenant/notifications': typeof TenantNotificationsIndexRoute
   '/tenant/orders': typeof TenantOrdersIndexRoute
@@ -1201,6 +1217,7 @@ export interface FileRoutesById {
   '/test/': typeof TestIndexRoute
   '/auth/forgot-password/new-password': typeof AuthForgotPasswordNewPasswordRoute
   '/hr/onboarding/$employeeId': typeof HrOnboardingEmployeeIdRoute
+  '/hr/recruitment/$id': typeof HrRecruitmentIdRoute
   '/hr/reports/$slug': typeof HrReportsSlugRoute
   '/hr/staffs/$id': typeof HrStaffsIdRoute
   '/hr/training/$id': typeof HrTrainingIdRoute
@@ -1244,6 +1261,7 @@ export interface FileRoutesById {
   '/staff/performance/': typeof StaffPerformanceIndexRoute
   '/staff/settings/': typeof StaffSettingsIndexRoute
   '/staff/staffs/': typeof StaffStaffsIndexRoute
+  '/staff/tasks/': typeof StaffTasksIndexRoute
   '/staff/training/': typeof StaffTrainingIndexRoute
   '/tenant/notifications/': typeof TenantNotificationsIndexRoute
   '/tenant/orders/': typeof TenantOrdersIndexRoute
@@ -1345,6 +1363,7 @@ export interface FileRouteTypes {
     | '/test/'
     | '/auth/forgot-password/new-password'
     | '/hr/onboarding/$employeeId'
+    | '/hr/recruitment/$id'
     | '/hr/reports/$slug'
     | '/hr/staffs/$id'
     | '/hr/training/$id'
@@ -1388,6 +1407,7 @@ export interface FileRouteTypes {
     | '/staff/performance'
     | '/staff/settings/'
     | '/staff/staffs'
+    | '/staff/tasks'
     | '/staff/training'
     | '/tenant/notifications'
     | '/tenant/orders'
@@ -1476,6 +1496,7 @@ export interface FileRouteTypes {
     | '/test'
     | '/auth/forgot-password/new-password'
     | '/hr/onboarding/$employeeId'
+    | '/hr/recruitment/$id'
     | '/hr/reports/$slug'
     | '/hr/staffs/$id'
     | '/hr/training/$id'
@@ -1519,6 +1540,7 @@ export interface FileRouteTypes {
     | '/staff/performance'
     | '/staff/settings'
     | '/staff/staffs'
+    | '/staff/tasks'
     | '/staff/training'
     | '/tenant/notifications'
     | '/tenant/orders'
@@ -1618,6 +1640,7 @@ export interface FileRouteTypes {
     | '/test/'
     | '/auth/forgot-password/new-password'
     | '/hr/onboarding/$employeeId'
+    | '/hr/recruitment/$id'
     | '/hr/reports/$slug'
     | '/hr/staffs/$id'
     | '/hr/training/$id'
@@ -1661,6 +1684,7 @@ export interface FileRouteTypes {
     | '/staff/performance/'
     | '/staff/settings/'
     | '/staff/staffs/'
+    | '/staff/tasks/'
     | '/staff/training/'
     | '/tenant/notifications/'
     | '/tenant/orders/'
@@ -1955,6 +1979,13 @@ declare module '@tanstack/react-router' {
       path: '/training'
       fullPath: '/staff/training'
       preLoaderRoute: typeof StaffTrainingIndexRouteImport
+      parentRoute: typeof StaffRouteRoute
+    }
+    '/staff/tasks/': {
+      id: '/staff/tasks/'
+      path: '/tasks'
+      fullPath: '/staff/tasks'
+      preLoaderRoute: typeof StaffTasksIndexRouteImport
       parentRoute: typeof StaffRouteRoute
     }
     '/staff/staffs/': {
@@ -2256,6 +2287,13 @@ declare module '@tanstack/react-router' {
       path: '/reports/$slug'
       fullPath: '/hr/reports/$slug'
       preLoaderRoute: typeof HrReportsSlugRouteImport
+      parentRoute: typeof HrRouteRoute
+    }
+    '/hr/recruitment/$id': {
+      id: '/hr/recruitment/$id'
+      path: '/recruitment/$id'
+      fullPath: '/hr/recruitment/$id'
+      preLoaderRoute: typeof HrRecruitmentIdRouteImport
       parentRoute: typeof HrRouteRoute
     }
     '/hr/onboarding/$employeeId': {
@@ -2862,6 +2900,7 @@ interface HrRouteRouteChildren {
   HrSettingsRouteRoute: typeof HrSettingsRouteRouteWithChildren
   HrIndexRoute: typeof HrIndexRoute
   HrOnboardingEmployeeIdRoute: typeof HrOnboardingEmployeeIdRoute
+  HrRecruitmentIdRoute: typeof HrRecruitmentIdRoute
   HrReportsSlugRoute: typeof HrReportsSlugRoute
   HrStaffsIdRoute: typeof HrStaffsIdRoute
   HrTrainingIdRoute: typeof HrTrainingIdRoute
@@ -2885,6 +2924,7 @@ const HrRouteRouteChildren: HrRouteRouteChildren = {
   HrSettingsRouteRoute: HrSettingsRouteRouteWithChildren,
   HrIndexRoute: HrIndexRoute,
   HrOnboardingEmployeeIdRoute: HrOnboardingEmployeeIdRoute,
+  HrRecruitmentIdRoute: HrRecruitmentIdRoute,
   HrReportsSlugRoute: HrReportsSlugRoute,
   HrStaffsIdRoute: HrStaffsIdRoute,
   HrTrainingIdRoute: HrTrainingIdRoute,
@@ -2936,6 +2976,7 @@ interface StaffRouteRouteChildren {
   StaffOrganizationIndexRoute: typeof StaffOrganizationIndexRoute
   StaffPerformanceIndexRoute: typeof StaffPerformanceIndexRoute
   StaffStaffsIndexRoute: typeof StaffStaffsIndexRoute
+  StaffTasksIndexRoute: typeof StaffTasksIndexRoute
   StaffTrainingIndexRoute: typeof StaffTrainingIndexRoute
 }
 
@@ -2949,6 +2990,7 @@ const StaffRouteRouteChildren: StaffRouteRouteChildren = {
   StaffOrganizationIndexRoute: StaffOrganizationIndexRoute,
   StaffPerformanceIndexRoute: StaffPerformanceIndexRoute,
   StaffStaffsIndexRoute: StaffStaffsIndexRoute,
+  StaffTasksIndexRoute: StaffTasksIndexRoute,
   StaffTrainingIndexRoute: StaffTrainingIndexRoute,
 }
 

@@ -1,8 +1,10 @@
-import { useEffect, useState } from "react";
-import { createFileRoute } from "@tanstack/react-router";
+import { useEffect, useMemo, useState } from "react";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import PageHeader from "@/components/Headers/PageHeader";
 import PageLoader from "@/components/layout/PageLoader";
 import {
+  useArchiveVacancy,
+  useCloseVacancy,
   useCreateVacancy,
   useDecideVacancy,
   usePublishVacancy,
@@ -12,26 +14,27 @@ import {
   useRecruitmentOffers,
   useRecruitmentOptions,
   useRecruitmentVacancies,
+  useSubmitVacancy,
+  useUnpublishVacancy,
   useUpdateApplicationStage,
-  type RecruitmentApplication,
-  type RecruitmentVacancy,
+  useUpdateVacancy,
   type CreateVacancyPayload,
+  type RecruitmentVacancy,
 } from "@/api/recruitmentApi";
 import { useOrganization } from "@/api/organizationApi";
 import { useEmployees } from "@/api/employeesApi";
-import { extract_message } from "@/helpers/auth";
+import { extract_message } from "@/helpers/errors";
 import RecruitmentStats from "./-components/RecruitmentStats";
 import CandidatePipeline from "./-components/CandidatePipeline";
 import VacanciesTable from "./-components/VacanciesTable";
 import OfferConversionSection from "./-components/OfferConversionSection";
 import CreateVacancyModal from "./-components/CreateVacancyModal";
 import CandidateDetailModal from "./-components/CandidateDetailModal";
-import type {
-  Candidate,
-  PipelineStage,
-  Vacancy,
-  VacancyStatus,
-} from "./-components/types";
+import VacancyActionModal, {
+  type VacancyLifecycleAction,
+} from "./-components/VacancyActionModal";
+import { toUiCandidate, toUiVacancy } from "./-components/mappers";
+import type { Candidate, PipelineStage, Vacancy } from "./-components/types";
 import { Plus } from "lucide-react";
 import { toast } from "sonner";
 
@@ -39,79 +42,15 @@ export const Route = createFileRoute("/hr/recruitment/")({
   component: RouteComponent,
 });
 
-const STATUS_MAP: Record<string, VacancyStatus> = {
-  published: "Published",
-  approved: "Published",
-  active: "Published",
-  draft: "Draft",
-  pending: "Pending Approval",
-  pending_approval: "Pending Approval",
-  closed: "Closed",
-  rejected: "Closed",
-  cancelled: "Closed",
-};
-
-const STAGE_MAP: Record<string, PipelineStage> = {
-  applied: "Applied",
-  screening: "Screening",
-  shortlisted: "Shortlisted",
-  interview: "Interview",
-  assessment: "Assessment",
-  offer: "Offer",
-  hired: "Hired",
-};
-
-function toUiVacancy(raw: RecruitmentVacancy): Vacancy {
-  const status = raw.status?.toLowerCase();
-  return {
-    id: raw.id,
-    title: raw.jobTitle ?? raw.title ?? "Untitled vacancy",
-    dept: raw.department ?? raw.departmentName ?? "—",
-    departmentId: raw.departmentId,
-    openings: raw.openings ?? 1,
-    applicants: raw.applicants ?? raw.applicationCount ?? 0,
-    closes: raw.closingDate
-      ? new Date(raw.closingDate).toLocaleDateString("en-US", {
-          month: "short",
-          day: "numeric",
-        })
-      : "—",
-    closingDate: raw.closingDate,
-    status: (status && STATUS_MAP[status]) || "Draft",
-    grade: raw.grade,
-    type: raw.employmentType,
-    location: raw.location,
-    reason: raw.reasonForHire,
-    budget: raw.budget,
-    desc: raw.jobDescription,
-  };
-}
-
-function toUiCandidate(raw: RecruitmentApplication): Candidate {
-  const stageKey = (
-    raw.stage ??
-    raw.applicationStage ??
-    "applied"
-  ).toLowerCase();
-  return {
-    id: raw.id,
-    name:
-      raw.name ||
-      [raw.firstName, raw.lastName].filter(Boolean).join(" ") ||
-      "Candidate",
-    role: raw.vacancyTitle ?? raw.jobTitle ?? "Applicant",
-    stage: STAGE_MAP[stageKey] ?? "Applied",
-    score: raw.score ?? 0,
-    email: raw.email,
-    phone: raw.phone,
-    appliedDate: raw.appliedAt ?? raw.createdAt,
-  };
-}
-
 function RouteComponent() {
+  const navigate = useNavigate();
+
   // Server state
   const dashboardQuery = useRecruitmentDashboard();
-  const vacanciesQuery = useRecruitmentVacancies();
+  const vacanciesQuery = useRecruitmentVacancies({
+    sort: "vacancyNumber",
+    order: "desc",
+  });
   const applicationsQuery = useRecruitmentApplications();
   const departmentsQuery = useRecruitmentOptions("department");
   const approversQuery = useRecruitmentApprovers();
@@ -120,13 +59,27 @@ function RouteComponent() {
   const employeesQuery = useEmployees();
 
   const createVacancyMutation = useCreateVacancy();
-  const updateStageMutation = useUpdateApplicationStage();
-  const publishVacancyMutation = usePublishVacancy();
+  const updateVacancyMutation = useUpdateVacancy();
+  const submitVacancyMutation = useSubmitVacancy();
   const decideVacancyMutation = useDecideVacancy();
+  const publishVacancyMutation = usePublishVacancy();
+  const unpublishVacancyMutation = useUnpublishVacancy();
+  const closeVacancyMutation = useCloseVacancy();
+  const archiveVacancyMutation = useArchiveVacancy();
+  const updateStageMutation = useUpdateApplicationStage();
 
   // Local view state (optimistic updates; refreshed when queries invalidate)
   const [candidates, setCandidates] = useState<Candidate[]>([]);
-  const [vacancies, setVacancies] = useState<Vacancy[]>([]);
+  const [isCreateVacancyOpen, setIsCreateVacancyOpen] = useState(false);
+  const [editingVacancy, setEditingVacancy] =
+    useState<RecruitmentVacancy | null>(null);
+  const [selectedCandidate, setSelectedCandidate] = useState<Candidate | null>(
+    null,
+  );
+  const [actionTarget, setActionTarget] = useState<{
+    vacancy: Vacancy;
+    action: VacancyLifecycleAction;
+  } | null>(null);
 
   useEffect(() => {
     if (applicationsQuery.data) {
@@ -134,15 +87,22 @@ function RouteComponent() {
     }
   }, [applicationsQuery.data]);
 
-  useEffect(() => {
-    if (vacanciesQuery.data) {
-      setVacancies(vacanciesQuery.data.map(toUiVacancy));
+  const nameLookup = useMemo(() => {
+    const map: Record<string, string> = {};
+    for (const a of approversQuery.data ?? []) {
+      if (a.id && a.name) map[a.id] = a.name;
     }
-  }, [vacanciesQuery.data]);
+    for (const e of employeesQuery.data ?? []) {
+      const full = `${e.firstName ?? ""} ${e.lastName ?? ""}`.trim();
+      if (e.id && (full || e.email)) map[e.id] = full || e.email || e.id;
+    }
+    return map;
+  }, [approversQuery.data, employeesQuery.data]);
 
-  const [isCreateVacancyOpen, setIsCreateVacancyOpen] = useState(false);
-  const [selectedCandidate, setSelectedCandidate] = useState<Candidate | null>(
-    null,
+  const vacancies = useMemo(
+    () =>
+      (vacanciesQuery.data ?? []).map((raw) => toUiVacancy(raw, nameLookup)),
+    [vacanciesQuery.data, nameLookup],
   );
 
   const departmentOptions =
@@ -186,7 +146,7 @@ function RouteComponent() {
       {
         loading: "Updating candidate stage...",
         success: `Candidate advanced to ${nextStage}`,
-        error: (error) => extract_message(error as never),
+        error: (error) => extract_message(error),
       },
     );
   };
@@ -219,58 +179,108 @@ function RouteComponent() {
       success: payload.saveAsDraft
         ? "Vacancy saved as draft"
         : "Vacancy submitted for approval",
-      error: (error) => extract_message(error as never),
+      error: (error) => extract_message(error),
     });
   };
 
-  const handleUpdateVacancyStatus = (
-    vacancyId: string,
-    status: VacancyStatus,
+  const handleUpdateVacancy = async (
+    id: string,
+    payload: Partial<CreateVacancyPayload>,
   ) => {
-    if (status === "Published") {
-      toast.promise(publishVacancyMutation.mutateAsync(vacancyId), {
-        loading: "Publishing vacancy...",
-        success: "Vacancy is now published",
-        error: (error) => extract_message(error as never),
-      });
-      return;
-    }
-
-    if (status === "Closed") {
-      toast.promise(
-        decideVacancyMutation.mutateAsync({
-          id: vacancyId,
-          decision: "reject",
-        }),
-        {
-          loading: "Closing vacancy...",
-          success: "Vacancy closed",
-          error: (error) => extract_message(error as never),
-        },
-      );
-      return;
-    }
-
-    setVacancies((prev) =>
-      prev.map((v) => (v.id === vacancyId ? { ...v, status } : v)),
+    return await toast.promise(
+      updateVacancyMutation.mutateAsync({ id, ...payload }),
+      {
+        loading: "Saving vacancy changes...",
+        success: "Vacancy updated",
+        error: (error) => extract_message(error),
+      },
     );
-    toast.success(`Vacancy status updated to ${status}`);
   };
 
-  const handleDeleteVacancy = (vacancyId: string) => {
-    setVacancies((prev) => prev.filter((v) => v.id !== vacancyId));
-    toast.success("Vacancy listing removed");
+  const handleSubmitVacancy = (vacancy: Vacancy) => {
+    toast.promise(submitVacancyMutation.mutateAsync(vacancy.id), {
+      loading: "Submitting vacancy for approval...",
+      success: "Vacancy submitted for approval",
+      error: (error) => extract_message(error),
+    });
   };
+
+  const handlePublishVacancy = (vacancy: Vacancy) => {
+    toast.promise(publishVacancyMutation.mutateAsync(vacancy.id), {
+      loading: "Publishing vacancy...",
+      success: "Vacancy is now published",
+      error: (error) => extract_message(error),
+    });
+  };
+
+  const handleConfirmAction = async (reason?: string) => {
+    if (!actionTarget) return;
+    const { vacancy, action } = actionTarget;
+
+    try {
+      switch (action) {
+        case "approve":
+          await decideVacancyMutation.mutateAsync({
+            id: vacancy.id,
+            decision: "approve",
+            reason,
+          });
+          toast.success("Vacancy approved");
+          break;
+        case "reject":
+          await decideVacancyMutation.mutateAsync({
+            id: vacancy.id,
+            decision: "reject",
+            reason,
+          });
+          toast.success("Vacancy rejected");
+          break;
+        case "unpublish":
+          await unpublishVacancyMutation.mutateAsync({
+            id: vacancy.id,
+            reason,
+          });
+          toast.success("Vacancy unpublished");
+          break;
+        case "close":
+          await closeVacancyMutation.mutateAsync({
+            id: vacancy.id,
+            reason,
+          });
+          toast.success("Vacancy closed");
+          break;
+        case "archive":
+          await archiveVacancyMutation.mutateAsync({
+            id: vacancy.id,
+            reason,
+          });
+          toast.success("Vacancy archived");
+          break;
+      }
+      setActionTarget(null);
+    } catch (error) {
+      toast.error(extract_message(error));
+    }
+  };
+
+  const isActionPending =
+    decideVacancyMutation.isPending ||
+    unpublishVacancyMutation.isPending ||
+    closeVacancyMutation.isPending ||
+    archiveVacancyMutation.isPending;
 
   return (
     <div className="space-y-6 pb-12">
       <PageHeader
         title="Recruitment & Hiring"
-        description="Requisition → publish → screen → interview → offer → convert to employee."
+        description="Requisition → approve → publish → screen → interview → offer → convert to employee."
       >
         <button
           type="button"
-          onClick={() => setIsCreateVacancyOpen(true)}
+          onClick={() => {
+            setEditingVacancy(null);
+            setIsCreateVacancyOpen(true);
+          }}
           className="btn btn-sm bg-primary text-white hover:bg-primary/90 border-0 rounded-xl px-4 font-medium gap-1.5 shadow-sm shadow-primary/20"
         >
           <Plus className="size-4" />
@@ -310,16 +320,43 @@ function RouteComponent() {
           description:
             "Create a vacancy to start tracking your hiring pipeline.",
           actionText: "Create vacancy",
-          onAction: () => setIsCreateVacancyOpen(true),
+          onAction: () => {
+            setEditingVacancy(null);
+            setIsCreateVacancyOpen(true);
+          },
         }}
       >
         <VacanciesTable
           vacancies={vacancies}
-          onSelectVacancy={(v) => {
-            toast.info(`${v.id}: ${v.title} (${v.dept}) — ${v.status}`);
+          onSelectVacancy={(v) =>
+            navigate({
+              to: "/hr/recruitment/$id",
+              params: { id: v.id },
+            })
+          }
+          onEditVacancy={(v) => {
+            if (v.raw) {
+              setEditingVacancy(v.raw);
+              setIsCreateVacancyOpen(true);
+            }
           }}
-          onUpdateStatus={handleUpdateVacancyStatus}
-          onDeleteVacancy={handleDeleteVacancy}
+          onSubmitVacancy={handleSubmitVacancy}
+          onApproveVacancy={(v) =>
+            setActionTarget({ vacancy: v, action: "approve" })
+          }
+          onRejectVacancy={(v) =>
+            setActionTarget({ vacancy: v, action: "reject" })
+          }
+          onPublishVacancy={handlePublishVacancy}
+          onUnpublishVacancy={(v) =>
+            setActionTarget({ vacancy: v, action: "unpublish" })
+          }
+          onCloseVacancy={(v) =>
+            setActionTarget({ vacancy: v, action: "close" })
+          }
+          onArchiveVacancy={(v) =>
+            setActionTarget({ vacancy: v, action: "archive" })
+          }
         />
       </PageLoader>
 
@@ -327,11 +364,25 @@ function RouteComponent() {
 
       <CreateVacancyModal
         isOpen={isCreateVacancyOpen}
-        onClose={() => setIsCreateVacancyOpen(false)}
+        onClose={() => {
+          setIsCreateVacancyOpen(false);
+          setEditingVacancy(null);
+        }}
         onCreateVacancy={handleCreateVacancy}
+        onUpdateVacancy={handleUpdateVacancy}
+        initialVacancy={editingVacancy}
         departments={departmentOptions}
         approvers={approverOptions}
         managers={approverOptions}
+      />
+
+      <VacancyActionModal
+        isOpen={Boolean(actionTarget)}
+        onClose={() => setActionTarget(null)}
+        action={actionTarget?.action ?? null}
+        vacancyTitle={actionTarget?.vacancy.title}
+        onConfirm={handleConfirmAction}
+        isPending={isActionPending}
       />
 
       <CandidateDetailModal

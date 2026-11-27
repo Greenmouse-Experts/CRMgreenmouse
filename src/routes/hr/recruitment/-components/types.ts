@@ -1,3 +1,5 @@
+import type { RecruitmentVacancy } from "@/api/recruitmentApi";
+
 export type PipelineStage =
   | "Applied"
   | "Screening"
@@ -8,10 +10,14 @@ export type PipelineStage =
   | "Hired";
 
 export type VacancyStatus =
-  | "Published"
-  | "Pending Approval"
   | "Draft"
-  | "Closed";
+  | "Pending Approval"
+  | "Approved"
+  | "Published"
+  | "Unpublished"
+  | "Rejected"
+  | "Closed"
+  | "Archived";
 
 export interface Candidate {
   id: string;
@@ -24,10 +30,13 @@ export interface Candidate {
   appliedDate?: string;
   experience?: string;
   notes?: string;
+  resumeUrl?: string;
+  source?: string;
 }
 
 export interface Vacancy {
   id: string;
+  vacancyNumber?: string;
   title: string;
   dept: string;
   departmentId?: string;
@@ -36,6 +45,7 @@ export interface Vacancy {
   closes: string;
   closingDate?: string;
   status: VacancyStatus;
+  rawStatus?: string;
   grade?: string;
   type?: string;
   location?: string;
@@ -43,7 +53,21 @@ export interface Vacancy {
   budget?: string;
   desc?: string;
   manager?: string;
+  hiringManagerId?: string | null;
   approver?: string;
-  approverId?: string;
+  approverId?: string | null;
   channels?: string;
+  salaryMinimum?: number | null;
+  salaryMaximum?: number | null;
+  salaryCurrency?: string | null;
+  salaryPeriod?: string | null;
+  rejectionReason?: string | null;
+  decidedBy?: string | null;
+  decidedAt?: string | null;
+  archivedAt?: string | null;
+  archivedBy?: string | null;
+  archiveReason?: string | null;
+  createdAt?: string;
+  updatedAt?: string;
+  raw?: RecruitmentVacancy;
 }

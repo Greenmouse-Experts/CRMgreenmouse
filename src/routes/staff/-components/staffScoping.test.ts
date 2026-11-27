@@ -3,6 +3,7 @@ import {
   filterPersonalAppraisals,
   filterPersonalDisciplinaryCases,
   filterPersonalGoals,
+  filterPersonalTasks,
   filterStaffCourses,
   resolveStaffIdentity,
 } from "./staffScoping";
@@ -147,5 +148,40 @@ describe("staffScoping", () => {
     expect(
       filterPersonalDisciplinaryCases(cases, identity).map((c) => c.id),
     ).toEqual(["dc1", "dc3"]);
+  });
+
+  it("filters tasks strictly to the logged-in employee and fails closed without identity", () => {
+    const tasks = [
+      { id: "t-emp", assignedTo: "emp-1" },
+      { id: "t-staff", assignedTo: "staff-user-1" },
+      { id: "t-assignee-id", assignee: { id: "emp-1", firstName: "Ada" } },
+      { id: "t-email", assignee: { id: "other", email: "ADA@COMPANY.COM" } },
+      {
+        id: "t-name",
+        assignee: { id: "other", firstName: "Ada", lastName: "Okafor" },
+      },
+      { id: "t-unassigned", assignedTo: undefined, assignee: undefined },
+      {
+        id: "t-other",
+        assignedTo: "emp-2",
+        assignee: { id: "emp-2", email: "bola@company.com", name: "Bola Ade" },
+      },
+    ];
+
+    expect(filterPersonalTasks(tasks, identity).map((t) => t.id)).toEqual([
+      "t-emp",
+      "t-staff",
+      "t-assignee-id",
+      "t-email",
+      "t-name",
+    ]);
+
+    expect(
+      filterPersonalTasks(tasks, {
+        idCandidates: new Set(),
+        nameCandidates: new Set(),
+        email: undefined,
+      }),
+    ).toEqual([]);
   });
 });
