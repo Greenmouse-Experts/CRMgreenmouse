@@ -23,6 +23,8 @@ import { useLocation } from "@tanstack/react-router";
 import { get_user_value } from "@/store/authStore";
 import { toast } from "sonner";
 import HrHeader from "./-components/HrHeader";
+import { useDashboardTheme } from "@/helpers/dashboardTheme";
+import RestrictPage from "@/components/RestrictPage";
 
 interface Links {
   path: string;
@@ -203,7 +205,14 @@ export const Route = createFileRoute("/hr")({
       return redirect({
         to: "/auth/login",
       });
-    if (auth.user.userType !== "tenant" && auth.user.userType !== "staff") {
+    const userType = auth.user.userType?.toLowerCase() ?? "";
+    const roleName = auth.user.role?.name?.toLowerCase() ?? "";
+    if (
+      userType !== "tenant" &&
+      userType !== "staff" &&
+      roleName !== "hr" &&
+      !userType.includes("hr")
+    ) {
       toast.info("wrong dashboard");
       return redirect({
         to: "/auth/login",
@@ -216,6 +225,7 @@ function RouteComponent() {
   const url = useLocation();
   const pathname = url.pathname.replace(/\/$/, "") || "/";
   const [openMenu, setOpenMenu] = useState<string | null>(null);
+  const [theme] = useDashboardTheme("hr");
   const activeLinkPath = nav_links
     .flatMap((link) => link.children?.map((child) => child.path) ?? [link.path])
     .filter(
@@ -226,93 +236,97 @@ function RouteComponent() {
     .sort((first, second) => second.length - first.length)[0];
 
   return (
-    <div className="drawer lg:drawer-open">
-      <input id="tenant-drawer" type="checkbox" className="drawer-toggle" />
-      <div className="drawer-content bg-base-300 isolate">
-        <HrHeader />
-        <main className="min-h-screen bg-base-300 pt-4 space-y-4 px-4">
-          <Outlet />
-        </main>
-      </div>
-      <div className="drawer-side">
-        <label
-          htmlFor="tenant-drawer"
-          aria-label="close sidebar"
-          className="drawer-overlay"
-        ></label>
-        <div className="min-h-full w-72 bg-base-100 text-base-content">
-          <div className="flex items-center gap-3 border-b border-base-300/80 px-4 py-4">
-            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary text-lg font-black text-primary-content">
-              K
-            </div>
-            <div className="leading-tight">
-              <div className="text-lg font-semibold text-base-content">
-                Kinovia CRM
-              </div>
-              <div className="text-[10px] uppercase tracking-[0.2em] text-base-content/80">
-                Human Resources
-              </div>
-            </div>
+    <div data-theme={theme}>
+      <RestrictPage allowedTypes={["tenant", "hr"]}>
+        <div className="drawer lg:drawer-open">
+          <input id="tenant-drawer" type="checkbox" className="drawer-toggle" />
+          <div className="drawer-content bg-base-200 isolate">
+            <HrHeader />
+            <main className="min-h-screen bg-base-200 pt-4 space-y-4 px-4">
+              <Outlet />
+            </main>
           </div>
+          <div className="drawer-side">
+            <label
+              htmlFor="tenant-drawer"
+              aria-label="close sidebar"
+              className="drawer-overlay"
+            ></label>
+            <div className="min-h-full w-64 bg-base-100 text-base-content">
+              <div className="flex items-center gap-3 border-b border-base-300/80 px-4 py-4">
+                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary text-lg font-black text-primary-content">
+                  K
+                </div>
+                <div className="leading-tight">
+                  <div className="text-lg font-semibold text-base-content">
+                    Kinovia CRM
+                  </div>
+                  <div className="text-[10px] uppercase tracking-[0.2em] text-base-content/80">
+                    Human Resources
+                  </div>
+                </div>
+              </div>
 
-          <ul className="menu w-full space-y-2">
-            {nav_links.map((link) => {
-              if (link.type === "submenu" && link.children) {
-                // Submenus closed by default
-                return (
-                  <li key={link.path} className="mb-2">
-                    <details
-                      open={openMenu === link.path}
-                      onToggle={(e) => {
-                        if (e.currentTarget.open) setOpenMenu(link.path);
-                        else
-                          setOpenMenu((current) =>
-                            current === link.path ? null : current,
-                          );
-                      }}
-                    >
-                      <summary className="text-md">
+              <ul className="menu w-full space-y-2">
+                {nav_links.map((link) => {
+                  if (link.type === "submenu" && link.children) {
+                    // Submenus closed by default
+                    return (
+                      <li key={link.path} className="mb-2">
+                        <details
+                          open={openMenu === link.path}
+                          onToggle={(e) => {
+                            if (e.currentTarget.open) setOpenMenu(link.path);
+                            else
+                              setOpenMenu((current) =>
+                                current === link.path ? null : current,
+                              );
+                          }}
+                        >
+                          <summary className="text-md">
+                            {link.icon}
+                            {link.label}
+                          </summary>
+                          <ul className="py-1 space-y-1">
+                            {link.children.map((childLink) => {
+                              const isChildActive =
+                                childLink.path === activeLinkPath;
+                              return (
+                                <li key={childLink.path}>
+                                  <Link
+                                    to={childLink.path}
+                                    className={`${isChildActive ? "bg-primary text-primary-content " : ""} text-md py-2 rounded-box`}
+                                  >
+                                    {childLink.icon}
+                                    {childLink.label}
+                                  </Link>
+                                </li>
+                              );
+                            })}
+                          </ul>
+                        </details>
+                      </li>
+                    );
+                  }
+
+                  const isActive = link.path === activeLinkPath;
+                  return (
+                    <li key={link.path} className="mb-2">
+                      <Link
+                        to={link.path}
+                        className={`${isActive ? "bg-primary text-primary-content " : ""} text-md py-2 rounded-box`}
+                      >
                         {link.icon}
                         {link.label}
-                      </summary>
-                      <ul className="py-1 space-y-1">
-                        {link.children.map((childLink) => {
-                          const isChildActive =
-                            childLink.path === activeLinkPath;
-                          return (
-                            <li key={childLink.path}>
-                              <Link
-                                to={childLink.path}
-                                className={`${isChildActive ? "bg-primary text-primary-content " : ""} text-md py-2 rounded-box`}
-                              >
-                                {childLink.icon}
-                                {childLink.label}
-                              </Link>
-                            </li>
-                          );
-                        })}
-                      </ul>
-                    </details>
-                  </li>
-                );
-              }
-
-              const isActive = link.path === activeLinkPath;
-              return (
-                <li key={link.path} className="mb-2">
-                  <Link
-                    to={link.path}
-                    className={`${isActive ? "bg-primary text-primary-content " : ""} text-md py-2 rounded-box`}
-                  >
-                    {link.icon}
-                    {link.label}
-                  </Link>
-                </li>
-              );
-            })}
-          </ul>
+                      </Link>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+          </div>
         </div>
-      </div>
+      </RestrictPage>
     </div>
   );
 }

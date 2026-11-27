@@ -318,9 +318,6 @@ function RouteComponent() {
   return (
     <div className="space-y-6 pb-16">
       <div>
-        <p className="mb-1  font-semibold uppercase tracking-[0.18em] text-primary">
-          People
-        </p>
         <PageHeader
           title="Employees"
           description={`${employeeCount} records · employment status tracked separately from availability`}

@@ -22,6 +22,7 @@ import { Link } from "@tanstack/react-router";
 import { useLocation } from "@tanstack/react-router";
 import { get_user_value } from "@/store/authStore";
 import { toast } from "sonner";
+import { useDashboardTheme } from "@/helpers/dashboardTheme";
 interface Links {
   path: string;
   label: string;
@@ -242,6 +243,7 @@ function RouteComponent() {
   const url = useLocation();
   const pathname = url.pathname.replace(/\/$/, "") || "/";
   const [openMenu, setOpenMenu] = useState<string | null>(null);
+  const [theme] = useDashboardTheme("tenant");
   const activeLinkPath = nav_links
     .flatMap((link) => link.children?.map((child) => child.path) ?? [link.path])
     .filter(
@@ -251,7 +253,7 @@ function RouteComponent() {
     )
     .sort((first, second) => second.length - first.length)[0];
   return (
-    <div className="drawer lg:drawer-open">
+    <div className="drawer lg:drawer-open" data-theme={theme}>
       <input id="tenant-drawer" type="checkbox" className="drawer-toggle" />
       <div className="drawer-content bg-base-200 isolate">
         <AdminHeader />

@@ -1,352 +1,440 @@
 import { useQuery } from "@tanstack/react-query";
-import apiClient from "./simpleApi";
+import apiClient from "@/client/api";
+import type {
+  ReportItem,
+  ReportChart,
+} from "@/routes/hr/reports/-components/types";
 
-// ==================== REPORT TYPES ====================
+/* -------------------------------------------------------------------------- */
+/* Types                                                                      */
+/* -------------------------------------------------------------------------- */
 
-export interface ReportPeriod {
-  from: string;
-  to: string;
+export interface ReportQueryParams {
+  months?: number;
+  period?: string;
+  departmentId?: string;
+  department?: string;
+  cycleId?: string;
 }
 
-export interface ProfitLossMonthly {
-  month: string;
-  income: number;
-  expenses: number;
-  profit: number;
+export interface HeadcountTurnoverResponse {
+  kpis: ReportItem["kpis"];
+  chart: ReportChart;
+  cols: string[];
+  rows: (string | number)[][];
+  insights: string[];
 }
 
-export interface ProfitLossReport {
-  basis: string;
-  period: ReportPeriod;
-  incomeTotal: number;
-  expenseTotal: number;
-  profit: number;
-  monthly: ProfitLossMonthly[];
-  incomeByCategory?: Record<string, number>;
-  expenseByCategory?: Record<string, number>;
+export interface AttendanceSummaryResponse {
+  kpis: ReportItem["kpis"];
+  chart: ReportChart;
+  cols: string[];
+  rows: (string | number)[][];
+  insights: string[];
 }
 
-export interface RevenueMonthly {
-  month: string;
-  total: number;
-  count: number;
+export interface LeaveUtilizationResponse {
+  kpis: ReportItem["kpis"];
+  chart: ReportChart;
+  cols: string[];
+  rows: (string | number)[][];
+  insights: string[];
 }
 
-export interface ReportCategory {
-  categoryId?: string;
-  name: string;
-  total: number;
-  count: number;
+export interface PayrollSummaryResponse {
+  kpis: ReportItem["kpis"];
+  chart: ReportChart;
+  cols: string[];
+  rows: (string | number)[][];
+  insights: string[];
 }
 
-export interface RevenueReport {
-  basis: string;
-  period: ReportPeriod;
-  total: number;
-  count: number;
-  monthly: RevenueMonthly[];
-  byCategory?: ReportCategory[];
+export interface RecruitmentFunnelResponse {
+  kpis: ReportItem["kpis"];
+  chart: ReportChart;
+  cols: string[];
+  rows: (string | number)[][];
+  insights: string[];
 }
 
-export interface ExpensesReport {
-  basis: string;
-  period: ReportPeriod;
-  total: number;
-  count: number;
-  monthly: RevenueMonthly[];
-  byCategory?: ReportCategory[];
+export interface PerformanceDistributionResponse {
+  kpis: ReportItem["kpis"];
+  chart: ReportChart;
+  cols: string[];
+  rows: (string | number)[][];
+  insights: string[];
 }
 
-export interface InvoiceRevenueMonthly {
-  month: string;
-  invoiced: number;
-  received: number;
-  outstanding: number;
+export interface TrainingCompletionResponse {
+  kpis: ReportItem["kpis"];
+  chart: ReportChart;
+  cols: string[];
+  rows: (string | number)[][];
+  insights: string[];
 }
 
-export interface InvoiceRevenueReport {
-  period: ReportPeriod;
-  currency: string;
-  invoicedTotal: number;
-  receivedTotal: number;
-  outstandingTotal: number;
-  outstandingCount: number;
-  legacyPaidWithoutDateCount?: number;
-  monthly: InvoiceRevenueMonthly[];
+export interface DiversityOverviewResponse {
+  kpis: ReportItem["kpis"];
+  chart: ReportChart;
+  cols: string[];
+  rows: (string | number)[][];
+  insights: string[];
 }
 
-export interface OutstandingInvoiceItem {
-  id: string;
-  invoiceNumber: string;
-  issuedDate?: string;
-  dueDate?: string;
-  status: string;
-  currency: string;
-  total: number;
-  amountPaid: number;
-  balanceDue: number;
-  customer?: {
-    id: string;
-    name?: string;
-    firstName?: string;
-    lastName?: string;
-    companyName?: string;
-    email?: string;
-  };
+export interface ContractExpirationsResponse {
+  kpis: ReportItem["kpis"];
+  chart: ReportChart;
+  cols: string[];
+  rows: (string | number)[][];
+  insights: string[];
 }
 
-export interface OutstandingInvoicesReport {
-  currency: string;
-  data: OutstandingInvoiceItem[];
-  total: number;
-  page: number;
-  limit: number;
-  totalPages: number;
-  hasNextPage: boolean;
-  hasPrevPage: boolean;
-}
+/* -------------------------------------------------------------------------- */
+/* Helpers                                                                    */
+/* -------------------------------------------------------------------------- */
 
-export interface PipelineFunnelStage {
-  stageId: string;
-  stageName: string;
-  color?: string;
-  order: number;
-  count: number;
-  value: number;
-  conversionRate?: number;
-}
-
-export interface PipelineFunnelReport {
-  pipelineId?: string;
-  pipelineName?: string;
-  stages: PipelineFunnelStage[];
-  totalDeals: number;
-  totalValue: number;
-}
-
-export interface WinRateMonthly {
-  month: string;
-  won: number;
-  lost: number;
-  rate: number;
-}
-
-export interface WinRateReport {
-  totalWon: number;
-  totalLost: number;
-  winRate: number;
-  monthly: WinRateMonthly[];
-}
-
-export interface AvgDealMonthly {
-  month: string;
-  averageValue: number;
-  count: number;
-}
-
-export interface AvgDealReport {
-  overallAverage: number;
-  monthly: AvgDealMonthly[];
-}
-
-export interface CycleTimeMonthly {
-  month: string;
-  averageDays: number;
-  count: number;
-}
-
-export interface CycleTimeReport {
-  averageDays: number;
-  monthly: CycleTimeMonthly[];
-}
-
-export interface RevenueTrendMonthly {
-  month: string;
-  invoiced: number;
-  received: number;
-}
-
-export interface RevenueTrendReport {
-  currency: string;
-  year: number;
-  totalInvoiced: number;
-  totalReceived: number;
-  outstandingTotal: number;
-  monthly: RevenueTrendMonthly[];
-}
-
-export interface StageDwellItem {
-  stageId: string;
-  stageName: string;
-  averageHours: number;
-  averageDays: number;
-}
-
-export interface StageDwellReport {
-  pipelineId?: string;
-  stages: StageDwellItem[];
-}
-
-export interface ReportDateFilterParams {
-  year?: number;
-  from?: string;
-  to?: string;
-}
-
-// ==================== REPORT HOOKS ====================
-
-export const useProfitLossReport = (params?: ReportDateFilterParams) => {
-  return useQuery<ProfitLossReport>({
-    queryKey: ["reports", "profit-loss", params],
-    queryFn: async () => {
-      const { data } = await apiClient.get<any>("/reports/profit-loss", {
-        params,
-      });
-      return data?.data || data;
-    },
-  });
+const getAuthConfig = async () => {
+  const { get_user_value } = await import("@/store/authStore");
+  const token = get_user_value()?.accessToken;
+  return { headers: { Authorization: `Bearer ${token}` } };
 };
 
-export const useRevenueReport = (params?: ReportDateFilterParams) => {
-  return useQuery<RevenueReport>({
-    queryKey: ["reports", "revenue", params],
-    queryFn: async () => {
-      const { data } = await apiClient.get<any>("/reports/revenue", {
-        params,
-      });
-      return data?.data || data;
-    },
-  });
-};
+const unwrap = <T>(data: any): T =>
+  (data?.data?.data ?? data?.data ?? data?.payload ?? data) as T;
 
-export const useExpensesReport = (params?: ReportDateFilterParams) => {
-  return useQuery<ExpensesReport>({
-    queryKey: ["reports", "expenses", params],
-    queryFn: async () => {
-      const { data } = await apiClient.get<any>("/reports/expenses", {
-        params,
-      });
-      return data?.data || data;
-    },
-  });
-};
+/* -------------------------------------------------------------------------- */
+/* Query hooks                                                                */
+/* -------------------------------------------------------------------------- */
 
-export const useInvoiceRevenueReport = (
-  params?: ReportDateFilterParams & { currency?: string },
-) => {
-  return useQuery<InvoiceRevenueReport>({
-    queryKey: ["reports", "invoice-revenue", params],
+export const useHeadcountTurnoverReport = (params: ReportQueryParams = {}) =>
+  useQuery<HeadcountTurnoverResponse>({
+    queryKey: ["reports", "headcount-turnover", params],
     queryFn: async () => {
-      const { data } = await apiClient.get<any>("/reports/invoice-revenue", {
-        params,
-      });
-      return data?.data || data;
-    },
-  });
-};
-
-export const useOutstandingInvoicesReport = (params?: {
-  currency?: string;
-  page?: number;
-  limit?: number;
-}) => {
-  return useQuery<OutstandingInvoicesReport>({
-    queryKey: ["reports", "outstanding-invoices", params],
-    queryFn: async () => {
+      const searchParams = new URLSearchParams();
+      if (params.months) searchParams.set("months", String(params.months));
+      if (params.departmentId)
+        searchParams.set("departmentId", params.departmentId);
       const { data } = await apiClient.get<any>(
-        "/reports/outstanding-invoices",
-        { params },
+        `/v1/reports/headcount-turnover?${searchParams.toString()}`,
+        await getAuthConfig(),
       );
-      if (Array.isArray(data?.data)) return data;
-      if (Array.isArray(data?.data?.data)) return data.data;
-      return data?.data ?? data;
+      return unwrap<HeadcountTurnoverResponse>(data);
     },
   });
+
+export const useAttendanceSummaryReport = (params: ReportQueryParams = {}) =>
+  useQuery<AttendanceSummaryResponse>({
+    queryKey: ["reports", "attendance-summary", params],
+    queryFn: async () => {
+      const searchParams = new URLSearchParams();
+      if (params.period) searchParams.set("period", params.period);
+      if (params.departmentId)
+        searchParams.set("departmentId", params.departmentId);
+      const { data } = await apiClient.get<any>(
+        `/v1/reports/attendance-summary?${searchParams.toString()}`,
+        await getAuthConfig(),
+      );
+      return unwrap<AttendanceSummaryResponse>(data);
+    },
+  });
+
+export const useLeaveUtilizationReport = (params: ReportQueryParams = {}) =>
+  useQuery<LeaveUtilizationResponse>({
+    queryKey: ["reports", "leave-utilization", params],
+    queryFn: async () => {
+      const searchParams = new URLSearchParams();
+      if (params.months) searchParams.set("months", String(params.months));
+      if (params.departmentId)
+        searchParams.set("departmentId", params.departmentId);
+      const { data } = await apiClient.get<any>(
+        `/v1/reports/leave-utilization?${searchParams.toString()}`,
+        await getAuthConfig(),
+      );
+      return unwrap<LeaveUtilizationResponse>(data);
+    },
+  });
+
+export const usePayrollSummaryReport = (params: ReportQueryParams = {}) =>
+  useQuery<PayrollSummaryResponse>({
+    queryKey: ["reports", "payroll-summary", params],
+    queryFn: async () => {
+      const searchParams = new URLSearchParams();
+      if (params.months) searchParams.set("months", String(params.months));
+      if (params.departmentId)
+        searchParams.set("departmentId", params.departmentId);
+      const { data } = await apiClient.get<any>(
+        `/v1/reports/payroll-summary?${searchParams.toString()}`,
+        await getAuthConfig(),
+      );
+      return unwrap<PayrollSummaryResponse>(data);
+    },
+  });
+
+export const useRecruitmentFunnelReport = (params: ReportQueryParams = {}) =>
+  useQuery<RecruitmentFunnelResponse>({
+    queryKey: ["reports", "recruitment-funnel", params],
+    queryFn: async () => {
+      const searchParams = new URLSearchParams();
+      if (params.months) searchParams.set("months", String(params.months));
+      if (params.departmentId)
+        searchParams.set("departmentId", params.departmentId);
+      const { data } = await apiClient.get<any>(
+        `/v1/reports/recruitment-funnel?${searchParams.toString()}`,
+        await getAuthConfig(),
+      );
+      return unwrap<RecruitmentFunnelResponse>(data);
+    },
+  });
+
+export const usePerformanceDistributionReport = (
+  params: ReportQueryParams = {},
+) =>
+  useQuery<PerformanceDistributionResponse>({
+    queryKey: ["reports", "performance-distribution", params],
+    queryFn: async () => {
+      const searchParams = new URLSearchParams();
+      if (params.cycleId) searchParams.set("cycleId", params.cycleId);
+      if (params.department) searchParams.set("department", params.department);
+      const { data } = await apiClient.get<any>(
+        `/v1/reports/performance-distribution?${searchParams.toString()}`,
+        await getAuthConfig(),
+      );
+      return unwrap<PerformanceDistributionResponse>(data);
+    },
+  });
+
+export const useTrainingCompletionReport = (params: ReportQueryParams = {}) =>
+  useQuery<TrainingCompletionResponse>({
+    queryKey: ["reports", "training-completion", params],
+    queryFn: async () => {
+      const searchParams = new URLSearchParams();
+      if (params.months) searchParams.set("months", String(params.months));
+      if (params.department) searchParams.set("department", params.department);
+      const { data } = await apiClient.get<any>(
+        `/v1/reports/training-completion?${searchParams.toString()}`,
+        await getAuthConfig(),
+      );
+      return unwrap<TrainingCompletionResponse>(data);
+    },
+  });
+
+export const useDiversityOverviewReport = (params: ReportQueryParams = {}) =>
+  useQuery<DiversityOverviewResponse>({
+    queryKey: ["reports", "diversity-overview", params],
+    queryFn: async () => {
+      const searchParams = new URLSearchParams();
+      if (params.months) searchParams.set("months", String(params.months));
+      if (params.departmentId)
+        searchParams.set("departmentId", params.departmentId);
+      const { data } = await apiClient.get<any>(
+        `/v1/reports/diversity-overview?${searchParams.toString()}`,
+        await getAuthConfig(),
+      );
+      return unwrap<DiversityOverviewResponse>(data);
+    },
+  });
+
+export const useContractExpirationsReport = (params: ReportQueryParams = {}) =>
+  useQuery<ContractExpirationsResponse>({
+    queryKey: ["reports", "contract-expirations", params],
+    queryFn: async () => {
+      const searchParams = new URLSearchParams();
+      if (params.months) searchParams.set("months", String(params.months));
+      if (params.departmentId)
+        searchParams.set("departmentId", params.departmentId);
+      const { data } = await apiClient.get<any>(
+        `/v1/reports/contract-expirations?${searchParams.toString()}`,
+        await getAuthConfig(),
+      );
+      return unwrap<ContractExpirationsResponse>(data);
+    },
+  });
+
+/* -------------------------------------------------------------------------- */
+/* Export hooks                                                               */
+/* -------------------------------------------------------------------------- */
+
+export const useExportHeadcountTurnover = (params: ReportQueryParams = {}) =>
+  useQuery<Blob>({
+    queryKey: ["reports", "headcount-turnover", "export", params],
+    queryFn: async () => {
+      const searchParams = new URLSearchParams();
+      if (params.months) searchParams.set("months", String(params.months));
+      if (params.departmentId)
+        searchParams.set("departmentId", params.departmentId);
+      const { data } = await apiClient.get(
+        `/v1/reports/headcount-turnover/export?${searchParams.toString()}`,
+        { ...(await getAuthConfig()), responseType: "blob" },
+      );
+      return data as Blob;
+    },
+    enabled: false,
+  });
+
+export const useExportAttendanceSummary = (params: ReportQueryParams = {}) =>
+  useQuery<Blob>({
+    queryKey: ["reports", "attendance-summary", "export", params],
+    queryFn: async () => {
+      const searchParams = new URLSearchParams();
+      if (params.period) searchParams.set("period", params.period);
+      if (params.departmentId)
+        searchParams.set("departmentId", params.departmentId);
+      const { data } = await apiClient.get(
+        `/v1/reports/attendance-summary/export?${searchParams.toString()}`,
+        { ...(await getAuthConfig()), responseType: "blob" },
+      );
+      return data as Blob;
+    },
+    enabled: false,
+  });
+
+export const useExportLeaveUtilization = (params: ReportQueryParams = {}) =>
+  useQuery<Blob>({
+    queryKey: ["reports", "leave-utilization", "export", params],
+    queryFn: async () => {
+      const searchParams = new URLSearchParams();
+      if (params.months) searchParams.set("months", String(params.months));
+      if (params.departmentId)
+        searchParams.set("departmentId", params.departmentId);
+      const { data } = await apiClient.get(
+        `/v1/reports/leave-utilization/export?${searchParams.toString()}`,
+        { ...(await getAuthConfig()), responseType: "blob" },
+      );
+      return data as Blob;
+    },
+    enabled: false,
+  });
+
+export const useExportPayrollSummary = (params: ReportQueryParams = {}) =>
+  useQuery<Blob>({
+    queryKey: ["reports", "payroll-summary", "export", params],
+    queryFn: async () => {
+      const searchParams = new URLSearchParams();
+      if (params.months) searchParams.set("months", String(params.months));
+      if (params.departmentId)
+        searchParams.set("departmentId", params.departmentId);
+      const { data } = await apiClient.get(
+        `/v1/reports/payroll-summary/export?${searchParams.toString()}`,
+        { ...(await getAuthConfig()), responseType: "blob" },
+      );
+      return data as Blob;
+    },
+    enabled: false,
+  });
+
+export const useExportRecruitmentFunnel = (params: ReportQueryParams = {}) =>
+  useQuery<Blob>({
+    queryKey: ["reports", "recruitment-funnel", "export", params],
+    queryFn: async () => {
+      const searchParams = new URLSearchParams();
+      if (params.months) searchParams.set("months", String(params.months));
+      if (params.departmentId)
+        searchParams.set("departmentId", params.departmentId);
+      const { data } = await apiClient.get(
+        `/v1/reports/recruitment-funnel/export?${searchParams.toString()}`,
+        { ...(await getAuthConfig()), responseType: "blob" },
+      );
+      return data as Blob;
+    },
+    enabled: false,
+  });
+
+export const useExportPerformanceDistribution = (
+  params: ReportQueryParams = {},
+) =>
+  useQuery<Blob>({
+    queryKey: ["reports", "performance-distribution", "export", params],
+    queryFn: async () => {
+      const searchParams = new URLSearchParams();
+      if (params.cycleId) searchParams.set("cycleId", params.cycleId);
+      if (params.department) searchParams.set("department", params.department);
+      const { data } = await apiClient.get(
+        `/v1/reports/performance-distribution/export?${searchParams.toString()}`,
+        { ...(await getAuthConfig()), responseType: "blob" },
+      );
+      return data as Blob;
+    },
+    enabled: false,
+  });
+
+export const useExportTrainingCompletion = (params: ReportQueryParams = {}) =>
+  useQuery<Blob>({
+    queryKey: ["reports", "training-completion", "export", params],
+    queryFn: async () => {
+      const searchParams = new URLSearchParams();
+      if (params.months) searchParams.set("months", String(params.months));
+      if (params.department) searchParams.set("department", params.department);
+      const { data } = await apiClient.get(
+        `/v1/reports/training-completion/export?${searchParams.toString()}`,
+        { ...(await getAuthConfig()), responseType: "blob" },
+      );
+      return data as Blob;
+    },
+    enabled: false,
+  });
+
+export const useExportDiversityOverview = (params: ReportQueryParams = {}) =>
+  useQuery<Blob>({
+    queryKey: ["reports", "diversity-overview", "export", params],
+    queryFn: async () => {
+      const searchParams = new URLSearchParams();
+      if (params.months) searchParams.set("months", String(params.months));
+      if (params.departmentId)
+        searchParams.set("departmentId", params.departmentId);
+      const { data } = await apiClient.get(
+        `/v1/reports/diversity-overview/export?${searchParams.toString()}`,
+        { ...(await getAuthConfig()), responseType: "blob" },
+      );
+      return data as Blob;
+    },
+    enabled: false,
+  });
+
+export const useExportContractExpirations = (params: ReportQueryParams = {}) =>
+  useQuery<Blob>({
+    queryKey: ["reports", "contract-expirations", "export", params],
+    queryFn: async () => {
+      const searchParams = new URLSearchParams();
+      if (params.months) searchParams.set("months", String(params.months));
+      if (params.departmentId)
+        searchParams.set("departmentId", params.departmentId);
+      const { data } = await apiClient.get(
+        `/v1/reports/contract-expirations/export?${searchParams.toString()}`,
+        { ...(await getAuthConfig()), responseType: "blob" },
+      );
+      return data as Blob;
+    },
+    enabled: false,
+  });
+
+/* -------------------------------------------------------------------------- */
+/* Helper: map report slug to query hook                                       */
+/* -------------------------------------------------------------------------- */
+
+export type ReportQueryHook = (
+  params: ReportQueryParams,
+) => ReturnType<typeof useQuery>;
+
+export const reportHooksMap: Record<string, ReportQueryHook> = {
+  "headcount-and-turnover": useHeadcountTurnoverReport,
+  "attendance-summary": useAttendanceSummaryReport,
+  "leave-utilization": useLeaveUtilizationReport,
+  "payroll-summary": usePayrollSummaryReport,
+  "recruitment-funnel": useRecruitmentFunnelReport,
+  "performance-distribution": usePerformanceDistributionReport,
+  "training-completion": useTrainingCompletionReport,
+  "diversity-overview": useDiversityOverviewReport,
+  "contract-expirations": useContractExpirationsReport,
 };
 
-export const usePipelineFunnelReport = (pipelineId?: string) => {
-  return useQuery<PipelineFunnelReport>({
-    queryKey: ["reports", "pipeline-funnel", pipelineId],
-    queryFn: async () => {
-      const { data } = await apiClient.get<any>("/reports/pipeline-funnel", {
-        params: { pipelineId },
-      });
-      return data?.data || data;
-    },
-  });
-};
-
-export const useWinRateReport = (
-  params?: { pipelineId?: string; year?: number },
-  options?: { enabled?: boolean },
-) => {
-  return useQuery<WinRateReport>({
-    enabled: options?.enabled ?? true,
-    queryKey: ["reports", "win-rate", params],
-    queryFn: async () => {
-      const { data } = await apiClient.get<any>("/reports/win-rate", {
-        params,
-      });
-      return data?.data || data;
-    },
-  });
-};
-
-export const useAvgDealReport = (
-  params?: { pipelineId?: string; year?: number },
-  options?: { enabled?: boolean },
-) => {
-  return useQuery<AvgDealReport>({
-    enabled: options?.enabled ?? true,
-    queryKey: ["reports", "avg-deal", params],
-    queryFn: async () => {
-      const { data } = await apiClient.get<any>("/reports/avg-deal", {
-        params,
-      });
-      return data?.data || data;
-    },
-  });
-};
-
-export const useCycleTimeReport = (
-  params?: { pipelineId?: string; year?: number },
-  options?: { enabled?: boolean },
-) => {
-  return useQuery<CycleTimeReport>({
-    enabled: options?.enabled ?? true,
-    queryKey: ["reports", "cycle-time", params],
-    queryFn: async () => {
-      const { data } = await apiClient.get<any>("/reports/cycle-time", {
-        params,
-      });
-      return data?.data || data;
-    },
-  });
-};
-
-export const useRevenueTrendReport = (params?: {
-  year?: number;
-  currency?: string;
-}) => {
-  return useQuery<RevenueTrendReport>({
-    queryKey: ["reports", "revenue-trend", params],
-    queryFn: async () => {
-      const { data } = await apiClient.get<any>("/reports/revenue-trend", {
-        params,
-      });
-      return data?.data || data;
-    },
-  });
-};
-
-export const useStageDwellReport = (pipelineId?: string) => {
-  return useQuery<StageDwellReport>({
-    queryKey: ["reports", "stage-dwell", pipelineId],
-    queryFn: async () => {
-      const { data } = await apiClient.get<any>("/reports/stage-dwell", {
-        params: { pipelineId },
-      });
-      return data?.data || data;
-    },
-  });
+export const reportExportHooksMap: Record<string, ReportQueryHook> = {
+  "headcount-and-turnover": useExportHeadcountTurnover,
+  "attendance-summary": useExportAttendanceSummary,
+  "leave-utilization": useExportLeaveUtilization,
+  "payroll-summary": useExportPayrollSummary,
+  "recruitment-funnel": useExportRecruitmentFunnel,
+  "performance-distribution": useExportPerformanceDistribution,
+  "training-completion": useExportTrainingCompletion,
+  "diversity-overview": useExportDiversityOverview,
+  "contract-expirations": useExportContractExpirations,
 };

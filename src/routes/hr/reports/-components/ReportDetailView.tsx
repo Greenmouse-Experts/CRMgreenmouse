@@ -1,4 +1,3 @@
-import { useState } from "react";
 import PageHeader from "@/components/Headers/PageHeader";
 import StatCard from "@/components/StatCard";
 import CustomTable, { type columnType } from "@/components/tables/CustomTable";
@@ -21,6 +20,10 @@ interface ReportDetailViewProps {
   allReports: ReportItem[];
   onBack: () => void;
   onSelectOtherReport: (report: ReportItem) => void;
+  timeframe: string;
+  setTimeframe: (value: string) => void;
+  department: string;
+  setDepartment: (value: string) => void;
 }
 
 const TIMEFRAMES = [
@@ -46,10 +49,11 @@ export default function ReportDetailView({
   allReports,
   onBack,
   onSelectOtherReport,
+  timeframe,
+  setTimeframe,
+  department,
+  setDepartment,
 }: ReportDetailViewProps) {
-  const [timeframe, setTimeframe] = useState("Last 6 months");
-  const [department, setDepartment] = useState("All departments");
-
   const handlePrint = () => {
     window.print();
   };

@@ -1,9 +1,14 @@
-import { useMyTrainingLearning } from "@/api/trainingApi";
+import {
+  normalizeMyLearningEntry,
+  useMyTrainingLearning,
+} from "@/api/trainingApi";
 import { Award, BookOpen, ExternalLink } from "lucide-react";
 
 export default function MyLearningSection() {
   const myLearningQuery = useMyTrainingLearning();
-  const items = myLearningQuery.data ?? [];
+  const items = (myLearningQuery.data ?? [])
+    .map(normalizeMyLearningEntry)
+    .filter((entry): entry is NonNullable<typeof entry> => Boolean(entry));
 
   if (myLearningQuery.isLoading || items.length === 0) {
     return null;
@@ -22,30 +27,26 @@ export default function MyLearningSection() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-        {items.map((item: any, idx: number) => {
-          const id = item.id || item.enrollmentId || String(idx);
-          const title =
-            item.courseTitle || item.course?.title || "Assigned Course";
-          const status = String(item.status || "enrolled").replace(/_/g, " ");
-          const certUrl = item.certificateUrl;
+        {items.map((item) => {
+          const status = item.status.replace(/_/g, " ");
 
           return (
             <div
-              key={id}
+              key={item.id}
               className="rounded-xl border border-base-200 bg-base-200/30 p-3.5 flex items-center justify-between gap-3"
             >
               <div className="min-w-0">
                 <p className="font-semibold text-base-content truncate">
-                  {title}
+                  {item.courseTitle}
                 </p>
                 <p className="text-sm text-base-content/70 capitalize">
                   {status}
                 </p>
               </div>
 
-              {certUrl && (
+              {item.certificateUrl && (
                 <a
-                  href={certUrl}
+                  href={item.certificateUrl}
                   target="_blank"
                   rel="noreferrer"
                   className="btn btn-sm btn-outline btn-success rounded-lg gap-1 shrink-0"

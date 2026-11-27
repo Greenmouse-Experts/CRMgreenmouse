@@ -219,6 +219,177 @@ export interface TrainingCourseDetailRecord extends TrainingCourseRecord {
   materials?: TrainingMaterialItem[];
 }
 
+export interface TrainingMyLearningItem {
+  id?: string;
+  enrollmentId?: string;
+  tenantId?: string;
+  courseId?: string;
+  sessionId?: string | null;
+  employeeId?: string;
+  courseTitle?: string;
+  title?: string;
+  category?: BackendCourseCategory | string;
+  defaultDeliveryMode?: BackendDeliveryMode | string;
+  learningObjectives?: string;
+  mandatory?: boolean;
+  certificateOnCompletion?: boolean;
+  targetType?: BackendTargetType | string;
+  targetIds?: string[];
+  costPerPersonKobo?: number;
+  status?: string;
+  courseStatus?: BackendCourseStatus | string;
+  attendanceStatus?: BackendAttendanceStatus | string;
+  attendanceNotes?: string | null;
+  completionNotes?: string | null;
+  certificateEligible?: boolean;
+  certificateUrl?: string | null;
+  certificateIssuedAt?: string | null;
+  enrolledAt?: string;
+  completedAt?: string | null;
+  publishedAt?: string | null;
+  createdAt?: string;
+  enrollment?: TrainingEnrollmentRecord;
+  course?: Partial<TrainingCourseDetailRecord> & {
+    id?: string;
+    title?: string;
+    courseTitle?: string;
+  };
+  session?: TrainingSessionRecord | null;
+  sessions?: TrainingSessionRecord[];
+  materials?: TrainingMaterialItem[];
+}
+
+export interface NormalizedMyLearningEntry {
+  id: string;
+  enrollmentId: string;
+  courseId: string;
+  courseTitle: string;
+  status: string;
+  attendanceStatus: string;
+  certificateEligible: boolean;
+  certificateUrl: string | null;
+  sessionId: string | null;
+  courseRecord: TrainingCourseRecord;
+  sessions: TrainingSessionRecord[];
+  materials: TrainingMaterialItem[];
+}
+
+export function extractMyLearningItems(raw: any): TrainingMyLearningItem[] {
+  if (Array.isArray(raw)) return raw;
+  const unwrapped = raw?.data?.data ?? raw?.data ?? raw?.payload ?? raw;
+  if (Array.isArray(unwrapped)) return unwrapped;
+  if (Array.isArray(unwrapped?.enrollments)) return unwrapped.enrollments;
+  if (Array.isArray(unwrapped?.items)) return unwrapped.items;
+  if (Array.isArray(unwrapped?.courses)) return unwrapped.courses;
+  if (Array.isArray(raw?.enrollments)) return raw.enrollments;
+  if (Array.isArray(raw?.items)) return raw.items;
+  return [];
+}
+
+export function normalizeMyLearningEntry(
+  item: TrainingMyLearningItem,
+): NormalizedMyLearningEntry | null {
+  const enrollment = item.enrollment;
+  const course = item.course;
+  const courseId = String(
+    item.courseId || enrollment?.courseId || course?.id || item.id || "",
+  ).trim();
+
+  if (!courseId) return null;
+
+  const enrollmentId = String(
+    enrollment?.id || item.enrollmentId || item.id || courseId,
+  ).trim();
+  const courseTitle =
+    course?.title ||
+    course?.courseTitle ||
+    item.courseTitle ||
+    item.title ||
+    "Assigned Training";
+  const status = String(enrollment?.status || item.status || "enrolled");
+  const attendanceStatus = String(
+    enrollment?.attendanceStatus || item.attendanceStatus || "not_recorded",
+  );
+  const certificateUrl =
+    enrollment?.certificateUrl ?? item.certificateUrl ?? null;
+  const certificateEligible = Boolean(
+    enrollment?.certificateEligible ??
+    item.certificateEligible ??
+    certificateUrl,
+  );
+  const sessionId =
+    enrollment?.sessionId ?? item.sessionId ?? item.session?.id ?? null;
+
+  const rawSessions = [
+    ...(item.session ? [item.session] : []),
+    ...(Array.isArray(item.sessions) ? item.sessions : []),
+    ...(Array.isArray(course?.sessions) ? course.sessions : []),
+  ];
+  const sessionMap = new Map<string, TrainingSessionRecord>();
+  for (const session of rawSessions) {
+    if (!session?.id) continue;
+    sessionMap.set(session.id, {
+      ...session,
+      courseId: session.courseId || courseId,
+    });
+  }
+
+  const rawMaterials = [
+    ...(Array.isArray(item.materials) ? item.materials : []),
+    ...(Array.isArray(course?.materials) ? course.materials : []),
+  ];
+  const materialMap = new Map<string, TrainingMaterialItem>();
+  for (const material of rawMaterials) {
+    if (!material?.id) continue;
+    materialMap.set(material.id, material);
+  }
+
+  const courseRecord: TrainingCourseRecord = {
+    id: courseId,
+    tenantId: course?.tenantId || enrollment?.tenantId || item.tenantId || "",
+    title: courseTitle,
+    category: course?.category || item.category || "other",
+    defaultDeliveryMode:
+      course?.defaultDeliveryMode || item.defaultDeliveryMode || "virtual",
+    learningObjectives:
+      course?.learningObjectives ?? item.learningObjectives ?? "",
+    mandatory: Boolean(course?.mandatory ?? item.mandatory),
+    certificateOnCompletion: Boolean(
+      course?.certificateOnCompletion ??
+      item.certificateOnCompletion ??
+      certificateUrl,
+    ),
+    targetType: course?.targetType || item.targetType || "selected",
+    targetIds: Array.isArray(course?.targetIds)
+      ? course.targetIds
+      : Array.isArray(item.targetIds)
+        ? item.targetIds
+        : [],
+    costPerPersonKobo: course?.costPerPersonKobo ?? item.costPerPersonKobo,
+    status: course?.status || item.courseStatus || "published",
+    publishedAt: course?.publishedAt ?? item.publishedAt ?? null,
+    archivedAt: course?.archivedAt ?? null,
+    createdBy: course?.createdBy,
+    createdAt: course?.createdAt ?? item.createdAt ?? enrollment?.enrolledAt,
+    updatedAt: course?.updatedAt ?? enrollment?.updatedAt,
+  };
+
+  return {
+    id: enrollmentId,
+    enrollmentId,
+    courseId,
+    courseTitle,
+    status,
+    attendanceStatus,
+    certificateEligible,
+    certificateUrl,
+    sessionId,
+    courseRecord,
+    sessions: Array.from(sessionMap.values()),
+    materials: Array.from(materialMap.values()),
+  };
+}
+
 /* =========================================================================
  * Queries
  * ========================================================================= */
@@ -282,6 +453,7 @@ export function useTrainingCourses() {
 export function useTrainingCourse(id?: string) {
   return useQuery({
     queryKey: TRAINING_QUERY_KEYS.course(id || ""),
+    retry: noAuthRetry,
     queryFn: async (): Promise<TrainingCourseDetailRecord> => {
       if (!id) throw new Error("Course ID is required");
       const response = await apiClient.get<any>(`/training/courses/${id}`);
@@ -318,6 +490,7 @@ export function useTrainingSessionParticipants(sessionId?: string) {
 export function useTrainingCourseMaterials(courseId?: string) {
   return useQuery({
     queryKey: TRAINING_QUERY_KEYS.courseMaterials(courseId || ""),
+    retry: noAuthRetry,
     queryFn: async (): Promise<TrainingMaterialItem[]> => {
       if (!courseId) throw new Error("Course ID is required");
       const response = await apiClient.get<any>(
@@ -334,18 +507,15 @@ export function useTrainingCourseMaterials(courseId?: string) {
 }
 
 /**
- * Fetch Current User's Learning / Enrollments
+ * Fetch Current User's Learning / Enrollments (`GET /v1/training/my-learning`)
  */
 export function useMyTrainingLearning() {
   return useQuery({
     queryKey: TRAINING_QUERY_KEYS.myLearning(),
-    queryFn: async (): Promise<any[]> => {
+    retry: noAuthRetry,
+    queryFn: async (): Promise<TrainingMyLearningItem[]> => {
       const response = await apiClient.get<any>("/training/my-learning");
-      const raw = response.data;
-      if (Array.isArray(raw)) return raw;
-      if (Array.isArray(raw?.data)) return raw.data;
-      if (Array.isArray(raw?.enrollments)) return raw.enrollments;
-      return [];
+      return extractMyLearningItems(response.data);
     },
   });
 }

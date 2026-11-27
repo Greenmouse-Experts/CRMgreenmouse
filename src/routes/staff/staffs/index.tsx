@@ -112,9 +112,6 @@ function RouteComponent() {
   return (
     <div className="space-y-6 pb-16">
       <div>
-        <p className="mb-1  font-semibold uppercase tracking-[0.18em] text-primary">
-          People
-        </p>
         <PageHeader
           title="Colleagues"
           description={`${totalCount} ${totalCount === 1 ? "colleague" : "colleagues"} · basic directory information`}

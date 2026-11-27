@@ -10,16 +10,20 @@ import {
   type StaffTrainingScopeTab,
 } from "../-components/staffScoping";
 import {
-  mapBackendCourseToUi,
-  mapBackendUpcomingSessionToUi,
+  mapBackendSessionRecordToUi,
+  mapCourseRecordToUi,
 } from "@/routes/hr/training/-components/mappers";
-import type { Course } from "@/routes/hr/training/-components/types";
+import type {
+  Course,
+  TrainingSession,
+} from "@/routes/hr/training/-components/types";
 import {
+  normalizeMyLearningEntry,
   useMyTrainingLearning,
-  useTrainingCourses,
-  useTrainingDashboard,
+  type NormalizedMyLearningEntry,
 } from "@/api/trainingApi";
 import { useEmployeeColleagues } from "@/api/employeesApi";
+import { AlertCircle } from "lucide-react";
 
 export const Route = createFileRoute("/staff/training/")({
   component: RouteComponent,
@@ -31,8 +35,6 @@ function RouteComponent() {
     useState<StaffTrainingScopeTab>("all-relevant");
 
   const { identity, isLoading: identityLoading } = useCurrentStaffIdentity();
-  const dashboardQuery = useTrainingDashboard();
-  const catalogQuery = useTrainingCourses();
   const myLearningQuery = useMyTrainingLearning();
   const colleaguesQuery = useEmployeeColleagues({ limit: 100 });
 
@@ -48,51 +50,40 @@ function RouteComponent() {
     return map;
   }, [colleaguesQuery.data?.data]);
 
+  const myLearningEntries = useMemo(
+    () =>
+      (myLearningQuery.data ?? [])
+        .map(normalizeMyLearningEntry)
+        .filter((entry): entry is NormalizedMyLearningEntry => Boolean(entry)),
+    [myLearningQuery.data],
+  );
+
   const enrolledCourseIds = useMemo(() => {
     const ids = new Set<string>();
-    for (const item of myLearningQuery.data ?? []) {
-      const cid = item?.courseId || item?.course?.id;
-      if (cid) ids.add(String(cid));
+    for (const entry of myLearningEntries) {
+      ids.add(entry.courseId);
     }
     return ids;
-  }, [myLearningQuery.data]);
+  }, [myLearningEntries]);
 
   const allCourses: Course[] = useMemo(() => {
-    const rawCourses =
-      catalogQuery.data && catalogQuery.data.length > 0
-        ? catalogQuery.data
-        : (dashboardQuery.data?.courses ?? []);
-
-    if (rawCourses.length > 0) {
-      return rawCourses.map(mapBackendCourseToUi);
-    }
-
-    // Fallback when minimal staff role only has /training/my-learning access
-    const fallback: Course[] = [];
     const seen = new Set<string>();
-    for (const item of myLearningQuery.data ?? []) {
-      const cid = String(item?.courseId || item?.course?.id || "");
-      if (!cid || seen.has(cid)) continue;
-      seen.add(cid);
-      fallback.push({
-        id: cid,
-        title: item?.courseTitle || item?.course?.title || "Assigned Training",
-        category: item?.course?.category || "Other",
-        enrolled: 1,
-        completionRate: item?.status === "completed" ? 100 : 0,
-        mode: item?.course?.defaultDeliveryMode || "Virtual",
-        mandatory: Boolean(item?.course?.mandatory),
-        status: item?.course?.status || "published",
-        certificateOnCompletion: Boolean(
-          item?.course?.certificateOnCompletion ?? item?.certificateUrl,
-        ),
-        learningObjectives: item?.course?.learningObjectives,
-        targetType: item?.course?.targetType || "department",
-        targetIds: item?.course?.targetIds ?? [],
-      });
+    const list: Course[] = [];
+
+    for (const entry of myLearningEntries) {
+      if (seen.has(entry.courseId)) continue;
+      seen.add(entry.courseId);
+      const isCompleted = entry.status.toLowerCase() === "completed";
+      list.push(
+        mapCourseRecordToUi(entry.courseRecord, {
+          enrolled: 1,
+          completionPercent: isCompleted ? 100 : 0,
+        }),
+      );
     }
-    return fallback;
-  }, [catalogQuery.data, dashboardQuery.data?.courses, myLearningQuery.data]);
+
+    return list;
+  }, [myLearningEntries]);
 
   const allRelevantCourses = useMemo(
     () =>
@@ -115,25 +106,37 @@ function RouteComponent() {
     [allRelevantCourses],
   );
 
-  const sessions = useMemo(() => {
-    const list = (dashboardQuery.data?.upcomingSessions ?? []).map((item) =>
-      mapBackendUpcomingSessionToUi(item, staffNameMap),
-    );
-    return list.filter(
-      (s) => !s.courseId || relevantCourseIds.has(s.courseId),
-    );
-  }, [dashboardQuery.data?.upcomingSessions, staffNameMap, relevantCourseIds]);
+  const sessions: TrainingSession[] = useMemo(() => {
+    const seen = new Set<string>();
+    const list: TrainingSession[] = [];
 
-  const isLoading =
-    identityLoading ||
-    (catalogQuery.isLoading && dashboardQuery.isLoading && myLearningQuery.isLoading);
+    for (const entry of myLearningEntries) {
+      for (const session of entry.sessions) {
+        if (!session.id || seen.has(session.id)) continue;
+        seen.add(session.id);
+        const uiSession = mapBackendSessionRecordToUi(
+          session,
+          entry.courseTitle,
+          1,
+          staffNameMap,
+        );
+        if (!uiSession.courseId || relevantCourseIds.has(uiSession.courseId)) {
+          list.push(uiSession);
+        }
+      }
+    }
+
+    return list;
+  }, [myLearningEntries, staffNameMap, relevantCourseIds]);
+
+  const isLoading = identityLoading || myLearningQuery.isLoading;
 
   if (isLoading) {
     return (
       <div className="space-y-6 pb-12">
         <PageHeader
           title="My Training & Development"
-          description="Loading courses and sessions for your department..."
+          description="Loading courses and sessions for your account..."
         />
         <div className="card bg-base-100 border border-base-200 p-12 text-center max-w-lg mx-auto">
           <span className="loading loading-spinner loading-lg mx-auto mb-4" />
@@ -149,10 +152,29 @@ function RouteComponent() {
         title="Training & Development"
         description={
           identity.departmentName
-            ? `Training programs, certifications, and sessions related to ${identity.departmentName}.`
+            ? `Training programs, certifications, and sessions for ${identity.departmentName}.`
             : "Courses, certifications, and upcoming training sessions assigned to you."
         }
       />
+
+      {myLearningQuery.isError && (
+        <div
+          className="alert border border-error/30 bg-error/10 text-sm flex items-center justify-between gap-3"
+          role="alert"
+        >
+          <div className="flex items-center gap-2">
+            <AlertCircle className="size-5 text-error shrink-0" />
+            <span>Could not load your training records. Please try again.</span>
+          </div>
+          <button
+            type="button"
+            className="btn btn-sm btn-outline"
+            onClick={() => myLearningQuery.refetch()}
+          >
+            Retry
+          </button>
+        </div>
+      )}
 
       <MyLearningSection />
 

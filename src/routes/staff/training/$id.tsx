@@ -1,7 +1,6 @@
 import { useMemo } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import PageHeader from "@/components/Headers/PageHeader";
-import QueryCompLayout from "@/components/layout/QueryCompLayout";
 import StatCard from "@/components/StatCard";
 import { RichTextContent } from "@/components/inputs/RichTextEditor";
 import { useCurrentStaffIdentity } from "../-components/useCurrentStaffIdentity";
@@ -17,9 +16,11 @@ import {
 import type { TrainingSession } from "@/routes/hr/training/-components/types";
 import {
   downloadTrainingMaterial,
+  normalizeMyLearningEntry,
   useMyTrainingLearning,
   useTrainingCourse,
   useTrainingCourseMaterials,
+  type TrainingCourseDetailRecord,
   type TrainingMaterialItem,
 } from "@/api/trainingApi";
 import { useEmployeeColleagues } from "@/api/employeesApi";
@@ -67,25 +68,38 @@ function StaffTrainingCourseDetailPage() {
     return map;
   }, [colleaguesQuery.data?.data]);
 
-  const enrolledCourseIds = useMemo(() => {
-    const ids = new Set<string>();
-    for (const item of myLearningQuery.data ?? []) {
-      const cid = item?.courseId || item?.course?.id;
-      if (cid) ids.add(String(cid));
-    }
-    return ids;
-  }, [myLearningQuery.data]);
-
-  const myEnrollmentFromLearning = useMemo(
+  const myLearningEntries = useMemo(
     () =>
-      (myLearningQuery.data ?? []).find(
-        (item: any) => String(item?.courseId || item?.course?.id || "") === id,
-      ),
-    [myLearningQuery.data, id],
+      (myLearningQuery.data ?? [])
+        .map(normalizeMyLearningEntry)
+        .filter((entry): entry is NonNullable<typeof entry> => Boolean(entry)),
+    [myLearningQuery.data],
   );
 
+  const enrolledCourseIds = useMemo(() => {
+    const ids = new Set<string>();
+    for (const entry of myLearningEntries) {
+      ids.add(entry.courseId);
+    }
+    return ids;
+  }, [myLearningEntries]);
+
+  const myEnrollmentFromLearning = useMemo(
+    () => myLearningEntries.find((entry) => entry.courseId === id),
+    [myLearningEntries, id],
+  );
+
+  const detail = useMemo<TrainingCourseDetailRecord | undefined>(() => {
+    if (courseQuery.data) return courseQuery.data;
+    if (!myEnrollmentFromLearning) return undefined;
+    return {
+      ...myEnrollmentFromLearning.courseRecord,
+      sessions: myEnrollmentFromLearning.sessions,
+      materials: myEnrollmentFromLearning.materials,
+    };
+  }, [courseQuery.data, myEnrollmentFromLearning]);
+
   const targetSummary = useMemo(() => {
-    const detail = courseQuery.data;
     if (!detail) return "—";
     const type = String(detail.targetType || "all").toLowerCase();
     const ids = detail.targetIds ?? [];
@@ -100,9 +114,9 @@ function StaffTrainingCourseDetailPage() {
         : `${ids.length} department(s)`;
     }
     if (type === "role") return "Role-targeted";
-    if (type === "selected") return "Selected staff";
+    if (type === "selected") return "Assigned to You";
     return type;
-  }, [courseQuery.data, orgQuery.data?.departments]);
+  }, [detail, orgQuery.data?.departments]);
 
   const handleDownloadMaterial = async (material: TrainingMaterialItem) => {
     try {
@@ -126,6 +140,9 @@ function StaffTrainingCourseDetailPage() {
     }
   };
 
+  const isLoading =
+    !detail && (courseQuery.isLoading || myLearningQuery.isLoading);
+
   return (
     <div className="space-y-6 pb-12">
       <div className="flex items-center justify-between">
@@ -138,8 +155,32 @@ function StaffTrainingCourseDetailPage() {
         </Link>
       </div>
 
-      <QueryCompLayout query={courseQuery}>
-        {(detail) => {
+      {isLoading ? (
+        <div className="card bg-base-100 border border-base-200 p-12 text-center max-w-lg mx-auto">
+          <span className="loading loading-spinner loading-lg mx-auto mb-4" />
+          <p className="text-base-content/80">Loading course details...</p>
+        </div>
+      ) : !detail ? (
+        <div className="card bg-base-100 border border-base-200 shadow-sm p-10 text-center space-y-3 max-w-xl mx-auto">
+          <ShieldAlert className="size-10 mx-auto text-error" />
+          <h2 className="text-lg font-bold text-base-content">
+            Course Details Unavailable
+          </h2>
+          <p className="text-sm text-base-content/75">
+            This training course could not be loaded or is not assigned to your
+            account.
+          </p>
+          <div className="pt-2">
+            <Link
+              to="/staff/training"
+              className="btn btn-sm bg-primary text-white border-0 rounded-xl"
+            >
+              Return to My Trainings
+            </Link>
+          </div>
+        </div>
+      ) : (
+        (() => {
           const isAllowed = isCourseRelevantToStaff(
             {
               id: detail.id,
@@ -191,7 +232,7 @@ function StaffTrainingCourseDetailPage() {
             return mapBackendSessionRecordToUi(
               s,
               detail.title,
-              count,
+              count || 1,
               staffNameMap,
             );
           });
@@ -513,8 +554,8 @@ function StaffTrainingCourseDetailPage() {
               </div>
             </div>
           );
-        }}
-      </QueryCompLayout>
+        })()
+      )}
     </div>
   );
 }

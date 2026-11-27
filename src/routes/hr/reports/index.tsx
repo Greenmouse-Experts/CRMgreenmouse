@@ -1,18 +1,10 @@
 import { useState } from "react";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import PageHeader from "@/components/Headers/PageHeader";
-import StatCard from "@/components/StatCard";
 import ReportCard from "./-components/ReportCard";
-import ReportDetailView from "./-components/ReportDetailView";
 import { HR_REPORTS } from "./-components/reportsData";
 import type { ReportItem } from "./-components/types";
-import {
-  CalendarCheck,
-  CircleDollarSign,
-  FileSpreadsheet,
-  Search,
-  Users,
-} from "lucide-react";
+import { Search } from "lucide-react";
 
 export const Route = createFileRoute("/hr/reports/")({
   component: RouteComponent,
@@ -28,7 +20,7 @@ const CATEGORIES = [
 ];
 
 function RouteComponent() {
-  const [selectedReport, setSelectedReport] = useState<ReportItem | null>(null);
+  const navigate = useNavigate();
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -47,18 +39,9 @@ function RouteComponent() {
     return true;
   });
 
-  if (selectedReport) {
-    return (
-      <div className="pb-12">
-        <ReportDetailView
-          report={selectedReport}
-          allReports={HR_REPORTS}
-          onBack={() => setSelectedReport(null)}
-          onSelectOtherReport={(r) => setSelectedReport(r)}
-        />
-      </div>
-    );
-  }
+  const handleSelectReport = (report: ReportItem) => {
+    navigate({ to: "/hr/reports/$slug", params: { slug: report.slug } });
+  };
 
   return (
     <div className="space-y-6 pb-12 ">
@@ -107,7 +90,7 @@ function RouteComponent() {
           <ReportCard
             key={report.slug}
             report={report}
-            onSelectReport={(r) => setSelectedReport(r)}
+            onSelectReport={handleSelectReport}
           />
         ))}
       </div>
