@@ -3,6 +3,17 @@ import apiClient from "./simpleApi";
 
 export type MyTaskStatus = "open" | "in_progress" | "completed" | "cancelled";
 
+/** Assignee as expanded by the tasks API (`assignedTo` object). */
+export interface TaskAssignee {
+  id: string;
+  firstName?: string;
+  lastName?: string;
+  name?: string;
+  email?: string;
+  profilePic?: string | null;
+  status?: string;
+}
+
 export interface Task {
   id: string;
   title: string;
@@ -13,6 +24,7 @@ export interface Task {
   dueAt?: string;
   startAt?: string;
   endAt?: string;
+  completedAt?: string | null;
   relatedType?:
     | "deal"
     | "lead"
@@ -22,17 +34,45 @@ export interface Task {
     | "order"
     | string;
   relatedId?: string;
-  assignedTo?: string;
-  assignee?: {
-    id: string;
-    firstName?: string;
-    lastName?: string;
-    email?: string;
-    name?: string;
-  };
+  /** Either an employee id (write payload) or an expanded employee object (read). */
+  assignedTo?: string | TaskAssignee | null;
+  /** Legacy alias for the expanded assignee. */
+  assignee?: TaskAssignee;
   createdAt?: string;
   updatedAt?: string;
 }
+
+/** Resolve the expanded assignee regardless of which field/shape the API used. */
+export const resolveTaskAssignee = (
+  task?: Task | null,
+): TaskAssignee | null => {
+  const raw = task?.assignedTo ?? task?.assignee ?? null;
+  if (!raw) return null;
+  if (typeof raw === "string") return { id: raw };
+  return raw;
+};
+
+/** Display name for an assignee: "First Last", then name, then email. */
+export const taskAssigneeName = (assignee?: TaskAssignee | null): string => {
+  if (!assignee) return "";
+  const fullName = [assignee.firstName, assignee.lastName]
+    .filter(Boolean)
+    .join(" ");
+  return assignee.name || fullName || assignee.email || "";
+};
+
+/** Initials used by the avatar fallback. */
+export const taskAssigneeInitials = (assignee?: TaskAssignee | null): string => {
+  const name = taskAssigneeName(assignee);
+  if (!name) return "";
+  const parts = name.split(/\s+/).filter(Boolean);
+  if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+  return `${parts[0][0]}${parts[parts.length - 1][0]}`.toUpperCase();
+};
+
+/** Id of the assignee, for pre-filling the assign select. */
+export const taskAssigneeId = (task?: Task | null): string =>
+  resolveTaskAssignee(task)?.id ?? "";
 
 export interface TaskQueryParams {
   search?: string;

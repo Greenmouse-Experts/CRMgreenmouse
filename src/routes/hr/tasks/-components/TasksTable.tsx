@@ -2,7 +2,14 @@ import { CheckCircle2, Pencil, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import CustomTable, { type columnType } from "@/components/tables/CustomTable";
 import type { Actions } from "@/components/tables/pop-up";
-import { useDeleteTask, useUpdateTaskStatus, type Task } from "@/api/tasksApi";
+import {
+  useDeleteTask,
+  useUpdateTaskStatus,
+  resolveTaskAssignee,
+  taskAssigneeInitials,
+  taskAssigneeName,
+  type Task,
+} from "@/api/tasksApi";
 import { extract_message } from "@/helpers/errors";
 
 const STATUS_STYLES: Record<string, string> = {
@@ -154,16 +161,44 @@ export default function TasksTable({ tasks, onEdit }: TasksTableProps) {
       ),
     },
     {
-      key: "assignee",
+      key: "assignedTo",
       label: "Assignee",
       render: (_value, task) => {
-        const fullName = [task.assignee?.firstName, task.assignee?.lastName]
-          .filter(Boolean)
-          .join(" ");
+        const assignee = resolveTaskAssignee(task);
+        if (!assignee) {
+          return (
+            <span className="text-xs italic text-base-content/50">
+              Unassigned
+            </span>
+          );
+        }
+        const name = taskAssigneeName(assignee) || "Unnamed";
+        const initials =
+          taskAssigneeInitials(assignee) || name.slice(0, 2).toUpperCase();
         return (
-          <span className="text-sm text-base-content/80">
-            {task.assignee?.name || fullName || task.assignee?.email || "—"}
-          </span>
+          <div className="flex min-w-0 items-center gap-2">
+            {assignee.profilePic ? (
+              <img
+                src={assignee.profilePic}
+                alt={name}
+                className="size-7 shrink-0 rounded-full object-cover"
+              />
+            ) : (
+              <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-primary/10 text-[10px] font-bold text-primary">
+                {initials}
+              </span>
+            )}
+            <div className="min-w-0">
+              <p className="truncate text-xs font-medium text-base-content">
+                {name}
+              </p>
+              {assignee.email && (
+                <p className="truncate text-[11px] text-base-content/60">
+                  {assignee.email}
+                </p>
+              )}
+            </div>
+          </div>
         );
       },
     },

@@ -5,7 +5,12 @@ import SimpleInput from "@/components/inputs/SimpleInput";
 import SimpleTextArea from "@/components/inputs/SimpleTextArea";
 import LocalSelect from "@/components/inputs/LocalSelect";
 import SimpleSelect from "@/components/inputs/SimpleSelect";
-import { useCreateTask, useUpdateTask, type Task } from "@/api/tasksApi";
+import {
+  useCreateTask,
+  useUpdateTask,
+  taskAssigneeId,
+  type Task,
+} from "@/api/tasksApi";
 import type { EmployeeRecord } from "@/api/employeesApi";
 import { extract_message } from "@/helpers/errors";
 import { Plus, Save } from "lucide-react";
@@ -76,7 +81,7 @@ export default function CreateTaskModal({
           status: initialTask.status || "open",
           priority: initialTask.priority || "medium",
           dueAt: initialTask.dueAt ? initialTask.dueAt.slice(0, 10) : "",
-          assignedTo: initialTask.assignedTo ?? initialTask.assignee?.id ?? "",
+          assignedTo: taskAssigneeId(initialTask),
         });
       } else {
         reset(defaultValues);
