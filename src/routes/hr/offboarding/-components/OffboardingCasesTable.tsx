@@ -193,6 +193,10 @@ export default function OffboardingCasesTable({
         <span className="text-error font-medium">Cancel Offboarding</span>
       ),
       action: async (item) => {
+        if (!item.id) {
+          toast.error("Cannot cancel: case ID is missing");
+          return;
+        }
         try {
           await cancelCase.mutateAsync({
             id: item.id,
