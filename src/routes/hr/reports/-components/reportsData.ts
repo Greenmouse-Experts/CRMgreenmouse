@@ -377,7 +377,12 @@ export const getReportBySlug = (slug: string): ReportItem | undefined => {
 };
 
 export const exportReportToCsv = (report: ReportItem) => {
-  const csvRows = [report.cols, ...report.rows];
+  const cols = report.cols ?? [];
+  const rows = report.rows ?? [];
+  if (cols.length === 0 && rows.length === 0) {
+    return;
+  }
+  const csvRows = [cols, ...rows];
   const csvContent = csvRows
     .map((row) =>
       row

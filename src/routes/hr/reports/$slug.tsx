@@ -1,6 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { getReportBySlug, HR_REPORTS } from "./-components/reportsData";
 import ReportDetailView from "./-components/ReportDetailView";
+import { normalizeReport } from "./-components/normalizeReport";
 import { ArrowLeft, FileQuestion } from "lucide-react";
 import { reportHooksMap, type ReportQueryParams } from "@/api/reportsApi";
 import PageLoader from "@/components/layout/PageLoader";
@@ -19,6 +20,22 @@ function timeframeToMonths(timeframe: string): number {
       return 12;
     default:
       return 6;
+  }
+}
+
+/** The reports API expects a `period` token (e.g. `6_months`). */
+function timeframeToPeriod(timeframe: string): string {
+  switch (timeframe) {
+    case "This month":
+      return "1_month";
+    case "Last 3 months":
+      return "3_months";
+    case "Last 6 months":
+      return "6_months";
+    case "Year to date":
+      return "12_months";
+    default:
+      return "6_months";
   }
 }
 
@@ -67,6 +84,7 @@ function RouteComponent() {
 
   const params: ReportQueryParams = {
     months: timeframeToMonths(timeframe),
+    period: timeframeToPeriod(timeframe),
     departmentId: departmentToId(department),
     department: departmentToId(department),
     cycleId: undefined, // Would come from a cycle selector in real app
@@ -77,10 +95,8 @@ function RouteComponent() {
     ? (queryHook(params) as UseQueryResult<any, Error>)
     : null;
 
-  // Merge mock report with API data when available
-  const report = apiQuery?.data
-    ? { ...mockReport, ...apiQuery.data }
-    : mockReport;
+  // Normalize the API payload into the flat ReportItem shape the view renders.
+  const report = normalizeReport(mockReport, apiQuery?.data);
 
   // If there's an API query, use PageLoader with it
   if (apiQuery) {
@@ -92,9 +108,9 @@ function RouteComponent() {
           description: `Unable to load data for ${mockReport.title}.`,
         }}
       >
-        {(loadedReport) => (
+        {(loadedData) => (
           <ReportDetailView
-            report={loadedReport}
+            report={normalizeReport(mockReport, loadedData)}
             allReports={HR_REPORTS}
             onBack={() => navigate({ to: "/hr/reports" })}
             onSelectOtherReport={(r) =>

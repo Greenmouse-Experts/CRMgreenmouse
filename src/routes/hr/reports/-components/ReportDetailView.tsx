@@ -63,21 +63,27 @@ export default function ReportDetailView({
     toast.success(`Exported ${report.title} as CSV`);
   };
 
+  const kpis = report.kpis ?? [];
+  const insights = report.insights ?? [];
+  const cols = report.cols ?? [];
+  const rows = report.rows ?? [];
+  const chart = report.chart;
+
   // Convert report.cols & report.rows to objects for CustomTable
-  const tableData = report.rows.map((row, rowIdx) => {
+  const tableData = rows.map((row, rowIdx) => {
     const item: Record<string, any> = { id: `row-${rowIdx}` };
-    report.cols.forEach((col, colIdx) => {
+    cols.forEach((col, colIdx) => {
       item[col] = row[colIdx];
     });
     return item;
   });
 
-  const columns: columnType[] = report.cols.map((col, idx) => ({
+  const columns: columnType[] = cols.map((col, idx) => ({
     key: col,
     label: col,
     render: (val: any) => {
       if (idx === 0) {
-        return <span className="font-semibold  text-base-content">{val}</span>;
+        return <span className="font-semibold text-base-content">{val}</span>;
       }
       return <span className=" text-base-content/80">{val}</span>;
     },
@@ -90,7 +96,7 @@ export default function ReportDetailView({
         <button
           type="button"
           onClick={onBack}
-          className="inline-flex items-center gap-1.5  font-semibold text-base-content/80 hover:text-primary transition-colors"
+          className="inline-flex items-center gap-1.5 font-semibold text-base-content/80 hover:text-primary transition-colors"
         >
           <ArrowLeft className="size-3.5" />
           <span>All reports catalog</span>
@@ -153,7 +159,7 @@ export default function ReportDetailView({
 
       {/* Top 4 KPI Metrics */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        {report.kpis.map((kpi) => (
+        {kpis.map((kpi) => (
           <StatCard
             key={kpi.label}
             title={kpi.label}
@@ -171,15 +177,23 @@ export default function ReportDetailView({
         <div className="xl:col-span-2 card bg-base-100 border border-base-200 shadow-sm p-5 sm:p-6 space-y-4">
           <div className="flex items-center justify-between">
             <h3 className="font-bold text-sm text-base-content">
-              {report.chart.title}
+              {chart?.title ?? report.title}
             </h3>
-            <span className="badge badge-sm badge-ghost text-[10px] capitalize">
-              {report.chart.type} visualization
-            </span>
+            {chart?.type && (
+              <span className="badge badge-sm badge-ghost text-[10px] capitalize">
+                {chart.type} visualization
+              </span>
+            )}
           </div>
 
           <div className="h-72 w-full pt-2">
-            <ReportChartRenderer chart={report.chart} />
+            {chart ? (
+              <ReportChartRenderer chart={chart} />
+            ) : (
+              <div className="h-full flex items-center justify-center text-sm text-base-content/60">
+                No chart data available.
+              </div>
+            )}
           </div>
         </div>
 
@@ -193,10 +207,15 @@ export default function ReportDetailView({
           </div>
 
           <ul className="space-y-3">
-            {report.insights.map((insight, idx) => (
+            {insights.length === 0 && (
+              <li className="text-sm text-base-content/60">
+                No insights available for this period.
+              </li>
+            )}
+            {insights.map((insight, idx) => (
               <li
                 key={idx}
-                className="flex items-start gap-2.5  text-base-content/80 leading-relaxed bg-base-200/80 p-3 rounded-xl border border-base-200/80"
+                className="flex items-start gap-2.5 text-base-content/80 leading-relaxed bg-base-200/80 p-3 rounded-xl border border-base-200/80"
               >
                 <Info className="size-3.5 text-primary mt-0.5 shrink-0" />
                 <span>{insight}</span>
@@ -222,31 +241,37 @@ export default function ReportDetailView({
             <h3 className="font-bold text-base text-base-content">
               Detailed Data Breakdown
             </h3>
-            <p className=" text-base-content/80 mt-0.5">
+            <p className="text-base-content/80 mt-0.5">
               Granular numerical records corresponding to {report.title}.
             </p>
           </div>
         </div>
 
         <div className="overflow-hidden rounded-xl border border-base-200">
-          <CustomTable ring={false} data={tableData} columns={columns} />
+          {tableData.length > 0 ? (
+            <CustomTable ring={false} data={tableData} columns={columns} />
+          ) : (
+            <div className="py-10 text-center text-sm text-base-content/60">
+              No tabular data available for this report.
+            </div>
+          )}
         </div>
       </div>
 
       {/* Other Reports Pill Navigation */}
       <div className="card bg-base-100 border border-base-200 shadow-sm p-5 sm:p-6 space-y-3">
-        <h4 className=" font-bold uppercase tracking-wider text-base-content/80">
+        <h4 className="font-bold uppercase tracking-wider text-base-content/80">
           Other HR Reports & Analytics
         </h4>
         <div className="flex flex-wrap gap-2">
-          {allReports
+          {(allReports ?? [])
             .filter((r) => r.slug !== report.slug)
             .map((r) => (
               <button
                 key={r.slug}
                 type="button"
                 onClick={() => onSelectOtherReport(r)}
-                className="px-3 py-1.5 rounded-full  font-medium bg-base-200 hover:bg-primary hover:text-white transition-all"
+                className="px-3 py-1.5 rounded-full text-base-content font-medium bg-base-200 hover:bg-primary hover:text-white transition-all"
               >
                 {r.title}
               </button>
