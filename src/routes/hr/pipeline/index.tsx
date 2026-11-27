@@ -37,13 +37,13 @@ function RouteComponent() {
   // Filter items by stage
   const filteredItems = useMemo(() => {
     const all = itemsQuery.data ?? [];
-    const itemsWithStage = all.map((item) => ({
-      ...item,
-      _stageName: item.stageName || (item.stageId ? `Stage ${item.stageId}` : "Unknown"),
+    const itemsWithStage = all.map((it) => ({
+      ...it,
+      _stageName: it.stageName || (it.stageId ? `Stage ${it.stageId}` : "Unknown"),
     }));
     if (!stageFilter) return itemsWithStage;
     return itemsWithStage.filter(
-      (it) => it.stageId === stageFilter || it.stageName === stageFilter,
+      (it2) => it2.stageId === stageFilter || it2.stageName === stageFilter,
     );
   }, [itemsQuery.data, stageFilter]);
 
@@ -211,55 +211,6 @@ function RouteComponent() {
                     );
                   },
                 },
-                {
-                  key: "stage",
-                  label: "Stage",
-                  render: (_, it) => {
-                    const stage = it.stageName || it.stageId || "Unknown";
-                    return (
-                      <span
-                        className="px-2 py-0.5 rounded text-xs font-medium bg-primary/10 text-primary"
-                      >
-                        {stage}
-                      </span>
-                    );
-                  },
-                },
-                {
-                  key: "email",
-                  label: "Email",
-                  render: (_, it) => {
-                    return it.email ? <a href={`mailto:${it.email}`}>{it.email}</a> : "-";
-                  },
-                },
-                {
-                  key: "actions",
-                  label: "Actions",
-                  render: (_, it) => {
-                    return (
-                      <div className="flex gap-2">
-                        <button
-                          title="View details"
-                          className="text-primary hover:text-primary/90"
-                        >
-                          Ⓥ
-                        </button>
-                        <button
-                          title="Move stage"
-                          className="text-warning hover:text-warning/90"
-                        >
-                          ↕
-                        </button>
-                        <button
-                          title="Remove"
-                          className="text-error hover:text-error/90"
-                        >
-                          ✕
-                        </button>
-                      </div>
-                    );
-                  },
-                },
               ]}
               data={filteredItems}
             />
@@ -286,17 +237,17 @@ function RouteComponent() {
             if (!editingItem) {
               const target = e.target as HTMLFormElement;
               await handleCreateItem({
-                name: target.elements.namedItem("name")?.value ?? "",
-                email: target.elements.namedItem("email")?.value || undefined,
-                phone: target.elements.namedItem("phone")?.value || undefined,
-                stageId: target.elements.namedItem("stageId")?.value ?? "",
-                source: target.elements.namedItem("source")?.value || undefined,
+                name: (target.elements.namedItem("name") as HTMLInputElement)?.value ?? "",
+                email: (target.elements.namedItem("email") as HTMLInputElement)?.value || undefined,
+                phone: (target.elements.namedItem("phone") as HTMLInputElement)?.value || undefined,
+                stageId: (target.elements.namedItem("stageId") as HTMLSelectElement)?.value ?? "",
+                source: (target.elements.namedItem("source") as HTMLInputElement)?.value || undefined,
               });
             } else {
               const target = e.target as HTMLFormElement;
               await handleMoveItem({
                 id: editingItem.id,
-                toStageId: target.elements.namedItem("stageId")?.value ?? "",
+                toStageId: (target.elements.namedItem("stageId") as HTMLSelectElement)?.value ?? "",
               });
               setEditingItem(null);
             }
