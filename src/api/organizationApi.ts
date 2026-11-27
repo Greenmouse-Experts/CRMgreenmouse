@@ -26,6 +26,11 @@ export interface UpdateDepartmentPayload {
   code?: string;
   name?: string;
   headEmployeeId?: string;
+  parentDepartmentId?: string;
+  costCentre?: string;
+  primaryLocation?: string;
+  approvedHeadcount?: number;
+  description?: string;
 }
 
 /**
@@ -104,6 +109,8 @@ export function toUiDepartment(raw: any): Department {
     headEmployeeId: raw?.headEmployeeId ?? raw?.headEmployee?.id ?? undefined,
     head: headName || "Unassigned",
     headName: headName ?? null,
+    parentDepartmentId:
+      raw?.parentDepartmentId ?? raw?.parentDepartment?.id ?? null,
     parent: raw?.parentDepartmentName ?? raw?.parent ?? undefined,
     parentDepartmentName: raw?.parentDepartmentName ?? null,
     costCentre: raw?.costCentre ?? null,

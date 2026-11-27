@@ -56,6 +56,10 @@ export default function DepartmentsTable({
           return (
             Boolean(dept.name && dept.name.toLowerCase().includes(q)) ||
             Boolean(dept.code && dept.code.toLowerCase().includes(q)) ||
+            Boolean(
+              dept.parentDepartmentName &&
+                dept.parentDepartmentName.toLowerCase().includes(q),
+            ) ||
             Boolean(dept.status && dept.status.toLowerCase().includes(q))
           );
         }
@@ -82,6 +86,20 @@ export default function DepartmentsTable({
           {value || dept.name || "Untitled"}
         </span>
       ),
+    },
+    {
+      key: "parentDepartmentName",
+      label: "Parent",
+      render: (_value, dept) =>
+        dept.parentDepartmentName ? (
+          <span className="text-xs text-base-content/80">
+            {dept.parentDepartmentName}
+          </span>
+        ) : (
+          <span className="text-[11px] italic text-base-content/50">
+            Top level
+          </span>
+        ),
     },
     {
       key: "staffCount",

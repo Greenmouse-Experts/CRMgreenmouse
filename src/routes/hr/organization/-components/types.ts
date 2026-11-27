@@ -10,6 +10,7 @@ export interface Department {
   headEmployeeId?: string | null;
   head?: string;
   headName?: string | null;
+  parentDepartmentId?: string | null;
   parentDepartmentName?: string | null;
   parent?: string;
   costCentre?: string | null;

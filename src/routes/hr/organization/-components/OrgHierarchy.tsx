@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import type { Department, OrgLeader } from "./types";
 import { Building2, ShieldCheck, Users } from "lucide-react";
 
@@ -8,28 +9,192 @@ interface OrgHierarchyProps {
   onSelectDept?: (deptId: string) => void;
 }
 
+const AVATAR_COLORS = [
+  "bg-indigo-100 text-indigo-700 border-indigo-200",
+  "bg-emerald-100 text-emerald-700 border-emerald-200",
+  "bg-amber-100 text-amber-700 border-amber-200",
+  "bg-rose-100 text-rose-700 border-rose-200",
+  "bg-cyan-100 text-cyan-700 border-cyan-200",
+  "bg-purple-100 text-purple-700 border-purple-200",
+  "bg-teal-100 text-teal-700 border-teal-200",
+];
+
+const getInitials = (name?: string | null) => {
+  if (!name || !name.trim()) return "—";
+  const parts = name.trim().split(/\s+/);
+  if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+  return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+};
+
+export interface DepartmentTree {
+  roots: Department[];
+  childrenMap: Map<string, Department[]>;
+}
+
+/**
+ * Build a parent/child tree from `parentDepartmentId`.
+ *
+ * Departments whose parent is missing, unknown, or themselves are treated as
+ * roots. A pure cycle (A → B → A) has no roots, so it falls back to a flat
+ * list instead of rendering nothing.
+ */
+export function buildDepartmentTree(departments: Department[]): DepartmentTree {
+  const byId = new Map(departments.map((dept) => [dept.id, dept]));
+  const childrenMap = new Map<string, Department[]>();
+  const roots: Department[] = [];
+
+  for (const dept of departments) {
+    const parentId = dept.parentDepartmentId ?? null;
+    const parent = parentId ? byId.get(parentId) : undefined;
+
+    if (parent && parent.id !== dept.id) {
+      const siblings = childrenMap.get(parent.id) ?? [];
+      siblings.push(dept);
+      childrenMap.set(parent.id, siblings);
+    } else {
+      roots.push(dept);
+    }
+  }
+
+  if (roots.length === 0 && departments.length > 0) {
+    return { roots: departments, childrenMap: new Map() };
+  }
+
+  return { roots, childrenMap };
+}
+
+interface DepartmentCardProps {
+  dept: Department;
+  index: number;
+  depth: number;
+  childCount: number;
+  isSelected: boolean;
+  onSelect?: (deptId: string) => void;
+}
+
+function DepartmentCard({
+  dept,
+  index,
+  depth,
+  childCount,
+  isSelected,
+  onSelect,
+}: DepartmentCardProps) {
+  const compact = depth > 0;
+  const colorClass = AVATAR_COLORS[index % AVATAR_COLORS.length];
+  const headText = dept.head || dept.headName || "Unassigned";
+  const hasHead = Boolean(headText && headText !== "Unassigned");
+
+  return (
+    <div
+      onClick={() => dept.id && onSelect?.(dept.id)}
+      className={`group relative rounded-xl border text-center transition-all duration-200 cursor-pointer ${
+        compact ? "p-2.5" : "p-3.5"
+      } ${
+        isSelected
+          ? "border-primary bg-primary/5 ring-2 ring-primary/20 shadow-sm"
+          : "border-base-200 bg-base-100 hover:border-primary/80 hover:shadow-md"
+      }`}
+    >
+      {/* Department Head Initials Avatar */}
+      <div className="flex justify-center mb-2">
+        <div
+          className={`${
+            compact ? "size-7 text-[10px]" : "size-9"
+          } rounded-full flex items-center justify-center font-bold border ${colorClass}`}
+        >
+          {getInitials(hasHead ? headText : dept.name)}
+        </div>
+      </div>
+
+      {/* Department Info */}
+      <p
+        className={`${
+          compact ? "text-xs" : "text-sm"
+        } font-bold text-base-content group-hover:text-primary transition-colors truncate`}
+      >
+        {dept.name || "Department"}
+      </p>
+      <p className="text-[11px] text-base-content/80 truncate mt-0.5">
+        {headText}
+      </p>
+      {dept.code && (
+        <p className="text-[10px] font-mono uppercase tracking-wide text-base-content/50 truncate">
+          {dept.code}
+        </p>
+      )}
+
+      {/* Staff / Sub-department Pills */}
+      <div className="mt-2 flex flex-wrap items-center justify-center gap-1">
+        <span className="inline-block rounded-full bg-primary/10 border border-primary/15 px-2.5 py-0.5 text-[11px] font-bold text-primary">
+          {dept.count ?? 0} staff
+        </span>
+        {childCount > 0 && (
+          <span className="inline-block rounded-full bg-base-200 border border-base-300 px-2.5 py-0.5 text-[10px] font-semibold text-base-content/70">
+            {childCount} sub
+          </span>
+        )}
+      </div>
+    </div>
+  );
+}
+
+interface HierarchyBranchProps {
+  dept: Department;
+  index: number;
+  depth: number;
+  tree: DepartmentTree;
+  selectedDeptId?: string | null;
+  onSelectDept?: (deptId: string) => void;
+}
+
+function HierarchyBranch({
+  dept,
+  index,
+  depth,
+  tree,
+  selectedDeptId,
+  onSelectDept,
+}: HierarchyBranchProps) {
+  const children = tree.childrenMap.get(dept.id) ?? [];
+
+  return (
+    <div className="flex flex-col">
+      <DepartmentCard
+        dept={dept}
+        index={index}
+        depth={depth}
+        childCount={children.length}
+        isSelected={selectedDeptId === dept.id}
+        onSelect={onSelectDept}
+      />
+
+      {children.length > 0 && (
+        <div className="mt-2 ml-3 space-y-2 border-l-2 border-primary/20 pl-3">
+          {children.map((child, childIdx) => (
+            <HierarchyBranch
+              key={child.id || `${dept.id}-${childIdx}`}
+              dept={child}
+              index={index + childIdx + 1}
+              depth={depth + 1}
+              tree={tree}
+              selectedDeptId={selectedDeptId}
+              onSelectDept={onSelectDept}
+            />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function OrgHierarchy({
   leader,
   departments,
   selectedDeptId,
   onSelectDept,
 }: OrgHierarchyProps) {
-  const getInitials = (name?: string | null) => {
-    if (!name || !name.trim()) return "—";
-    const parts = name.trim().split(/\s+/);
-    if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
-    return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
-  };
-
-  const avatarColors = [
-    "bg-indigo-100 text-indigo-700 border-indigo-200",
-    "bg-emerald-100 text-emerald-700 border-emerald-200",
-    "bg-amber-100 text-amber-700 border-amber-200",
-    "bg-rose-100 text-rose-700 border-rose-200",
-    "bg-cyan-100 text-cyan-700 border-cyan-200",
-    "bg-purple-100 text-purple-700 border-purple-200",
-    "bg-teal-100 text-teal-700 border-teal-200",
-  ];
+  const tree = useMemo(() => buildDepartmentTree(departments), [departments]);
 
   const hasLeader = Boolean(leader?.name?.trim());
 
@@ -95,57 +260,25 @@ export default function OrgHierarchy({
             <div className="h-7 w-0.5 bg-primary/80" />
 
             {/* Horizontal Cross Branch Line */}
-            <div className="hidden xl:block w-[88%] h-0.5 bg-primary/20 mb-3 relative">
+            <div className="hidden lg:block w-[88%] h-0.5 bg-primary/20 mb-3 relative">
               <div className="absolute left-0 top-0 size-2 rounded-full bg-primary/80 -translate-y-1/2" />
               <div className="absolute right-0 top-0 size-2 rounded-full bg-primary/80 -translate-y-1/2" />
               <div className="absolute left-1/2 top-0 size-2.5 rounded-full bg-primary -translate-x-1/2 -translate-y-1/2" />
             </div>
 
-            {/* Department Heads Level */}
-            <div className="grid w-full grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-7 pt-1">
-              {departments.map((dept, idx) => {
-                const isSelected = selectedDeptId === dept.id;
-                const colorClass = avatarColors[idx % avatarColors.length];
-                const headText = dept.head || "Unassigned";
-
-                return (
-                  <div
-                    key={dept.id || idx}
-                    onClick={() => dept.id && onSelectDept?.(dept.id)}
-                    className={`group relative rounded-xl border p-3.5 text-center transition-all duration-200 cursor-pointer ${
-                      isSelected
-                        ? "border-primary bg-primary/5 ring-2 ring-primary/20 shadow-sm scale-[1.02]"
-                        : "border-base-200 bg-base-100 hover:border-primary/80 hover:shadow-md"
-                    }`}
-                  >
-                    {/* Department Head Initials Avatar */}
-                    <div className="flex justify-center mb-2">
-                      <div
-                        className={`size-9 rounded-full flex items-center justify-center font-bold  border ${colorClass}`}
-                      >
-                        {getInitials(
-                          headText !== "Unassigned" ? headText : dept.name,
-                        )}
-                      </div>
-                    </div>
-
-                    {/* Department Info */}
-                    <p className="text-sm font-bold text-base-content group-hover:text-primary transition-colors truncate">
-                      {dept.name || "Department"}
-                    </p>
-                    <p className=" text-base-content/80 truncate mt-0.5">
-                      {headText}
-                    </p>
-
-                    {/* Staff Count Pill */}
-                    <div className="mt-2.5">
-                      <span className="inline-block rounded-full bg-primary/10 border border-primary/15 px-2.5 py-0.5 text-[11px] font-bold text-primary">
-                        {dept.count ?? 0} staff
-                      </span>
-                    </div>
-                  </div>
-                );
-              })}
+            {/* Department tree: roots side by side, children nested under parents */}
+            <div className="grid w-full grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 pt-1 items-start">
+              {tree.roots.map((dept, idx) => (
+                <HierarchyBranch
+                  key={dept.id || idx}
+                  dept={dept}
+                  index={idx}
+                  depth={0}
+                  tree={tree}
+                  selectedDeptId={selectedDeptId}
+                  onSelectDept={onSelectDept}
+                />
+              ))}
             </div>
           </>
         )}
