@@ -174,13 +174,13 @@ const nav_links = [
         type: "menu",
         children: null,
       },
-      {
-        path: "/hr/pipeline",
-        label: "Pipelines",
-        icon: <Kanban size={ICON_SIZE} />,
-        type: "menu",
-        children: null,
-      },
+      // {
+      //   path: "/hr/pipeline",
+      //   label: "Pipelines",
+      //   icon: <Kanban size={ICON_SIZE} />,
+      //   type: "menu",
+      //   children: null,
+      // },
       {
         path: "/hr/reports",
         label: "Reports",
