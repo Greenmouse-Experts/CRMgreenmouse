@@ -32,6 +32,7 @@ export type CaseStatus =
 export interface DisciplinaryCase {
   id: string;
   caseCode: string;
+  employeeId?: string;
   employee: string;
   department: string;
   category: CaseCategory;

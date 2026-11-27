@@ -200,6 +200,8 @@ export const mapCaseFromApi = (raw: any): DisciplinaryCase => {
       : undefined;
 
   const id = String(c?.id ?? raw?.id ?? "");
+  const rawEmployeeId =
+    c?.employeeId ?? raw?.employeeId ?? raw?.employee?.id ?? c?.employee?.id;
 
   return {
     id,
@@ -209,6 +211,7 @@ export const mapCaseFromApi = (raw: any): DisciplinaryCase => {
         raw?.caseNumber ??
         (id ? id.slice(0, 8).toUpperCase() : "—"),
     ),
+    employeeId: rawEmployeeId ? String(rawEmployeeId) : undefined,
     employee: formatEmployeeName(
       raw?.employeeName ?? raw?.employee ?? c?.employeeName ?? c?.employee,
       "Unknown Employee",

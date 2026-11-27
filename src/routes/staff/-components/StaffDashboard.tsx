@@ -4,6 +4,7 @@ import {
   Activity,
   ArrowDownRight,
   ArrowUpRight,
+  BarChart3,
   BriefcaseBusiness,
   Building2,
   Cake,
@@ -15,6 +16,8 @@ import {
   ClipboardCheck,
   Clock,
   FileText,
+  GraduationCap,
+  Scale,
   Settings,
   UserPlus,
   Users,
@@ -50,6 +53,10 @@ const staffPaths = {
   colleagues: "/staff/staffs",
   organization: "/staff/organization",
   attendance: "/staff/attendance",
+  leave: "/staff/leave",
+  performance: "/staff/performance",
+  training: "/staff/training",
+  disciplinary: "/staff/disciplinary",
   profile: "/staff/settings/profile",
   settings: "/staff/settings",
 } as const;
@@ -59,6 +66,26 @@ const quickActions = [
     label: "Clock in / Out",
     path: staffPaths.attendance,
     icon: <Clock className="size-4" />,
+  },
+  {
+    label: "Request leave",
+    path: staffPaths.leave,
+    icon: <BriefcaseBusiness className="size-4" />,
+  },
+  {
+    label: "My performance",
+    path: staffPaths.performance,
+    icon: <BarChart3 className="size-4" />,
+  },
+  {
+    label: "Department trainings",
+    path: staffPaths.training,
+    icon: <GraduationCap className="size-4" />,
+  },
+  {
+    label: "Disciplinary status",
+    path: staffPaths.disciplinary,
+    icon: <Scale className="size-4" />,
   },
   {
     label: "View colleagues",
@@ -249,7 +276,7 @@ export default function StaffDashboard() {
       person: l.emp ?? "Employee",
       detail: `${String(l.type)} · ${l.from ?? ""}–${l.to ?? ""}`,
       age: l.startDate ?? "",
-      path: staffPaths.attendance,
+      path: staffPaths.leave,
       icon: <CalendarCheck2 className="size-4" />,
     }));
 
@@ -392,12 +419,9 @@ export default function StaffDashboard() {
 
   const renderHeaderActions = () => (
     <>
-      <Link
-        to={staffPaths.profile}
-        className="btn btn-outline btn-sm sm:btn-md"
-      >
-        <CircleUserRound className="size-4" />
-        My profile
+      <Link to={staffPaths.leave} className="btn btn-outline btn-sm sm:btn-md">
+        <BriefcaseBusiness className="size-4" />
+        Request leave
       </Link>
       <Link
         to={staffPaths.attendance}
