@@ -117,7 +117,7 @@ export default function OffboardingCasesTable({
                 </span>
                 {isActive && (
                   <span className="badge badge-sm badge-primary text-sm font-bold">
-                    Active view
+                    Active
                   </span>
                 )}
               </div>
@@ -139,15 +139,20 @@ export default function OffboardingCasesTable({
     {
       key: "lastWorkingDay",
       label: "Last Working Day",
-      render: (date: string) => (
-        <span className=" font-medium text-base-content">
-          {new Date(date).toLocaleDateString("en-US", {
-            month: "short",
-            day: "numeric",
-            year: "numeric",
-          })}
-        </span>
-      ),
+      render: (date: string) => {
+        const parsed = date ? new Date(date) : null;
+        const formatted =
+          parsed && !Number.isNaN(parsed.getTime())
+            ? parsed.toLocaleDateString("en-US", {
+                month: "short",
+                day: "numeric",
+                year: "numeric",
+              })
+            : "—";
+        return (
+          <span className=" font-medium text-base-content">{formatted}</span>
+        );
+      },
     },
     {
       key: "currentStep",
@@ -178,6 +183,10 @@ export default function OffboardingCasesTable({
       key: "accept_case",
       label: "Accept Notice",
       action: async (item) => {
+        if (!item.id) {
+          toast.error("Cannot accept: case ID is missing");
+          return;
+        }
         try {
           await acceptCase.mutateAsync({ id: item.id });
           toast.success(`Accepted offboarding notice for ${item.employee}`);

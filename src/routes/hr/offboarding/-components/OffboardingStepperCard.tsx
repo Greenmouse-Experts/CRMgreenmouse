@@ -37,14 +37,22 @@ export default function OffboardingStepperCard({
     OFFBOARDING_STEPS.indexOf(activeCase.currentStep),
   );
 
-  const formattedLastDay = activeCase.lastWorkingDay
-    ? new Date(activeCase.lastWorkingDay).toLocaleDateString("en-US", {
-        month: "short",
-        day: "numeric",
-      })
-    : "—";
+  const parsedLastDay = activeCase.lastWorkingDay
+    ? new Date(activeCase.lastWorkingDay)
+    : null;
+  const formattedLastDay =
+    parsedLastDay && !Number.isNaN(parsedLastDay.getTime())
+      ? parsedLastDay.toLocaleDateString("en-US", {
+          month: "short",
+          day: "numeric",
+        })
+      : "—";
 
   const handleAccept = async () => {
+    if (!activeCase.id) {
+      toast.error("Cannot accept: case ID is missing");
+      return;
+    }
     try {
       await acceptCase.mutateAsync({ id: activeCase.id });
       toast.success(`Offboarding notice accepted for ${activeCase.employee}`);
@@ -54,6 +62,10 @@ export default function OffboardingStepperCard({
   };
 
   const handleAuthorizeRevocation = async () => {
+    if (!activeCase.id) {
+      toast.error("Cannot authorize revocation: case ID is missing");
+      return;
+    }
     try {
       await authorizeRevocation.mutateAsync({
         caseId: activeCase.id,
@@ -67,6 +79,10 @@ export default function OffboardingStepperCard({
   };
 
   const handleSettlementAction = async () => {
+    if (!activeCase.id) {
+      toast.error("Cannot process settlement: case ID is missing");
+      return;
+    }
     try {
       if (activeCase.settlementStatus === "submitted") {
         await approveSettlement.mutateAsync({ caseId: activeCase.id });

@@ -8,6 +8,7 @@ export * from "./financeApi";
 export * from "./imageApi";
 export * from "./notifications-api";
 export * from "./organizationApi";
+export * from "./pipelineApi";
 export * from "./salesApi";
 export * from "./supportApi";
 export * from "./tasksApi";

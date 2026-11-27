@@ -54,7 +54,7 @@ const authConfig = () => {
   return { headers: { Authorization: `Bearer ${token}` } };
 };
 
-const unwrapList = <T>(data: any, keys: string[]): T[] => {
+export const unwrapList = <T>(data: any, keys: string[]): T[] => {
   if (Array.isArray(data)) return data as T[];
   if (Array.isArray(data?.data)) return data.data as T[];
   if (Array.isArray(data?.data?.data)) return data.data.data as T[];
@@ -62,11 +62,13 @@ const unwrapList = <T>(data: any, keys: string[]): T[] => {
   for (const key of keys) {
     if (Array.isArray(data?.[key])) return data[key] as T[];
     if (Array.isArray(data?.data?.[key])) return data.data[key] as T[];
+    if (Array.isArray(data?.data?.data?.[key]))
+      return data.data.data[key] as T[];
   }
   return [];
 };
 
-const unwrapOne = <T>(data: any): T =>
+export const unwrapOne = <T>(data: any): T =>
   (data?.data?.data ?? data?.data ?? data?.payload ?? data) as T;
 
 const queryRoot = ["offboarding"] as const;
@@ -77,7 +79,10 @@ const useInvalidateOffboarding = () => {
 };
 
 const normalizeClearanceStatus = (value?: string): ClearanceStatus => {
-  const key = (value ?? "").trim().toLowerCase().replace(/[\s-]+/g, "_");
+  const key = (value ?? "")
+    .trim()
+    .toLowerCase()
+    .replace(/[\s-]+/g, "_");
   switch (key) {
     case "completed":
     case "done":
@@ -107,7 +112,10 @@ const normalizeDepartment = (value?: string): ClearanceDepartment => {
 };
 
 const normalizeSeparationType = (value?: string): SeparationType => {
-  const key = (value ?? "").trim().toLowerCase().replace(/[\s-]+/g, "_");
+  const key = (value ?? "")
+    .trim()
+    .toLowerCase()
+    .replace(/[\s-]+/g, "_");
   switch (key) {
     case "end_of_contract":
     case "contract_end":
@@ -125,7 +133,10 @@ const normalizeSeparationType = (value?: string): SeparationType => {
 };
 
 const normalizeOffboardingStatus = (value?: string): OffboardingStatus => {
-  const key = (value ?? "").trim().toLowerCase().replace(/[\s-]+/g, "_");
+  const key = (value ?? "")
+    .trim()
+    .toLowerCase()
+    .replace(/[\s-]+/g, "_");
   switch (key) {
     case "completed":
     case "closed":
@@ -151,7 +162,10 @@ const normalizeOffboardingStatus = (value?: string): OffboardingStatus => {
 };
 
 const normalizeStep = (value?: string): OffboardingStep => {
-  const key = (value ?? "").trim().toLowerCase().replace(/[\s-]+/g, "_");
+  const key = (value ?? "")
+    .trim()
+    .toLowerCase()
+    .replace(/[\s-]+/g, "_");
   switch (key) {
     case "acceptance":
     case "accepted":
@@ -178,15 +192,32 @@ const normalizeStep = (value?: string): OffboardingStep => {
   }
 };
 
+const resolveId = (...candidates: unknown[]): string => {
+  for (const candidate of candidates) {
+    if (typeof candidate === "string" && candidate.trim()) {
+      return candidate.trim();
+    }
+    if (typeof candidate === "number" && Number.isFinite(candidate)) {
+      return String(candidate);
+    }
+  }
+  return "";
+};
+
 export const mapBackendOffboardingTask = (
   raw: any,
   fallbackCaseId = "",
 ): ClearanceItem => {
-  const assignee = raw?.assignee ?? raw?.assignedToUser;
+  const t = raw?.task && typeof raw.task === "object" ? raw.task : raw;
+  const assignee =
+    raw?.assignee ?? t?.assignee ?? raw?.assignedToUser ?? t?.assignedToUser;
   const ownerName =
     raw?.assignedToName ??
+    t?.assignedToName ??
     raw?.ownerName ??
+    t?.ownerName ??
     raw?.owner ??
+    t?.owner ??
     (assignee && typeof assignee === "object"
       ? [assignee.firstName, assignee.lastName].filter(Boolean).join(" ") ||
         assignee.name ||
@@ -194,31 +225,60 @@ export const mapBackendOffboardingTask = (
       : undefined) ??
     "—";
 
+  const dueDateRaw = t?.dueDate ?? raw?.dueDate;
+
   return {
-    id: String(raw?.id ?? ""),
-    caseId: String(raw?.caseId ?? raw?.offboardingCaseId ?? fallbackCaseId),
-    department: normalizeDepartment(raw?.department),
-    item: String(raw?.title ?? raw?.item ?? "Untitled task"),
+    id: resolveId(t?.id, t?.taskId, t?._id, raw?.id, raw?.taskId, raw?._id),
+    caseId: resolveId(
+      t?.caseId,
+      t?.offboardingCaseId,
+      t?.case?.id,
+      raw?.caseId,
+      raw?.offboardingCaseId,
+      raw?.case?.id,
+      fallbackCaseId,
+    ),
+    department: normalizeDepartment(t?.department ?? raw?.department),
+    item: String(
+      t?.title ?? t?.item ?? raw?.title ?? raw?.item ?? "Untitled task",
+    ),
     owner: String(ownerName),
     assignedToId:
-      typeof raw?.assignedTo === "string"
-        ? raw.assignedTo
-        : assignee?.id ?? undefined,
-    taskType: raw?.taskType ?? undefined,
-    required: typeof raw?.required === "boolean" ? raw.required : undefined,
-    status: normalizeClearanceStatus(raw?.status),
-    dueDate: raw?.dueDate ? String(raw.dueDate).slice(0, 10) : undefined,
-    notes: raw?.notes ?? raw?.waiveReason ?? undefined,
+      typeof t?.assignedTo === "string"
+        ? t.assignedTo
+        : typeof raw?.assignedTo === "string"
+          ? raw.assignedTo
+          : (assignee?.id ?? undefined),
+    taskType: t?.taskType ?? raw?.taskType ?? undefined,
+    required:
+      typeof t?.required === "boolean"
+        ? t.required
+        : typeof raw?.required === "boolean"
+          ? raw.required
+          : undefined,
+    status: normalizeClearanceStatus(t?.status ?? raw?.status),
+    dueDate: dueDateRaw ? String(dueDateRaw).slice(0, 10) : undefined,
+    notes:
+      t?.notes ?? t?.waiveReason ?? raw?.notes ?? raw?.waiveReason ?? undefined,
   };
 };
 
 export const mapBackendOffboardingCase = (raw: any): OffboardingCase => {
-  const emp = raw?.employee;
+  const c =
+    raw?.case && typeof raw.case === "object"
+      ? raw.case
+      : raw?.offboardingCase && typeof raw.offboardingCase === "object"
+        ? raw.offboardingCase
+        : raw;
+
+  const emp = raw?.employee ?? c?.employee ?? raw?.staff ?? c?.staff;
   const empName =
     raw?.employeeName ??
+    c?.employeeName ??
     (emp && typeof emp === "object"
       ? [emp.firstName, emp.lastName].filter(Boolean).join(" ") ||
         emp.name ||
+        emp.fullName ||
         emp.email
       : typeof emp === "string"
         ? emp
@@ -227,44 +287,103 @@ export const mapBackendOffboardingCase = (raw: any): OffboardingCase => {
 
   const dept =
     raw?.departmentName ??
+    c?.departmentName ??
     (emp && typeof emp === "object"
       ? typeof emp.department === "object"
         ? emp.department?.name
         : emp.department
       : undefined) ??
     raw?.department ??
+    c?.department ??
     "—";
 
   const role =
     raw?.jobTitle ??
+    c?.jobTitle ??
     (emp && typeof emp === "object"
-      ? emp.jobTitle ?? emp.position?.name ?? emp.position?.title
+      ? (emp.jobTitle ?? emp.position?.name ?? emp.position?.title)
       : undefined) ??
     raw?.role ??
+    c?.role ??
     "—";
 
-  const caseId = String(raw?.id ?? "");
-  const rawTasks = Array.isArray(raw?.tasks) ? raw.tasks : [];
+  const caseId = resolveId(
+    c?.id,
+    c?.caseId,
+    c?.offboardingCaseId,
+    c?._id,
+    c?.uuid,
+    raw?.id,
+    raw?.caseId,
+    raw?.offboardingCaseId,
+    raw?._id,
+    raw?.uuid,
+  );
+  const rawTasks = Array.isArray(raw?.tasks)
+    ? raw.tasks
+    : Array.isArray(c?.tasks)
+      ? c.tasks
+      : [];
 
   return {
     id: caseId,
     employee: String(empName),
-    employeeId: String(raw?.employeeId ?? emp?.id ?? ""),
+    employeeId: resolveId(c?.employeeId, raw?.employeeId, emp?.id),
     department: String(dept || "—"),
     role: String(role || "—"),
-    separationType: normalizeSeparationType(raw?.category ?? raw?.separationType),
+    separationType: normalizeSeparationType(
+      c?.category ?? c?.separationType ?? raw?.category ?? raw?.separationType,
+    ),
     resignationDate: String(
-      raw?.noticeDate ?? raw?.resignationDate ?? raw?.createdAt ?? "",
+      c?.noticeDate ??
+        c?.resignationDate ??
+        c?.createdAt ??
+        raw?.noticeDate ??
+        raw?.resignationDate ??
+        raw?.createdAt ??
+        "",
     ).slice(0, 10),
     lastWorkingDay: String(
-      raw?.lastWorkingDate ?? raw?.lastWorkingDay ?? "",
+      c?.lastWorkingDate ??
+        c?.lastWorkingDay ??
+        raw?.lastWorkingDate ??
+        raw?.lastWorkingDay ??
+        "",
     ).slice(0, 10),
-    currentStep: normalizeStep(raw?.currentStage ?? raw?.stage ?? raw?.currentStep),
-    status: normalizeOffboardingStatus(raw?.status),
-    handoverTo: String(raw?.handoverToName ?? raw?.handoverTo ?? "—"),
-    notes: raw?.confidentialReason ?? raw?.notes ?? undefined,
-    stage: raw?.currentStage ?? raw?.stage ?? undefined,
-    settlementStatus: raw?.settlement?.status ?? raw?.settlementStatus ?? undefined,
+    currentStep: normalizeStep(
+      c?.currentStage ??
+        c?.stage ??
+        c?.currentStep ??
+        raw?.currentStage ??
+        raw?.stage ??
+        raw?.currentStep,
+    ),
+    status: normalizeOffboardingStatus(c?.status ?? raw?.status),
+    handoverTo: String(
+      raw?.handoverToName ??
+        c?.handoverToName ??
+        raw?.handoverTo ??
+        c?.handoverTo ??
+        "—",
+    ),
+    notes:
+      c?.confidentialReason ??
+      c?.notes ??
+      raw?.confidentialReason ??
+      raw?.notes ??
+      undefined,
+    stage:
+      c?.currentStage ??
+      c?.stage ??
+      raw?.currentStage ??
+      raw?.stage ??
+      undefined,
+    settlementStatus:
+      raw?.settlement?.status ??
+      c?.settlement?.status ??
+      raw?.settlementStatus ??
+      c?.settlementStatus ??
+      undefined,
     tasks: rawTasks.map((t: any) => mapBackendOffboardingTask(t, caseId)),
   };
 };
@@ -293,7 +412,9 @@ export const useOffboardingCases = () =>
         "/offboarding/cases",
         authConfig(),
       );
-      return unwrapList<any>(data, ["cases"]).map(mapBackendOffboardingCase);
+      return unwrapList<any>(data, ["cases", "items", "records"]).map(
+        mapBackendOffboardingCase,
+      );
     },
   });
 

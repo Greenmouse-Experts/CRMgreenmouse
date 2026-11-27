@@ -5,6 +5,7 @@ import { ArrowLeft, FileQuestion } from "lucide-react";
 import { reportHooksMap, type ReportQueryParams } from "@/api/reportsApi";
 import PageLoader from "@/components/layout/PageLoader";
 import React from "react";
+import type { UseQueryResult } from "@tanstack/react-query";
 
 function timeframeToMonths(timeframe: string): number {
   switch (timeframe) {
@@ -72,7 +73,9 @@ function RouteComponent() {
   };
 
   // Use the query hook if available, otherwise fall back to mock data
-  const apiQuery = queryHook ? queryHook(params) : null;
+  const apiQuery: UseQueryResult<any, Error> | null = queryHook
+    ? (queryHook(params) as UseQueryResult<any, Error>)
+    : null;
 
   // Merge mock report with API data when available
   const report = apiQuery?.data

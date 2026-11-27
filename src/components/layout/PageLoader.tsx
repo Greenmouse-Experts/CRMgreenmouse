@@ -67,6 +67,7 @@ export default function PageLoader<TData>(props: PageLoaderProps<TData>) {
       (query.error as AxiosError<ApiResponse>)?.response?.status === 403;
 
     if (is403) {
+      const message = extract_message(query.error as any);
       return (
         <div className="min-h-[40vh] w-full flex flex-col items-center justify-center p-6 text-center animate-in zoom-in-95 duration-300">
           <div className="mb-4 rounded-full bg-error/10 p-3 text-error">
@@ -76,8 +77,12 @@ export default function PageLoader<TData>(props: PageLoaderProps<TData>) {
             Access Denied
           </h3>
           <p className="mt-1 text-sm text-base-content/60 max-w-xs">
-            You don't have permission to view this resource. Contact support or
-            a Super Admin to request access.
+            {message ?? (
+              <>
+                You don't have permission to view this resource. UpgContact
+                support or a Super Admin to request access.
+              </>
+            )}
           </p>
         </div>
       );

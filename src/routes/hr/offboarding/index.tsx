@@ -47,7 +47,7 @@ function RouteComponent() {
         </button>
       </PageHeader>
 
-      <div className="flex items-center gap-3 rounded-xl bg-blue-500/10 border border-blue-500/20 p-4 sm:text-sm font-medium text-blue-900 dark:text-blue-200 shadow-2xs">
+      <div className="flex items-center gap-3 rounded-xl bg-info border border-blue-500/20 p-4 sm:text-sm font-medium text-info-content dark:text-blue-200 shadow-2xs">
         <ShieldCheck className="size-5 shrink-0 text-blue-600 dark:text-blue-400" />
         <span>
           Records are retained after exit; access to company services is

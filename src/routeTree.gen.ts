@@ -53,6 +53,7 @@ import { Route as HrSettingsIndexRouteImport } from './routes/hr/settings/index'
 import { Route as HrSelfServiceIndexRouteImport } from './routes/hr/self-service/index'
 import { Route as HrReportsIndexRouteImport } from './routes/hr/reports/index'
 import { Route as HrRecruitmentIndexRouteImport } from './routes/hr/recruitment/index'
+import { Route as HrPipelineIndexRouteImport } from './routes/hr/pipeline/index'
 import { Route as HrPerformanceIndexRouteImport } from './routes/hr/performance/index'
 import { Route as HrPayrollIndexRouteImport } from './routes/hr/payroll/index'
 import { Route as HrOrganizationIndexRouteImport } from './routes/hr/organization.index'
@@ -373,6 +374,11 @@ const HrReportsIndexRoute = HrReportsIndexRouteImport.update({
 const HrRecruitmentIndexRoute = HrRecruitmentIndexRouteImport.update({
   id: '/recruitment/',
   path: '/recruitment/',
+  getParentRoute: () => HrRouteRoute,
+} as any)
+const HrPipelineIndexRoute = HrPipelineIndexRouteImport.update({
+  id: '/pipeline/',
+  path: '/pipeline/',
   getParentRoute: () => HrRouteRoute,
 } as any)
 const HrPerformanceIndexRoute = HrPerformanceIndexRouteImport.update({
@@ -982,6 +988,7 @@ export interface FileRoutesByFullPath {
   '/hr/organization': typeof HrOrganizationIndexRoute
   '/hr/payroll': typeof HrPayrollIndexRoute
   '/hr/performance': typeof HrPerformanceIndexRoute
+  '/hr/pipeline': typeof HrPipelineIndexRoute
   '/hr/recruitment': typeof HrRecruitmentIndexRoute
   '/hr/reports': typeof HrReportsIndexRoute
   '/hr/self-service': typeof HrSelfServiceIndexRoute
@@ -1117,6 +1124,7 @@ export interface FileRoutesByTo {
   '/hr/organization': typeof HrOrganizationIndexRoute
   '/hr/payroll': typeof HrPayrollIndexRoute
   '/hr/performance': typeof HrPerformanceIndexRoute
+  '/hr/pipeline': typeof HrPipelineIndexRoute
   '/hr/recruitment': typeof HrRecruitmentIndexRoute
   '/hr/reports': typeof HrReportsIndexRoute
   '/hr/self-service': typeof HrSelfServiceIndexRoute
@@ -1264,6 +1272,7 @@ export interface FileRoutesById {
   '/hr/organization/': typeof HrOrganizationIndexRoute
   '/hr/payroll/': typeof HrPayrollIndexRoute
   '/hr/performance/': typeof HrPerformanceIndexRoute
+  '/hr/pipeline/': typeof HrPipelineIndexRoute
   '/hr/recruitment/': typeof HrRecruitmentIndexRoute
   '/hr/reports/': typeof HrReportsIndexRoute
   '/hr/self-service/': typeof HrSelfServiceIndexRoute
@@ -1412,6 +1421,7 @@ export interface FileRouteTypes {
     | '/hr/organization'
     | '/hr/payroll'
     | '/hr/performance'
+    | '/hr/pipeline'
     | '/hr/recruitment'
     | '/hr/reports'
     | '/hr/self-service'
@@ -1547,6 +1557,7 @@ export interface FileRouteTypes {
     | '/hr/organization'
     | '/hr/payroll'
     | '/hr/performance'
+    | '/hr/pipeline'
     | '/hr/recruitment'
     | '/hr/reports'
     | '/hr/self-service'
@@ -1693,6 +1704,7 @@ export interface FileRouteTypes {
     | '/hr/organization/'
     | '/hr/payroll/'
     | '/hr/performance/'
+    | '/hr/pipeline/'
     | '/hr/recruitment/'
     | '/hr/reports/'
     | '/hr/self-service/'
@@ -2115,6 +2127,13 @@ declare module '@tanstack/react-router' {
       path: '/recruitment'
       fullPath: '/hr/recruitment'
       preLoaderRoute: typeof HrRecruitmentIndexRouteImport
+      parentRoute: typeof HrRouteRoute
+    }
+    '/hr/pipeline/': {
+      id: '/hr/pipeline/'
+      path: '/pipeline'
+      fullPath: '/hr/pipeline'
+      preLoaderRoute: typeof HrPipelineIndexRouteImport
       parentRoute: typeof HrRouteRoute
     }
     '/hr/performance/': {
@@ -2950,6 +2969,7 @@ interface HrRouteRouteChildren {
   HrOrganizationIndexRoute: typeof HrOrganizationIndexRoute
   HrPayrollIndexRoute: typeof HrPayrollIndexRoute
   HrPerformanceIndexRoute: typeof HrPerformanceIndexRoute
+  HrPipelineIndexRoute: typeof HrPipelineIndexRoute
   HrRecruitmentIndexRoute: typeof HrRecruitmentIndexRoute
   HrReportsIndexRoute: typeof HrReportsIndexRoute
   HrSelfServiceIndexRoute: typeof HrSelfServiceIndexRoute
@@ -2974,6 +2994,7 @@ const HrRouteRouteChildren: HrRouteRouteChildren = {
   HrOrganizationIndexRoute: HrOrganizationIndexRoute,
   HrPayrollIndexRoute: HrPayrollIndexRoute,
   HrPerformanceIndexRoute: HrPerformanceIndexRoute,
+  HrPipelineIndexRoute: HrPipelineIndexRoute,
   HrRecruitmentIndexRoute: HrRecruitmentIndexRoute,
   HrReportsIndexRoute: HrReportsIndexRoute,
   HrSelfServiceIndexRoute: HrSelfServiceIndexRoute,

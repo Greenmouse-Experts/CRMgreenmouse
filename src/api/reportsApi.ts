@@ -90,7 +90,70 @@ export interface ContractExpirationsResponse {
 }
 
 /* -------------------------------------------------------------------------- */
-/* Helpers                                                                    */
+/* Tenant Revenue & Expenses Reports                                          */
+/* -------------------------------------------------------------------------- */
+
+export interface RevenueReportResponse {
+  summary: {
+    totalRevenue: number;
+    totalInvoices: number;
+    averageInvoiceValue: number;
+    outstandingAmount: number;
+    paidInvoices: number;
+    overdueInvoices: number;
+  };
+  byMonth: Array<{
+    month: string;
+    revenue: number;
+    invoices: number;
+  }>;
+  byCategory: Array<{
+    name: string;
+    total: number;
+    percentage: number;
+  }>;
+  topCustomers: Array<{
+    customer: string;
+    revenue: number;
+    invoices: number;
+  }>;
+  insights: string[];
+}
+
+export interface ExpensesReportResponse {
+  summary: {
+    totalExpenses: number;
+    totalRecords: number;
+    averageExpense: number;
+    byStatus: {
+      paid: number;
+      pending: number;
+      overdue: number;
+    };
+  };
+  byMonth: Array<{
+    month: string;
+    expenses: number;
+    records: number;
+  }>;
+  byCategory: Array<{
+    name: string;
+    total: number;
+    percentage: number;
+  }>;
+  topVendors: Array<{
+    vendor: string;
+    amount: number;
+    records: number;
+  }>;
+  insights: string[];
+}
+
+export type RevenueReport = RevenueReportResponse;
+export type ExpensesReport = ExpensesReportResponse;
+
+/* -------------------------------------------------------------------------- */
+/* Export hooks                                                               */
 /* -------------------------------------------------------------------------- */
 
 const getAuthConfig = async () => {
@@ -115,7 +178,7 @@ export const useHeadcountTurnoverReport = (params: ReportQueryParams = {}) =>
       if (params.departmentId)
         searchParams.set("departmentId", params.departmentId);
       const { data } = await apiClient.get<any>(
-        `/v1/reports/headcount-turnover?${searchParams.toString()}`,
+        `/reports/headcount-turnover?${searchParams.toString()}`,
         await getAuthConfig(),
       );
       return unwrap<HeadcountTurnoverResponse>(data);
@@ -131,7 +194,7 @@ export const useAttendanceSummaryReport = (params: ReportQueryParams = {}) =>
       if (params.departmentId)
         searchParams.set("departmentId", params.departmentId);
       const { data } = await apiClient.get<any>(
-        `/v1/reports/attendance-summary?${searchParams.toString()}`,
+        `/reports/attendance-summary?${searchParams.toString()}`,
         await getAuthConfig(),
       );
       return unwrap<AttendanceSummaryResponse>(data);
@@ -147,7 +210,7 @@ export const useLeaveUtilizationReport = (params: ReportQueryParams = {}) =>
       if (params.departmentId)
         searchParams.set("departmentId", params.departmentId);
       const { data } = await apiClient.get<any>(
-        `/v1/reports/leave-utilization?${searchParams.toString()}`,
+        `/reports/leave-utilization?${searchParams.toString()}`,
         await getAuthConfig(),
       );
       return unwrap<LeaveUtilizationResponse>(data);
@@ -163,7 +226,7 @@ export const usePayrollSummaryReport = (params: ReportQueryParams = {}) =>
       if (params.departmentId)
         searchParams.set("departmentId", params.departmentId);
       const { data } = await apiClient.get<any>(
-        `/v1/reports/payroll-summary?${searchParams.toString()}`,
+        `/reports/payroll-summary?${searchParams.toString()}`,
         await getAuthConfig(),
       );
       return unwrap<PayrollSummaryResponse>(data);
@@ -179,7 +242,7 @@ export const useRecruitmentFunnelReport = (params: ReportQueryParams = {}) =>
       if (params.departmentId)
         searchParams.set("departmentId", params.departmentId);
       const { data } = await apiClient.get<any>(
-        `/v1/reports/recruitment-funnel?${searchParams.toString()}`,
+        `/reports/recruitment-funnel?${searchParams.toString()}`,
         await getAuthConfig(),
       );
       return unwrap<RecruitmentFunnelResponse>(data);
@@ -196,7 +259,7 @@ export const usePerformanceDistributionReport = (
       if (params.cycleId) searchParams.set("cycleId", params.cycleId);
       if (params.department) searchParams.set("department", params.department);
       const { data } = await apiClient.get<any>(
-        `/v1/reports/performance-distribution?${searchParams.toString()}`,
+        `/reports/performance-distribution?${searchParams.toString()}`,
         await getAuthConfig(),
       );
       return unwrap<PerformanceDistributionResponse>(data);
@@ -211,7 +274,7 @@ export const useTrainingCompletionReport = (params: ReportQueryParams = {}) =>
       if (params.months) searchParams.set("months", String(params.months));
       if (params.department) searchParams.set("department", params.department);
       const { data } = await apiClient.get<any>(
-        `/v1/reports/training-completion?${searchParams.toString()}`,
+        `/reports/training-completion?${searchParams.toString()}`,
         await getAuthConfig(),
       );
       return unwrap<TrainingCompletionResponse>(data);
@@ -227,7 +290,7 @@ export const useDiversityOverviewReport = (params: ReportQueryParams = {}) =>
       if (params.departmentId)
         searchParams.set("departmentId", params.departmentId);
       const { data } = await apiClient.get<any>(
-        `/v1/reports/diversity-overview?${searchParams.toString()}`,
+        `/reports/diversity-overview?${searchParams.toString()}`,
         await getAuthConfig(),
       );
       return unwrap<DiversityOverviewResponse>(data);
@@ -243,10 +306,60 @@ export const useContractExpirationsReport = (params: ReportQueryParams = {}) =>
       if (params.departmentId)
         searchParams.set("departmentId", params.departmentId);
       const { data } = await apiClient.get<any>(
-        `/v1/reports/contract-expirations?${searchParams.toString()}`,
+        `/reports/contract-expirations?${searchParams.toString()}`,
         await getAuthConfig(),
       );
       return unwrap<ContractExpirationsResponse>(data);
+    },
+  });
+
+/* -------------------------------------------------------------------------- */
+/* Tenant Revenue & Expenses Report Hooks                                    */
+/* -------------------------------------------------------------------------- */
+
+export interface RevenueReportQueryParams {
+  year?: number;
+  from?: string;
+  to?: string;
+  currency?: string;
+}
+
+export interface ExpensesReportQueryParams {
+  year?: number;
+  from?: string;
+  to?: string;
+}
+
+export const useRevenueReport = (params: RevenueReportQueryParams = {}) =>
+  useQuery<RevenueReportResponse>({
+    queryKey: ["reports", "revenue", params],
+    queryFn: async () => {
+      const searchParams = new URLSearchParams();
+      if (params.year) searchParams.set("year", String(params.year));
+      if (params.from) searchParams.set("from", params.from);
+      if (params.to) searchParams.set("to", params.to);
+      if (params.currency) searchParams.set("currency", params.currency);
+      const { data } = await apiClient.get<any>(
+        `/reports/revenue?${searchParams.toString()}`,
+        await getAuthConfig(),
+      );
+      return unwrap<RevenueReportResponse>(data);
+    },
+  });
+
+export const useExpensesReport = (params: ExpensesReportQueryParams = {}) =>
+  useQuery<ExpensesReportResponse>({
+    queryKey: ["reports", "expenses", params],
+    queryFn: async () => {
+      const searchParams = new URLSearchParams();
+      if (params.year) searchParams.set("year", String(params.year));
+      if (params.from) searchParams.set("from", params.from);
+      if (params.to) searchParams.set("to", params.to);
+      const { data } = await apiClient.get<any>(
+        `/reports/expenses?${searchParams.toString()}`,
+        await getAuthConfig(),
+      );
+      return unwrap<ExpensesReportResponse>(data);
     },
   });
 
@@ -263,7 +376,7 @@ export const useExportHeadcountTurnover = (params: ReportQueryParams = {}) =>
       if (params.departmentId)
         searchParams.set("departmentId", params.departmentId);
       const { data } = await apiClient.get(
-        `/v1/reports/headcount-turnover/export?${searchParams.toString()}`,
+        `/reports/headcount-turnover/export?${searchParams.toString()}`,
         { ...(await getAuthConfig()), responseType: "blob" },
       );
       return data as Blob;
@@ -280,7 +393,7 @@ export const useExportAttendanceSummary = (params: ReportQueryParams = {}) =>
       if (params.departmentId)
         searchParams.set("departmentId", params.departmentId);
       const { data } = await apiClient.get(
-        `/v1/reports/attendance-summary/export?${searchParams.toString()}`,
+        `/reports/attendance-summary/export?${searchParams.toString()}`,
         { ...(await getAuthConfig()), responseType: "blob" },
       );
       return data as Blob;
@@ -297,7 +410,7 @@ export const useExportLeaveUtilization = (params: ReportQueryParams = {}) =>
       if (params.departmentId)
         searchParams.set("departmentId", params.departmentId);
       const { data } = await apiClient.get(
-        `/v1/reports/leave-utilization/export?${searchParams.toString()}`,
+        `/reports/leave-utilization/export?${searchParams.toString()}`,
         { ...(await getAuthConfig()), responseType: "blob" },
       );
       return data as Blob;
@@ -314,7 +427,7 @@ export const useExportPayrollSummary = (params: ReportQueryParams = {}) =>
       if (params.departmentId)
         searchParams.set("departmentId", params.departmentId);
       const { data } = await apiClient.get(
-        `/v1/reports/payroll-summary/export?${searchParams.toString()}`,
+        `/reports/payroll-summary/export?${searchParams.toString()}`,
         { ...(await getAuthConfig()), responseType: "blob" },
       );
       return data as Blob;
@@ -331,7 +444,7 @@ export const useExportRecruitmentFunnel = (params: ReportQueryParams = {}) =>
       if (params.departmentId)
         searchParams.set("departmentId", params.departmentId);
       const { data } = await apiClient.get(
-        `/v1/reports/recruitment-funnel/export?${searchParams.toString()}`,
+        `/reports/recruitment-funnel/export?${searchParams.toString()}`,
         { ...(await getAuthConfig()), responseType: "blob" },
       );
       return data as Blob;
@@ -349,7 +462,7 @@ export const useExportPerformanceDistribution = (
       if (params.cycleId) searchParams.set("cycleId", params.cycleId);
       if (params.department) searchParams.set("department", params.department);
       const { data } = await apiClient.get(
-        `/v1/reports/performance-distribution/export?${searchParams.toString()}`,
+        `/reports/performance-distribution/export?${searchParams.toString()}`,
         { ...(await getAuthConfig()), responseType: "blob" },
       );
       return data as Blob;
@@ -365,7 +478,7 @@ export const useExportTrainingCompletion = (params: ReportQueryParams = {}) =>
       if (params.months) searchParams.set("months", String(params.months));
       if (params.department) searchParams.set("department", params.department);
       const { data } = await apiClient.get(
-        `/v1/reports/training-completion/export?${searchParams.toString()}`,
+        `/reports/training-completion/export?${searchParams.toString()}`,
         { ...(await getAuthConfig()), responseType: "blob" },
       );
       return data as Blob;
@@ -382,7 +495,7 @@ export const useExportDiversityOverview = (params: ReportQueryParams = {}) =>
       if (params.departmentId)
         searchParams.set("departmentId", params.departmentId);
       const { data } = await apiClient.get(
-        `/v1/reports/diversity-overview/export?${searchParams.toString()}`,
+        `/reports/diversity-overview/export?${searchParams.toString()}`,
         { ...(await getAuthConfig()), responseType: "blob" },
       );
       return data as Blob;
@@ -399,7 +512,44 @@ export const useExportContractExpirations = (params: ReportQueryParams = {}) =>
       if (params.departmentId)
         searchParams.set("departmentId", params.departmentId);
       const { data } = await apiClient.get(
-        `/v1/reports/contract-expirations/export?${searchParams.toString()}`,
+        `/reports/contract-expirations/export?${searchParams.toString()}`,
+        { ...(await getAuthConfig()), responseType: "blob" },
+      );
+      return data as Blob;
+    },
+    enabled: false,
+  });
+
+export const useExportRevenueReport = (params: RevenueReportQueryParams = {}) =>
+  useQuery<Blob>({
+    queryKey: ["reports", "revenue", "export", params],
+    queryFn: async () => {
+      const searchParams = new URLSearchParams();
+      if (params.year) searchParams.set("year", String(params.year));
+      if (params.from) searchParams.set("from", params.from);
+      if (params.to) searchParams.set("to", params.to);
+      if (params.currency) searchParams.set("currency", params.currency);
+      const { data } = await apiClient.get(
+        `/reports/revenue/export?${searchParams.toString()}`,
+        { ...(await getAuthConfig()), responseType: "blob" },
+      );
+      return data as Blob;
+    },
+    enabled: false,
+  });
+
+export const useExportExpensesReport = (
+  params: ExpensesReportQueryParams = {},
+) =>
+  useQuery<Blob>({
+    queryKey: ["reports", "expenses", "export", params],
+    queryFn: async () => {
+      const searchParams = new URLSearchParams();
+      if (params.year) searchParams.set("year", String(params.year));
+      if (params.from) searchParams.set("from", params.from);
+      if (params.to) searchParams.set("to", params.to);
+      const { data } = await apiClient.get(
+        `/reports/expenses/export?${searchParams.toString()}`,
         { ...(await getAuthConfig()), responseType: "blob" },
       );
       return data as Blob;
