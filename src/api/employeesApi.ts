@@ -427,6 +427,53 @@ export interface PaginatedColleaguesResponse {
   limit: number;
 }
 
+export const matchesColleagueIdentifier = (
+  colleague: ColleagueRecord,
+  identifier: string,
+): boolean => {
+  const target = identifier.trim();
+  if (!target) return false;
+  return (
+    colleague.id === target ||
+    colleague._id === target ||
+    colleague.staffId === target ||
+    colleague.employeeNumber === target
+  );
+};
+
+export const fetchEmployeeColleaguesPage = async (
+  params?: ColleaguesQueryParams,
+): Promise<PaginatedColleaguesResponse> => {
+  const cleanParams: Record<string, string | number> = {};
+  if (params?.search?.trim()) cleanParams.search = params.search.trim();
+  if (params?.department && params.department !== "All") {
+    cleanParams.department = params.department;
+  }
+  if (typeof params?.page === "number" && params.page > 0) {
+    cleanParams.page = params.page;
+  }
+  if (typeof params?.limit === "number" && params.limit > 0) {
+    cleanParams.limit = params.limit;
+  }
+  const { data } = await apiClient.get<any>("/employees/colleagues", {
+    ...authConfig(),
+    params: cleanParams,
+  });
+  const list = unwrapList<ColleagueRecord>(data, ["colleagues", "items"]);
+  const payload =
+    data?.data && !Array.isArray(data.data) ? data.data : data;
+  const page = Number(payload?.page ?? params?.page ?? 1) || 1;
+  const limit = Number(payload?.limit ?? params?.limit ?? 20) || 20;
+  const total =
+    payload?.total != null ? Number(payload.total) : list.length;
+  return {
+    data: list,
+    total,
+    page,
+    limit,
+  };
+};
+
 export const useEmployeeColleagues = (
   params?: ColleaguesQueryParams,
   options?: { enabled?: boolean },
@@ -434,37 +481,56 @@ export const useEmployeeColleagues = (
   useQuery<PaginatedColleaguesResponse>({
     queryKey: [...queryRoot, "colleagues", params ?? {}],
     enabled: options?.enabled ?? true,
-    queryFn: async () => {
-      const cleanParams: Record<string, string | number> = {};
-      if (params?.search?.trim()) cleanParams.search = params.search.trim();
-      if (params?.department && params.department !== "All") {
-        cleanParams.department = params.department;
-      }
-      if (typeof params?.page === "number" && params.page > 0) {
-        cleanParams.page = params.page;
-      }
-      if (typeof params?.limit === "number" && params.limit > 0) {
-        cleanParams.limit = params.limit;
-      }
-      const { data } = await apiClient.get<any>("/employees/colleagues", {
-        ...authConfig(),
-        params: cleanParams,
+    queryFn: () => fetchEmployeeColleaguesPage(params),
+  });
+
+export const useEmployeeColleague = (id?: string) => {
+  const queryClient = useQueryClient();
+
+  const findInCache = (): ColleagueRecord | undefined => {
+    if (!id) return undefined;
+    const cachedQueries =
+      queryClient.getQueriesData<PaginatedColleaguesResponse>({
+        queryKey: [...queryRoot, "colleagues"],
       });
-      const list = unwrapList<ColleagueRecord>(data, ["colleagues", "items"]);
-      const payload =
-        data?.data && !Array.isArray(data.data) ? data.data : data;
-      const page = Number(payload?.page ?? params?.page ?? 1) || 1;
-      const limit = Number(payload?.limit ?? params?.limit ?? 20) || 20;
-      const total =
-        payload?.total != null ? Number(payload.total) : list.length;
-      return {
-        data: list,
-        total,
-        page,
-        limit,
-      };
+    for (const [, cached] of cachedQueries) {
+      const match = cached?.data?.find((item) =>
+        matchesColleagueIdentifier(item, id),
+      );
+      if (match) return match;
+    }
+    return undefined;
+  };
+
+  return useQuery<ColleagueRecord | null>({
+    queryKey: [...queryRoot, "colleague-detail", id],
+    enabled: Boolean(id),
+    initialData: findInCache,
+    queryFn: async () => {
+      if (!id) return null;
+      const cached = findInCache();
+      if (cached) return cached;
+
+      const limit = 100;
+      let page = 1;
+      const maxPages = 20;
+
+      while (page <= maxPages) {
+        const res = await fetchEmployeeColleaguesPage({ page, limit });
+        const match = res.data.find((item) =>
+          matchesColleagueIdentifier(item, id),
+        );
+        if (match) return match;
+        if (res.data.length === 0 || page * res.limit >= res.total) {
+          break;
+        }
+        page += 1;
+      }
+
+      return null;
     },
   });
+};
 
 export interface StaffOption {
   id: string;

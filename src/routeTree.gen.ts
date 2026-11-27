@@ -79,6 +79,7 @@ import { Route as AdminSettingsIndexRouteImport } from './routes/admin/settings/
 import { Route as AdminProductsIndexRouteImport } from './routes/admin/products/index'
 import { Route as AdminOrdersIndexRouteImport } from './routes/admin/orders/index'
 import { Route as StaffTrainingIdRouteImport } from './routes/staff/training/$id'
+import { Route as StaffStaffsIdRouteImport } from './routes/staff/staffs/$id'
 import { Route as HrTrainingIdRouteImport } from './routes/hr/training/$id'
 import { Route as HrStaffsIdRouteImport } from './routes/hr/staffs/$id'
 import { Route as HrReportsSlugRouteImport } from './routes/hr/reports/$slug'
@@ -502,6 +503,11 @@ const AdminOrdersIndexRoute = AdminOrdersIndexRouteImport.update({
 const StaffTrainingIdRoute = StaffTrainingIdRouteImport.update({
   id: '/training/$id',
   path: '/training/$id',
+  getParentRoute: () => StaffRouteRoute,
+} as any)
+const StaffStaffsIdRoute = StaffStaffsIdRouteImport.update({
+  id: '/staffs/$id',
+  path: '/staffs/$id',
   getParentRoute: () => StaffRouteRoute,
 } as any)
 const HrTrainingIdRoute = HrTrainingIdRouteImport.update({
@@ -949,6 +955,7 @@ export interface FileRoutesByFullPath {
   '/hr/reports/$slug': typeof HrReportsSlugRoute
   '/hr/staffs/$id': typeof HrStaffsIdRoute
   '/hr/training/$id': typeof HrTrainingIdRoute
+  '/staff/staffs/$id': typeof StaffStaffsIdRoute
   '/staff/training/$id': typeof StaffTrainingIdRoute
   '/admin/orders': typeof AdminOrdersIndexRoute
   '/admin/products': typeof AdminProductsIndexRoute
@@ -1083,6 +1090,7 @@ export interface FileRoutesByTo {
   '/hr/reports/$slug': typeof HrReportsSlugRoute
   '/hr/staffs/$id': typeof HrStaffsIdRoute
   '/hr/training/$id': typeof HrTrainingIdRoute
+  '/staff/staffs/$id': typeof StaffStaffsIdRoute
   '/staff/training/$id': typeof StaffTrainingIdRoute
   '/admin/orders': typeof AdminOrdersIndexRoute
   '/admin/products': typeof AdminProductsIndexRoute
@@ -1229,6 +1237,7 @@ export interface FileRoutesById {
   '/hr/reports/$slug': typeof HrReportsSlugRoute
   '/hr/staffs/$id': typeof HrStaffsIdRoute
   '/hr/training/$id': typeof HrTrainingIdRoute
+  '/staff/staffs/$id': typeof StaffStaffsIdRoute
   '/staff/training/$id': typeof StaffTrainingIdRoute
   '/admin/orders/': typeof AdminOrdersIndexRoute
   '/admin/products/': typeof AdminProductsIndexRoute
@@ -1376,6 +1385,7 @@ export interface FileRouteTypes {
     | '/hr/reports/$slug'
     | '/hr/staffs/$id'
     | '/hr/training/$id'
+    | '/staff/staffs/$id'
     | '/staff/training/$id'
     | '/admin/orders'
     | '/admin/products'
@@ -1510,6 +1520,7 @@ export interface FileRouteTypes {
     | '/hr/reports/$slug'
     | '/hr/staffs/$id'
     | '/hr/training/$id'
+    | '/staff/staffs/$id'
     | '/staff/training/$id'
     | '/admin/orders'
     | '/admin/products'
@@ -1655,6 +1666,7 @@ export interface FileRouteTypes {
     | '/hr/reports/$slug'
     | '/hr/staffs/$id'
     | '/hr/training/$id'
+    | '/staff/staffs/$id'
     | '/staff/training/$id'
     | '/admin/orders/'
     | '/admin/products/'
@@ -2285,6 +2297,13 @@ declare module '@tanstack/react-router' {
       path: '/training/$id'
       fullPath: '/staff/training/$id'
       preLoaderRoute: typeof StaffTrainingIdRouteImport
+      parentRoute: typeof StaffRouteRoute
+    }
+    '/staff/staffs/$id': {
+      id: '/staff/staffs/$id'
+      path: '/staffs/$id'
+      fullPath: '/staff/staffs/$id'
+      preLoaderRoute: typeof StaffStaffsIdRouteImport
       parentRoute: typeof StaffRouteRoute
     }
     '/hr/training/$id': {
@@ -2988,6 +3007,7 @@ const StaffSettingsRouteRouteWithChildren =
 interface StaffRouteRouteChildren {
   StaffSettingsRouteRoute: typeof StaffSettingsRouteRouteWithChildren
   StaffIndexRoute: typeof StaffIndexRoute
+  StaffStaffsIdRoute: typeof StaffStaffsIdRoute
   StaffTrainingIdRoute: typeof StaffTrainingIdRoute
   StaffAttendanceIndexRoute: typeof StaffAttendanceIndexRoute
   StaffDisciplinaryIndexRoute: typeof StaffDisciplinaryIndexRoute
@@ -3003,6 +3023,7 @@ interface StaffRouteRouteChildren {
 const StaffRouteRouteChildren: StaffRouteRouteChildren = {
   StaffSettingsRouteRoute: StaffSettingsRouteRouteWithChildren,
   StaffIndexRoute: StaffIndexRoute,
+  StaffStaffsIdRoute: StaffStaffsIdRoute,
   StaffTrainingIdRoute: StaffTrainingIdRoute,
   StaffAttendanceIndexRoute: StaffAttendanceIndexRoute,
   StaffDisciplinaryIndexRoute: StaffDisciplinaryIndexRoute,

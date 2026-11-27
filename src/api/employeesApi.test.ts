@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   extractEmployeePhoto,
   findMatchingBank,
+  matchesColleagueIdentifier,
   sanitizeEmployeePayload,
   validateEmployeeBankingGroup,
   type BankOption,
@@ -147,5 +148,24 @@ describe("extractEmployeePhoto", () => {
 
     expect(extractEmployeePhoto(null)).toBeUndefined();
     expect(extractEmployeePhoto({ profilePhotoUrl: "" })).toBeUndefined();
+  });
+});
+
+describe("matchesColleagueIdentifier", () => {
+  const sample = {
+    id: "emp-uuid-1",
+    staffId: "staff-uuid-1",
+    employeeNumber: "EMP-042",
+  };
+
+  it("matches by id, staffId, or employeeNumber", () => {
+    expect(matchesColleagueIdentifier(sample, "emp-uuid-1")).toBe(true);
+    expect(matchesColleagueIdentifier(sample, "staff-uuid-1")).toBe(true);
+    expect(matchesColleagueIdentifier(sample, "EMP-042")).toBe(true);
+  });
+
+  it("returns false for blank or non-matching identifiers", () => {
+    expect(matchesColleagueIdentifier(sample, "")).toBe(false);
+    expect(matchesColleagueIdentifier(sample, "emp-uuid-999")).toBe(false);
   });
 });

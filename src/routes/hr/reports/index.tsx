@@ -61,7 +61,7 @@ function RouteComponent() {
   }
 
   return (
-    <div className="space-y-6 pb-12">
+    <div className="space-y-6 pb-12 ">
       {/* Page Header */}
       <PageHeader
         title="Reports & Analytics"
@@ -69,36 +69,6 @@ function RouteComponent() {
       />
 
       {/* Top 4 Overview Stat Cards */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <StatCard
-          title="Standard Reports"
-          value={HR_REPORTS.length}
-          desc="Automated real-time modules"
-          icon={<FileSpreadsheet className="size-5" />}
-          variant="primary"
-        />
-        <StatCard
-          title="Active Headcount"
-          value="261"
-          desc="+4.2% growth over 6 months"
-          icon={<Users className="size-5" />}
-          variant="info"
-        />
-        <StatCard
-          title="Monthly Payroll"
-          value="₦16.7M"
-          desc="November calculated total"
-          icon={<CircleDollarSign className="size-5" />}
-          variant="success"
-        />
-        <StatCard
-          title="Weekly Attendance"
-          value="94.1%"
-          desc="Avg. 11 late arrivals / day"
-          icon={<CalendarCheck className="size-5" />}
-          variant="warning"
-        />
-      </div>
 
       {/* Search and Category Filter Bar */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-2">
@@ -108,7 +78,7 @@ function RouteComponent() {
               key={cat}
               type="button"
               onClick={() => setSelectedCategory(cat)}
-              className={`px-3 py-1.5  font-semibold rounded-xl transition-all ${
+              className={`px-3 py-1.5 font-semibold rounded-xl transition-all ${
                 selectedCategory === cat
                   ? "bg-primary text-white shadow-2xs"
                   : "bg-base-100 border border-base-200 text-base-content/80 hover:bg-base-200"
@@ -132,7 +102,7 @@ function RouteComponent() {
       </div>
 
       {/* 9 Report Cards Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 ">
         {filteredReports.map((report) => (
           <ReportCard
             key={report.slug}

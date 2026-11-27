@@ -33,7 +33,7 @@ export default function ReportCard({
   return (
     <div
       onClick={() => onSelectReport(report)}
-      className="card bg-base-100 border border-base-200 hover:border-primary/80 hover:shadow-md transition-all p-5 rounded-2xl cursor-pointer flex flex-col justify-between group"
+      className="card bg-base-100 border border-base-200 hover:border-primary/80 hover:shadow-md transition-all p-5 rounded-2xl cursor-pointer flex flex-col justify-between group ring fade"
     >
       <div>
         <div className="flex items-start justify-between gap-3 mb-3">
@@ -53,18 +53,6 @@ export default function ReportCard({
         <p className=" text-base-content/80 mt-1 line-clamp-2">{report.desc}</p>
 
         {/* Quick KPI preview badges */}
-        <div className="grid grid-cols-2 gap-2 mt-4 pt-3 border-t border-base-200/80 ">
-          {report.kpis.slice(0, 2).map((kpi) => (
-            <div key={kpi.label} className="bg-base-200/80 p-2 rounded-xl">
-              <span className="text-[10px] text-base-content/80 block truncate">
-                {kpi.label}
-              </span>
-              <span className="font-bold text-base-content mt-0.5 block truncate">
-                {kpi.value}
-              </span>
-            </div>
-          ))}
-        </div>
       </div>
 
       {/* Action Footer */}
@@ -72,7 +60,7 @@ export default function ReportCard({
         <button
           type="button"
           onClick={() => onSelectReport(report)}
-          className="btn btn-sm btn-ghost hover:bg-primary/10 hover:text-primary flex-1 rounded-xl  font-semibold gap-1.5"
+          className="btn btn-sm btn-ghost hover:bg-primary/10 hover:text-primary flex-1 ring  fade rounded-xl  font-semibold gap-1.5"
         >
           <Eye className="size-3.5" />
           <span>View Report</span>

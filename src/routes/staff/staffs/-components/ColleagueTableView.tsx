@@ -1,7 +1,9 @@
+import { Link, useNavigate } from "@tanstack/react-router";
 import CustomTable, { type columnType } from "@/components/tables/CustomTable";
 import ColleagueAvatar from "./ColleagueAvatar";
 import ColleagueStatusBadge from "./ColleagueStatusBadge";
 import type { Colleague } from "./types";
+import { Eye } from "lucide-react";
 
 interface ColleagueTableViewProps {
   colleagues: Colleague[];
@@ -10,6 +12,8 @@ interface ColleagueTableViewProps {
 export default function ColleagueTableView({
   colleagues,
 }: ColleagueTableViewProps) {
+  const navigate = useNavigate();
+
   if (colleagues.length === 0) {
     return null;
   }
@@ -29,7 +33,7 @@ export default function ColleagueTableView({
             size="sm"
           />
           <div className="min-w-0">
-            <p className="font-semibold text-base-content truncate">
+            <p className="font-semibold text-base-content truncate group-hover:text-primary">
               {emp.name}
             </p>
             <div className="flex items-center gap-1.5 text-base-content/80 truncate">
@@ -98,11 +102,32 @@ export default function ColleagueTableView({
         <ColleagueStatusBadge status={emp.status} onLeave={emp.onLeave} />
       ),
     },
+    {
+      key: "action",
+      label: "Action",
+      render: (_value: unknown, emp: Colleague) => (
+        <Link
+          to="/staff/staffs/$id"
+          params={{ id: emp.id }}
+          onClick={(e) => e.stopPropagation()}
+          className="btn btn-xs btn-ghost text-primary hover:bg-primary/10 rounded-lg gap-1.5 font-medium"
+        >
+          <Eye className="size-3.5" />
+          <span>View</span>
+        </Link>
+      ),
+    },
   ];
 
   return (
     <div className="card bg-base-100 border border-base-200/80 shadow-xs overflow-hidden rounded-2xl">
-      <CustomTable data={colleagues} columns={columns} />
+      <CustomTable
+        data={colleagues}
+        columns={columns}
+        onRowClick={(emp: Colleague) =>
+          navigate({ to: "/staff/staffs/$id", params: { id: emp.id } })
+        }
+      />
     </div>
   );
 }

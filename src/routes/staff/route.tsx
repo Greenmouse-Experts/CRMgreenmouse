@@ -88,13 +88,13 @@ const nav_links = [
         type: "menu",
         children: null,
       },
-      {
-        path: "/staff/payroll",
-        label: "Payroll",
-        icon: <WalletCards size={ICON_SIZE} />,
-        type: "menu",
-        children: null,
-      },
+      // {
+      //   path: "/staff/payroll",
+      //   label: "Payroll",
+      //   icon: <WalletCards size={ICON_SIZE} />,
+      //   type: "menu",
+      //   children: null,
+      // },
     ],
   },
   {

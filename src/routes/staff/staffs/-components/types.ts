@@ -28,6 +28,7 @@ export interface Colleague {
   profilePhotoUrl?: string | null;
   title: string;
   dept: string;
+  rawDept?: string;
   location: string;
   type: EmploymentType;
   status: EmploymentStatus;

@@ -38,30 +38,29 @@ export default function StatCard({
 }: StatCardProps) {
   const iconStyle =
     colorClass || variantStyles[variant] || variantStyles.default;
-
   return (
     <div
       className={`card bg-base-100/80 backdrop-blur-md border border-base-200 shadow-sm p-4 hover:shadow-md transition-all duration-200 ${className}`}
     >
       <div className="flex items-center justify-between gap-3">
         <div className="min-w-0 flex-1">
-          <p className="text-sm font-semibold text-base-content/60 uppercase tracking-wider truncate">
+          <p className="text-xs font-semibold text-base-content/60 uppercase tracking-wider truncate">
             {title}
           </p>
-          <h3 className="text-2xl font-semibold text-base-content mt-1 truncate">
+          <h3 className="text-xl font-semibold text-base-content mt-1 truncate">
             {value}
           </h3>
-          {desc && (
+          {/*{desc && (
             <p className="text-sm text-base-content/80 mt-0.5 truncate">
               {desc}
             </p>
-          )}
+          )}*/}
         </div>
-        {icon && (
+        {/*{icon && (
           <div className={`p-3 rounded-xl border shrink-0 ${iconStyle}`}>
             {icon}
           </div>
-        )}
+        )}*/}
       </div>
     </div>
   );
