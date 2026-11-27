@@ -176,7 +176,7 @@ export default function ChecklistTable({
             />
           </div>
 
-          <div className="flex flex-wrap items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2 flex-1 justify-end">
             <select
               value={selectedOwner}
               onChange={(e) => onOwnerChange(e.target.value)}
